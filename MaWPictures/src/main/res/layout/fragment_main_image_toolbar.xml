@@ -1,0 +1,79 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbarLayout"
+    android:layout_width="match_parent"
+    android:layout_height="24dp"
+    android:layout_above="@+id/horizontalScrollView"
+    android:gravity="center_horizontal"
+    android:background="?attr/colorPrimaryDark"
+    tools:ignore="Overdraw">
+
+    <ImageButton
+        android:id="@+id/commentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_comment_white_24dp"
+        android:contentDescription="@string/frg_toolbar_comment"
+        android:clickable="false"
+        android:adjustViewBounds="true"
+        android:scaleType="center"
+        android:background="@null"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/exifButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_info_outline_white_24dp"
+        android:contentDescription="@string/frg_toolbar_exif"
+        android:clickable="false"
+        android:adjustViewBounds="true"
+        android:scaleType="center"
+        android:background="@null"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/ratingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_star_white_24dp"
+        android:contentDescription="@string/frg_toolbar_rate"
+        android:adjustViewBounds="true"
+        android:scaleType="center"
+        android:background="@null"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/rotateLeftButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_rotate_left_white_24dp"
+        android:contentDescription="@string/frg_toolbar_rotate_left"
+        android:adjustViewBounds="true"
+        android:scaleType="center"
+        android:background="@null"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/rotateRightButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_rotate_right_white_24dp"
+        android:contentDescription="@string/frg_toolbar_rotate_right"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/slideshowButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_play_arrow_white_24dp"
+        android:contentDescription="@string/frg_toolbar_toggle_slideshow"
+        android:adjustViewBounds="true"
+        android:scaleType="center"
+        android:background="@null"
+        android:layout_weight="1" />
+
+</LinearLayout>

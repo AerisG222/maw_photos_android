@@ -1,0 +1,43 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="@dimen/dialog_width"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dialog_horizontal_margin">
+
+    <TextView
+        android:id="@+id/yourRatingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/frg_rating_your_rating"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp" />
+
+    <RatingBar
+        android:id="@+id/yourRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:clickable="true"
+        android:stepSize="1"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/averageRatingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/frg_rating_avg_rating"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="8dp" />
+
+    <RatingBar
+        android:id="@+id/averageRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:isIndicator="true"
+        android:stepSize="1"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>

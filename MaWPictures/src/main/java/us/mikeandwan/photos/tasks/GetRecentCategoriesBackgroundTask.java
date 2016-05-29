@@ -1,0 +1,68 @@
+package us.mikeandwan.photos.tasks;
+
+
+import android.content.Context;
+import android.util.Log;
+
+import java.util.List;
+
+import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.data.Category;
+import us.mikeandwan.photos.data.MawDataManager;
+import us.mikeandwan.photos.services.PhotoApiClient;
+
+public class GetRecentCategoriesBackgroundTask extends BackgroundTask<List<Category>> {
+    private MawDataManager _dm;
+    private Context _context;
+
+
+    public GetRecentCategoriesBackgroundTask(Context context) {
+        super(BackgroundTaskPriority.Normal);
+
+        _context = context;
+        _dm = new MawDataManager(_context);
+    }
+
+
+    @Override
+    public List<Category> call() throws Exception {
+        Log.d(MawApplication.LOG_TAG, "> started to get recent categories");
+
+        PhotoApiClient client = new PhotoApiClient(_context);
+
+        if (!client.isConnected(_context)) {
+            throw new Exception("Network unavailable");
+        }
+
+        List<Category> categories = client.getRecentCategories(_dm.getLatestCategoryId());
+
+        for (Category category : categories) {
+            _dm.addCategory(category);
+        }
+
+        // new check which should cover case if the initial download was interrupted / failed
+        int serverCount = client.getTotalCategoryCount();
+        int localCount = _dm.getCategoryCount();
+
+        if (serverCount != localCount) {
+            Log.w(MawApplication.LOG_TAG, "> different number of categories on server, attempting full refresh");
+
+            List<Category> serverCategories = client.getRecentCategories(0);
+            List<Category> localCategories = _dm.getAllCategories();
+
+            serverCategories.removeAll(localCategories);
+
+            for (Category cat : serverCategories) {
+                // add this category to the database
+                _dm.addCategory(cat);
+
+                // also add this category to the list of categories we report as being new
+                categories.add(cat);
+            }
+
+            Log.w(MawApplication.LOG_TAG, "> completed full refresh");
+        }
+
+        return categories;
+    }
+}

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_title_slideshow_interval">Slideshow Interval</string>
+    <string-array name="pref_slideshow_intervals">
+        <item>1s</item>
+        <item>2s</item>
+        <item>3s</item>
+        <item>4s</item>
+        <item>5s</item>
+        <item>10s</item>
+        <item>20s</item>
+        <item>30s</item>
+    </string-array>
+    <string-array name="pref_slideshow_interval_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+
+    <string name="pref_header_data_sync">Data &amp; Sync</string>
+
+    <string name="pref_title_sync_frequency">Sync Frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>4 hours</item>
+        <item>8 hours</item>
+        <item>1 day</item>
+        <item>1 week</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>4</item>
+        <item>8</item>
+        <item>24</item>
+        <item>168</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New Photo Notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="pref_header_category_display">Category List Display</string>
+    <string name="pref_title_category_list_type_list">List with Name</string>
+    <string name="pref_title_category_list_type_thumbnails">Thumbnails Only</string>
+
+    <string name="pref_header_display_options">Photo Display</string>
+    <string name="pref_title_show_thumbnails">Show Thumbnails</string>
+    <string name="pref_title_show_toolbar">Show Toolbar</string>
+</resources>

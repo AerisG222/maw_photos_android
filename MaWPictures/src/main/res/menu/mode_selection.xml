@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:mawphotos="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_force_sync"
+          android:title="@string/action_sync"
+          android:icon="@drawable/ic_sync_white_24dp"
+          android:orderInCategory="100"
+          mawphotos:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_settings"
+          android:title="@string/action_settings"
+          android:orderInCategory="100"
+          mawphotos:showAsAction="never" />
+</menu>

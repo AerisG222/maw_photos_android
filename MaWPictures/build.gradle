@@ -1,0 +1,77 @@
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+def AAVersion = '3.3.2'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '23.0.3'
+
+    defaultConfig {
+        applicationId "us.mikeandwan.pictures"
+        minSdkVersion 19
+        targetSdkVersion 22
+        versionCode 20
+        versionName "3.0"
+    }
+
+    signingConfigs {
+        maw {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
+
+    productFlavors {
+        development {
+
+        }
+
+        production {
+
+        }
+    }
+
+    buildTypes {
+        release {
+            /* runProguard true */
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+            debuggable false
+            /* jniDebugBuild false */
+            signingConfig signingConfigs.maw
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+}
+
+apt {
+    arguments {
+        androidManifestFile variant.outputs[0].processResources.manifestFile
+        // if you have multiple outputs (when using splits), you may want to have other index than 0
+
+        // you should set your package name here if you are using different application IDs
+        resourcePackageName "us.mikeandwan.photos"
+
+        // You can set optional annotation processing options here, like these commented options:
+        // logLevel 'INFO'
+        // logFile '/var/log/aa.log'
+    }
+}
+
+dependencies {
+    apt "org.androidannotations:androidannotations:$AAVersion"
+    compile "org.androidannotations:androidannotations-api:$AAVersion"
+    compile 'com.android.support:appcompat-v7:22.+'
+    compile 'com.android.support:design:22.+'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.5.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.3'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'commons-io:commons-io:+'
+    compile 'com.commonsware.cwac:provider:0.2.+'
+}

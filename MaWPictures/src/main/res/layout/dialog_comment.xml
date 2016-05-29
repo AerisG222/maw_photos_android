@@ -1,0 +1,43 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/dialog_width"
+    android:padding="@dimen/dialog_horizontal_margin"
+    android:layout_height="match_parent"
+    >
+
+    <EditText
+        android:id="@+id/commentEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine|textAutoCorrect"
+        android:ems="30"
+        android:lines="3"
+        android:textAlignment="viewStart"
+        tools:ignore="LabelFor" />
+
+    <Button
+        android:id="@+id/addCommentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_below="@id/commentEditText"
+        android:text="@string/frg_comment_add_comment" />
+
+    <ScrollView
+        android:id="@+id/commentScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addCommentButton"
+        android:layout_margin="4dp">
+
+        <TableLayout
+            android:id="@+id/commentTableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:divider="@android:drawable/divider_horizontal_dim_dark" />
+
+    </ScrollView>
+
+</RelativeLayout>
