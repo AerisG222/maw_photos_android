@@ -1,10 +1,12 @@
 package us.mikeandwan.photos;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import org.androidannotations.annotations.EApplication;
 
 
+@SuppressLint("Registered")
 @EApplication
 public class MawApplication extends Application {
     public static final String LOG_TAG = "maw";

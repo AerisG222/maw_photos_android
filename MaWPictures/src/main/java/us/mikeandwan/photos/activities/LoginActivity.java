@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     protected void cleanupLegacyStorage() {
-        Log.i(_app.LOG_TAG, "starting to wipe");
+        Log.i(MawApplication.LOG_TAG, "starting to wipe");
 
         PhotoStorage ps = new PhotoStorage(_app);
         ps.wipeLegacyCache();
