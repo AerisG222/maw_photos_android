@@ -8,7 +8,7 @@ import us.mikeandwan.photos.data.Photo;
 
 
 public class BasePhotoFragment extends Fragment {
-    protected Context getContext() {
+    public Context getContext() {
         return getActivity().getBaseContext();
     }
 

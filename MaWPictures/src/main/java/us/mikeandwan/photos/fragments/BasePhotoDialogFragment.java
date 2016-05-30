@@ -9,7 +9,7 @@ import us.mikeandwan.photos.data.Photo;
 
 
 public class BasePhotoDialogFragment extends DialogFragment {
-    protected Context getContext() {
+    public Context getContext() {
         return getActivity().getBaseContext();
     }
 
