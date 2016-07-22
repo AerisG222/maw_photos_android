@@ -87,12 +87,12 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
 
     private void displayImage(PhotoDownload photoDownload) {
-        String path = photoDownload.getMawPhoto().getFullerInfo().getPath();
+        String path = photoDownload.getMawPhoto().getMdInfo().getPath();
 
         if (!_photoStorage.doesExist(path)) {
             if (photoDownload.getDownloadAttempts() == 0) {
                 photoDownload.incrementDownloadCount();
-                downloadImage(photoDownload, PhotoSize.Fuller, BackgroundTaskPriority.High);
+                downloadImage(photoDownload, PhotoSize.Md, BackgroundTaskPriority.High);
             } else {
                 Log.w(MawApplication.LOG_TAG, "we have already tried to download this main image w/o success, not trying again");
             }

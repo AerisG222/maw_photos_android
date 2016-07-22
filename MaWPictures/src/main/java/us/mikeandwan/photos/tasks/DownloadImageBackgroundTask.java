@@ -40,17 +40,17 @@ public class DownloadImageBackgroundTask extends BackgroundTask<PhotoDownload> {
         }
 
         switch (_size) {
-            case Full:
-                client.downloadPhoto(_photoDownload.getMawPhoto().getFullsizeInfo().getPath());
+            case Sm:
+                client.downloadPhoto(_photoDownload.getMawPhoto().getSmInfo().getPath());
                 break;
-            case Fuller:
-                client.downloadPhoto(_photoDownload.getMawPhoto().getFullerInfo().getPath());
+            case Md:
+                client.downloadPhoto(_photoDownload.getMawPhoto().getMdInfo().getPath());
                 break;
-            case Thumbnail:
-                client.downloadPhoto(_photoDownload.getMawPhoto().getThumbnailInfo().getPath());
+            case Xs:
+                client.downloadPhoto(_photoDownload.getMawPhoto().getXsInfo().getPath());
                 break;
-            case Original:
-                client.downloadPhoto(_photoDownload.getMawPhoto().getOriginalInfo().getPath());
+            case Lg:
+                client.downloadPhoto(_photoDownload.getMawPhoto().getLgInfo().getPath());
                 break;
         }
 

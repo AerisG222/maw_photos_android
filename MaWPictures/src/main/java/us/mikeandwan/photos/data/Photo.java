@@ -5,10 +5,14 @@ import java.io.Serializable;
 
 public class Photo implements Serializable {
     private int _id;
-    private PhotoInfo _thumbInfo;
-    private PhotoInfo _fullInfo;
-    private PhotoInfo _fullerInfo;
-    private PhotoInfo _origInfo;
+    private int _categoryId;
+    private Double _latitude;
+    private Double _longitude;
+    private PhotoInfo _xsInfo;
+    private PhotoInfo _smInfo;
+    private PhotoInfo _mdInfo;
+    private PhotoInfo _lgInfo;
+    private PhotoInfo _prtInfo;
 
 
     public int getId() {
@@ -21,42 +25,83 @@ public class Photo implements Serializable {
     }
 
 
-    public PhotoInfo getThumbnailInfo() {
-
-        return _thumbInfo;
+    public int getCategoryId() {
+        return _categoryId;
     }
 
 
-    public void setThumbnailInfo(PhotoInfo thumbInfo) {
-        _thumbInfo = thumbInfo;
+    public void setCategoryId(int categoryId) {
+        _categoryId = categoryId;
     }
 
 
-    public PhotoInfo getFullsizeInfo() {
-        return _fullInfo;
+    public Double getLatitude() {
+        return _latitude;
     }
 
 
-    public void setFullsizeInfo(PhotoInfo fullInfo) {
-        _fullInfo = fullInfo;
-    }
-
-    public PhotoInfo getFullerInfo() {
-        return _fullerInfo;
+    public void setLatitude(Double latitude) {
+        _latitude = latitude;
     }
 
 
-    public void setFullerInfo(PhotoInfo fullerInfo) {
-        _fullerInfo = fullerInfo;
-    }
-
-    public PhotoInfo getOriginalInfo() {
-        return _origInfo;
+    public Double getLongitude() {
+        return _longitude;
     }
 
 
-    public void setOriginalInfo(PhotoInfo origInfo) {
-        _origInfo = origInfo;
+    public void setLongitude(Double longitude) {
+        _longitude = longitude;
+    }
+
+
+    public PhotoInfo getXsInfo() {
+        return _xsInfo;
+    }
+
+
+    public void setXsInfo(PhotoInfo xsInfo) {
+        _xsInfo = xsInfo;
+    }
+
+
+    public PhotoInfo getSmInfo() {
+        return _smInfo;
+    }
+
+
+    public void setSmInfo(PhotoInfo smInfo) {
+        _smInfo = smInfo;
+    }
+
+
+    public PhotoInfo getMdInfo() {
+        return _mdInfo;
+    }
+
+
+    public void setMdInfo(PhotoInfo mdInfo) {
+        _mdInfo = mdInfo;
+    }
+
+
+    public PhotoInfo getLgInfo() {
+        return _lgInfo;
+    }
+
+
+    public void setLgInfo(PhotoInfo lgInfo) {
+        _lgInfo = lgInfo;
+    }
+
+
+    public PhotoInfo getPrtInfo() {
+        return _prtInfo;
+    }
+
+
+    public void setPrtInfo(PhotoInfo prtInfo) {
+        _prtInfo = prtInfo;
     }
 
 

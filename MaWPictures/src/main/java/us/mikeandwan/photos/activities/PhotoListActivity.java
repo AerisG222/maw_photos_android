@@ -421,7 +421,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     private Intent createShareIntent(Photo photo) {
         if (photo != null) {
             PhotoStorage ps = new PhotoStorage(this);
-            Uri contentUri = ps.getSharingContentUri(photo.getFullerInfo().getPath());
+            Uri contentUri = ps.getSharingContentUri(photo.getMdInfo().getPath());
 
             if (contentUri != null) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -457,12 +457,12 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
         // start fetching next item first, if there is one, as it is more likely to move forward first
         for (int i = index + 1; i < index + PREFETCH_COUNT && i < _photoList.size(); i++) {
             PhotoDownload pd = new PhotoDownload(_photoList.get(i), i);
-            downloadImage(pd, PhotoSize.Fuller, BackgroundTaskPriority.Low);
+            downloadImage(pd, PhotoSize.Md, BackgroundTaskPriority.Low);
         }
 
         for (int i = index - 1; i > index - PREFETCH_COUNT && i > 0; i--) {
             PhotoDownload pd = new PhotoDownload(_photoList.get(i), i);
-            downloadImage(pd, PhotoSize.Fuller, BackgroundTaskPriority.Low);
+            downloadImage(pd, PhotoSize.Md, BackgroundTaskPriority.Low);
         }
     }
 

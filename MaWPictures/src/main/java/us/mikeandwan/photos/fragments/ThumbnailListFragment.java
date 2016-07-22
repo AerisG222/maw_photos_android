@@ -115,15 +115,15 @@ public class ThumbnailListFragment extends BasePhotoFragment {
 
 
     private void displayPhotoThumbnail(PhotoDownload photoDownload) {
-        if (!_photoStorage.doesExist(photoDownload.getMawPhoto().getThumbnailInfo().getPath())) {
+        if (!_photoStorage.doesExist(photoDownload.getMawPhoto().getXsInfo().getPath())) {
             if (photoDownload.getDownloadAttempts() == 0) {
                 photoDownload.incrementDownloadCount();
-                downloadImage(photoDownload, PhotoSize.Thumbnail, BackgroundTaskPriority.Normal);
+                downloadImage(photoDownload, PhotoSize.Xs, BackgroundTaskPriority.Normal);
             } else {
                 Log.w(MawApplication.LOG_TAG, "we have already tried to download this thumbnail w/o success, not trying again");
             }
         } else {
-            String file = "file://" + _photoStorage.getCachePath(photoDownload.getMawPhoto().getThumbnailInfo().getPath());
+            String file = "file://" + _photoStorage.getCachePath(photoDownload.getMawPhoto().getXsInfo().getPath());
             ImageView thumb = _thumbList.get(photoDownload.getIndex());
 
             Picasso
