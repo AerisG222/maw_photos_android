@@ -68,9 +68,9 @@ dependencies {
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.android.support:design:24.1.1'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.7.4'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.4'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.8.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.1'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'commons-io:commons-io:2.5'
     compile 'com.commonsware.cwac:provider:0.4.1'
