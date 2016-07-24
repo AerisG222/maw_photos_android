@@ -56,53 +56,85 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
 
     private void displayExifData(ExifData exif) {
         if (exif != null) {
-            addExifRow("AF Point", ExifDataFormatter.format(exif.getAfPoint()), true);
-            addExifRow("Aperture", ExifDataFormatter.format(exif.getAperture()), false);
-            addExifRow("Contrast", ExifDataFormatter.format(exif.getContrast()), true);
-            addExifRow("Depth of Field", ExifDataFormatter.format(exif.getDepthOfField()), false);
-            addExifRow("Digital Zoom Ratio", ExifDataFormatter.formatOneDecimal(exif.getDigitalZoomRation()), true);
-            addExifRow("Exposure Compensation", ExifDataFormatter.format(exif.getExposureCompensation()), false);
-            addExifRow("Exposure Difference", ExifDataFormatter.format(exif.getExposureDifference()), true);
-            addExifRow("Exposure Mode", ExifDataFormatter.format(exif.getExposureMode()), false);
-            addExifRow("Exposure Time", ExifDataFormatter.formatInvertTime(exif.getExposureTime()), true);
-            addExifRow("F Number", ExifDataFormatter.format(exif.getfNumber()), false);
-            addExifRow("Flash", ExifDataFormatter.format(exif.getFlash()), true);
-            addExifRow("Flash Exposure Compensation", ExifDataFormatter.format(exif.getFlashExposureCompensation()), false);
-            addExifRow("Flash Mode", ExifDataFormatter.format(exif.getFlashMode()), true);
-            addExifRow("Flash Setting", ExifDataFormatter.format(exif.getFlashSetting()), false);
-            addExifRow("Flash Type", ExifDataFormatter.format(exif.getFlashType()), true);
-            addExifRow("Focal Length", ExifDataFormatter.formatFocalLengthOneDecimal(exif.getFocalLength()), false);
-            addExifRow("Focal Length in 35mm Format", ExifDataFormatter.formatFocalLengthNoDecimals(exif.getFocalLengthIn35mmFormat()), true);
-            addExifRow("Focus Distance", ExifDataFormatter.formatDistance(exif.getFocusDistance()), false);
-            addExifRow("Focus Mode", ExifDataFormatter.format(exif.getFocusMode()), true);
-            addExifRow("Focus Position", ExifDataFormatter.format(exif.getFocusPosition()), false);
-            addExifRow("Gain Control", ExifDataFormatter.format(exif.getGainControl()), true);
-            addExifRow("Hue Adjustment", ExifDataFormatter.format(exif.getHueAdjustment()), false);
-            addExifRow("Hyperfocal Distance", ExifDataFormatter.formatDistance(exif.getHyperFocalDistance()), true);
-            addExifRow("ISO", ExifDataFormatter.format(exif.getIso()), false);
-            addExifRow("Lens ID", ExifDataFormatter.format(exif.getLensId()), true);
-            addExifRow("Light Source", ExifDataFormatter.format(exif.getLightSource()), false);
-            addExifRow("Make", ExifDataFormatter.format(exif.getMake()), true);
-            addExifRow("Metering Mode", ExifDataFormatter.format(exif.getMeteringMode()), false);
-            addExifRow("Model", ExifDataFormatter.format(exif.getModel()), true);
-            addExifRow("Noise Reduction", ExifDataFormatter.format(exif.getNoiseReduction()), false);
-            addExifRow("Orientation", ExifDataFormatter.format(exif.getOrientation()), true);
-            addExifRow("Saturation", ExifDataFormatter.format(exif.getSaturation()), false);
-            addExifRow("Scale Factor 35 EFL", ExifDataFormatter.formatOneDecimalMm(exif.getScaleFactor35Efl()), true);
-            addExifRow("Scene Capture Type", ExifDataFormatter.format(exif.getSceneCaptureType()), false);
-            addExifRow("Scene Type", ExifDataFormatter.format(exif.getSceneType()), true);
-            addExifRow("Sensing Method", ExifDataFormatter.format(exif.getSensingMethod()), false);
-            addExifRow("Sharpness", ExifDataFormatter.format(exif.getSharpness()), true);
-            addExifRow("Shutter Speed", ExifDataFormatter.formatInvertTime(exif.getShutterSpeed()), false);
-            addExifRow("White Balance", ExifDataFormatter.format(exif.getWhiteBalance()), true);
-            addExifRow("Shot Taken Date", ExifDataFormatter.format(exif.getShotTakenDate()), false);
-            addExifRow("Exposure Program", ExifDataFormatter.format(exif.getExposureProgram()), true);
-            addExifRow("GPS Version ID", ExifDataFormatter.format(exif.getGpsVersionId()), false);
-            addExifRow("GPS Latitude", ExifDataFormatter.formatLatitude(exif.getGpsLatitude()), true);
-            addExifRow("GPS Longitude", ExifDataFormatter.formatLongitude(exif.getGpsLongitude()), false);
-            addExifRow("GPS Altitude", ExifDataFormatter.formatAltitude(exif.getGpsAltitude()), true);
-            addExifRow("GPS Time Stamp", ExifDataFormatter.format(exif.getGpsTime()), false);
-            addExifRow("GPS Satellites", ExifDataFormatter.format(exif.getGpsSatellites()), true);
+            // exif
+            addExifRow("Bits Per Sample", ExifDataFormatter.format(exif.getBitsPerSample()));
+            addExifRow("Compression", ExifDataFormatter.format(exif.getCompression()));
+            addExifRow("Contrast", ExifDataFormatter.format(exif.getContrast()));
+            addExifRow("Create Date", ExifDataFormatter.format(exif.getCreateDate()));
+            addExifRow("Digital Zoom Ratio", ExifDataFormatter.format(exif.getDigitalZoomRatio()));
+            addExifRow("Exposure Compensation", ExifDataFormatter.format(exif.getExposureCompensation()));
+            addExifRow("Exposure Mode", ExifDataFormatter.format(exif.getExposureMode()));
+            addExifRow("Exposure Program", ExifDataFormatter.format(exif.getExposureProgram()));
+            addExifRow("Exposure Time", ExifDataFormatter.format(exif.getExposureTime()));
+            addExifRow("F Number", ExifDataFormatter.format(exif.getfNumber()));
+            addExifRow("Flash", ExifDataFormatter.format(exif.getFlash()));
+            addExifRow("Focal Length", ExifDataFormatter.formatMillimeters(exif.getFocalLength()));
+            addExifRow("Focal Length In 35mm Format", ExifDataFormatter.formatMillimeters(exif.getFocalLengthIn35mmFormat()));
+            addExifRow("Gain Control", ExifDataFormatter.format(exif.getGainControl()));
+            addExifRow("Gps Altitude", ExifDataFormatter.formatAltitude(exif.getGpsAltitude()));
+            addExifRow("Gps Date Stamp", ExifDataFormatter.format(exif.getGpsDateStamp()));
+            addExifRow("Gps Direction", ExifDataFormatter.format(exif.getGpsDirection()));
+            addExifRow("Gps Latitude", ExifDataFormatter.formatLatitude(exif.getGpsLatitude()));
+            addExifRow("Gps Longitude", ExifDataFormatter.formatLongitude(exif.getGpsLongitude()));
+            addExifRow("Gps Measure Mode", ExifDataFormatter.format(exif.getGpsMeasureMode()));
+            addExifRow("Gps Satellites", ExifDataFormatter.format(exif.getGpsSatellites()));
+            addExifRow("Gps Status", ExifDataFormatter.format(exif.getGpsStatus()));
+            addExifRow("Gps Version Id", ExifDataFormatter.format(exif.getGpsVersionId()));
+            addExifRow("Iso", ExifDataFormatter.format(exif.getIso()));
+            addExifRow("Light Source", ExifDataFormatter.format(exif.getLightSource()));
+            addExifRow("Make", ExifDataFormatter.format(exif.getMake()));
+            addExifRow("Metering Mode", ExifDataFormatter.format(exif.getMeteringMode()));
+            addExifRow("Model", ExifDataFormatter.format(exif.getModel()));
+            addExifRow("Orientation", ExifDataFormatter.format(exif.getOrientation()));
+            addExifRow("Saturation", ExifDataFormatter.format(exif.getSaturation()));
+            addExifRow("Scene Capture Type", ExifDataFormatter.format(exif.getSceneCaptureType()));
+            addExifRow("Scene Type", ExifDataFormatter.format(exif.getSceneType()));
+            addExifRow("Sensing Method", ExifDataFormatter.format(exif.getSensingMethod()));
+            addExifRow("Sharpness", ExifDataFormatter.format(exif.getSharpness()));
+
+            // nikon
+            addExifRow("Auto Focus Area Mode", ExifDataFormatter.format(exif.getAutoFocusAreaMode()));
+            addExifRow("Auto Focus Point", ExifDataFormatter.format(exif.getAutoFocusPoint()));
+            addExifRow("Active D Lighting", ExifDataFormatter.format(exif.getActiveDLighting()));
+            addExifRow("Colorspace", ExifDataFormatter.format(exif.getColorspace()));
+            addExifRow("Exposure Difference", ExifDataFormatter.formatFourDecimals(exif.getExposureDifference()));
+            addExifRow("Flash Color Filter", ExifDataFormatter.format(exif.getFlashColorFilter()));
+            addExifRow("Flash Compensation", ExifDataFormatter.format(exif.getFlashCompensation()));
+            addExifRow("Flash Control Mode", ExifDataFormatter.format(exif.getFlashControlMode()));
+            addExifRow("Flash Exposure Compensation", ExifDataFormatter.format(exif.getFlashExposureCompensation()));
+            addExifRow("Flash Focal Length", ExifDataFormatter.formatMillimeters(exif.getFlashFocalLength()));
+            addExifRow("Flash Mode", ExifDataFormatter.format(exif.getFlashMode()));
+            addExifRow("Flash Setting", ExifDataFormatter.format(exif.getFlashSetting()));
+            addExifRow("Flash Type", ExifDataFormatter.format(exif.getFlashType()));
+            addExifRow("Focus Distance", ExifDataFormatter.formatMeters(exif.getFocusDistance()));
+            addExifRow("Focus Mode", ExifDataFormatter.format(exif.getFocusMode()));
+            addExifRow("Focus Position", ExifDataFormatter.format(exif.getFocusPosition()));
+            addExifRow("High Iso Noise Reduction", ExifDataFormatter.format(exif.getHighIsoNoiseReduction()));
+            addExifRow("Hue Adjustment", ExifDataFormatter.format(exif.getHueAdjustment()));
+            addExifRow("Noise Reduction", ExifDataFormatter.format(exif.getNoiseReduction()));
+            addExifRow("Picture Control Name", ExifDataFormatter.format(exif.getPictureControlName()));
+            addExifRow("Primary AF Point", ExifDataFormatter.format(exif.getPrimaryAFPoint()));
+            addExifRow("VR Mode", ExifDataFormatter.format(exif.getVRMode()));
+            addExifRow("Vibration Reduction", ExifDataFormatter.format(exif.getVibrationReduction()));
+            addExifRow("Vignette Control", ExifDataFormatter.format(exif.getVignetteControl()));
+            addExifRow("White Balance", ExifDataFormatter.format(exif.getWhiteBalance()));
+
+            // composite
+            addExifRow("Aperture", ExifDataFormatter.format(exif.getAperture()));
+            addExifRow("Auto Focus", ExifDataFormatter.format(exif.getAutoFocus()));
+            addExifRow("Depth Of Field", ExifDataFormatter.format(exif.getDepthOfField()));
+            addExifRow("Field Of View", ExifDataFormatter.format(exif.getFieldOfView()));
+            addExifRow("Hyperfocal Distance", ExifDataFormatter.formatMeters(exif.getHyperfocalDistance()));
+            addExifRow("Lens Id", ExifDataFormatter.format(exif.getLensId()));
+            addExifRow("Light Value", ExifDataFormatter.formatFourDecimals(exif.getLightValue()));
+            addExifRow("Scale Factor 35 Efl", ExifDataFormatter.formatOneDecimal(exif.getScaleFactor35Efl()));
+            addExifRow("Shutter Speed", ExifDataFormatter.format(exif.getShutterSpeed()));
+
+            // processing info
+            addExifRow("Raw Conversion Mode", ExifDataFormatter.format(exif.getRawConversionMode()));
+            addExifRow("Sigmoidal Contrast Adjustment", ExifDataFormatter.formatFourDecimals(exif.getSigmoidalContrastAdjustment()));
+            addExifRow("Saturation Adjustment", ExifDataFormatter.formatFourDecimals(exif.getSaturationAdjustment()));
+            addExifRow("Compression Quality", ExifDataFormatter.format(exif.getCompressionQuality()));
         }
 
         updateProgress();
@@ -131,13 +163,13 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
     }
 
 
-    private void addExifRow(String name, String value, boolean isOdd) {
+    private void addExifRow(String name, String value) {
         Context ctx = getContext();
         TableRow row = new TableRow(ctx);
 
         _exifView.addView(row);
 
-        if (isOdd) {
+        if (_exifView.getChildCount() % 2 == 1) {
             row.setBackgroundColor(0xFF222222);
         }
 

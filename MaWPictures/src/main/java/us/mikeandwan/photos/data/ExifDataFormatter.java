@@ -36,15 +36,6 @@ public class ExifDataFormatter {
     }
 
 
-    public static String format(Byte val) {
-        if (val == null) {
-            return "--";
-        }
-
-        return val.toString();
-    }
-
-
     public static String format(Short val) {
         if (val == null) {
             return "--";
@@ -63,69 +54,47 @@ public class ExifDataFormatter {
     }
 
 
-    public static String formatInvertTime(Double val) {
-        if (val == null) {
-            return "--";
-        }
-
-        if (val >= 1) {
-            return val.toString();
-        }
-
-        return "1/" + Math.round(1.0 / val);
-    }
-
-
-    public static String formatFocalLengthOneDecimal(Double val) {
-        if (val == null) {
-            return "--";
-        }
-
-        DecimalFormat df = new DecimalFormat("#.0");
-
-        return df.format(val) + " mm";
-    }
-
-
-    public static String formatFocalLengthNoDecimals(Double val) {
-        if (val == null) {
-            return "--";
-        }
-
-        return val + " mm";
-    }
-
-
     public static String formatOneDecimal(Double val) {
         if (val == null) {
             return "--";
         }
 
-        DecimalFormat df = new DecimalFormat("#.0");
+        DecimalFormat df = new DecimalFormat("0.0");
 
         return df.format(val);
     }
 
 
-    public static String formatOneDecimalMm(Double val) {
+    public static String formatFourDecimals(Double val) {
         if (val == null) {
             return "--";
         }
 
-        DecimalFormat df = new DecimalFormat("#.0");
+        DecimalFormat df = new DecimalFormat("0.0000");
+
+        return df.format(val);
+    }
+
+
+    public static String formatMillimeters(Double val) {
+        if (val == null) {
+            return "--";
+        }
+
+        DecimalFormat df = new DecimalFormat("0.0");
 
         return df.format(val) + " mm";
     }
 
 
-    public static String formatDistance(Double val) {
+    public static String formatMeters(Double val) {
         if (val == null) {
             return "--";
         }
 
-        DecimalFormat df = new DecimalFormat("#.0");
+        DecimalFormat df = new DecimalFormat("0.0");
 
-        return df.format(val) + " mm";
+        return df.format(val) + " m";
     }
 
 
@@ -155,7 +124,7 @@ public class ExifDataFormatter {
     }
 
 
-    public static String formatAltitude(Short val) {
+    public static String formatAltitude(Double val) {
         if (val == null) {
             return "--";
         }
