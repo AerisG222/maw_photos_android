@@ -42,7 +42,10 @@ public class PhotoApiClient {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECT_TIMEOUT = 10000;
     private static final String AUTH_COOKIE_NAME = "maw_auth";
+    private static final String XSRF_COOKIE_NAME = "XSRF-TOKEN";
+    private static final String XSRF_HEADER = "X-XSRF-TOKEN";
     private static final String API_LOGIN_URL = Constants.SITE_URL + "api/account/login";
+    private static final String API_GET_XSRF_URL = Constants.SITE_URL + "api/account/get-xsrf-token";
     private static final String API_GET_PHOTO_YEARS_URL = Constants.SITE_URL + "api/photos/getPhotoYears";
     private static final String API_GET_RECENT_CATEGORIES_URL = Constants.SITE_URL + "api/photos/getRecentCategories";
     private static final String API_GET_CATEGORY_COUNT_URL = Constants.SITE_URL + "api/photos/getCategoryCount";
@@ -123,13 +126,26 @@ public class PhotoApiClient {
     public boolean isAuthenticated() {
         List<HttpCookie> cookies = _cookieManager.getCookieStore().getCookies();
 
+        boolean authCookieAvailable = false;
+        boolean xsrfCookieAvailable = false;
+
         for (HttpCookie cookie : cookies) {
             if (AUTH_COOKIE_NAME.equalsIgnoreCase(cookie.getName()) && !cookie.hasExpired()) {
-                return true;
+                Log.i(MawApplication.LOG_TAG, "Auth cookie valid");
+                authCookieAvailable = true;
+                continue;
+            }
+
+            if (XSRF_COOKIE_NAME.equalsIgnoreCase(cookie.getName()) && !cookie.hasExpired()) {
+                Log.i(MawApplication.LOG_TAG, "XSRF cookie valid");
+                xsrfCookieAvailable = true;
+                continue;
             }
         }
 
-        return false;
+        Log.i(MawApplication.LOG_TAG, "");
+
+        return authCookieAvailable && xsrfCookieAvailable;
     }
 
 
@@ -145,8 +161,8 @@ public class PhotoApiClient {
             HttpResponseInfo response = execute(info);
 
             if (response != null && response.getStatusCode() == HttpURLConnection.HTTP_OK && Boolean.valueOf(response.getContent())) {
-                // we actually do not care what the response is, to try and ensure we have successfully
-                // logged in, we check for the existence of the auth ticket
+                establishXsrfTokenCookie();
+
                 return isAuthenticated();
             }
         } catch (Exception ex) {
@@ -413,6 +429,8 @@ public class PhotoApiClient {
             conn.setConnectTimeout(CONNECT_TIMEOUT);
             conn.setRequestMethod(requestInfo.getMethod());
 
+            tryAddXsrfHeader(conn);
+
             if (requestInfo.getJsonParam() != null) {
                 conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             }
@@ -499,5 +517,45 @@ public class PhotoApiClient {
         }
 
         return result.toString();
+    }
+
+
+    private void establishXsrfTokenCookie() {
+        try {
+            HttpRequestInfo info = new HttpRequestInfo();
+
+            info.setUrl(new URL(API_GET_XSRF_URL));
+            info.setMethod("GET");
+
+            HttpResponseInfo response = execute(info);
+
+            if (response != null && response.getStatusCode() == HttpURLConnection.HTTP_OK) {
+                Log.i(MawApplication.LOG_TAG, "Obtained XSRF token");
+            }
+        } catch (Exception ex) {
+            Log.w(MawApplication.LOG_TAG, "Error obtaining XSRF token: " + ex.getMessage());
+        }
+    }
+
+
+    private void tryAddXsrfHeader(HttpURLConnection conn) {
+        HttpCookie cookie = getXsrfCookie();
+
+        if(cookie != null) {
+            conn.setRequestProperty(XSRF_HEADER, cookie.getValue());
+        }
+    }
+
+
+    private HttpCookie getXsrfCookie() {
+        List<HttpCookie> cookies = _cookieManager.getCookieStore().getCookies();
+
+        for (HttpCookie cookie : cookies) {
+            if (XSRF_COOKIE_NAME.equalsIgnoreCase(cookie.getName()) ) {
+                return cookie;
+            }
+        }
+
+        return null;
     }
 }
