@@ -304,7 +304,7 @@ public class PhotoApiClient {
             if (response != null && response.getStatusCode() == HttpURLConnection.HTTP_OK) {
                 Log.w(MawApplication.LOG_TAG, "got response: " + response.getContent());
             } else {
-                Log.w(MawApplication.LOG_TAG, "unable to save rating!");
+                Log.w(MawApplication.LOG_TAG, "unable to save comment!");
             }
         } catch (MalformedURLException ex) {
             Log.e(MawApplication.LOG_TAG, "invalid url!");
