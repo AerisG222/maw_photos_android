@@ -9,8 +9,10 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -110,6 +112,8 @@ public class PhotoStorage {
 
 
     public void wipeLegacyCache() {
+        wipePriorCache();
+
         File dir = new File(getLegacyRootPath());
 
         try {
@@ -120,7 +124,54 @@ public class PhotoStorage {
     }
 
 
+    private void wipePriorCache() {
+        // with latest site, the dir names are now different (xs, sm, lg, etc) rather than
+        // (fullsize, fuller, orig, etc).  this kills the older cache as they will no longer
+        // be referenced
+        try {
+            wipePrior(getRootPath());
+        } catch (IOException ex) {
+            Log.e(MawApplication.LOG_TAG, "Unable to delete newer cache directory: " + ex.getMessage());
+        }
+    }
+
+
+    private void wipePrior(File dir) throws IOException {
+        if(dir == null) {
+            return;
+        }
+
+        if(isPrior(dir)) {
+            FileUtils.deleteDirectory(dir);
+            return;
+        }
+
+        for(File subdir : dir.listFiles(new DirectoryFilter())) {
+            wipePrior(subdir);
+        }
+    }
+
+
     private String getLegacyRootPath() {
         return String.valueOf(Environment.getExternalStorageDirectory()) + "/" + MAW_ROOT;
+    }
+
+
+    private boolean isPrior(File dir) {
+        if(dir.isDirectory()) {
+            return "thumbnails".equalsIgnoreCase(dir.getName()) ||
+                    "fuller".equalsIgnoreCase(dir.getName()) ||
+                    "fullsize".equalsIgnoreCase(dir.getName()) ||
+                    "orig".equalsIgnoreCase(dir.getName());
+        }
+
+        return false;
+    }
+
+
+    private class DirectoryFilter implements FileFilter {
+        public boolean accept(File file) {
+            return file.isDirectory();
+        }
     }
 }
