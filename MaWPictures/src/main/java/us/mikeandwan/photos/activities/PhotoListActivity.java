@@ -69,9 +69,8 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     public static final float FADE_END_ALPHA = 0.2f;
     public static final int FADE_DURATION = 4200;
 
-    // kept running into OOM with 5, try to decrease this to reduce consumption
-    private static final int RANDOM_PREFETCH_COUNT = 10;
-    private static final int PREFETCH_COUNT = 3;
+    private static final int RANDOM_INITIAL_COUNT = 20;
+    private static final int PREFETCH_COUNT = 2;
 
     private Activity _theActivity;
     private ScheduledThreadPoolExecutor _slideshowExecutor;
@@ -233,7 +232,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
         // try to leave a buffer of 5 images from where the user is to the end of the list
         if (_isRandomView) {
-            int minEndingIndex = index + RANDOM_PREFETCH_COUNT;
+            int minEndingIndex = index + RANDOM_INITIAL_COUNT;
 
             if (minEndingIndex > _photoList.size()) {
                 for (int i = _photoList.size(); i < minEndingIndex; i++) {
@@ -326,9 +325,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
 
     private void initRandomPhotos() {
-        // start with 10 images, we will dynamically increase the number of photos as the user thumbs
-        // through the list
-        for (int i = 0; i < RANDOM_PREFETCH_COUNT; i++) {
+        for (int i = 0; i < RANDOM_INITIAL_COUNT; i++) {
             fetchRandom();
         }
     }
@@ -448,13 +445,13 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
             sap.setShareIntent(createShareIntent(photo));
         }
 
-        prefetchAdjacentImages(_index);
+        PrefetchMainImage(_index);
 
         updateProgress();
     }
 
 
-    private void prefetchAdjacentImages(int index) {
+    private void PrefetchMainImage(int index) {
         // start fetching next item first, if there is one, as it is more likely to move forward first
         for (int i = index + 1; i < index + PREFETCH_COUNT && i < _photoList.size(); i++) {
             PhotoDownload pd = new PhotoDownload(_photoList.get(i), i);

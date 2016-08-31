@@ -86,20 +86,18 @@ public class ThumbnailListFragment extends BasePhotoFragment {
 
 
     public void onPhotoListUpdated() {
-        if(_thumbList.isEmpty()) {
-            List<Photo> list = getPhotoActivity().getPhotoList();
+        List<Photo> list = getPhotoActivity().getPhotoList();
 
-            // we currently assume that things are only added to the end of the list.  if a totally
-            // new list is used, this should happen today through screen navigations, which would require
-            // this fragment to be fully recreated, so would not contain out of date data
+        // we currently assume that things are only added to the end of the list.  if a totally
+        // new list is used, this should happen today through screen navigations, which would require
+        // this fragment to be fully recreated, so would not contain out of date data
 
-            int listSize = list.size();
-            int thumbSize = _thumbList.size();
+        int listSize = list.size();
+        int thumbSize = _thumbList.size();
 
-            if (listSize > thumbSize) {
-                for (int i = thumbSize; i < listSize; i++) {
-                    addThumbnail(list.get(i), i);
-                }
+        if (listSize > thumbSize) {
+            for (int i = thumbSize; i < listSize; i++) {
+                addThumbnail(list.get(i), i);
             }
         }
     }
