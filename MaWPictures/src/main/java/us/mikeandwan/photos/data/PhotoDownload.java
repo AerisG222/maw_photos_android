@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.data;
 
 
+@SuppressWarnings("ALL")
 public class PhotoDownload {
     private Photo _photo;
     private int _index;

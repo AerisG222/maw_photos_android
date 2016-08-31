@@ -40,15 +40,16 @@ import us.mikeandwan.photos.tasks.BackgroundTask;
 import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesBackgroundTask;
 
+@SuppressWarnings("ALL")
 @SuppressLint("Registered")
 @OptionsMenu(R.menu.mode_selection)
 @EActivity(R.layout.activity_mode_selection)
 public class ModeSelectionActivity extends AppCompatActivity {
     private SimpleExpandableListAdapter _adapter;
-    private List<Map<String, String>> _groupData = new ArrayList<>();
-    private List<List<Map<String, String>>> _childData = new ArrayList<>();
+    private final List<Map<String, String>> _groupData = new ArrayList<>();
+    private final List<List<Map<String, String>>> _childData = new ArrayList<>();
     private MawDataManager _dm;
-    private List<Map<String, String>> _yearChildren = new ArrayList<>();
+    private final List<Map<String, String>> _yearChildren = new ArrayList<>();
     private List<Integer> _yearList;
 
     @OptionsMenuItem(R.id.action_settings)
@@ -142,7 +143,7 @@ public class ModeSelectionActivity extends AppCompatActivity {
         BackgroundTask task = new GetRecentCategoriesBackgroundTask(getBaseContext()) {
             @Override
             protected void postExecuteTask(List<Category> result) {
-                onSyncComplete(result);
+                onSyncComplete();
             }
 
             @Override
@@ -159,7 +160,7 @@ public class ModeSelectionActivity extends AppCompatActivity {
         BackgroundTaskExecutor.getInstance().enqueueTask(task);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_indicator, null);
+        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_indicator, _toolbar, false);
 
         Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
         rotation.setRepeatCount(Animation.INFINITE);
@@ -169,7 +170,7 @@ public class ModeSelectionActivity extends AppCompatActivity {
     }
 
 
-    private void onSyncComplete(List<Category> result) {
+    private void onSyncComplete() {
         // go back to the database rather than inspecting results, as there poller may have happened
         // before the sync, which means that the new year would not be in the list of results
         prepareYearChildren();

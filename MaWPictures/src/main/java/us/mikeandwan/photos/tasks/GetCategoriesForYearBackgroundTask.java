@@ -12,9 +12,9 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetCategoriesForYearBackgroundTask extends BackgroundTask<List<Category>> {
-    private MawDataManager _dm;
-    private Context _context;
-    private int _year;
+    private final MawDataManager _dm;
+    private final Context _context;
+    private final int _year;
 
 
     public GetCategoriesForYearBackgroundTask(Context context, int year) {

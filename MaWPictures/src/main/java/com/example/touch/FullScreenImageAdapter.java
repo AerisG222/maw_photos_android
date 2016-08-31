@@ -32,12 +32,12 @@ import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
 public class FullScreenImageAdapter extends PagerAdapter {
-    private Context _context;
-    private IPhotoActivity _activity;
-    private List<Photo> _photoList;
-    private Dictionary<Integer, TouchImageView> _imgList = new Hashtable<>();
-    private LayoutInflater _inflater;
-    private PhotoStorage _photoStorage;
+    private final Context _context;
+    private final IPhotoActivity _activity;
+    private final List<Photo> _photoList;
+    private final Dictionary<Integer, TouchImageView> _imgList = new Hashtable<>();
+    private final LayoutInflater _inflater;
+    private final PhotoStorage _photoStorage;
 
 
     public FullScreenImageAdapter(Context context, IPhotoActivity activity) {

@@ -40,6 +40,7 @@ import us.mikeandwan.photos.tasks.BackgroundTask;
 import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesBackgroundTask;
 
+@SuppressWarnings("ALL")
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_category_list)
 @OptionsMenu(R.menu.category_list)
@@ -146,7 +147,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
         BackgroundTask task = new GetRecentCategoriesBackgroundTask(getBaseContext()) {
             @Override
             protected void postExecuteTask(List<Category> result) {
-                onSyncComplete(result);
+                onSyncComplete();
             }
 
             @Override
@@ -163,7 +164,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
         BackgroundTaskExecutor.getInstance().enqueueTask(task);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_indicator, null);
+        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_indicator, _toolbar, false);
 
         Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
         rotation.setRepeatCount(Animation.INFINITE);
@@ -173,7 +174,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
     }
 
 
-    private void onSyncComplete(List<Category> result) {
+    private void onSyncComplete() {
         // force the update to categories to come from database, and not the network result, as there
         // may have been updates already pulled from the poller
         _categories.clear();

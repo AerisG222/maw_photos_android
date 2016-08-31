@@ -19,7 +19,7 @@
 - new interaction when flinging between images
 - optionally hide the toolbar and/or thumbnail list to allow for larger main image
 - restructured code to leverage fragments, resulting in much cleaner code/organization
-- minor perf optimization for listviews
+- minor performance optimization for list views
 - support older devices (now support sdk9+)
 
 2.0:
@@ -53,7 +53,7 @@
 - updates to support older runtimes
 
 1.1:
-- improve the progress indictors
+- improve the progress indicators
 - add ability to swipe main image to navigate through pictures
 
 1.0:

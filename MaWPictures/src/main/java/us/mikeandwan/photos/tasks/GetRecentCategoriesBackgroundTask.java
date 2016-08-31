@@ -12,8 +12,8 @@ import us.mikeandwan.photos.data.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 public class GetRecentCategoriesBackgroundTask extends BackgroundTask<List<Category>> {
-    private MawDataManager _dm;
-    private Context _context;
+    private final MawDataManager _dm;
+    private final Context _context;
 
 
     public GetRecentCategoriesBackgroundTask(Context context) {

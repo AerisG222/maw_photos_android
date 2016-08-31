@@ -14,17 +14,17 @@ public class BasePhotoDialogFragment extends DialogFragment {
     }
 
 
-    protected IPhotoActivity getPhotoActivity() {
+    private IPhotoActivity getPhotoActivity() {
         return (IPhotoActivity) getActivity();
     }
 
 
-    protected void updateProgress() {
+    void updateProgress() {
         getPhotoActivity().updateProgress();
     }
 
 
-    protected Photo getCurrentPhoto() {
+    Photo getCurrentPhoto() {
         return getPhotoActivity().getCurrentPhoto();
     }
 }

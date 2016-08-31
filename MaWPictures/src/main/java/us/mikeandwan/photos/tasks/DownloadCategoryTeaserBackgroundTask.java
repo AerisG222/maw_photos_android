@@ -9,8 +9,8 @@ import us.mikeandwan.photos.widget.CategoryRowDetail;
 
 
 public class DownloadCategoryTeaserBackgroundTask extends BackgroundTask<CategoryRowDetail> {
-    private Context _context;
-    private CategoryRowDetail _rowDetail;
+    private final Context _context;
+    private final CategoryRowDetail _rowDetail;
 
 
     public DownloadCategoryTeaserBackgroundTask(Context context, CategoryRowDetail rowDetail) {

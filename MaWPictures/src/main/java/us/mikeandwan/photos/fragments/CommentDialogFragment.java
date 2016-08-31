@@ -36,6 +36,7 @@ import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.GetCommentsBackgroundTask;
 
 
+@SuppressWarnings("ALL")
 @EFragment(R.layout.dialog_comment)
 public class CommentDialogFragment extends BasePhotoDialogFragment {
     @ViewById(R.id.commentTableLayout)

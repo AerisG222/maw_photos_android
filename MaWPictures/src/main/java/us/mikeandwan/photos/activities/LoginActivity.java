@@ -44,6 +44,7 @@ import us.mikeandwan.photos.tasks.GetYearsBackgroundTask;
 import us.mikeandwan.photos.tasks.LoginBackgroundTask;
 
 
+@SuppressWarnings("ALL")
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends AppCompatActivity {
@@ -80,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    protected void cleanupLegacyStorage() {
+    private void cleanupLegacyStorage() {
         Log.i(MawApplication.LOG_TAG, "starting to wipe");
 
         PhotoStorage ps = new PhotoStorage(_app);
@@ -187,7 +188,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 BackgroundTaskExecutor.getInstance().enqueueTask(task);
             } else {
-                goToModeSelection(true);
+                goToModeSelection();
             }
         } else {
             Snackbar.make(_loginFormView, "Unable to authenticate", Snackbar.LENGTH_SHORT).show();
@@ -205,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
         BackgroundTask task = new GetCategoriesForYearBackgroundTask(getBaseContext(), years.get(0)) {
             @Override
             protected void postExecuteTask(List<Category> result) {
-                goToModeSelection(true);
+                goToModeSelection();
             }
         };
 
@@ -222,7 +223,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void goToModeSelection(Boolean success) {
+    private void goToModeSelection() {
         Intent intent = new Intent(this, ModeSelectionActivity_.class);
         startActivity(intent);
 
@@ -231,7 +232,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void showProgress(final boolean show) {
+    private void showProgress(final boolean show) {
         _loginButton.setEnabled(!show);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {

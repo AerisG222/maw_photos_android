@@ -11,8 +11,8 @@ import us.mikeandwan.photos.data.Comment;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 public class GetCommentsBackgroundTask extends BackgroundTask<List<Comment>> {
-    private Context _context;
-    private int _photoId;
+    private final Context _context;
+    private final int _photoId;
 
 
     public GetCommentsBackgroundTask(Context context, int photoId) {

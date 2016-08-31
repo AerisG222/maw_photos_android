@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class HttpRequestInfo {
+class HttpRequestInfo {
     private URL _url;
 
     public URL getUrl() {
@@ -26,7 +26,7 @@ public class HttpRequestInfo {
         _method = method;
     }
 
-    private Map<String, String> _params = new HashMap<>();
+    private final Map<String, String> _params = new HashMap<>();
 
     public Map<String, String> getParams() {
         return _params;

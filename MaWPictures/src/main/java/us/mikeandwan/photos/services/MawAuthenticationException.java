@@ -3,10 +3,10 @@ package us.mikeandwan.photos.services;
 
 public class MawAuthenticationException extends Exception {
     public MawAuthenticationException() {
-        this("Unable to authenticate against mikeandwan.us");
+        this("Unable to authenticate to mikeandwan.us");
     }
 
-    public MawAuthenticationException(String message) {
+    private MawAuthenticationException(String message) {
         super(message);
     }
 }

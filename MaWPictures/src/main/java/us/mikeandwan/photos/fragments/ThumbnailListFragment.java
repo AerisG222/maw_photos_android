@@ -34,10 +34,11 @@ import us.mikeandwan.photos.tasks.BackgroundTaskPriority;
 import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
 
 
+@SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_thumbnail_list)
 public class ThumbnailListFragment extends BasePhotoFragment {
     private int _thumbIndex;
-    private List<ImageView> _thumbList = new ArrayList<>();
+    private final List<ImageView> _thumbList = new ArrayList<>();
     private PhotoStorage _photoStorage;
 
     @ViewById(R.id.horizontalScrollView)

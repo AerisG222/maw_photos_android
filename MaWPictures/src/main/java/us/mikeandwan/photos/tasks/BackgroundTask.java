@@ -7,15 +7,15 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class BackgroundTask<T> implements BackgroundTaskCallable {
     private BackgroundTaskPriority _priority = BackgroundTaskPriority.Normal;
-    private Handler _handler = new Handler();
+    private final Handler _handler = new Handler();
 
 
-    public BackgroundTask() {
+    BackgroundTask() {
         this(BackgroundTaskPriority.Normal);
     }
 
 
-    public BackgroundTask(BackgroundTaskPriority priority) {
+    BackgroundTask(BackgroundTaskPriority priority) {
         _priority = priority;
     }
 

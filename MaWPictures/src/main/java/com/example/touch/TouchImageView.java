@@ -43,6 +43,7 @@ import static com.example.touch.TouchImageView.State.NONE;
 import static com.example.touch.TouchImageView.State.ZOOM;
 
 
+@SuppressWarnings("ALL")
 public class TouchImageView extends ImageView {
     private static final String DEBUG = "DEBUG";
 
@@ -636,7 +637,7 @@ public class TouchImageView extends ImageView {
         //
         // Remember last point position for dragging
         //
-        private PointF last = new PointF();
+        private final PointF last = new PointF();
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -767,16 +768,19 @@ public class TouchImageView extends ImageView {
      *
      * @author Ortiz
      */
+    @SuppressWarnings("JavaDoc")
     private class DoubleTapZoom implements Runnable {
 
-        private long startTime;
+        private final long startTime;
         private static final float ZOOM_TIME = 500;
-        private float startZoom, targetZoom;
-        private float bitmapX, bitmapY;
-        private boolean stretchImageToSuper;
-        private AccelerateDecelerateInterpolator interpolator = new AccelerateDecelerateInterpolator();
-        private PointF startTouch;
-        private PointF endTouch;
+        private final float startZoom;
+        private final float targetZoom;
+        private final float bitmapX;
+        private final float bitmapY;
+        private final boolean stretchImageToSuper;
+        private final AccelerateDecelerateInterpolator interpolator = new AccelerateDecelerateInterpolator();
+        private final PointF startTouch;
+        private final PointF endTouch;
 
         DoubleTapZoom(float targetZoom, float focusX, float focusY, boolean stretchImageToSuper) {
             setState(ANIMATE_ZOOM);

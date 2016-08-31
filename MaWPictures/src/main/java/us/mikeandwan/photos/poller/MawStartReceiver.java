@@ -10,6 +10,7 @@ import org.androidannotations.annotations.EReceiver;
 import us.mikeandwan.photos.MawApplication;
 
 
+@SuppressWarnings("ALL")
 @EReceiver
 public class MawStartReceiver extends BroadcastReceiver {
     @Override

@@ -16,6 +16,7 @@ import java.util.Calendar;
 import us.mikeandwan.photos.MawApplication;
 
 
+@SuppressWarnings("ALL")
 @EReceiver
 public class MawScheduleReceiver extends BroadcastReceiver {
     @Override
@@ -26,7 +27,7 @@ public class MawScheduleReceiver extends BroadcastReceiver {
     }
 
 
-    public void schedule(Context context) {
+    private void schedule(Context context) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         int repeatHours = Integer.valueOf(sharedPrefs.getString("sync_frequency", "24"));  // odd, prefs only work when string based..
 

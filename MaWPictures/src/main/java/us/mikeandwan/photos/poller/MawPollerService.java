@@ -35,6 +35,7 @@ import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
+@SuppressWarnings("ALL")
 @SuppressLint("Registered")
 @EService
 public class MawPollerService extends Service {

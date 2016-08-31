@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 
 import us.mikeandwan.photos.activities.IPhotoActivity;
-import us.mikeandwan.photos.data.Photo;
 
 
 public class BasePhotoFragment extends Fragment {
@@ -13,17 +12,12 @@ public class BasePhotoFragment extends Fragment {
     }
 
 
-    protected IPhotoActivity getPhotoActivity() {
+    IPhotoActivity getPhotoActivity() {
         return (IPhotoActivity) getActivity();
     }
 
 
-    protected void updateProgress() {
+    void updateProgress() {
         getPhotoActivity().updateProgress();
-    }
-
-
-    protected Photo getCurrentPhoto() {
-        return getPhotoActivity().getCurrentPhoto();
     }
 }

@@ -1,8 +1,8 @@
 package us.mikeandwan.photos.tasks;
 
 
+@SuppressWarnings("ALL")
 public enum BackgroundTaskPriority {
-    VeryLow,
     Low,
     Normal,
     High,

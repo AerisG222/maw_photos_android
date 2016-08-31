@@ -11,8 +11,8 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetYearsBackgroundTask extends BackgroundTask<List<Integer>> {
-    private MawDataManager _dm;
-    private Context _context;
+    private final MawDataManager _dm;
+    private final Context _context;
 
 
     public GetYearsBackgroundTask(Context context) {

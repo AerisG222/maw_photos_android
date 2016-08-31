@@ -9,9 +9,9 @@ import us.mikeandwan.photos.data.Rating;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 public class SetRatingBackgroundTask extends BackgroundTask<Rating> {
-    private Context _context;
-    private int _photoId;
-    private int _rating;
+    private final Context _context;
+    private final int _photoId;
+    private final int _rating;
 
 
     public SetRatingBackgroundTask(Context context, int photoId, int rating) {

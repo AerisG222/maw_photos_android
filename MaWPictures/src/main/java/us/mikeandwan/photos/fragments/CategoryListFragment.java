@@ -34,6 +34,7 @@ import us.mikeandwan.photos.tasks.DownloadCategoryTeaserBackgroundTask;
 import us.mikeandwan.photos.widget.CategoryRowDetail;
 
 
+@SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_category_list)
 public class CategoryListFragment extends BaseCategoryListFragment {
     private CategoryArrayAdapter _adapter;
@@ -110,7 +111,7 @@ public class CategoryListFragment extends BaseCategoryListFragment {
             textView.setText(category.getName());
             imageView.setImageBitmap(_photoStorage.getPlaceholderThumbnail());
 
-            CategoryRowDetail row = new CategoryRowDetail(imageView, textView, category);
+            CategoryRowDetail row = new CategoryRowDetail(imageView, category);
 
             if (_photoStorage.doesExist(category.getTeaserPhotoInfo().getPath())) {
                 displayCategory(row);

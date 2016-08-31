@@ -1,5 +1,7 @@
 package us.mikeandwan.photos.tasks;
 
+import android.support.annotation.NonNull;
+
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RunnableFuture;
@@ -7,9 +9,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 
-public class BackgroundTaskFuture<T> implements RunnableFuture<T> {
-    private RunnableFuture<T> _src;
-    private BackgroundTask _task;
+class BackgroundTaskFuture<T> implements RunnableFuture<T> {
+    private final RunnableFuture<T> _src;
+    private final BackgroundTask _task;
 
 
     public BackgroundTaskFuture(RunnableFuture<T> other, BackgroundTask task) {
@@ -43,7 +45,7 @@ public class BackgroundTaskFuture<T> implements RunnableFuture<T> {
     }
 
 
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public T get(long timeout, @NonNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return _src.get();
     }
 
@@ -53,7 +55,7 @@ public class BackgroundTaskFuture<T> implements RunnableFuture<T> {
     }
 
 
-    public static Comparator<Runnable> COMP = new Comparator<Runnable>() {
+    public static final Comparator<Runnable> COMP = new Comparator<Runnable>() {
         public int compare(Runnable o1, Runnable o2) {
             if (o1 == null && o2 == null)
                 return 0;

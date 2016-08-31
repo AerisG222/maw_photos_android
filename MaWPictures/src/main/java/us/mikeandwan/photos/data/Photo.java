@@ -3,6 +3,7 @@ package us.mikeandwan.photos.data;
 
 import java.io.Serializable;
 
+@SuppressWarnings("ALL")
 public class Photo implements Serializable {
     private int _id;
     private int _categoryId;

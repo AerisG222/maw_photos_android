@@ -9,7 +9,7 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetRandomPhotoBackgroundTask extends BackgroundTask<PhotoAndCategory> {
-    private Context _context;
+    private final Context _context;
 
 
     public GetRandomPhotoBackgroundTask(Context context) {

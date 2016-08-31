@@ -9,6 +9,7 @@ import org.androidannotations.annotations.ViewById;
 import us.mikeandwan.photos.R;
 
 
+@SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_main_image_toolbar)
 public class MainImageToolbarFragment extends BasePhotoFragment {
     private boolean _isSlideshowPlaying;

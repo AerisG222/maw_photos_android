@@ -31,6 +31,7 @@ import us.mikeandwan.photos.tasks.DownloadCategoryTeaserBackgroundTask;
 import us.mikeandwan.photos.widget.CategoryRowDetail;
 
 
+@SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_category_thumbnails)
 public class CategoryThumbnailsFragment extends BaseCategoryListFragment {
     private PhotoStorage _photoStorage;
@@ -98,7 +99,7 @@ public class CategoryThumbnailsFragment extends BaseCategoryListFragment {
             }
 
             Category category = _categories.get(position);
-            CategoryRowDetail row = new CategoryRowDetail(imageView, null, category);
+            CategoryRowDetail row = new CategoryRowDetail(imageView, category);
 
             imageView.setImageBitmap(_photoStorage.getPlaceholderThumbnail());
 

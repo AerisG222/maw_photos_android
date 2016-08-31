@@ -25,6 +25,7 @@ import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.GetExifDataBackgroundTask;
 
 
+@SuppressWarnings("ALL")
 @EFragment(R.layout.dialog_exif)
 public class ExifDialogFragment extends BasePhotoDialogFragment {
     @DimensionPixelSizeRes(R.dimen._2dp)

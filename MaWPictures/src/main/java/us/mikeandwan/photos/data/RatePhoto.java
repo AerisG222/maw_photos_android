@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.data;
 
 
+@SuppressWarnings("ALL")
 public class RatePhoto {
     private int _photoId;
 

@@ -10,6 +10,7 @@ import us.mikeandwan.photos.R;
 
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
+@SuppressWarnings("ALL")
 public class TouchViewPager extends ViewPager {
     private boolean _enabled = true;
 

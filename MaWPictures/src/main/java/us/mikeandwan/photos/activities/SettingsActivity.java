@@ -20,6 +20,7 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.poller.MawScheduleReceiver;
 
 
+@SuppressWarnings("ALL")
 public class SettingsActivity extends PreferenceActivity {
     @Override
     public boolean onIsMultiPane() {
@@ -40,7 +41,7 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
 
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();

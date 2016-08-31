@@ -9,8 +9,8 @@ import us.mikeandwan.photos.data.ExifData;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 public class GetExifDataBackgroundTask extends BackgroundTask<ExifData> {
-    private Context _context;
-    private int _photoId;
+    private final Context _context;
+    private final int _photoId;
 
 
     public GetExifDataBackgroundTask(Context context, int photoId) {

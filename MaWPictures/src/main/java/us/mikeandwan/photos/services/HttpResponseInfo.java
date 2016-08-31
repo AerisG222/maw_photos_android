@@ -1,9 +1,9 @@
 package us.mikeandwan.photos.services;
 
 
-public class HttpResponseInfo {
-    private String _content;
-    private int _statusCode;
+class HttpResponseInfo {
+    private final String _content;
+    private final int _statusCode;
 
 
     public HttpResponseInfo(int code, String content) {

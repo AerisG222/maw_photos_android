@@ -12,8 +12,8 @@ import us.mikeandwan.photos.data.CommentPhoto;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 public class AddCommentBackgroundTask extends BackgroundTask<List<Comment>> {
-    private Context _context;
-    private CommentPhoto _cp;
+    private final Context _context;
+    private final CommentPhoto _cp;
 
 
     public AddCommentBackgroundTask(Context context, CommentPhoto cp) {

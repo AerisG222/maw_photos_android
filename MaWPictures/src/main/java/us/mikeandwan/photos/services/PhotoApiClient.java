@@ -56,18 +56,18 @@ public class PhotoApiClient {
     private static final String API_PHOTOS_BY_COMMENT_COUNT_URL = Constants.SITE_URL + "api/photos/getPhotosByCommentCount";
     private static final String API_PHOTOS_BY_AVERAGE_RATING_URL = Constants.SITE_URL + "api/photos/getPhotosByAverageRating";
     private static final String API_PHOTOS_BY_USER_RATING_URL = Constants.SITE_URL + "api/photos/getPhotosByUserRating";
-    public static final String API_GET_PHOTO_RATING_URL = Constants.SITE_URL + "api/photos/getRatingForPhoto";
-    public static final String API_SET_PHOTO_RATING_URL = Constants.SITE_URL + "api/photos/ratePhoto";
-    public static final String API_GET_PHOTO_COMMENTS_URL = Constants.SITE_URL + "api/photos/getCommentsForPhoto";
-    public static final String API_ADD_PHOTO_COMMENT_URL = Constants.SITE_URL + "api/photos/addCommentForPhoto";
-    public static final String API_GET_PHOTO_EXIF_URL = Constants.SITE_URL + "api/photos/getPhotoExifData";
-    public static final String API_GET_RANDOM_PHOTO_URL = Constants.SITE_URL + "api/photos/getRandomPhoto";
+    private static final String API_GET_PHOTO_RATING_URL = Constants.SITE_URL + "api/photos/getRatingForPhoto";
+    private static final String API_SET_PHOTO_RATING_URL = Constants.SITE_URL + "api/photos/ratePhoto";
+    private static final String API_GET_PHOTO_COMMENTS_URL = Constants.SITE_URL + "api/photos/getCommentsForPhoto";
+    private static final String API_ADD_PHOTO_COMMENT_URL = Constants.SITE_URL + "api/photos/addCommentForPhoto";
+    private static final String API_GET_PHOTO_EXIF_URL = Constants.SITE_URL + "api/photos/getPhotoExifData";
+    private static final String API_GET_RANDOM_PHOTO_URL = Constants.SITE_URL + "api/photos/getRandomPhoto";
 
-    private static CookieManager _cookieManager = new CookieManager();
+    private static final CookieManager _cookieManager = new CookieManager();
     private static PhotoStorage _photoStorage;
 
     private boolean _isSecondAttempt;
-    private Context _context;
+    private final Context _context;
 
 
     static {
@@ -116,6 +116,7 @@ public class PhotoApiClient {
     }
 
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -139,7 +140,6 @@ public class PhotoApiClient {
             if (XSRF_COOKIE_NAME.equalsIgnoreCase(cookie.getName()) && !cookie.hasExpired()) {
                 Log.i(MawApplication.LOG_TAG, "XSRF cookie valid");
                 xsrfCookieAvailable = true;
-                continue;
             }
         }
 

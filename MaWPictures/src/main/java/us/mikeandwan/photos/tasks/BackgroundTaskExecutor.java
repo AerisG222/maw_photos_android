@@ -6,37 +6,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import us.mikeandwan.photos.MawApplication;
 
 
 public class BackgroundTaskExecutor {
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
-    //private static final int CORE_POOL_SIZE = CPU_COUNT + 1;
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
-    private static final int KEEP_ALIVE = 30;
     private static volatile BackgroundTaskExecutor _instance = null;
-
-    private static final ThreadFactory _threadFactory = new ThreadFactory() {
-        private final AtomicInteger _count = new AtomicInteger(1);
-
-        public Thread newThread(Runnable r) {
-            return new Thread(r, "MawBackgroundTaskThread #" + _count.getAndIncrement());
-        }
-    };
-
-    private static final RejectedExecutionHandler _rejectedHandler = new RejectedExecutionHandler() {
-        @Override
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-            Log.e(MawApplication.LOG_TAG, "execution rejected: " + r.toString());
-        }
-    };
 
     private static final ThreadPoolExecutor _threadPool = getPriorityExecutor(MAXIMUM_POOL_SIZE);
 
@@ -123,8 +103,8 @@ public class BackgroundTaskExecutor {
 
 
     private static class BackgroundTaskCallbackRunnable implements Runnable {
-        private BackgroundTask _task;
-        private BackgroundTaskFuture _future;
+        private final BackgroundTask _task;
+        private final BackgroundTaskFuture _future;
 
 
         public BackgroundTaskCallbackRunnable(BackgroundTaskFuture future) {

@@ -10,14 +10,9 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class DownloadImageBackgroundTask extends BackgroundTask<PhotoDownload> {
-    private Context _context;
-    private PhotoDownload _photoDownload;
-    private PhotoSize _size;
-
-
-    public DownloadImageBackgroundTask(Context context, PhotoDownload photoDownload, PhotoSize size) {
-        this(context, photoDownload, size, BackgroundTaskPriority.Normal);
-    }
+    private final Context _context;
+    private final PhotoDownload _photoDownload;
+    private final PhotoSize _size;
 
 
     public DownloadImageBackgroundTask(Context context, PhotoDownload photoDownload, PhotoSize size, BackgroundTaskPriority priority) {

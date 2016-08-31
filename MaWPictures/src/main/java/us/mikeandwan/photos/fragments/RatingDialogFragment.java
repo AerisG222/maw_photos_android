@@ -20,6 +20,7 @@ import us.mikeandwan.photos.tasks.GetRatingBackgroundTask;
 import us.mikeandwan.photos.tasks.SetRatingBackgroundTask;
 
 
+@SuppressWarnings("ALL")
 @EFragment(R.layout.dialog_rating)
 public class RatingDialogFragment extends BasePhotoDialogFragment {
     @ViewById(R.id.yourRatingBar)

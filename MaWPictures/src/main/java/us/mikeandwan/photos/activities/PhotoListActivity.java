@@ -60,11 +60,12 @@ import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
 import us.mikeandwan.photos.tasks.GetPhotoListBackgroundTask;
 import us.mikeandwan.photos.tasks.GetRandomPhotoBackgroundTask;
 
+@SuppressWarnings("ALL")
 @SuppressLint("Registered")
 @OptionsMenu(R.menu.photo_list)
 @EActivity(R.layout.activity_photo_list)
 public class PhotoListActivity extends AppCompatActivity implements IPhotoActivity {
-    public static final float FADE_START_ALPHA = 1.0f;
+    private static final float FADE_START_ALPHA = 1.0f;
     public static final float FADE_END_ALPHA = 0.2f;
     public static final int FADE_DURATION = 4200;
 
@@ -340,7 +341,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
                 _index = 0;
                 _photoList.add(result.getPhoto());
 
-                onRandomPhotoFetched(result.getPhoto());
+                onRandomPhotoFetched();
             }
 
             @Override
@@ -356,7 +357,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     }
 
 
-    private void onRandomPhotoFetched(Photo photo) {
+    private void onRandomPhotoFetched() {
         _mainImageFragment.onPhotoListUpdated();
         _thumbnailListFragment.onPhotoListUpdated();
 
@@ -534,7 +535,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
 
     class SlideshowRunnable implements Runnable {
-        private int _nextIndex;
+        private final int _nextIndex;
 
         public SlideshowRunnable(int nextIndex) {
             _nextIndex = nextIndex;

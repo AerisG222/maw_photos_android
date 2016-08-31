@@ -9,11 +9,9 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +25,7 @@ import us.mikeandwan.photos.MawApplication;
 public class PhotoStorage {
     private static final String MAW_ROOT = "maw_pictures";
     private static final String CONTENT_URI = "content://us.mikeandwan.streamprovider/";
-    private Context _context;
+    private final Context _context;
 
 
     public PhotoStorage(Context context) {
@@ -35,12 +33,17 @@ public class PhotoStorage {
     }
 
 
-    public boolean put(String remotePath, HttpURLConnection conn) {
+    public void put(String remotePath, HttpURLConnection conn) {
         File dir = new File(getRootPath(), remotePath.substring(0, remotePath.lastIndexOf('/')));
         File file = getCachePath(remotePath);
         OutputStream outputStream = null;
 
-        dir.mkdirs();
+        if(!dir.exists()) {
+            if(!dir.mkdirs()) {
+                Log.e(MawApplication.LOG_TAG, "Error creating photo directory hierarchy: " + dir.getName());
+                return;
+            }
+        }
 
         try {
             byte[] buffer = new byte[4096];
@@ -51,12 +54,8 @@ public class PhotoStorage {
             while ((n = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, n);
             }
-        } catch (FileNotFoundException e) {
-            Log.w(MawApplication.LOG_TAG, "Error saving image file: " + e.getMessage());
-            return false;
         } catch (IOException e) {
             Log.w(MawApplication.LOG_TAG, "Error saving image file: " + e.getMessage());
-            return false;
         } finally {
             if (outputStream != null) {
                 try {
@@ -66,8 +65,6 @@ public class PhotoStorage {
                 }
             }
         }
-
-        return true;
     }
 
 
@@ -158,14 +155,10 @@ public class PhotoStorage {
 
 
     private boolean isPrior(File dir) {
-        if(dir.isDirectory()) {
-            return "thumbnails".equalsIgnoreCase(dir.getName()) ||
-                    "fuller".equalsIgnoreCase(dir.getName()) ||
-                    "fullsize".equalsIgnoreCase(dir.getName()) ||
-                    "orig".equalsIgnoreCase(dir.getName());
-        }
-
-        return false;
+        return dir.isDirectory() && ("thumbnails".equalsIgnoreCase(dir.getName()) ||
+                                     "fuller".equalsIgnoreCase(dir.getName()) ||
+                                     "fullsize".equalsIgnoreCase(dir.getName()) ||
+                                     "orig".equalsIgnoreCase(dir.getName()));
     }
 
 

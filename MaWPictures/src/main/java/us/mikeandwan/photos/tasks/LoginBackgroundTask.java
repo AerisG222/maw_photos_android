@@ -9,8 +9,8 @@ import us.mikeandwan.photos.data.Credentials;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 public class LoginBackgroundTask extends BackgroundTask<Boolean> {
-    private Credentials _creds;
-    private Context _context;
+    private final Credentials _creds;
+    private final Context _context;
 
 
     public LoginBackgroundTask(Context context, Credentials creds) {

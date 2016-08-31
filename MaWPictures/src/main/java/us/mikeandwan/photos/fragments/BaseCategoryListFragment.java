@@ -9,9 +9,9 @@ import us.mikeandwan.photos.activities.ICategoryListActivity;
 import us.mikeandwan.photos.data.Category;
 
 public class BaseCategoryListFragment extends Fragment {
-    protected List<Category> _categories;
+    List<Category> _categories;
 
-    protected ICategoryListActivity getCategoryActivity() {
+    ICategoryListActivity getCategoryActivity() {
         return (ICategoryListActivity) getActivity();
     }
 

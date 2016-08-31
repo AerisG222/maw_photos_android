@@ -11,8 +11,8 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetPhotoListBackgroundTask extends BackgroundTask<List<Photo>> {
-    private Context _context;
-    private String _url;
+    private final Context _context;
+    private final String _url;
 
 
     public GetPhotoListBackgroundTask(Context context, String url) {

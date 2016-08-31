@@ -16,12 +16,12 @@ import java.util.List;
 import us.mikeandwan.photos.MawApplication;
 
 
-public class JsonClient<T> {
-    private static ObjectMapper _mapper = new ObjectMapper();
+class JsonClient<T> {
+    private static final ObjectMapper _mapper = new ObjectMapper();
 
-    private PhotoApiClient _apiClient;
+    private final PhotoApiClient _apiClient;
     private boolean _isSecondAttempt;
-    final Class<T> _typeParameterClass;
+    private final Class<T> _typeParameterClass;
 
 
     public JsonClient(Class<T> typeParameterClass, PhotoApiClient apiClient) {

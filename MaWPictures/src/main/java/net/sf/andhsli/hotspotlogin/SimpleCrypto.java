@@ -1,5 +1,7 @@
 package net.sf.andhsli.hotspotlogin;
 
+import android.annotation.SuppressLint;
+
 import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
@@ -20,6 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author ferenc.hechler
  */
+@SuppressWarnings("ALL")
 public class SimpleCrypto {
 
     public static String encrypt(String seed, String cleartext) throws Exception {
@@ -47,14 +50,14 @@ public class SimpleCrypto {
 
     private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
         SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
+        @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
         return cipher.doFinal(clear);
     }
 
     private static byte[] decrypt(byte[] raw, byte[] encrypted) throws Exception {
         SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
+        @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, skeySpec);
         return cipher.doFinal(encrypted);
     }
@@ -67,7 +70,7 @@ public class SimpleCrypto {
         return new String(toByte(hex));
     }
 
-    public static byte[] toByte(String hexString) {
+    private static byte[] toByte(String hexString) {
         int len = hexString.length() / 2;
         byte[] result = new byte[len];
         for (int i = 0; i < len; i++)
@@ -75,12 +78,12 @@ public class SimpleCrypto {
         return result;
     }
 
-    public static String toHex(byte[] buf) {
+    private static String toHex(byte[] buf) {
         if (buf == null)
             return "";
         StringBuffer result = new StringBuffer(2 * buf.length);
-        for (int i = 0; i < buf.length; i++) {
-            appendHex(result, buf[i]);
+        for (byte aBuf : buf) {
+            appendHex(result, aBuf);
         }
         return result.toString();
     }

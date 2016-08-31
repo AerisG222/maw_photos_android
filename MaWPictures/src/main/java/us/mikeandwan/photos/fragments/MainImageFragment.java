@@ -13,6 +13,7 @@ import org.androidannotations.annotations.ViewById;
 import us.mikeandwan.photos.R;
 
 
+@SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_main_image)
 public class MainImageFragment extends BasePhotoFragment {
     private FullScreenImageAdapter _adapter;

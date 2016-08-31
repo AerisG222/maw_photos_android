@@ -12,7 +12,7 @@ import java.util.List;
 import us.mikeandwan.photos.MawApplication;
 
 
-public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
+class MawSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "maw";
 
