@@ -35,6 +35,7 @@ import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -75,6 +76,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     private Activity _theActivity;
     private ScheduledThreadPoolExecutor _slideshowExecutor;
     private HorizontalScrollView _thumbnailScrollView;
+    private HashSet<Integer> _randomPhotoIds;
 
     @InstanceState
     protected int _index = 0;
@@ -307,6 +309,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
             protected void postExecuteTask(List<Photo> result) {
                 _index = 0;
                 _photoList.addAll(result);
+                _thumbnailListFragment.addPhotoList(result);
 
                 onGatherPhotoListComplete();
             }
@@ -325,6 +328,8 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
 
     private void initRandomPhotos() {
+        _randomPhotoIds = new HashSet<>();
+
         for (int i = 0; i < RANDOM_INITIAL_COUNT; i++) {
             fetchRandom();
         }
@@ -335,8 +340,18 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
         GetRandomPhotoBackgroundTask task = new GetRandomPhotoBackgroundTask(getBaseContext()) {
             @Override
             protected void postExecuteTask(PhotoAndCategory result) {
+                if(_randomPhotoIds.contains(result.getPhoto().getId())) {
+                    // avoid duplicates
+                    return;
+                }
+
+                _randomPhotoIds.add(result.getPhoto().getId());
+
                 _index = 0;
                 _photoList.add(result.getPhoto());
+                _thumbnailListFragment.addPhoto((result.getPhoto()));
+
+                Log.d(MawApplication.LOG_TAG, "random photo: " + result.getPhoto().getId());
 
                 onRandomPhotoFetched();
             }
@@ -356,7 +371,6 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
     private void onRandomPhotoFetched() {
         _mainImageFragment.onPhotoListUpdated();
-        _thumbnailListFragment.onPhotoListUpdated();
 
         if (!_displayedRandomImage) {
             _displayedRandomImage = true;
@@ -369,7 +383,6 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
     private void onGatherPhotoListComplete() {
         _mainImageFragment.onPhotoListUpdated();
-        _thumbnailListFragment.onPhotoListUpdated();
 
         gotoPhoto(_index);
 

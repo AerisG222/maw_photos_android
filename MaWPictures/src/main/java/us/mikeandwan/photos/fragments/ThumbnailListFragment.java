@@ -63,10 +63,6 @@ public class ThumbnailListFragment extends BasePhotoFragment {
 
 
     public void onCurrentPhotoUpdated() {
-        if(_thumbList.isEmpty()) {
-            onPhotoListUpdated();
-        }
-
         // if the change came outside of this fragment, then make sure we move to the current
         // thumbnail.  otherwise, don't change the view as that is unexpected to user
         if (_thumbIndex != getPhotoActivity().getCurrentIndex()) {
@@ -85,27 +81,24 @@ public class ThumbnailListFragment extends BasePhotoFragment {
     }
 
 
-    public void onPhotoListUpdated() {
-        List<Photo> list = getPhotoActivity().getPhotoList();
-
-        // we currently assume that things are only added to the end of the list.  if a totally
-        // new list is used, this should happen today through screen navigations, which would require
-        // this fragment to be fully recreated, so would not contain out of date data
-
-        int listSize = list.size();
-        int thumbSize = _thumbList.size();
-
-        if (listSize > thumbSize) {
-            for (int i = thumbSize; i < listSize; i++) {
-                addThumbnail(list.get(i), i);
+    public void addPhotoList(List<Photo> photoList) {
+        synchronized (_thumbList) {
+            for (Photo photo : photoList) {
+                addPhoto(photo);
             }
         }
     }
 
 
-    private void addThumbnail(Photo photo, int index) {
+    public void addPhoto(Photo photo)
+    {
         ImageView imageView = createThumbnail();
-        _thumbList.add(index, imageView);
+        int index = 0;
+
+        synchronized (_thumbList) {
+            _thumbList.add(imageView);
+            index = _thumbList.size() - 1;
+        }
 
         PhotoDownload pd = new PhotoDownload(photo, index);
 
