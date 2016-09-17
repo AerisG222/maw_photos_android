@@ -1,3 +1,8 @@
+3.1:
+- updates based on website changes
+- fix an issue in random mode
+- minor code cleanup / fixes
+
 3.0:
 - ui updates to better align with material design
 - update category list page to show larger thumbnails
