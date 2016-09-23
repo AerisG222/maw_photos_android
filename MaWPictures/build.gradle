@@ -10,8 +10,8 @@ android {
         applicationId "us.mikeandwan.pictures"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 21
-        versionName "3.1"
+        versionCode 22
+        versionName "3.2"
     }
 
     signingConfigs {
@@ -69,8 +69,8 @@ apt {
 dependencies {
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
-    compile 'com.android.support:appcompat-v7:24.2.0'
-    compile 'com.android.support:design:24.2.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
     compile 'com.fasterxml.jackson.core:jackson-core:2.8.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.1'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.1'

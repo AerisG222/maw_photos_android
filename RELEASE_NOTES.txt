@@ -1,3 +1,6 @@
+3.2:
+- fix issue with category thumbnails
+
 3.1:
 - updates based on website changes
 - fix an issue in random mode
