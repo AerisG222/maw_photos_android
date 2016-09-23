@@ -13,7 +13,7 @@ import us.mikeandwan.photos.MawApplication;
 
 
 class MawSQLiteOpenHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "maw";
 
 
@@ -40,8 +40,19 @@ class MawSQLiteOpenHelper extends SQLiteOpenHelper {
             createYearTable(sqLiteDatabase);
             populateYearTable(sqLiteDatabase);
         }
+
+        if (i < 3) {
+            updateCategoryTeaserPath(sqLiteDatabase);
+        }
     }
 
+
+    private void updateCategoryTeaserPath(SQLiteDatabase db) {
+        String sql = "UPDATE image_category "
+                   + "   SET teaser_image_path = REPLACE(teaser_image_path, '/thumbnails/', '/xs/')";
+
+        db.execSQL(sql);
+    }
 
     private void createCategoryTable(SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS image_category ("
