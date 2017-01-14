@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.tasks;
 
-import android.content.Context;
 import android.util.Log;
 
 import us.mikeandwan.photos.MawApplication;
@@ -9,13 +8,13 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetRandomPhotoBackgroundTask extends BackgroundTask<PhotoAndCategory> {
-    private final Context _context;
+    private final PhotoApiClient _client;
 
 
-    public GetRandomPhotoBackgroundTask(Context context) {
+    public GetRandomPhotoBackgroundTask(PhotoApiClient client) {
         super(BackgroundTaskPriority.Normal);
 
-        _context = context;
+        _client = client;
     }
 
 
@@ -23,12 +22,10 @@ public class GetRandomPhotoBackgroundTask extends BackgroundTask<PhotoAndCategor
     public PhotoAndCategory call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to get random photo");
 
-        PhotoApiClient client = new PhotoApiClient(_context);
-
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        return client.getRandomPhoto();
+        return _client.getRandomPhoto();
     }
 }

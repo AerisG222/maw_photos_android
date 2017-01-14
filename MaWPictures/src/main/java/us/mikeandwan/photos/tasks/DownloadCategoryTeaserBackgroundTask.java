@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.tasks;
 
-import android.content.Context;
 import android.util.Log;
 
 import us.mikeandwan.photos.MawApplication;
@@ -9,14 +8,14 @@ import us.mikeandwan.photos.widget.CategoryRowDetail;
 
 
 public class DownloadCategoryTeaserBackgroundTask extends BackgroundTask<CategoryRowDetail> {
-    private final Context _context;
     private final CategoryRowDetail _rowDetail;
+    private final PhotoApiClient _client;
 
 
-    public DownloadCategoryTeaserBackgroundTask(Context context, CategoryRowDetail rowDetail) {
+    public DownloadCategoryTeaserBackgroundTask(PhotoApiClient client, CategoryRowDetail rowDetail) {
         super(BackgroundTaskPriority.Normal);
 
-        _context = context;
+        _client = client;
         _rowDetail = rowDetail;
     }
 
@@ -25,13 +24,11 @@ public class DownloadCategoryTeaserBackgroundTask extends BackgroundTask<Categor
     public CategoryRowDetail call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to download teaser for category: " + _rowDetail.getCategory().getId());
 
-        PhotoApiClient client = new PhotoApiClient(_context);
-
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        client.downloadPhoto(_rowDetail.getCategory().getTeaserPhotoInfo().getPath());
+        _client.downloadPhoto(_rowDetail.getCategory().getTeaserPhotoInfo().getPath());
 
         return _rowDetail;
     }

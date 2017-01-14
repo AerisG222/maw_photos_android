@@ -22,6 +22,7 @@ import android.widget.TextView;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.EditorAction;
@@ -48,7 +49,6 @@ import us.mikeandwan.photos.tasks.LoginBackgroundTask;
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends AppCompatActivity {
-    private MawDataManager _dm;
     private Credentials _creds = new Credentials();
 
     @SystemService
@@ -72,11 +72,15 @@ public class LoginActivity extends AppCompatActivity {
     @App
     MawApplication _app;
 
+    @Bean
+    MawDataManager _dm;
+
+    @Bean
+    PhotoStorage _ps;
+
 
     @AfterInject
     protected void afterInject() {
-        _dm = new MawDataManager(_app);
-
         cleanupLegacyStorage();
     }
 
@@ -84,8 +88,7 @@ public class LoginActivity extends AppCompatActivity {
     private void cleanupLegacyStorage() {
         Log.i(MawApplication.LOG_TAG, "starting to wipe");
 
-        PhotoStorage ps = new PhotoStorage(_app);
-        ps.wipeLegacyCache();
+        _ps.wipeLegacyCache();
     }
 
 

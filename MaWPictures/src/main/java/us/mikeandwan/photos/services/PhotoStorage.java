@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.RootContext;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -22,15 +24,13 @@ import us.mikeandwan.photos.MawApplication;
 
 
 // TODO: this currently requires external storage, perhaps also allow this to run w/o caching - perhaps thumbnails in internal storage?
+@EBean(scope = EBean.Scope.Singleton)
 public class PhotoStorage {
     private static final String MAW_ROOT = "maw_pictures";
     private static final String CONTENT_URI = "content://us.mikeandwan.streamprovider/";
-    private final Context _context;
 
-
-    public PhotoStorage(Context context) {
-        _context = context;
-    }
+    @RootContext
+    private Context _context;
 
 
     public void put(String remotePath, HttpURLConnection conn) {

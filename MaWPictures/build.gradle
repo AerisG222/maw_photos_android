@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
 def AAVersion = '4.2.0'
 
 android {
@@ -12,6 +11,16 @@ android {
         targetSdkVersion 25
         versionCode 22
         versionName "3.2"
+
+        jackOptions {
+            enabled true
+            additionalParameters("jack.incremental" : "true")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     signingConfigs {
@@ -52,31 +61,25 @@ android {
     }
 }
 
-apt {
-    arguments {
-        androidManifestFile variant.outputs[0].processResources.manifestFile
-        // if you have multiple outputs (when using splits), you may want to have other index than 0
-
-        // you should set your package name here if you are using different application IDs
-        resourcePackageName "us.mikeandwan.photos"
-
-        // You can set optional annotation processing options here, like these commented options:
-        // logLevel 'INFO'
-        // logFile '/var/log/aa.log'
-    }
-}
-
 dependencies {
-    apt "org.androidannotations:androidannotations:$AAVersion"
+    annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.android.support:design:25.1.0'
     compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile 'com.commonsware.cwac:provider:0.5.0'
     compile 'com.fasterxml.jackson.core:jackson-core:2.8.5'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.5'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'commons-io:commons-io:2.5'
-    compile 'com.commonsware.cwac:provider:0.5.0'
+    compile "io.reactivex.rxjava2:rxjava:2.0.4"
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+}
+
+android.applicationVariants.all { variant ->
+    variant.variantData.variantConfiguration.javaCompileOptions.annotationProcessorOptions
+            .arguments = ['androidManifestFile': variant.outputs[0]?.processResources?.manifestFile?.absolutePath,
+                          'resourcePackageName': "us.mikeandwan.photos"]
 }

@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.tasks;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.List;
@@ -11,14 +10,14 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetPhotoListBackgroundTask extends BackgroundTask<List<Photo>> {
-    private final Context _context;
     private final String _url;
+    PhotoApiClient _client;
 
 
-    public GetPhotoListBackgroundTask(Context context, String url) {
+    public GetPhotoListBackgroundTask(PhotoApiClient client, String url) {
         super(BackgroundTaskPriority.Normal);
 
-        _context = context;
+        _client = client;
         _url = url;
     }
 
@@ -27,12 +26,10 @@ public class GetPhotoListBackgroundTask extends BackgroundTask<List<Photo>> {
     public List<Photo> call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to get photo list");
 
-        PhotoApiClient client = new PhotoApiClient(_context);
-
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        return client.getPhotos(_url);
+        return _client.getPhotos(_url);
     }
 }

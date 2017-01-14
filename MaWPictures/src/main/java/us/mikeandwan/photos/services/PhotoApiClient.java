@@ -6,6 +6,11 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.SystemService;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +42,7 @@ import us.mikeandwan.photos.data.PhotoAndCategory;
 import us.mikeandwan.photos.data.RatePhoto;
 import us.mikeandwan.photos.data.Rating;
 
-
+@EBean(scope = EBean.Scope.Singleton)
 public class PhotoApiClient {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECT_TIMEOUT = 10000;
@@ -64,20 +69,24 @@ public class PhotoApiClient {
     private static final String API_GET_RANDOM_PHOTO_URL = Constants.SITE_URL + "api/photos/getRandomPhoto";
 
     private static final CookieManager _cookieManager = new CookieManager();
-    private static PhotoStorage _photoStorage;
 
     private boolean _isSecondAttempt;
-    private final Context _context;
+
+    @Bean
+    PhotoStorage _photoStorage;
+
+    @Bean
+    MawDataManager _dataManager;
+
+    @RootContext
+    Context _context;
+
+    @SystemService
+    ConnectivityManager _connectivityManager;
 
 
     static {
         CookieHandler.setDefault(_cookieManager);
-    }
-
-
-    public PhotoApiClient(Context context) {
-        _context = context;
-        _photoStorage = new PhotoStorage(_context);
     }
 
 
@@ -117,9 +126,8 @@ public class PhotoApiClient {
 
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+    public boolean isConnected() {
+        NetworkInfo activeNetwork = _connectivityManager.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }
 
@@ -393,9 +401,7 @@ public class PhotoApiClient {
         if (force || !isAuthenticated()) {
             Log.d(MawApplication.LOG_TAG, "refreshing the authentication token");
 
-            MawDataManager dm = new MawDataManager(_context);
-
-            Credentials creds = dm.getCredentials();
+            Credentials creds = _dataManager.getCredentials();
 
             if (creds != null) {
                 String username = creds.getUsername();

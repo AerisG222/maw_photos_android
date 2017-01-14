@@ -8,29 +8,28 @@ import android.util.Log;
 
 import net.sf.andhsli.hotspotlogin.SimpleCrypto;
 
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import us.mikeandwan.photos.MawApplication;
 
 
+@EBean(scope = EBean.Scope.Singleton)
 public class MawDataManager {
     private static final String _seed = "Z@9{9^WSi)Rgf:Bjr|$L2f9.wK$fQH(_tiLs+\"4~p#i0u+[BBcSgEck!_0}PaJeF";
-    private MawSQLiteOpenHelper _dbHelper;
     private SQLiteDatabase _db;
     private boolean _autoClose;
 
+    @Bean
+    private MawSQLiteOpenHelper _dbHelper;
 
     public MawDataManager(Context context) {
         // if a db is not provided, we will open/close the connection automatically, set _autoclose
         // to true, so we know to close up our connection when a call is complete
-        _dbHelper = new MawSQLiteOpenHelper(context);
         _autoClose = true;
-    }
-
-
-    public MawDataManager(SQLiteDatabase db) {
-        _db = db;
     }
 
 

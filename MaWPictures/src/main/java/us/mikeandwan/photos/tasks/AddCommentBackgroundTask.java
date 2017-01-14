@@ -1,7 +1,5 @@
 package us.mikeandwan.photos.tasks;
 
-
-import android.content.Context;
 import android.util.Log;
 
 import java.util.List;
@@ -11,15 +9,16 @@ import us.mikeandwan.photos.data.Comment;
 import us.mikeandwan.photos.data.CommentPhoto;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
+
 public class AddCommentBackgroundTask extends BackgroundTask<List<Comment>> {
-    private final Context _context;
     private final CommentPhoto _cp;
+    private final PhotoApiClient _client;
 
 
-    public AddCommentBackgroundTask(Context context, CommentPhoto cp) {
+    public AddCommentBackgroundTask(PhotoApiClient client, CommentPhoto cp) {
         super(BackgroundTaskPriority.High);
 
-        _context = context;
+        _client = client;
         _cp = cp;
     }
 
@@ -28,15 +27,13 @@ public class AddCommentBackgroundTask extends BackgroundTask<List<Comment>> {
     public List<Comment> call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to add comment for photo: " + _cp.getPhotoId());
 
-        PhotoApiClient client = new PhotoApiClient(_context);
-
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        client.addComment(_cp.getPhotoId(), _cp.getComment());
+        _client.addComment(_cp.getPhotoId(), _cp.getComment());
 
         // now request all comments again to confirm that it was added
-        return client.getComments(_cp.getPhotoId());
+        return _client.getComments(_cp.getPhotoId());
     }
 }

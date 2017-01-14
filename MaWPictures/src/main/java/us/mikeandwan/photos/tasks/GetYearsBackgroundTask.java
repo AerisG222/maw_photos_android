@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.tasks;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.List;
@@ -12,27 +11,26 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 public class GetYearsBackgroundTask extends BackgroundTask<List<Integer>> {
     private final MawDataManager _dm;
-    private final Context _context;
+    private final PhotoApiClient _client;
 
 
-    public GetYearsBackgroundTask(Context context) {
+    public GetYearsBackgroundTask(MawDataManager dataManager, PhotoApiClient client) {
         super(BackgroundTaskPriority.High);
 
-        _context = context;
-        _dm = new MawDataManager(_context);
+        _dm = dataManager;
+        _client = client;
     }
 
 
     @Override
     public List<Integer> call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started GetYears()");
-        PhotoApiClient client = new PhotoApiClient(_context);
 
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        List<Integer> years = client.getPhotoYears();
+        List<Integer> years = _client.getPhotoYears();
         List<Integer> cachedYears = _dm.getPhotoYears();
 
         if (years.size() > 0) {

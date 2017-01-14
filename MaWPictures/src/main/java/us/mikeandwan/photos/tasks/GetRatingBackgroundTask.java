@@ -1,22 +1,24 @@
 package us.mikeandwan.photos.tasks;
 
-
-import android.content.Context;
 import android.util.Log;
+
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.data.Rating;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
+
 public class GetRatingBackgroundTask extends BackgroundTask<Rating> {
-    private final Context _context;
     private final int _photoId;
+    private final PhotoApiClient _client;
 
 
-    public GetRatingBackgroundTask(Context context, int photoId) {
+    public GetRatingBackgroundTask(PhotoApiClient client, int photoId) {
         super(BackgroundTaskPriority.High);
 
-        _context = context;
+        _client = client;
         _photoId = photoId;
     }
 
@@ -25,12 +27,10 @@ public class GetRatingBackgroundTask extends BackgroundTask<Rating> {
     public Rating call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to get rating for photo: " + _photoId);
 
-        PhotoApiClient client = new PhotoApiClient(_context);
-
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        return client.getRatings(_photoId);
+        return _client.getRatings(_photoId);
     }
 }

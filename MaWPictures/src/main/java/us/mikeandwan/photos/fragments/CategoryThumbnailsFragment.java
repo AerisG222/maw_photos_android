@@ -12,8 +12,10 @@ import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
@@ -34,7 +36,8 @@ import us.mikeandwan.photos.widget.CategoryRowDetail;
 @SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_category_thumbnails)
 public class CategoryThumbnailsFragment extends BaseCategoryListFragment {
-    private PhotoStorage _photoStorage;
+    @Bean
+    PhotoStorage _photoStorage;
 
     @ViewById(R.id.gridview)
     GridView _gridView;
@@ -42,18 +45,15 @@ public class CategoryThumbnailsFragment extends BaseCategoryListFragment {
     @App
     MawApplication _app;
 
-
-    @AfterInject
-    protected void afterInject() {
-        _photoStorage = new PhotoStorage(_app);
-    }
+    @RootContext
+    Context _context;
 
 
     @Override
     public void setCategories(List<Category> categories) {
         super.setCategories(categories);
 
-        CategoryThumbnailArrayAdapter adapter = new CategoryThumbnailArrayAdapter(this.getActivity(), _categories);
+        CategoryThumbnailArrayAdapter adapter = new CategoryThumbnailArrayAdapter(_context, _categories);
 
         _gridView.setAdapter(adapter);
     }

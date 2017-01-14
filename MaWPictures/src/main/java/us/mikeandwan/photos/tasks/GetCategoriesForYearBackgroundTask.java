@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.tasks;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.List;
@@ -12,17 +11,17 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetCategoriesForYearBackgroundTask extends BackgroundTask<List<Category>> {
-    private final MawDataManager _dm;
-    private final Context _context;
     private final int _year;
+    private final MawDataManager _dm;
+    private final PhotoApiClient _client;
 
 
-    public GetCategoriesForYearBackgroundTask(Context context, int year) {
+    public GetCategoriesForYearBackgroundTask(MawDataManager dataManager, PhotoApiClient client, int year) {
         super(BackgroundTaskPriority.Normal);
 
-        _context = context;
+        _dm = dataManager;
+        _client = client;
         _year = year;
-        _dm = new MawDataManager(_context);
     }
 
 
@@ -30,13 +29,11 @@ public class GetCategoriesForYearBackgroundTask extends BackgroundTask<List<Cate
     public List<Category> call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started GetCategoriesForYear(" + _year + ")");
 
-        PhotoApiClient client = new PhotoApiClient(_context);
-
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        List<Category> categories = client.getCategoriesForYear(_year);
+        List<Category> categories = _client.getCategoriesForYear(_year);
         List<Category> cachedCategories = _dm.getCategoriesForYear(_year);
 
         if (categories.size() > 0) {

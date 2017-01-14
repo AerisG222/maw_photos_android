@@ -1,22 +1,21 @@
 package us.mikeandwan.photos.tasks;
 
-
-import android.content.Context;
 import android.util.Log;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.data.Credentials;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
+
 public class LoginBackgroundTask extends BackgroundTask<Boolean> {
     private final Credentials _creds;
-    private final Context _context;
+    private final PhotoApiClient _client;
 
 
-    public LoginBackgroundTask(Context context, Credentials creds) {
+    public LoginBackgroundTask(PhotoApiClient client, Credentials creds) {
         super(BackgroundTaskPriority.VeryHigh);
 
-        _context = context;
+        _client = client;
         _creds = creds;
     }
 
@@ -25,14 +24,12 @@ public class LoginBackgroundTask extends BackgroundTask<Boolean> {
     public Boolean call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started login task");
 
-        PhotoApiClient client = new PhotoApiClient(_context);
-
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             Log.e(MawApplication.LOG_TAG, "network unavailable");
             return false;
         }
 
-        if (client.authenticate(_creds.getUsername(), _creds.getPassword())) {
+        if (_client.authenticate(_creds.getUsername(), _creds.getPassword())) {
             Log.i(MawApplication.LOG_TAG, "authenticated");
 
             return true;

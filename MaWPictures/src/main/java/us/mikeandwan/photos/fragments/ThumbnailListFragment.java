@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +13,9 @@ import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -39,7 +42,9 @@ import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
 public class ThumbnailListFragment extends BasePhotoFragment {
     private int _thumbIndex;
     private final List<ImageView> _thumbList = new ArrayList<>();
-    private PhotoStorage _photoStorage;
+
+    @Bean
+    PhotoStorage _photoStorage;
 
     @ViewById(R.id.horizontalScrollView)
     protected HorizontalScrollView _horizontalScrollView;
@@ -50,11 +55,8 @@ public class ThumbnailListFragment extends BasePhotoFragment {
     @App
     MawApplication _app;
 
-
-    @AfterInject
-    protected void afterInject() {
-        _photoStorage = new PhotoStorage(_app);
-    }
+    @RootContext
+    Context _context;
 
 
     public HorizontalScrollView getThumbnailScrollView() {
@@ -153,7 +155,7 @@ public class ThumbnailListFragment extends BasePhotoFragment {
 
 
     private ImageView createThumbnail() {
-        ImageView image = new ImageView(getContext());
+        ImageView image = new ImageView(_context);
 
         try {
             image.setScaleType(ImageView.ScaleType.CENTER);

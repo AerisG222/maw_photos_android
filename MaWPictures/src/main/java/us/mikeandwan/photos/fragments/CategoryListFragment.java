@@ -3,21 +3,26 @@ package us.mikeandwan.photos.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.ViewById;
+import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -32,24 +37,35 @@ import us.mikeandwan.photos.tasks.BackgroundTask;
 import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.DownloadCategoryTeaserBackgroundTask;
 import us.mikeandwan.photos.widget.CategoryRowDetail;
+import us.mikeandwan.photos.widget.RecyclerViewAdapterBase;
+import us.mikeandwan.photos.widget.ViewWrapper;
 
 
 @SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_category_list)
 public class CategoryListFragment extends BaseCategoryListFragment {
-    private CategoryArrayAdapter _adapter;
-    private PhotoStorage _photoStorage;
+    //private CategoryArrayAdapter _adapter;
+    private RecyclerView.Adapter _adapter;
+    private RecyclerView.LayoutManager _layoutManager;
 
-    @ViewById(R.id.category_list_view)
-    protected ListView categoryListView;
+    @ViewById(R.id.category_recycler_view)
+    protected RecyclerView categoryRecyclerView;
 
     @App
     protected MawApplication _app;
 
+    @Bean
+    PhotoStorage _photoStorage;
+
+    @RootContext
+    Context _context;
 
     @AfterInject
     protected void afterInject() {
-        _photoStorage = new PhotoStorage(_app);
+        categoryRecyclerView.setHasFixedSize(true);
+
+        _layoutManager = new LinearLayoutManager(_context);
+        categoryRecyclerView.setLayoutManager(_layoutManager);
     }
 
 
@@ -57,13 +73,13 @@ public class CategoryListFragment extends BaseCategoryListFragment {
     public void setCategories(List<Category> categories) {
         super.setCategories(categories);
 
-        _adapter = new CategoryArrayAdapter(this.getActivity(), _categories);
+        _adapter = new CategoryArrayAdapter(_categories);
 
-        categoryListView.setAdapter(_adapter);
+        categoryRecyclerView.setAdapter(_adapter);
     }
 
 
-    @ItemClick(R.id.category_list_view)
+    @ItemClick(R.id.category_recycler_view)
     void onCategoryListItemClick(Category category) {
         getCategoryActivity().selectCategory(category);
     }
@@ -75,43 +91,42 @@ public class CategoryListFragment extends BaseCategoryListFragment {
         _adapter.notifyDataSetChanged();
     }
 
-    private void displayCategory(CategoryRowDetail detail) {
-        String file = "file://" + _photoStorage.getCachePath(detail.getCategory().getTeaserPhotoInfo().getPath());
-
-        Picasso
-            .with(getActivity())
-            .load(file)
-            .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
-            .centerCrop()
-            .into(detail.getImageView());
-    }
 
 
-    public class CategoryArrayAdapter extends ArrayAdapter<Category> {
-        private final Context _context;
-        private final List<Category> _categories;
 
-        public CategoryArrayAdapter(Context context, List<Category> categories) {
-            super(context, R.layout.category_list_item, categories);
-            _context = context;
-            _categories = categories;
+    @EBean
+    public class CategoryArrayAdapter extends RecyclerViewAdapterBase<Category, CategoryRowDetail> {
+        @RootContext
+        Context context;
+
+        @Override
+        protected PersonItemView onCreateItemView(ViewGroup parent, int viewType) {
+            return PersonItemView_.build(context);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.category_list_item, parent, false);
-            }
+        public void onBindViewHolder(ViewWrapper<PersonItemView> viewHolder, int position) {
+            PersonItemView view = viewHolder.getView();
+            Person person = items.get(position);
 
+            view.bind(person);
+        }
+
+        public CategoryArrayAdapter(List<Category> categories) {
+            super();
+            this.items = categories;
+        }
+
+
+        @Override
+        public void onBindViewHolder(ViewWrapper<CategoryRowDetail> holder, int position) {
             Category category = _categories.get(position);
-            ImageView imageView = (ImageView) convertView.findViewById(R.id.thumbnailImageView);
-            TextView textView = (TextView) convertView.findViewById(R.id.categoryNameTextView);
+            CategoryRowDetail detail = holder.getView();
 
-            textView.setText(category.getName());
-            imageView.setImageBitmap(_photoStorage.getPlaceholderThumbnail());
+            detail._textView.setText(category.getName());
+            detail._imageView.setImageBitmap(_photoStorage.getPlaceholderThumbnail());
 
-            CategoryRowDetail row = new CategoryRowDetail(imageView, category);
+            CategoryRowDetail row = new CategoryRowDetail(holder._imageView, category);
 
             if (_photoStorage.doesExist(category.getTeaserPhotoInfo().getPath())) {
                 displayCategory(row);
@@ -132,8 +147,11 @@ public class CategoryListFragment extends BaseCategoryListFragment {
 
                 BackgroundTaskExecutor.getInstance().enqueueTask(task);
             }
+        }
 
-            return convertView;
+        @Override
+        public int getItemCount() {
+            return _categories.size();
         }
     }
 }

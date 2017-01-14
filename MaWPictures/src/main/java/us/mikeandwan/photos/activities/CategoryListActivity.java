@@ -15,15 +15,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
+import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
@@ -38,14 +40,15 @@ import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.BackgroundTask;
 import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
+import us.mikeandwan.photos.tasks.BackgroundTaskFactory;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesBackgroundTask;
+
 
 @SuppressWarnings("ALL")
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_category_list)
 @OptionsMenu(R.menu.category_list)
 public class CategoryListActivity extends AppCompatActivity implements ICategoryListActivity {
-    private MawDataManager _dm;
     private List<Category> _categories;
     private BaseCategoryListFragment _activeFragment;
 
@@ -67,11 +70,17 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
     @App
     MawApplication _app;
 
+    @Bean
+    MawDataManager _dataManager;
 
-    @AfterInject
-    protected void afterInject() {
-        _dm = new MawDataManager(_app);
-    }
+    @Bean
+    BackgroundTaskFactory _taskFactory;
+
+    @RootContext
+    Context _context;
+
+    @SystemService
+    LayoutInflater _layoutInflator;
 
 
     @AfterViews
@@ -89,7 +98,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
 
     @Override
     public void onResume() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
         FragmentManager fm = getFragmentManager();
         BaseCategoryListFragment fragmentToHide;
 
@@ -107,7 +116,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
             .hide(fragmentToHide)
             .commit();
 
-        _categories = _dm.getCategoriesForYear(_year);
+        _categories = _dataManager.getCategoriesForYear(_year);
 
         _activeFragment.setCategories(_categories);
 
@@ -135,7 +144,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
 
 
     public void selectCategory(Category category) {
-        Intent intent = new Intent(getBaseContext(), PhotoListActivity_.class);
+        Intent intent = new Intent(_context, PhotoListActivity_.class);
         intent.putExtra("NAME", category.getName());
         intent.putExtra("URL", PhotoApiClient.getPhotosForCategoryUrl(category.getId()));
 
@@ -144,27 +153,11 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
 
 
     private void forceSync() {
-        BackgroundTask task = new GetRecentCategoriesBackgroundTask(getBaseContext()) {
-            @Override
-            protected void postExecuteTask(List<Category> result) {
-                onSyncComplete();
-            }
-
-            @Override
-            protected void handleException(ExecutionException ex) {
-                _refreshMenuItem.getActionView().clearAnimation();
-                _refreshMenuItem.setActionView(null);
-
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getBaseContext(), LoginActivity_.class));
-                }
-            }
-        };
+        BackgroundTask task = _taskFactory.BuildGetRecentCategoriesBackgroundTask(this::onSyncComplete, this::onException);
 
         BackgroundTaskExecutor.getInstance().enqueueTask(task);
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_indicator, _toolbar, false);
+        ImageView iv = (ImageView) _layoutInflator.inflate(R.layout.refresh_indicator, _toolbar, false);
 
         Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
         rotation.setRepeatCount(Animation.INFINITE);
@@ -174,11 +167,20 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
     }
 
 
-    private void onSyncComplete() {
+    private void onException(ExecutionException ex) {
+        _refreshMenuItem.getActionView().clearAnimation();
+        _refreshMenuItem.setActionView(null);
+
+        if (ex.getCause() instanceof MawAuthenticationException) {
+            startActivity(new Intent(_context, LoginActivity_.class));
+        }
+    }
+
+    private void onSyncComplete(List<Category> result) {
         // force the update to categories to come from database, and not the network result, as there
         // may have been updates already pulled from the poller
         _categories.clear();
-        _categories.addAll(_dm.getCategoriesForYear(_year));
+        _categories.addAll(_dataManager.getCategoriesForYear(_year));
 
         _activeFragment.notifyCategoriesUpdated();
 

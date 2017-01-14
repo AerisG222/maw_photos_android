@@ -15,9 +15,9 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.SimpleExpandableListAdapter;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -28,8 +28,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.concurrent.ExecutionException;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.data.Category;
@@ -40,16 +43,17 @@ import us.mikeandwan.photos.tasks.BackgroundTask;
 import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesBackgroundTask;
 
+
 @SuppressWarnings("ALL")
 @SuppressLint("Registered")
 @OptionsMenu(R.menu.mode_selection)
 @EActivity(R.layout.activity_mode_selection)
 public class ModeSelectionActivity extends AppCompatActivity {
-    private SimpleExpandableListAdapter _adapter;
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private final List<Map<String, String>> _groupData = new ArrayList<>();
     private final List<List<Map<String, String>>> _childData = new ArrayList<>();
-    private MawDataManager _dm;
     private final List<Map<String, String>> _yearChildren = new ArrayList<>();
+    private SimpleExpandableListAdapter _adapter;
     private List<Integer> _yearList;
 
     @OptionsMenuItem(R.id.action_settings)
@@ -64,11 +68,8 @@ public class ModeSelectionActivity extends AppCompatActivity {
     @App
     MawApplication _app;
 
-
-    @AfterInject
-    protected void afterInject() {
-        _dm = new MawDataManager(_app);
-    }
+    @Bean
+    MawDataManager _dm;
 
 
     @AfterViews
@@ -79,26 +80,10 @@ public class ModeSelectionActivity extends AppCompatActivity {
             ViewCompat.setElevation(_toolbar, 8);
         }
 
-        _modeExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Intent intent;
-
-                if (groupPosition == 0) {
-                    intent = new Intent(parent.getContext(), CategoryListActivity_.class);
-                    intent.putExtra("YEAR", Integer.parseInt(_childData.get(groupPosition).get(childPosition).get("NAME")));
-                } else {
-                    intent = new Intent(parent.getContext(), PhotoListActivity_.class);
-                    intent.putExtra("NAME", _childData.get(groupPosition).get(childPosition).get("NAME"));
-                }
-
-                intent.putExtra("URL", _childData.get(groupPosition).get(childPosition).get("URL"));
-
-                startActivity(intent);
-
-                return true;
+        _modeExpandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+                return onItemClicked(parent, v, groupPosition, childPosition, id);
             }
-        });
+        );
 
         _adapter = new SimpleExpandableListAdapter(this,
             _groupData,
@@ -126,6 +111,13 @@ public class ModeSelectionActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
+    }
+
+
     @OptionsItem(R.id.action_settings)
     protected void onMenuItemSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
@@ -139,7 +131,31 @@ public class ModeSelectionActivity extends AppCompatActivity {
     }
 
 
+    private boolean onItemClicked(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+        Intent intent;
+
+        if (groupPosition == 0) {
+            intent = new Intent(parent.getContext(), CategoryListActivity_.class);
+            intent.putExtra("YEAR", Integer.parseInt(_childData.get(groupPosition).get(childPosition).get("NAME")));
+        } else {
+            intent = new Intent(parent.getContext(), PhotoListActivity_.class);
+            intent.putExtra("NAME", _childData.get(groupPosition).get(childPosition).get("NAME"));
+        }
+
+        intent.putExtra("URL", _childData.get(groupPosition).get(childPosition).get("URL"));
+
+        startActivity(intent);
+
+        return true;
+    }
+
+
     private void forceSync() {
+        disposables.add(
+                new Observer<List<int>>()
+
+        );
+
         BackgroundTask task = new GetRecentCategoriesBackgroundTask(getBaseContext()) {
             @Override
             protected void postExecuteTask(List<Category> result) {
@@ -257,5 +273,10 @@ public class ModeSelectionActivity extends AppCompatActivity {
         child.put("URL", url);
 
         return child;
+    }
+
+
+    private Observable<List<Integer>> yearListObserver() {
+
     }
 }

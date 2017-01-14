@@ -6,16 +6,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import us.mikeandwan.photos.MawApplication;
 
 
+@EBean(scope = EBean.Scope.Singleton)
 class MawSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "maw";
 
+    @Bean
+    MawDataManager _dataManager;
 
     MawSQLiteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -110,10 +116,8 @@ class MawSQLiteOpenHelper extends SQLiteOpenHelper {
             }
         }
 
-        MawDataManager mdm = new MawDataManager(db);
-
         for (Integer year : years) {
-            mdm.addYear(year);
+            _dataManager.addYear(year);
         }
     }
 }

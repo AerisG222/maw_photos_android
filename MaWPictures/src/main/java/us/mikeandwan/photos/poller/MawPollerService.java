@@ -20,7 +20,9 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
 
 import java.util.List;
@@ -39,8 +41,10 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 @SuppressLint("Registered")
 @EService
 public class MawPollerService extends Service {
-    private Context _context;
     private ServiceHandler _serviceHandler;
+
+    @RootContext
+    private Context _context;
 
     @SystemService
     NotificationManager _notificationManager;
@@ -54,7 +58,7 @@ public class MawPollerService extends Service {
         HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
 
-        _context = getApplicationContext();
+        //_context = getApplicationContext();
 
         // Get the HandlerThread's Looper and use it for our Handler
         Looper serviceLooper = thread.getLooper();
@@ -124,6 +128,9 @@ public class MawPollerService extends Service {
 
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
+        @Bean
+        PhotoApiClient client;
+
         public ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -134,7 +141,7 @@ public class MawPollerService extends Service {
             int maxId = dm.getLatestCategoryId();
             int totalCount = 0;
 
-            PhotoApiClient client = new PhotoApiClient(_context);
+            //PhotoApiClient client = new PhotoApiClient(_context);
 
             if (!client.isConnected(_context)) {
                 Log.w(MawApplication.LOG_TAG, "not connected to network, skipping poll check");

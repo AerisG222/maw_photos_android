@@ -1,7 +1,5 @@
 package us.mikeandwan.photos.tasks;
 
-
-import android.content.Context;
 import android.util.Log;
 
 import java.util.List;
@@ -11,16 +9,17 @@ import us.mikeandwan.photos.data.Category;
 import us.mikeandwan.photos.data.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
+
 public class GetRecentCategoriesBackgroundTask extends BackgroundTask<List<Category>> {
     private final MawDataManager _dm;
-    private final Context _context;
+    private final PhotoApiClient _client;
 
 
-    public GetRecentCategoriesBackgroundTask(Context context) {
+    public GetRecentCategoriesBackgroundTask(MawDataManager dataManager, PhotoApiClient client) {
         super(BackgroundTaskPriority.Normal);
 
-        _context = context;
-        _dm = new MawDataManager(_context);
+        _dm = dataManager;
+        _client = client;
     }
 
 
@@ -28,26 +27,24 @@ public class GetRecentCategoriesBackgroundTask extends BackgroundTask<List<Categ
     public List<Category> call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to get recent categories");
 
-        PhotoApiClient client = new PhotoApiClient(_context);
-
-        if (!client.isConnected(_context)) {
+        if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        List<Category> categories = client.getRecentCategories(_dm.getLatestCategoryId());
+        List<Category> categories = _client.getRecentCategories(_dm.getLatestCategoryId());
 
         for (Category category : categories) {
             _dm.addCategory(category);
         }
 
         // new check which should cover case if the initial download was interrupted / failed
-        int serverCount = client.getTotalCategoryCount();
+        int serverCount = _client.getTotalCategoryCount();
         int localCount = _dm.getCategoryCount();
 
         if (serverCount != localCount) {
             Log.w(MawApplication.LOG_TAG, "> different number of categories on server, attempting full refresh");
 
-            List<Category> serverCategories = client.getRecentCategories(0);
+            List<Category> serverCategories = _client.getRecentCategories(0);
             List<Category> localCategories = _dm.getAllCategories();
 
             serverCategories.removeAll(localCategories);

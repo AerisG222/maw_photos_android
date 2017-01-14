@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
@@ -119,6 +120,9 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
     @Extra("NAME")
     protected String _name;
+
+    @Bean
+    PhotoStorage _ps;
 
 
     @AfterViews
@@ -431,8 +435,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
     private Intent createShareIntent(Photo photo) {
         if (photo != null) {
-            PhotoStorage ps = new PhotoStorage(this);
-            Uri contentUri = ps.getSharingContentUri(photo.getMdInfo().getPath());
+            Uri contentUri = _ps.getSharingContentUri(photo.getMdInfo().getPath());
 
             if (contentUri != null) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);

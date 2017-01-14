@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.fragments;
 
 
+import android.content.Context;
 import android.support.v4.view.ViewPager;
 
 import com.example.touch.FullScreenImageAdapter;
@@ -8,6 +9,7 @@ import com.example.touch.TouchViewPager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.ViewById;
 
 import us.mikeandwan.photos.R;
@@ -21,10 +23,12 @@ public class MainImageFragment extends BasePhotoFragment {
     @ViewById(R.id.pager)
     protected TouchViewPager _pager;
 
+    @RootContext
+    Context _context;
 
     @AfterViews
     protected void afterViews() {
-        _adapter = new FullScreenImageAdapter(getContext(), getPhotoActivity());
+        _adapter = new FullScreenImageAdapter(_context, getPhotoActivity());
 
         _pager.setPageMargin(20);
         _pager.setAdapter(_adapter);

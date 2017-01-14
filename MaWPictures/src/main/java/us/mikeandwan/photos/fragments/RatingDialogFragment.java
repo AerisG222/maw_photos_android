@@ -1,11 +1,13 @@
 package us.mikeandwan.photos.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.RatingBar;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.concurrent.ExecutionException;
@@ -29,6 +31,8 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     @ViewById(R.id.averageRatingBar)
     protected RatingBar _averageRatingBar;
 
+    @RootContext
+    Context _context;
 
     @AfterViews
     protected void afterViews() {
@@ -38,7 +42,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                 if (fromUser) {
                     int photoId = getCurrentPhoto().getId();
 
-                    SetRatingBackgroundTask task = new SetRatingBackgroundTask(getContext(), photoId, Math.round(rating)) {
+                    SetRatingBackgroundTask task = new SetRatingBackgroundTask(_context, photoId, Math.round(rating)) {
                         @Override
                         protected void postExecuteTask(Rating rating) {
                             displayRating(rating);
@@ -49,7 +53,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                             Log.e(MawApplication.LOG_TAG, "exception setting the rating: " + ex.getMessage());
 
                             if (ex.getCause() instanceof MawAuthenticationException) {
-                                startActivity(new Intent(getContext(), LoginActivity_.class));
+                                startActivity(new Intent(_context, LoginActivity_.class));
                             }
                         }
                     };
@@ -76,7 +80,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
         _yourRatingBar.setRating(0);
         _averageRatingBar.setRating(0);
 
-        GetRatingBackgroundTask task = new GetRatingBackgroundTask(getContext(), getCurrentPhoto().getId()) {
+        GetRatingBackgroundTask task = new GetRatingBackgroundTask(_context, getCurrentPhoto().getId()) {
             @Override
             protected void postExecuteTask(Rating rating) {
                 displayRating(rating);
@@ -87,7 +91,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                 Log.e(MawApplication.LOG_TAG, "exception getting the rating: " + ex.getMessage());
 
                 if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getContext(), LoginActivity_.class));
+                    startActivity(new Intent(_context, LoginActivity_.class));
                 }
             }
         };
