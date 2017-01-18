@@ -9,15 +9,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import org.androidannotations.annotations.EReceiver;
-
 import java.util.Calendar;
 
 import us.mikeandwan.photos.MawApplication;
 
 
-@SuppressWarnings("ALL")
-@EReceiver
 public class MawScheduleReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -39,7 +35,7 @@ public class MawScheduleReceiver extends BroadcastReceiver {
         long repeatIntervalInMillis = repeatInHours * AlarmManager.INTERVAL_HOUR;
         //long repeatIntervalInMillis = 20000;
 
-        Intent i = new Intent(context, MawStartReceiver_.class);
+        Intent i = new Intent(context, MawStartReceiver.class);
         PendingIntent pending = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 

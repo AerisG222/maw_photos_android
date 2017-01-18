@@ -3,7 +3,6 @@ package us.mikeandwan.photos.data;
 import java.util.Date;
 
 
-@SuppressWarnings("ALL")
 public class Comment {
     private Date _entryDate;
 

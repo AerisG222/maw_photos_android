@@ -20,7 +20,6 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.poller.MawScheduleReceiver;
 
 
-@SuppressWarnings("ALL")
 public class SettingsActivity extends PreferenceActivity {
     @Override
     public boolean onIsMultiPane() {

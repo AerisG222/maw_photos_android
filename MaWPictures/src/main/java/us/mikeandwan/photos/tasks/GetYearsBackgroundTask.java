@@ -9,20 +9,14 @@ import us.mikeandwan.photos.data.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class GetYearsBackgroundTask extends BackgroundTask<List<Integer>> {
-    private final MawDataManager _dm;
-    private final PhotoApiClient _client;
+public class GetYearsBackgroundTask {
+    @Bean
+    MawDataManager _dm;
+
+    @Bean
+    PhotoApiClient _client;
 
 
-    public GetYearsBackgroundTask(MawDataManager dataManager, PhotoApiClient client) {
-        super(BackgroundTaskPriority.High);
-
-        _dm = dataManager;
-        _client = client;
-    }
-
-
-    @Override
     public List<Integer> call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started GetYears()");
 

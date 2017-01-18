@@ -1,67 +1,68 @@
 package us.mikeandwan.photos.fragments;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import us.mikeandwan.photos.R;
 
 
-@SuppressWarnings("ALL")
-@EFragment(R.layout.fragment_main_image_toolbar)
 public class MainImageToolbarFragment extends BasePhotoFragment {
     private boolean _isSlideshowPlaying;
+    private Unbinder _unbinder;
 
-    @ViewById(R.id.commentButton)
-    protected ImageButton _commentButton;
+    @BindView(R.id.commentButton) ImageButton _commentButton;
+    @BindView(R.id.exifButton) ImageButton _exifButton;
+    @BindView(R.id.rotateLeftButton) ImageButton _rotateLeftButton;
+    @BindView(R.id.rotateRightButton) ImageButton _rotateRightButton;
+    @BindView(R.id.ratingButton) ImageButton _ratingButton;
+    @BindView(R.id.slideshowButton)  ImageButton _slideshowButton;
 
-    @ViewById(R.id.exifButton)
-    protected ImageButton _exifButton;
-
-    @ViewById(R.id.rotateLeftButton)
-    protected ImageButton _rotateLeftButton;
-
-    @ViewById(R.id.rotateRightButton)
-    protected ImageButton _rotateRightButton;
-
-    @ViewById(R.id.ratingButton)
-    protected ImageButton _ratingButton;
-
-    @ViewById(R.id.slideshowButton)
-    protected ImageButton _slideshowButton;
-
-
-    @Click(R.id.exifButton)
-    void onExifButtonClick() {
+    @OnClick(R.id.exifButton) void onExifButtonClick() {
         getPhotoActivity().showExif();
     }
 
-    @Click(R.id.ratingButton)
-    void onRatingButtonClick() {
+    @OnClick(R.id.ratingButton) void onRatingButtonClick() {
         getPhotoActivity().showRating();
     }
 
-    @Click(R.id.commentButton)
-    void onCommentButtonClick() {
+    @OnClick(R.id.commentButton) void onCommentButtonClick() {
         getPhotoActivity().showComments();
     }
 
-    @Click(R.id.rotateLeftButton)
-    void onRotateLeftButtonClick() {
+    @OnClick(R.id.rotateLeftButton) void onRotateLeftButtonClick() {
         getPhotoActivity().rotatePhoto(-1);
     }
 
-    @Click(R.id.rotateRightButton)
-    void onRotateRightButtonClick() {
+    @OnClick(R.id.rotateRightButton) void onRotateRightButtonClick() {
         getPhotoActivity().rotatePhoto(1);
     }
 
-    @Click(R.id.slideshowButton)
-    void onSlideshowButtonClick() {
+    @OnClick(R.id.slideshowButton) void onSlideshowButtonClick() {
         toggleSlideshow();
         getPhotoActivity().toggleSlideshow();
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_main_image_toolbar, container, false);
+        _unbinder = ButterKnife.bind(this, view);
+
+        return view;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        _unbinder.unbind();
     }
 
 

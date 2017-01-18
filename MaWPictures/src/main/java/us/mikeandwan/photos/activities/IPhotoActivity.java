@@ -5,7 +5,7 @@ import java.util.List;
 
 import us.mikeandwan.photos.data.Photo;
 
-@SuppressWarnings("ALL")
+
 public interface IPhotoActivity {
     void updateProgress();
 

@@ -1,87 +1,85 @@
 package us.mikeandwan.photos.fragments;
 
-
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.App;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.ViewById;
-import org.w3c.dom.Text;
-
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import us.mikeandwan.photos.MawApplication;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
+import butterknife.OnItemSelected;
+import butterknife.Unbinder;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity_;
+import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.data.Category;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.BackgroundTask;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.DownloadCategoryTeaserBackgroundTask;
 import us.mikeandwan.photos.widget.CategoryRowDetail;
-import us.mikeandwan.photos.widget.RecyclerViewAdapterBase;
-import us.mikeandwan.photos.widget.ViewWrapper;
 
 
-@SuppressWarnings("ALL")
-@EFragment(R.layout.fragment_category_list)
 public class CategoryListFragment extends BaseCategoryListFragment {
-    //private CategoryArrayAdapter _adapter;
-    private RecyclerView.Adapter _adapter;
-    private RecyclerView.LayoutManager _layoutManager;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private CategoryArrayAdapter _adapter;
+    private Unbinder _unbinder;
 
-    @ViewById(R.id.category_recycler_view)
-    protected RecyclerView categoryRecyclerView;
-
-    @App
-    protected MawApplication _app;
+    @BindView(R.id.category_list_view) ListView categoryListView;
 
     @Bean
     PhotoStorage _photoStorage;
 
-    @RootContext
-    Context _context;
-
-    @AfterInject
-    protected void afterInject() {
-        categoryRecyclerView.setHasFixedSize(true);
-
-        _layoutManager = new LinearLayoutManager(_context);
-        categoryRecyclerView.setLayoutManager(_layoutManager);
-    }
+    @Bean
+    DownloadCategoryTeaserBackgroundTask _downloadCategoryTeaserTask;
 
 
     @Override
     public void setCategories(List<Category> categories) {
         super.setCategories(categories);
 
-        _adapter = new CategoryArrayAdapter(_categories);
+        _adapter = new CategoryArrayAdapter(getActivity(), _categories);
 
-        categoryRecyclerView.setAdapter(_adapter);
+        categoryListView.setAdapter(_adapter);
     }
 
 
-    @ItemClick(R.id.category_recycler_view)
-    void onCategoryListItemClick(Category category) {
+    @OnItemSelected(R.id.category_list_view)
+    void onCategoryListItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Category category = (Category) parent.getItemAtPosition((position));
+
         getCategoryActivity().selectCategory(category);
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_category_list, container, false);
+        _unbinder = ButterKnife.bind(this, view);
+
+        return view;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
+        _unbinder.unbind();
     }
 
 
@@ -92,66 +90,62 @@ public class CategoryListFragment extends BaseCategoryListFragment {
     }
 
 
+    private void displayCategory(CategoryRowDetail detail) {
+        String file = "file://" + _photoStorage.getCachePath(detail.getCategory().getTeaserPhotoInfo().getPath());
+
+        Picasso
+                .with(getActivity())
+                .load(file)
+                .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
+                .centerCrop()
+                .into(detail.getImageView());
+    }
 
 
-    @EBean
-    public class CategoryArrayAdapter extends RecyclerViewAdapterBase<Category, CategoryRowDetail> {
-        @RootContext
-        Context context;
+    private void handleException(Throwable ex) {
+        if (ex.getCause() instanceof MawAuthenticationException) {
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+        }
+    }
 
-        @Override
-        protected PersonItemView onCreateItemView(ViewGroup parent, int viewType) {
-            return PersonItemView_.build(context);
+
+    public class CategoryArrayAdapter extends ArrayAdapter<Category> {
+        private final List<Category> _categories;
+
+        public CategoryArrayAdapter(Context context, List<Category> categories) {
+            super(context, R.layout.category_list_item, categories);
+            _categories = categories;
         }
 
         @Override
-        public void onBindViewHolder(ViewWrapper<PersonItemView> viewHolder, int position) {
-            PersonItemView view = viewHolder.getView();
-            Person person = items.get(position);
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getActivity().getLayoutInflater().inflate(R.layout.category_list_item, parent, false);
+            }
 
-            view.bind(person);
-        }
-
-        public CategoryArrayAdapter(List<Category> categories) {
-            super();
-            this.items = categories;
-        }
-
-
-        @Override
-        public void onBindViewHolder(ViewWrapper<CategoryRowDetail> holder, int position) {
             Category category = _categories.get(position);
-            CategoryRowDetail detail = holder.getView();
+            ImageView imageView = (ImageView) convertView.findViewById(R.id.thumbnailImageView);
+            TextView textView = (TextView) convertView.findViewById(R.id.categoryNameTextView);
 
-            detail._textView.setText(category.getName());
-            detail._imageView.setImageBitmap(_photoStorage.getPlaceholderThumbnail());
+            textView.setText(category.getName());
+            imageView.setImageBitmap(_photoStorage.getPlaceholderThumbnail());
 
-            CategoryRowDetail row = new CategoryRowDetail(holder._imageView, category);
+            CategoryRowDetail row = new CategoryRowDetail(imageView, category);
 
             if (_photoStorage.doesExist(category.getTeaserPhotoInfo().getPath())) {
                 displayCategory(row);
             } else {
-                BackgroundTask task = new DownloadCategoryTeaserBackgroundTask(getActivity(), row) {
-                    @Override
-                    protected void postExecuteTask(CategoryRowDetail rowDetail) {
-                        displayCategory(rowDetail);
-                    }
-
-                    @Override
-                    protected void handleException(ExecutionException ex) {
-                        if (ex.getCause() instanceof MawAuthenticationException) {
-                            startActivity(new Intent(getActivity(), LoginActivity_.class));
-                        }
-                    }
-                };
-
-                BackgroundTaskExecutor.getInstance().enqueueTask(task);
+                disposables.add(Flowable.fromCallable(() -> _downloadCategoryTeaserTask.call(row))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.single())
+                                .subscribe(
+                                        x -> displayCategory(x),
+                                        ex -> handleException(ex)
+                                )
+                );
             }
-        }
 
-        @Override
-        public int getItemCount() {
-            return _categories.size();
+            return convertView;
         }
     }
 }

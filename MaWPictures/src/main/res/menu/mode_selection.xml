@@ -6,10 +6,12 @@
           android:title="@string/action_sync"
           android:icon="@drawable/ic_sync_white_24dp"
           android:orderInCategory="100"
+          android:onClick="onMenuItemForceSync"
           mawphotos:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:orderInCategory="100"
+          android:onClick="onMenuItemSettings"
           mawphotos:showAsAction="never" />
 </menu>

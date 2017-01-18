@@ -10,20 +10,14 @@ import us.mikeandwan.photos.data.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class GetRecentCategoriesBackgroundTask extends BackgroundTask<List<Category>> {
-    private final MawDataManager _dm;
-    private final PhotoApiClient _client;
+public class GetRecentCategoriesBackgroundTask {
+    @Bean
+    MawDataManager _dm;
+
+    @Bean
+    PhotoApiClient _client;
 
 
-    public GetRecentCategoriesBackgroundTask(MawDataManager dataManager, PhotoApiClient client) {
-        super(BackgroundTaskPriority.Normal);
-
-        _dm = dataManager;
-        _client = client;
-    }
-
-
-    @Override
     public List<Category> call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to get recent categories");
 

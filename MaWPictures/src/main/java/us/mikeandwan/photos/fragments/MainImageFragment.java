@@ -1,34 +1,55 @@
 package us.mikeandwan.photos.fragments;
 
-
-import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.example.touch.FullScreenImageAdapter;
 import com.example.touch.TouchViewPager;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.ViewById;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.services.PhotoApiClient;
+import us.mikeandwan.photos.services.PhotoStorage;
 
 
-@SuppressWarnings("ALL")
-@EFragment(R.layout.fragment_main_image)
 public class MainImageFragment extends BasePhotoFragment {
     private FullScreenImageAdapter _adapter;
+    private Unbinder _unbinder;
 
-    @ViewById(R.id.pager)
-    protected TouchViewPager _pager;
+    @BindView(R.id.pager) TouchViewPager _pager;
 
-    @RootContext
-    Context _context;
+    @Bean
+    PhotoStorage _photoStorage;
 
-    @AfterViews
-    protected void afterViews() {
-        _adapter = new FullScreenImageAdapter(_context, getPhotoActivity());
+    @Bean
+    PhotoApiClient _photoClient;
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_main_image, container, false);
+        _unbinder = ButterKnife.bind(this, view);
+
+        afterBind();
+
+        return view;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        _unbinder.unbind();
+    }
+
+
+    protected void afterBind() {
+        _adapter = new FullScreenImageAdapter(getActivity(), _photoStorage, _photoClient, getPhotoActivity());
 
         _pager.setPageMargin(20);
         _pager.setAdapter(_adapter);

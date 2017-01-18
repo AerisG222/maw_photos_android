@@ -74,10 +74,9 @@
             <meta-data
                 android:name="com.commonsware.cwac.provider.STREAM_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
-
         </provider>
 
-
     </application>
+
 
 </manifest>

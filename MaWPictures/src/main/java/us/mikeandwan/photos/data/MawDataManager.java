@@ -24,7 +24,8 @@ public class MawDataManager {
     private boolean _autoClose;
 
     @Bean
-    private MawSQLiteOpenHelper _dbHelper;
+    MawSQLiteOpenHelper _dbHelper;
+
 
     public MawDataManager(Context context) {
         // if a db is not provided, we will open/close the connection automatically, set _autoclose

@@ -14,19 +14,19 @@ import android.widget.RelativeLayout;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.IPhotoActivity;
-import us.mikeandwan.photos.activities.LoginActivity_;
+import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.data.Photo;
 import us.mikeandwan.photos.data.PhotoDownload;
 import us.mikeandwan.photos.data.PhotoSize;
 import us.mikeandwan.photos.services.MawAuthenticationException;
+import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
-import us.mikeandwan.photos.tasks.BackgroundTaskPriority;
 import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
 
 
@@ -38,14 +38,17 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final Dictionary<Integer, TouchImageView> _imgList = new Hashtable<>();
     private final LayoutInflater _inflater;
     private final PhotoStorage _photoStorage;
+    private final DownloadImageBackgroundTask _downloadImageTask;
 
 
-    public FullScreenImageAdapter(Context context, IPhotoActivity activity) {
+    public FullScreenImageAdapter(Context context, PhotoStorage photoStorage, PhotoApiClient photoClient, IPhotoActivity activity) {
         _context = context;
         _activity = activity;
         _photoList = activity.getPhotoList();
-        _photoStorage = new PhotoStorage(_context);
+        _photoStorage = photoStorage;
         _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        _downloadImageTask = new DownloadImageBackgroundTask();
+        _downloadImageTask.setPhotoClient(photoClient);
     }
 
 
@@ -92,7 +95,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if (!_photoStorage.doesExist(path)) {
             if (photoDownload.getDownloadAttempts() == 0) {
                 photoDownload.incrementDownloadCount();
-                downloadImage(photoDownload, PhotoSize.Md, BackgroundTaskPriority.High);
+                downloadImage(photoDownload, PhotoSize.Md);
             } else {
                 Log.w(MawApplication.LOG_TAG, "we have already tried to download this main image w/o success, not trying again");
             }
@@ -107,23 +110,25 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
 
-    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size, BackgroundTaskPriority priority) {
-        DownloadImageBackgroundTask task = new DownloadImageBackgroundTask(_context, photoDownload, size, priority) {
-            @Override
-            protected void postExecuteTask(PhotoDownload result) {
-                displayImage(result);
-                _activity.updateProgress();
-            }
+    private void handleException(Throwable ex) {
+        if (ex.getCause() instanceof MawAuthenticationException) {
+            _context.startActivity(new Intent(_context, LoginActivity.class));
+        }
+    }
 
-            @Override
-            protected void handleException(ExecutionException ex) {
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    _context.startActivity(new Intent(_context, LoginActivity_.class));
-                }
-            }
-        };
 
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
+    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size) {
+        Flowable.fromCallable(() -> _downloadImageTask.call(photoDownload, size))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(
+                        x -> {
+                            displayImage(x);
+                            _activity.updateProgress();
+                        },
+                        ex -> handleException(ex)
+                );
+
         _activity.updateProgress();
     }
 }

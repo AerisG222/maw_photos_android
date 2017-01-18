@@ -3,8 +3,10 @@ package us.mikeandwan.photos.data;
 
 import java.io.Serializable;
 
-@SuppressWarnings("ALL")
+
 public class Photo implements Serializable {
+    private static final long serialVersionUID = 1;
+
     private int _id;
     private int _categoryId;
     private Double _latitude;

@@ -22,7 +22,6 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author ferenc.hechler
  */
-@SuppressWarnings("ALL")
 public class SimpleCrypto {
 
     public static String encrypt(String seed, String cleartext) throws Exception {

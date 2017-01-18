@@ -1,11 +1,9 @@
 package us.mikeandwan.photos.poller;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -20,16 +18,11 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EService;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SystemService;
-
 import java.util.List;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity_;
+import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.data.Category;
 import us.mikeandwan.photos.data.Credentials;
 import us.mikeandwan.photos.data.MawDataManager;
@@ -37,17 +30,12 @@ import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-@SuppressWarnings("ALL")
-@SuppressLint("Registered")
-@EService
 public class MawPollerService extends Service {
     private ServiceHandler _serviceHandler;
 
-    @RootContext
-    private Context _context;
+    @Bean
+    PhotoApiClient _client;
 
-    @SystemService
-    NotificationManager _notificationManager;
 
     @Override
     public void onCreate() {
@@ -57,8 +45,6 @@ public class MawPollerService extends Service {
         // background priority so CPU-intensive work will not disrupt our UI.
         HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
-
-        //_context = getApplicationContext();
 
         // Get the HandlerThread's Looper and use it for our Handler
         Looper serviceLooper = thread.getLooper();
@@ -89,7 +75,7 @@ public class MawPollerService extends Service {
 
     private void addNotification(int count, String ringtone, Boolean vibrate) {
         Intent i = new Intent(Intent.ACTION_MAIN);
-        i.setClass(_context, LoginActivity_.class);
+        i.setClass(this, LoginActivity.class);
 
         String title;
         String contentText;
@@ -103,9 +89,9 @@ public class MawPollerService extends Service {
             contentText = String.valueOf(count) + " new " + pluralize;
         }
 
-        PendingIntent detailsIntent = PendingIntent.getActivity(_context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(_context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setContentTitle(title);
         builder.setContentText(contentText);
         builder.setSmallIcon(R.drawable.ic_stat_notify);
@@ -122,36 +108,32 @@ public class MawPollerService extends Service {
 
         Notification notification = builder.build();
 
-        _notificationManager.notify(0, notification);
+        NotificationManager mgr = (NotificationManager) getApplication().getSystemService(NOTIFICATION_SERVICE);
+        mgr.notify(0, notification);
     }
 
 
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
-        @Bean
-        PhotoApiClient client;
-
         public ServiceHandler(Looper looper) {
             super(looper);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            MawDataManager dm = new MawDataManager(_context);
+            MawDataManager dm = new MawDataManager(getBaseContext());
             int maxId = dm.getLatestCategoryId();
             int totalCount = 0;
 
-            //PhotoApiClient client = new PhotoApiClient(_context);
-
-            if (!client.isConnected(_context)) {
+            if (!_client.isConnected()) {
                 Log.w(MawApplication.LOG_TAG, "not connected to network, skipping poll check");
                 return;
             }
 
-            if (!client.isAuthenticated()) {
+            if (!_client.isAuthenticated()) {
                 Credentials creds = dm.getCredentials();
 
-                if (!client.authenticate(creds.getUsername(), creds.getPassword())) {
+                if (!_client.authenticate(creds.getUsername(), creds.getPassword())) {
                     Log.e(MawApplication.LOG_TAG, "unable to authenticate - will not check for new photos");
                 }
             }
@@ -159,11 +141,11 @@ public class MawPollerService extends Service {
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
             try {
-                List<Category> categories = client.getRecentCategories(maxId);
+                List<Category> categories = _client.getRecentCategories(maxId);
 
                 if (categories.size() > 0) {
                     for (Category category : categories) {
-                        if (!client.downloadPhoto(category.getTeaserPhotoInfo().getPath())) {
+                        if (!_client.downloadPhoto(category.getTeaserPhotoInfo().getPath())) {
                             Log.d(MawApplication.LOG_TAG, "unable to download teaser: " + category.getTeaserPhotoInfo().getPath());
                         }
 

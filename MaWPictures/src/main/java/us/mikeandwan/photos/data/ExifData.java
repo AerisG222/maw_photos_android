@@ -3,7 +3,6 @@ package us.mikeandwan.photos.data;
 import java.util.Date;
 
 
-@SuppressWarnings("ALL")
 public class ExifData {
     // exif
     private Short _bitsPerSample;

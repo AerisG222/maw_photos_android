@@ -6,11 +6,6 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SystemService;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +37,7 @@ import us.mikeandwan.photos.data.PhotoAndCategory;
 import us.mikeandwan.photos.data.RatePhoto;
 import us.mikeandwan.photos.data.Rating;
 
-@EBean(scope = EBean.Scope.Singleton)
+
 public class PhotoApiClient {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECT_TIMEOUT = 10000;
@@ -71,6 +66,7 @@ public class PhotoApiClient {
     private static final CookieManager _cookieManager = new CookieManager();
 
     private boolean _isSecondAttempt;
+    private Context _context;
 
     @Bean
     PhotoStorage _photoStorage;
@@ -78,15 +74,14 @@ public class PhotoApiClient {
     @Bean
     MawDataManager _dataManager;
 
-    @RootContext
-    Context _context;
-
-    @SystemService
-    ConnectivityManager _connectivityManager;
-
 
     static {
         CookieHandler.setDefault(_cookieManager);
+    }
+
+
+    public PhotoApiClient(Context context) {
+        _context = context;
     }
 
 
@@ -125,9 +120,10 @@ public class PhotoApiClient {
     }
 
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConnected() {
-        NetworkInfo activeNetwork = _connectivityManager.getActiveNetworkInfo();
+        ConnectivityManager mgr = (ConnectivityManager)_context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = mgr.getActiveNetworkInfo();
+
         return activeNetwork != null && activeNetwork.isConnected();
     }
 

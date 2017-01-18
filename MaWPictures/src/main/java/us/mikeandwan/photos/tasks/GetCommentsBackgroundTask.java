@@ -9,27 +9,18 @@ import us.mikeandwan.photos.data.Comment;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class GetCommentsBackgroundTask extends BackgroundTask<List<Comment>> {
-    private final int _photoId;
-    private final PhotoApiClient _client;
+public class GetCommentsBackgroundTask {
+    @Bean
+    PhotoApiClient _client;
 
 
-    public GetCommentsBackgroundTask(PhotoApiClient client, int photoId) {
-        super(BackgroundTaskPriority.High);
-
-        _client = client;
-        _photoId = photoId;
-    }
-
-
-    @Override
-    public List<Comment> call() throws Exception {
-        Log.d(MawApplication.LOG_TAG, "> started to get comments for photo: " + _photoId);
+    public List<Comment> call(int photoId) throws Exception {
+        Log.d(MawApplication.LOG_TAG, "> started to get comments for photo: " + photoId);
 
         if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        return _client.getComments(_photoId);
+        return _client.getComments(photoId);
     }
 }

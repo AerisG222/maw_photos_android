@@ -1,90 +1,55 @@
 package us.mikeandwan.photos.activities;
 
-import android.annotation.SuppressLint;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.App;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.OptionsMenuItem;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import us.mikeandwan.photos.MawApplication;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.data.Category;
 import us.mikeandwan.photos.data.MawDataManager;
 import us.mikeandwan.photos.fragments.BaseCategoryListFragment;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
-import us.mikeandwan.photos.tasks.BackgroundTask;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
-import us.mikeandwan.photos.tasks.BackgroundTaskFactory;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesBackgroundTask;
 
 
-@SuppressWarnings("ALL")
-@SuppressLint("Registered")
-@EActivity(R.layout.activity_category_list)
-@OptionsMenu(R.menu.category_list)
 public class CategoryListActivity extends AppCompatActivity implements ICategoryListActivity {
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private int _year;
     private List<Category> _categories;
     private BaseCategoryListFragment _activeFragment;
+    private BaseCategoryListFragment _categoryListFragment;
+    private BaseCategoryListFragment _categoryThumbnailsFragment;
+    private MenuItem _refreshMenuItem;
 
-    @OptionsMenuItem(R.id.action_force_sync)
-    protected MenuItem _refreshMenuItem;
-
-    @ViewById(R.id.toolbar)
-    protected Toolbar _toolbar;
-
-    @Extra("YEAR")
-    protected int _year;
-
-    @FragmentById(R.id.category_list_fragment)
-    protected BaseCategoryListFragment _categoryListFragment;
-
-    @FragmentById(R.id.category_thumbnails_fragment)
-    protected BaseCategoryListFragment _categoryThumbnailsFragment;
-
-    @App
-    MawApplication _app;
+    @BindView(R.id.toolbar) Toolbar _toolbar;
 
     @Bean
     MawDataManager _dataManager;
 
     @Bean
-    BackgroundTaskFactory _taskFactory;
-
-    @RootContext
-    Context _context;
-
-    @SystemService
-    LayoutInflater _layoutInflator;
+    GetRecentCategoriesBackgroundTask _getRecentCategoriesTask;
 
 
-    @AfterViews
-    protected void afterViews() {
+    protected void afterBind() {
         if (_toolbar != null) {
             setSupportActionBar(_toolbar);
 
@@ -97,8 +62,33 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
 
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_category_list);
+        ButterKnife.bind(this);
+
+        _year = getIntent().getIntExtra("YEAR", 0);
+        _categoryListFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_list_fragment);
+        _categoryThumbnailsFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_thumbnails_fragment);
+
+        afterBind();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.category_list, menu);
+
+        _refreshMenuItem = menu.findItem(R.id.action_force_sync);
+        _refreshMenuItem.setOnMenuItemClickListener(() -> );
+        return true;
+    }
+
+
+    @Override
     public void onResume() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         FragmentManager fm = getFragmentManager();
         BaseCategoryListFragment fragmentToHide;
 
@@ -124,27 +114,31 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
     }
 
 
-    @OptionsItem(android.R.id.home)
-    protected void onMenuHomeClick() {
-        finish();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
     }
 
 
-    @OptionsItem(R.id.action_settings)
-    protected void onMenuSettingsClick() {
+    //protected void onMenuHomeClick() {
+    //    finish();
+    //}
+
+
+    public void onMenuSettingsClick(MenuItem menuItem) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
 
-    @OptionsItem(R.id.action_force_sync)
-    protected void onMenuSyncClick() {
+    public void onMenuSyncClick(MenuItem menuItem) {
         forceSync();
     }
 
 
     public void selectCategory(Category category) {
-        Intent intent = new Intent(_context, PhotoListActivity_.class);
+        Intent intent = new Intent(this, PhotoListActivity.class);
         intent.putExtra("NAME", category.getName());
         intent.putExtra("URL", PhotoApiClient.getPhotosForCategoryUrl(category.getId()));
 
@@ -153,11 +147,17 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
 
 
     private void forceSync() {
-        BackgroundTask task = _taskFactory.BuildGetRecentCategoriesBackgroundTask(this::onSyncComplete, this::onException);
+        disposables.add(
+                Flowable.fromCallable(() -> _getRecentCategoriesTask.call())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.single())
+                        .subscribe(
+                                x -> onSyncComplete(x),
+                                ex -> onException(ex)
+                        )
+        );
 
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
-
-        ImageView iv = (ImageView) _layoutInflator.inflate(R.layout.refresh_indicator, _toolbar, false);
+        ImageView iv = (ImageView) getLayoutInflater().inflate(R.layout.refresh_indicator, _toolbar, false);
 
         Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
         rotation.setRepeatCount(Animation.INFINITE);
@@ -167,14 +167,15 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
     }
 
 
-    private void onException(ExecutionException ex) {
+    private void onException(Throwable ex) {
         _refreshMenuItem.getActionView().clearAnimation();
         _refreshMenuItem.setActionView(null);
 
         if (ex.getCause() instanceof MawAuthenticationException) {
-            startActivity(new Intent(_context, LoginActivity_.class));
+            startActivity(new Intent(this, LoginActivity.class));
         }
     }
+
 
     private void onSyncComplete(List<Category> result) {
         // force the update to categories to come from database, and not the network result, as there

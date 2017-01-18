@@ -1,70 +1,68 @@
 package us.mikeandwan.photos.fragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RatingBar;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.ViewById;
-
-import java.util.concurrent.ExecutionException;
-
-import us.mikeandwan.photos.MawApplication;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity_;
+import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.data.Rating;
 import us.mikeandwan.photos.services.MawAuthenticationException;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.GetRatingBackgroundTask;
 import us.mikeandwan.photos.tasks.SetRatingBackgroundTask;
 
 
-@SuppressWarnings("ALL")
-@EFragment(R.layout.dialog_rating)
 public class RatingDialogFragment extends BasePhotoDialogFragment {
-    @ViewById(R.id.yourRatingBar)
-    protected RatingBar _yourRatingBar;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private Unbinder _unbinder;
 
-    @ViewById(R.id.averageRatingBar)
-    protected RatingBar _averageRatingBar;
+    @BindView(R.id.yourRatingBar) RatingBar _yourRatingBar;
+    @BindView(R.id.averageRatingBar) RatingBar _averageRatingBar;
 
-    @RootContext
-    Context _context;
+    @Bean
+    GetRatingBackgroundTask _getRatingTask;
 
-    @AfterViews
-    protected void afterViews() {
-        _yourRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+    @Bean
+    SetRatingBackgroundTask _setRatingTask;
+
+
+    protected void afterBind() {
+        _yourRatingBar.setOnRatingBarChangeListener((_ratingBar, rating, fromUser) -> {
                 if (fromUser) {
-                    int photoId = getCurrentPhoto().getId();
+                    disposables.add(Flowable.fromCallable(() -> _setRatingTask.call(getCurrentPhoto().getId(), Math.round(rating)))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.single())
+                            .subscribe(
+                                    x -> displayRating(x),
+                                    ex -> handleException(ex)
+                            )
+                    );
 
-                    SetRatingBackgroundTask task = new SetRatingBackgroundTask(_context, photoId, Math.round(rating)) {
-                        @Override
-                        protected void postExecuteTask(Rating rating) {
-                            displayRating(rating);
-                        }
-
-                        @Override
-                        protected void handleException(ExecutionException ex) {
-                            Log.e(MawApplication.LOG_TAG, "exception setting the rating: " + ex.getMessage());
-
-                            if (ex.getCause() instanceof MawAuthenticationException) {
-                                startActivity(new Intent(_context, LoginActivity_.class));
-                            }
-                        }
-                    };
-
-                    BackgroundTaskExecutor.getInstance().enqueueTask(task);
                     updateProgress();
                 }
-            }
         });
 
         getDialog().setTitle("Ratings");
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_rating, container, false);
+        _unbinder = ButterKnife.bind(this, view);
+
+        afterBind();
+
+        return view;
     }
 
 
@@ -76,27 +74,34 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
+        _unbinder.unbind();
+    }
+
+
+    private void handleException(Throwable ex) {
+        if (ex.getCause() instanceof MawAuthenticationException) {
+            startActivity(new Intent(getContext(), LoginActivity.class));
+        }
+    }
+
+
     private void getRatings() {
         _yourRatingBar.setRating(0);
         _averageRatingBar.setRating(0);
 
-        GetRatingBackgroundTask task = new GetRatingBackgroundTask(_context, getCurrentPhoto().getId()) {
-            @Override
-            protected void postExecuteTask(Rating rating) {
-                displayRating(rating);
-            }
+        disposables.add(Flowable.fromCallable(() -> _getRatingTask.call(getCurrentPhoto().getId()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(
+                        x -> displayRating(x),
+                        ex -> handleException(ex)
+                )
+        );
 
-            @Override
-            protected void handleException(ExecutionException ex) {
-                Log.e(MawApplication.LOG_TAG, "exception getting the rating: " + ex.getMessage());
-
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(_context, LoginActivity_.class));
-                }
-            }
-        };
-
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
         updateProgress();
     }
 

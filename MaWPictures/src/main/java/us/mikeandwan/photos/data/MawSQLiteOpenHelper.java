@@ -23,6 +23,7 @@ class MawSQLiteOpenHelper extends SQLiteOpenHelper {
     @Bean
     MawDataManager _dataManager;
 
+
     MawSQLiteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

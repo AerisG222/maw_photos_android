@@ -7,18 +7,11 @@ import us.mikeandwan.photos.data.PhotoAndCategory;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class GetRandomPhotoBackgroundTask extends BackgroundTask<PhotoAndCategory> {
-    private final PhotoApiClient _client;
+public class GetRandomPhotoBackgroundTask {
+    @Bean
+    PhotoApiClient _client;
 
 
-    public GetRandomPhotoBackgroundTask(PhotoApiClient client) {
-        super(BackgroundTaskPriority.Normal);
-
-        _client = client;
-    }
-
-
-    @Override
     public PhotoAndCategory call() throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to get random photo");
 

@@ -1,9 +1,11 @@
 package us.mikeandwan.photos.fragments;
 
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -11,52 +13,59 @@ import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.App;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.IPhotoActivity;
-import us.mikeandwan.photos.activities.LoginActivity_;
+import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.activities.PhotoListActivity;
 import us.mikeandwan.photos.data.Photo;
 import us.mikeandwan.photos.data.PhotoDownload;
 import us.mikeandwan.photos.data.PhotoSize;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
-import us.mikeandwan.photos.tasks.BackgroundTaskPriority;
 import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
 
 
-@SuppressWarnings("ALL")
-@EFragment(R.layout.fragment_thumbnail_list)
 public class ThumbnailListFragment extends BasePhotoFragment {
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private int _thumbIndex;
     private final List<ImageView> _thumbList = new ArrayList<>();
+    private Unbinder _unbinder;
+
+    @BindView(R.id.horizontalScrollView) HorizontalScrollView _horizontalScrollView;
+    @BindView(R.id.imageLayout) LinearLayout _imageLayout;
 
     @Bean
     PhotoStorage _photoStorage;
 
-    @ViewById(R.id.horizontalScrollView)
-    protected HorizontalScrollView _horizontalScrollView;
+    @Bean
+    DownloadImageBackgroundTask _downloadImageTask;
 
-    @ViewById(R.id.imageLayout)
-    protected LinearLayout _imageLayout;
 
-    @App
-    MawApplication _app;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_thumbnail_list, container, false);
+        _unbinder = ButterKnife.bind(this, view);
 
-    @RootContext
-    Context _context;
+        return view;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
+        _unbinder.unbind();
+    }
 
 
     public HorizontalScrollView getThumbnailScrollView() {
@@ -112,7 +121,7 @@ public class ThumbnailListFragment extends BasePhotoFragment {
         if (!_photoStorage.doesExist(photoDownload.getMawPhoto().getXsInfo().getPath())) {
             if (photoDownload.getDownloadAttempts() == 0) {
                 photoDownload.incrementDownloadCount();
-                downloadImage(photoDownload, PhotoSize.Xs, BackgroundTaskPriority.Normal);
+                downloadImage(photoDownload, PhotoSize.Xs);
             } else {
                 Log.w(MawApplication.LOG_TAG, "we have already tried to download this thumbnail w/o success, not trying again");
             }
@@ -132,30 +141,32 @@ public class ThumbnailListFragment extends BasePhotoFragment {
     }
 
 
-    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size, BackgroundTaskPriority priority) {
-        DownloadImageBackgroundTask task = new DownloadImageBackgroundTask(getContext(), photoDownload, size, priority) {
-            @Override
-            protected void postExecuteTask(PhotoDownload result) {
-                displayPhotoThumbnail(result);
-                updateProgress();
-            }
+    private void handleException(Throwable ex) {
+        if (ex.getCause() instanceof MawAuthenticationException) {
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+        }
+    }
 
-            @Override
-            protected void handleException(ExecutionException ex) {
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getContext(), LoginActivity_.class));
-                }
-            }
-        };
 
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
+    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size) {
+        disposables.add(Flowable.fromCallable(() -> _downloadImageTask.call(photoDownload, size))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(
+                        x -> {
+                            displayPhotoThumbnail(x);
+                            updateProgress();
+                        },
+                        ex -> handleException(ex)
+                )
+        );
 
         updateProgress();
     }
 
 
     private ImageView createThumbnail() {
-        ImageView image = new ImageView(_context);
+        ImageView image = new ImageView(getActivity());
 
         try {
             image.setScaleType(ImageView.ScaleType.CENTER);
@@ -164,13 +175,10 @@ public class ThumbnailListFragment extends BasePhotoFragment {
 
             final IPhotoActivity activity = getPhotoActivity();
 
-            image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            image.setOnClickListener(view -> {
                     //noinspection SuspiciousMethodCalls
                     _thumbIndex = _thumbList.indexOf(view);
                     activity.gotoPhoto(_thumbIndex);
-                }
             });
 
             _imageLayout.addView(image);

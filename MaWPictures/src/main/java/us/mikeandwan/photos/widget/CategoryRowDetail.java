@@ -1,9 +1,9 @@
 package us.mikeandwan.photos.widget;
 
-
 import android.widget.ImageView;
 
 import us.mikeandwan.photos.data.Category;
+
 
 public class CategoryRowDetail {
     private final ImageView _imageView;

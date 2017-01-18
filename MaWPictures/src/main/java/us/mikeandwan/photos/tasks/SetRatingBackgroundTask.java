@@ -7,41 +7,30 @@ import us.mikeandwan.photos.data.Rating;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class SetRatingBackgroundTask extends BackgroundTask<Rating> {
-    private final PhotoApiClient _client;
-    private final int _photoId;
-    private final int _rating;
+public class SetRatingBackgroundTask {
+    @Bean
+    PhotoApiClient _client;
 
 
-    public SetRatingBackgroundTask(PhotoApiClient client, int photoId, int rating) {
-        super(BackgroundTaskPriority.High);
-
-        _client = client;
-        _photoId = photoId;
-        _rating = rating;
-    }
-
-
-    @Override
-    public Rating call() throws Exception {
-        Log.d(MawApplication.LOG_TAG, "> started to set user rating for photo: " + _photoId);
+    public Rating call(int photoId, int rating) throws Exception {
+        Log.d(MawApplication.LOG_TAG, "> started to set user rating for photo: " + photoId);
 
         if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        Float averageRating = _client.setRating(_photoId, _rating);
+        Float averageRating = _client.setRating(photoId, rating);
 
-        Rating rating = new Rating();
+        Rating rate = new Rating();
 
         if (averageRating != null) {
-            rating.setAverageRating(averageRating);
-            rating.setUserRating((short) Math.round(_rating));
+            rate.setAverageRating(averageRating);
+            rate.setUserRating((short) Math.round(rating));
         } else {
-            rating.setAverageRating((float) 0);
-            rating.setUserRating((short) 0);
+            rate.setAverageRating((float) 0);
+            rate.setUserRating((short) 0);
         }
 
-        return rating;
+        return rate;
     }
 }

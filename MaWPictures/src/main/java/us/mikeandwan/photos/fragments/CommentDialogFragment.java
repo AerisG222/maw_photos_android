@@ -3,9 +3,12 @@ package us.mikeandwan.photos.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
@@ -13,52 +16,48 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.ColorRes;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
-import us.mikeandwan.photos.MawApplication;
+import butterknife.BindColor;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity_;
+import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.data.Comment;
 import us.mikeandwan.photos.data.CommentPhoto;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.tasks.AddCommentBackgroundTask;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.GetCommentsBackgroundTask;
 
 
-@SuppressWarnings("ALL")
-@EFragment(R.layout.dialog_comment)
 public class CommentDialogFragment extends BasePhotoDialogFragment {
-    @ViewById(R.id.commentTableLayout)
-    protected TableLayout _commentTableLayout;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private Unbinder _unbinder;
 
-    @ViewById(R.id.addCommentButton)
-    protected Button _addCommentButton;
+    @BindView(R.id.commentTableLayout) TableLayout _commentTableLayout;
+    @BindView(R.id.addCommentButton) Button _addCommentButton;
+    @BindView(R.id.commentEditText) EditText _commentEditText;
+    @BindView(R.id.commentScrollView) ScrollView _commentScrollView;
 
-    @ViewById(R.id.commentEditText)
-    protected EditText _commentEditText;
+    @BindColor(R.color.primary) int _colorPrimary;
+    @BindColor(R.color.primary_dark) int _colorPrimaryDark;
 
-    @ViewById(R.id.commentScrollView)
-    protected ScrollView _commentScrollView;
+    @Bean
+    AddCommentBackgroundTask _addCommentTask;
 
-    @ColorRes(R.color.primary)
-    protected int _colorPrimary;
-
-    @ColorRes(R.color.primary_dark)
-    protected int _colorPrimaryDark;
+    @Bean
+    GetCommentsBackgroundTask _getCommentsTask;
 
 
-    @Click(R.id.addCommentButton)
+    @OnClick(R.id.addCommentButton)
     void onAddCommentClick() {
         String comment = _commentEditText.getText().toString();
 
@@ -67,34 +66,38 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
             cp.setPhotoId(getCurrentPhoto().getId());
             cp.setComment(comment);
 
-            AddCommentBackgroundTask task = new AddCommentBackgroundTask(getContext(), cp) {
-                @Override
-                protected void postExecuteTask(List<Comment> comments) {
-                    _commentEditText.setText("");
-                    displayComments(comments);
-                }
+            disposables.add(Flowable.fromCallable(() -> _addCommentTask.call(cp))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.single())
+                    .subscribe(
+                            x -> {
+                                _commentEditText.setText("");
+                                displayComments(x);
+                            },
+                            ex -> handleException(ex)
+                    )
+            );
 
-                @Override
-                protected void handleException(ExecutionException ex) {
-                    Log.e(MawApplication.LOG_TAG, "exception adding the comment: " + ex.getMessage());
-
-                    if (ex.getCause() instanceof MawAuthenticationException) {
-                        startActivity(new Intent(getContext(), LoginActivity_.class));
-                    }
-                }
-            };
-
-            BackgroundTaskExecutor.getInstance().enqueueTask(task);
             updateProgress();
         }
     }
 
 
-    @AfterViews
-    protected void afterViews() {
+    protected void afterBind() {
         getDialog().setTitle("Comments");
 
         _commentEditText.requestFocus();
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_comment, container, false);
+        _unbinder = ButterKnife.bind(this, view);
+
+        afterBind();
+
+        return view;
     }
 
 
@@ -106,25 +109,32 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
+        _unbinder.unbind();
+    }
+
+
     private void getComments() {
-        GetCommentsBackgroundTask task = new GetCommentsBackgroundTask(getContext(), getCurrentPhoto().getId()) {
-            @Override
-            protected void postExecuteTask(List<Comment> comments) {
-                displayComments(comments);
-            }
+        disposables.add(Flowable.fromCallable(() -> _getCommentsTask.call(getCurrentPhoto().getId()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(
+                        x -> displayComments(x),
+                        ex -> handleException(ex)
+                )
+        );
 
-            @Override
-            protected void handleException(ExecutionException ex) {
-                Log.e(MawApplication.LOG_TAG, "exception getting the comments: " + ex.getMessage());
-
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getContext(), LoginActivity_.class));
-                }
-            }
-        };
-
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
         updateProgress();
+    }
+
+
+    private void handleException(Throwable ex) {
+        if (ex.getCause() instanceof MawAuthenticationException) {
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+        }
     }
 
 

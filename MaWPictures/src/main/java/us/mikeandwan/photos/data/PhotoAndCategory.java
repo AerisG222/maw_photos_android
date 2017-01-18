@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.data;
 
 
-@SuppressWarnings("ALL")
 public class PhotoAndCategory {
     private Photo _photo;
     private Category _category;

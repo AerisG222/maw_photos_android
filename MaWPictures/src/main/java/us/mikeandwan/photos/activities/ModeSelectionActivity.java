@@ -1,12 +1,12 @@
 package us.mikeandwan.photos.activities;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,39 +15,23 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.SimpleExpandableListAdapter;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.App;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.OptionsMenuItem;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
-import java.util.concurrent.ExecutionException;
 
-import io.reactivex.Observer;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
-import us.mikeandwan.photos.MawApplication;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.data.Category;
 import us.mikeandwan.photos.data.MawDataManager;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
-import us.mikeandwan.photos.tasks.BackgroundTask;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
-import us.mikeandwan.photos.tasks.GetRecentCategoriesBackgroundTask;
+import us.mikeandwan.photos.tasks.GetYearsBackgroundTask;
 
 
-@SuppressWarnings("ALL")
-@SuppressLint("Registered")
-@OptionsMenu(R.menu.mode_selection)
-@EActivity(R.layout.activity_mode_selection)
 public class ModeSelectionActivity extends AppCompatActivity {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private final List<Map<String, String>> _groupData = new ArrayList<>();
@@ -55,34 +39,26 @@ public class ModeSelectionActivity extends AppCompatActivity {
     private final List<Map<String, String>> _yearChildren = new ArrayList<>();
     private SimpleExpandableListAdapter _adapter;
     private List<Integer> _yearList;
+    private MenuItem _refreshMenuItem;
 
-    @OptionsMenuItem(R.id.action_settings)
-    protected MenuItem _refreshMenuItem;
-
-    @ViewById(R.id.toolbar)
-    protected Toolbar _toolbar;
-
-    @ViewById(R.id.modeExpandableListView)
-    protected ExpandableListView _modeExpandableListView;
-
-    @App
-    MawApplication _app;
+    @BindView(R.id.toolbar) Toolbar _toolbar;
+    @BindView(R.id.modeExpandableListView) ExpandableListView _modeExpandableListView;
 
     @Bean
     MawDataManager _dm;
 
+    @Bean
+    GetYearsBackgroundTask _getYearsTask;
 
-    @AfterViews
-    protected void afterViews() {
+
+    protected void afterBind() {
         if (_toolbar != null) {
             setSupportActionBar(_toolbar);
-
             ViewCompat.setElevation(_toolbar, 8);
         }
 
-        _modeExpandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
-                return onItemClicked(parent, v, groupPosition, childPosition, id);
-            }
+        _modeExpandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) ->
+                onItemClicked(parent, v, groupPosition, childPosition, id)
         );
 
         _adapter = new SimpleExpandableListAdapter(this,
@@ -96,6 +72,26 @@ public class ModeSelectionActivity extends AppCompatActivity {
             new int[]{android.R.id.text1});
 
         initModeList();
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_mode_selection);
+        ButterKnife.bind(this);
+        afterBind();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mode_selection, menu);
+
+        _refreshMenuItem = menu.findItem(R.id.action_settings);
+
+        return true;
     }
 
 
@@ -118,15 +114,13 @@ public class ModeSelectionActivity extends AppCompatActivity {
     }
 
 
-    @OptionsItem(R.id.action_settings)
-    protected void onMenuItemSettings() {
+    public void onMenuItemSettings(MenuItem menuItem) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
 
-    @OptionsItem(R.id.action_force_sync)
-    protected void onMenuItemForceSync() {
+    public void onMenuItemForceSync(MenuItem menuItem) {
         forceSync();
     }
 
@@ -135,10 +129,10 @@ public class ModeSelectionActivity extends AppCompatActivity {
         Intent intent;
 
         if (groupPosition == 0) {
-            intent = new Intent(parent.getContext(), CategoryListActivity_.class);
+            intent = new Intent(parent.getContext(), CategoryListActivity.class);
             intent.putExtra("YEAR", Integer.parseInt(_childData.get(groupPosition).get(childPosition).get("NAME")));
         } else {
-            intent = new Intent(parent.getContext(), PhotoListActivity_.class);
+            intent = new Intent(parent.getContext(), PhotoListActivity.class);
             intent.putExtra("NAME", _childData.get(groupPosition).get(childPosition).get("NAME"));
         }
 
@@ -152,31 +146,22 @@ public class ModeSelectionActivity extends AppCompatActivity {
 
     private void forceSync() {
         disposables.add(
-                new Observer<List<int>>()
+            Flowable.fromCallable(() -> _getYearsTask.call())
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.single())
+            .subscribe(
+                x -> onSyncComplete(x),
+                ex -> {
+                    _refreshMenuItem.getActionView().clearAnimation();
+                    _refreshMenuItem.setActionView(null);
 
+                    if (ex.getCause() instanceof MawAuthenticationException) {
+                        startActivity(new Intent(getBaseContext(), LoginActivity.class));
+                    }
+            })
         );
 
-        BackgroundTask task = new GetRecentCategoriesBackgroundTask(getBaseContext()) {
-            @Override
-            protected void postExecuteTask(List<Category> result) {
-                onSyncComplete();
-            }
-
-            @Override
-            protected void handleException(ExecutionException ex) {
-                _refreshMenuItem.getActionView().clearAnimation();
-                _refreshMenuItem.setActionView(null);
-
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getBaseContext(), LoginActivity_.class));
-                }
-            }
-        };
-
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_indicator, _toolbar, false);
+        ImageView iv = (ImageView) getLayoutInflater().inflate(R.layout.refresh_indicator, _toolbar, false);
 
         Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
         rotation.setRepeatCount(Animation.INFINITE);
@@ -186,10 +171,10 @@ public class ModeSelectionActivity extends AppCompatActivity {
     }
 
 
-    private void onSyncComplete() {
+    private void onSyncComplete(List<Integer> years) {
         // go back to the database rather than inspecting results, as there poller may have happened
         // before the sync, which means that the new year would not be in the list of results
-        prepareYearChildren();
+        prepareYearChildren(years);
 
         _adapter.notifyDataSetChanged();
 
@@ -201,6 +186,11 @@ public class ModeSelectionActivity extends AppCompatActivity {
     private void prepareYearChildren() {
         List<Integer> years = _dm.getPhotoYears();
 
+        prepareYearChildren(years);
+    }
+
+
+    private void prepareYearChildren(List<Integer> years) {
         // if we are showing this for the first time, or have a new year available in the data,
         // show it in the interface
         if (_yearList == null || years.size() != _yearList.size()) {
@@ -273,10 +263,5 @@ public class ModeSelectionActivity extends AppCompatActivity {
         child.put("URL", url);
 
         return child;
-    }
-
-
-    private Observable<List<Integer>> yearListObserver() {
-
     }
 }

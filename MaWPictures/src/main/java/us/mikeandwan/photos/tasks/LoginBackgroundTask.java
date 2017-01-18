@@ -7,21 +7,12 @@ import us.mikeandwan.photos.data.Credentials;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class LoginBackgroundTask extends BackgroundTask<Boolean> {
-    private final Credentials _creds;
-    private final PhotoApiClient _client;
+public class LoginBackgroundTask {
+    @Bean
+    PhotoApiClient _client;
 
 
-    public LoginBackgroundTask(PhotoApiClient client, Credentials creds) {
-        super(BackgroundTaskPriority.VeryHigh);
-
-        _client = client;
-        _creds = creds;
-    }
-
-
-    @Override
-    public Boolean call() throws Exception {
+    public Boolean call(Credentials creds) throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started login task");
 
         if (!_client.isConnected()) {
@@ -29,7 +20,7 @@ public class LoginBackgroundTask extends BackgroundTask<Boolean> {
             return false;
         }
 
-        if (_client.authenticate(_creds.getUsername(), _creds.getPassword())) {
+        if (_client.authenticate(creds.getUsername(), creds.getPassword())) {
             Log.i(MawApplication.LOG_TAG, "authenticated");
 
             return true;

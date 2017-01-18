@@ -4,6 +4,8 @@ package us.mikeandwan.photos.data;
 import java.io.Serializable;
 
 public class PhotoInfo implements Serializable {
+    private static final long serialVersionUID = 1;
+
     private int _height;
     private int _width;
     private String _path;

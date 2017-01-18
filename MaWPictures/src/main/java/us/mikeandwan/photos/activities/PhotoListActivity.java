@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.activities;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -9,6 +8,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
@@ -16,56 +16,45 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.InstanceState;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.OptionsMenuItem;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.data.Photo;
 import us.mikeandwan.photos.data.PhotoAndCategory;
 import us.mikeandwan.photos.data.PhotoDownload;
 import us.mikeandwan.photos.data.PhotoSize;
-import us.mikeandwan.photos.fragments.CommentDialogFragment_;
-import us.mikeandwan.photos.fragments.ExifDialogFragment_;
+import us.mikeandwan.photos.fragments.CommentDialogFragment;
+import us.mikeandwan.photos.fragments.ExifDialogFragment;
 import us.mikeandwan.photos.fragments.MainImageFragment;
 import us.mikeandwan.photos.fragments.MainImageToolbarFragment;
-import us.mikeandwan.photos.fragments.RatingDialogFragment_;
+import us.mikeandwan.photos.fragments.RatingDialogFragment;
 import us.mikeandwan.photos.fragments.ThumbnailListFragment;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
-import us.mikeandwan.photos.tasks.BackgroundTaskPriority;
 import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
 import us.mikeandwan.photos.tasks.GetPhotoListBackgroundTask;
 import us.mikeandwan.photos.tasks.GetRandomPhotoBackgroundTask;
 
-@SuppressWarnings("ALL")
-@SuppressLint("Registered")
-@OptionsMenu(R.menu.photo_list)
-@EActivity(R.layout.activity_photo_list)
+
 public class PhotoListActivity extends AppCompatActivity implements IPhotoActivity {
     private static final float FADE_START_ALPHA = 1.0f;
     public static final float FADE_END_ALPHA = 0.2f;
@@ -74,10 +63,22 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     private static final int RANDOM_INITIAL_COUNT = 20;
     private static final int PREFETCH_COUNT = 2;
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private Activity _theActivity;
     private ScheduledThreadPoolExecutor _slideshowExecutor;
     private HorizontalScrollView _thumbnailScrollView;
     private HashSet<Integer> _randomPhotoIds;
+    private int _taskCount = 0;
+    private String _url;
+    private String _name;
+    private ThumbnailListFragment _thumbnailListFragment;
+    private MainImageToolbarFragment _imageToolbarFragment;
+    private MainImageFragment _mainImageFragment;
+    private MenuItem _menuShare;
+
+    @BindView(R.id.progressBar) ProgressBar _progressBar;
+    @BindView(R.id.toolbar) Toolbar _toolbar;
+    @BindView(R.id.bottomLayout) LinearLayout _bottomLayout;
 
     @InstanceState
     protected int _index = 0;
@@ -94,39 +95,20 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     @InstanceState
     protected ArrayList<Photo> _photoList = new ArrayList<>();
 
-    @OptionsMenuItem(R.id.action_share)
-    protected MenuItem _menuShare;
-
-    @ViewById(R.id.progressBar)
-    protected ProgressBar _progressBar;
-
-    @ViewById(R.id.toolbar)
-    protected Toolbar _toolbar;
-
-    @FragmentById(R.id.thumbnailListFragment)
-    protected ThumbnailListFragment _thumbnailListFragment;
-
-    @FragmentById(R.id.mainImageToolbarFragment)
-    protected MainImageToolbarFragment _imageToolbarFragment;
-
-    @FragmentById(R.id.mainImageFragment)
-    protected MainImageFragment _mainImageFragment;
-
-    @ViewById(R.id.bottomLayout)
-    protected LinearLayout _bottomLayout;
-
-    @Extra("URL")
-    protected String _url;
-
-    @Extra("NAME")
-    protected String _name;
-
     @Bean
     PhotoStorage _ps;
 
+    @Bean
+    GetPhotoListBackgroundTask _getPhotoListTask;
 
-    @AfterViews
-    protected void afterViews() {
+    @Bean
+    GetRandomPhotoBackgroundTask _getRandomPhotoTask;
+
+    @Bean
+    DownloadImageBackgroundTask _downloadImageTask;
+
+
+    protected void afterBind() {
         _theActivity = this;
 
         if (_toolbar != null) {
@@ -139,27 +121,56 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
         }
 
         _thumbnailScrollView = _thumbnailListFragment.getThumbnailScrollView();
-        _thumbnailScrollView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        _thumbnailScrollView.setOnTouchListener((view, event) -> {
                 fade(_thumbnailScrollView);
-
                 return false;
-            }
         });
 
         fade();
     }
 
 
-    @OptionsItem(android.R.id.home)
-    protected void onMenuItemHome() {
-        finish();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_photo_list);
+        ButterKnife.bind(this);
+
+        _thumbnailListFragment = (ThumbnailListFragment) getFragmentManager().findFragmentById(R.id.thumbnailListFragment);
+        _imageToolbarFragment = (MainImageToolbarFragment) getFragmentManager().findFragmentById(R.id.mainImageToolbarFragment);
+        _mainImageFragment = (MainImageFragment) getFragmentManager().findFragmentById(R.id.mainImageFragment);
+
+        _url = getIntent().getStringExtra("URL");
+        _name = getIntent().getStringExtra("NAME");
+
+        afterBind();
     }
 
 
-    @OptionsItem(R.id.action_settings)
-    protected void onMenuItemSettings() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.photo_list, menu);
+
+        _menuShare = menu.findItem(R.id.action_share);
+
+        return true;
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
+    }
+
+
+    //public void onMenuItemHome(MenuItem menuItem) {
+    //    finish();
+    //}
+
+
+    protected void onMenuItemSettings(MenuItem menuItem) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
@@ -266,9 +277,9 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
 
     public void updateProgress() {
-        Log.d(MawApplication.LOG_TAG, "task count: " + BackgroundTaskExecutor.getInstance().getTaskCount());
+        Log.d(MawApplication.LOG_TAG, "task count: " + _taskCount);
 
-        if (BackgroundTaskExecutor.getInstance().getTaskCount() > 0) {
+        if (_taskCount > 0) {
             _progressBar.setVisibility(View.VISIBLE);
         } else {
             _progressBar.setVisibility(View.INVISIBLE);
@@ -277,17 +288,17 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
 
     public void showRating() {
-        showDialog(new RatingDialogFragment_());
+        showDialog(new RatingDialogFragment());
     }
 
 
     public void showExif() {
-        showDialog(new ExifDialogFragment_());
+        showDialog(new ExifDialogFragment());
     }
 
 
     public void showComments() {
-        showDialog(new CommentDialogFragment_());
+        showDialog(new CommentDialogFragment());
     }
 
 
@@ -308,26 +319,25 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
 
     private void initPhotoList(String url) {
-        GetPhotoListBackgroundTask task = new GetPhotoListBackgroundTask(getBaseContext(), url) {
-            @Override
-            protected void postExecuteTask(List<Photo> result) {
-                _index = 0;
-                _photoList.addAll(result);
-                _thumbnailListFragment.addPhotoList(result);
+        disposables.add(Flowable.fromCallable(() -> _getPhotoListTask.call(url))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(
+                        x -> onGetPhotoList(x),
+                        ex -> handleException(ex)
+                )
+        );
 
-                onGatherPhotoListComplete();
-            }
-
-            @Override
-            protected void handleException(ExecutionException ex) {
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getBaseContext(), LoginActivity.class));
-                }
-            }
-        };
-
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
         updateProgress();
+    }
+
+
+    private void onGetPhotoList(List<Photo> list) {
+        _index = 0;
+        _photoList.addAll(list);
+        _thumbnailListFragment.addPhotoList(list);
+
+        onGatherPhotoListComplete();
     }
 
 
@@ -341,35 +351,42 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
 
 
     private void fetchRandom() {
-        GetRandomPhotoBackgroundTask task = new GetRandomPhotoBackgroundTask(getBaseContext()) {
-            @Override
-            protected void postExecuteTask(PhotoAndCategory result) {
-                if(_randomPhotoIds.contains(result.getPhoto().getId())) {
-                    // avoid duplicates
-                    return;
-                }
+        disposables.add(Flowable.fromCallable(() -> _getRandomPhotoTask.call())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(
+                        x -> onGetRandom(x),
+                        ex -> handleException(ex)
+                )
+        );
 
-                _randomPhotoIds.add(result.getPhoto().getId());
-
-                _index = 0;
-                _photoList.add(result.getPhoto());
-                _thumbnailListFragment.addPhoto((result.getPhoto()));
-
-                Log.d(MawApplication.LOG_TAG, "random photo: " + result.getPhoto().getId());
-
-                onRandomPhotoFetched();
-            }
-
-            @Override
-            protected void handleException(ExecutionException ex) {
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getBaseContext(), LoginActivity.class));
-                }
-            }
-        };
-
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
         updateProgress();
+    }
+
+
+    private void onGetRandom(PhotoAndCategory result)
+    {
+        if(_randomPhotoIds.contains(result.getPhoto().getId())) {
+            // avoid duplicates
+            return;
+        }
+
+        _randomPhotoIds.add(result.getPhoto().getId());
+
+        _index = 0;
+        _photoList.add(result.getPhoto());
+        _thumbnailListFragment.addPhoto((result.getPhoto()));
+
+        Log.d(MawApplication.LOG_TAG, "random photo: " + result.getPhoto().getId());
+
+        onRandomPhotoFetched();
+    }
+
+
+    private void handleException(Throwable ex) {
+        if (ex.getCause() instanceof MawAuthenticationException) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
     }
 
 
@@ -400,25 +417,19 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
             int intervalSeconds = Integer.parseInt(sharedPrefs.getString("slideshow_interval", "3"));
 
             _slideshowExecutor = new ScheduledThreadPoolExecutor(1);
+            _slideshowExecutor.scheduleWithFixedDelay(() -> incrementSlideshow(), intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
+        }
+    }
 
-            _slideshowExecutor.scheduleWithFixedDelay(new Runnable() {
-                @Override
-                public void run() {
-                    int nextIndex = _index + 1;
 
-                    if (nextIndex < _photoList.size()) {
-                        SlideshowRunnable slideshowRunnable = new SlideshowRunnable((nextIndex));
-                        _theActivity.runOnUiThread(slideshowRunnable);
-                    } else {
-                        _theActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                toggleSlideshow();
-                            }
-                        });
-                    }
-                }
-            }, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
+    private void incrementSlideshow() {
+        int nextIndex = _index + 1;
+
+        if (nextIndex < _photoList.size()) {
+            SlideshowRunnable slideshowRunnable = new SlideshowRunnable((nextIndex));
+            _theActivity.runOnUiThread(slideshowRunnable);
+        } else {
+            _theActivity.runOnUiThread(() -> toggleSlideshow());
         }
     }
 
@@ -471,32 +482,26 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
         // start fetching next item first, if there is one, as it is more likely to move forward first
         for (int i = index + 1; i < index + PREFETCH_COUNT && i < _photoList.size(); i++) {
             PhotoDownload pd = new PhotoDownload(_photoList.get(i), i);
-            downloadImage(pd, PhotoSize.Md, BackgroundTaskPriority.Low);
+            downloadImage(pd, PhotoSize.Md);
         }
 
         for (int i = index - 1; i > index - PREFETCH_COUNT && i > 0; i--) {
             PhotoDownload pd = new PhotoDownload(_photoList.get(i), i);
-            downloadImage(pd, PhotoSize.Md, BackgroundTaskPriority.Low);
+            downloadImage(pd, PhotoSize.Md);
         }
     }
 
 
-    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size, BackgroundTaskPriority priority) {
-        DownloadImageBackgroundTask task = new DownloadImageBackgroundTask(getBaseContext(), photoDownload, size, priority) {
-            @Override
-            protected void postExecuteTask(PhotoDownload result) {
-                updateProgress();
-            }
+    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size) {
+        disposables.add(Flowable.fromCallable(() -> _downloadImageTask.call(photoDownload, size))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(
+                        x -> updateProgress(),
+                        ex -> handleException(ex)
+                )
+        );
 
-            @Override
-            protected void handleException(ExecutionException ex) {
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getBaseContext(), LoginActivity.class));
-                }
-            }
-        };
-
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
         updateProgress();
     }
 

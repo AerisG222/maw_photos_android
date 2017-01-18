@@ -43,7 +43,6 @@ import static com.example.touch.TouchImageView.State.NONE;
 import static com.example.touch.TouchImageView.State.ZOOM;
 
 
-@SuppressWarnings("ALL")
 public class TouchImageView extends ImageView {
     private static final String DEBUG = "DEBUG";
 
@@ -768,7 +767,6 @@ public class TouchImageView extends ImageView {
      *
      * @author Ortiz
      */
-    @SuppressWarnings("JavaDoc")
     private class DoubleTapZoom implements Runnable {
 
         private final long startTime;

@@ -1,49 +1,52 @@
 package us.mikeandwan.photos.fragments;
 
-
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.DimensionPixelSizeRes;
-
-import java.util.concurrent.ExecutionException;
-
-import us.mikeandwan.photos.MawApplication;
+import butterknife.BindDimen;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity_;
+import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.data.ExifData;
 import us.mikeandwan.photos.data.ExifDataFormatter;
 import us.mikeandwan.photos.services.MawAuthenticationException;
-import us.mikeandwan.photos.tasks.BackgroundTaskExecutor;
 import us.mikeandwan.photos.tasks.GetExifDataBackgroundTask;
 
 
-@SuppressWarnings("ALL")
-@EFragment(R.layout.dialog_exif)
 public class ExifDialogFragment extends BasePhotoDialogFragment {
-    @DimensionPixelSizeRes(R.dimen._2dp)
-    int _2dp;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private Unbinder _unbinder;
 
-    @DimensionPixelSizeRes(R.dimen._4dp)
-    int _4dp;
+    @BindDimen(R.dimen._2dp) int _2dp;
+    @BindDimen(R.dimen._4dp) int _4dp;
+    @BindDimen(R.dimen._8dp) int _8dp;
 
-    @DimensionPixelSizeRes(R.dimen._8dp)
-    int _8dp;
+    @BindView(R.id.exifView) TableLayout _exifView;
 
-    @ViewById(R.id.exifView)
-    protected TableLayout _exifView;
+    @Bean
+    GetExifDataBackgroundTask _getExifDataTask;
 
 
-    @AfterViews
-    protected void afterViews() {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_exif, container, false);
+        _unbinder = ButterKnife.bind(this, view);
+
         getDialog().setTitle("Exif Data");
+
+        return view;
     }
 
 
@@ -52,6 +55,14 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
         getExifData();
 
         super.onResume();
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
+        _unbinder.unbind();
     }
 
 
@@ -143,24 +154,23 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
 
 
     private void getExifData() {
-        GetExifDataBackgroundTask task = new GetExifDataBackgroundTask(getContext(), getCurrentPhoto().getId()) {
-            @Override
-            protected void postExecuteTask(ExifData exif) {
-                displayExifData(exif);
-            }
+        disposables.add(Flowable.fromCallable(() -> _getExifDataTask.call(getCurrentPhoto().getId()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(
+                        x -> displayExifData(x),
+                        ex -> handleException(ex)
+                )
+        );
 
-            @Override
-            protected void handleException(ExecutionException ex) {
-                Log.e(MawApplication.LOG_TAG, "exception getting the exif data: " + ex.getMessage());
-
-                if (ex.getCause() instanceof MawAuthenticationException) {
-                    startActivity(new Intent(getContext(), LoginActivity_.class));
-                }
-            }
-        };
-
-        BackgroundTaskExecutor.getInstance().enqueueTask(task);
         updateProgress();
+    }
+
+
+    private void handleException(Throwable ex) {
+        if (ex.getCause() instanceof MawAuthenticationException) {
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+        }
     }
 
 
