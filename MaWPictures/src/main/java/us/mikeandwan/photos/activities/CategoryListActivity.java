@@ -28,7 +28,7 @@ import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.fragments.BaseCategoryListFragment;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
-import us.mikeandwan.photos.tasks.GetRecentCategoriesBackgroundTask;
+import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
 
 
 public class CategoryListActivity extends AppCompatActivity implements ICategoryListActivity {
@@ -46,7 +46,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
     MawDataManager _dataManager;
 
     @Bean
-    GetRecentCategoriesBackgroundTask _getRecentCategoriesTask;
+    GetRecentCategoriesTask _getRecentCategoriesTask;
 
 
     protected void afterBind() {
@@ -81,7 +81,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
         inflater.inflate(R.menu.category_list, menu);
 
         _refreshMenuItem = menu.findItem(R.id.action_force_sync);
-        _refreshMenuItem.setOnMenuItemClickListener(() -> );
+
         return true;
     }
 

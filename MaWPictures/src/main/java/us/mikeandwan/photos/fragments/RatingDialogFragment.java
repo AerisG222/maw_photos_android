@@ -17,8 +17,8 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Rating;
 import us.mikeandwan.photos.services.MawAuthenticationException;
-import us.mikeandwan.photos.tasks.GetRatingBackgroundTask;
-import us.mikeandwan.photos.tasks.SetRatingBackgroundTask;
+import us.mikeandwan.photos.tasks.GetRatingTask;
+import us.mikeandwan.photos.tasks.SetRatingTask;
 
 
 public class RatingDialogFragment extends BasePhotoDialogFragment {
@@ -29,10 +29,10 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     @BindView(R.id.averageRatingBar) RatingBar _averageRatingBar;
 
     @Bean
-    GetRatingBackgroundTask _getRatingTask;
+    GetRatingTask _getRatingTask;
 
     @Bean
-    SetRatingBackgroundTask _setRatingTask;
+    SetRatingTask _setRatingTask;
 
 
     protected void afterBind() {

@@ -8,7 +8,7 @@ import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class DownloadImageBackgroundTask {
+public class DownloadImageTask {
     @Bean
     PhotoApiClient _client;
 

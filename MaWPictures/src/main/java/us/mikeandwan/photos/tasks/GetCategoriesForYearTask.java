@@ -10,7 +10,7 @@ import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class GetCategoriesForYearBackgroundTask {
+public class GetCategoriesForYearTask {
     @Bean
     MawDataManager _dm;
 

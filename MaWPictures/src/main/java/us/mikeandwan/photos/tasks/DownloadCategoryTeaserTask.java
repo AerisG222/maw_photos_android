@@ -7,7 +7,7 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.models.ui.CategoryRowDetail;
 
 
-public class DownloadCategoryTeaserBackgroundTask {
+public class DownloadCategoryTeaserTask {
     @Bean
     PhotoApiClient _client;
 

@@ -10,7 +10,7 @@ import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class AddCommentBackgroundTask {
+public class AddCommentTask {
     @Bean
     PhotoApiClient _client;
 

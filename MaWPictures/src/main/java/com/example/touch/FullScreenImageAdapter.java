@@ -27,7 +27,7 @@ import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
+import us.mikeandwan.photos.tasks.DownloadImageTask;
 
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
@@ -38,7 +38,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final Dictionary<Integer, TouchImageView> _imgList = new Hashtable<>();
     private final LayoutInflater _inflater;
     private final PhotoStorage _photoStorage;
-    private final DownloadImageBackgroundTask _downloadImageTask;
+    private final DownloadImageTask _downloadImageTask;
 
 
     public FullScreenImageAdapter(Context context, PhotoStorage photoStorage, PhotoApiClient photoClient, IPhotoActivity activity) {
@@ -47,7 +47,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         _photoList = activity.getPhotoList();
         _photoStorage = photoStorage;
         _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        _downloadImageTask = new DownloadImageBackgroundTask();
+        _downloadImageTask = new DownloadImageTask();
         _downloadImageTask.setPhotoClient(photoClient);
     }
 

@@ -28,7 +28,7 @@ import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadCategoryTeaserBackgroundTask;
+import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
 import us.mikeandwan.photos.models.ui.CategoryRowDetail;
 
 
@@ -43,7 +43,7 @@ public class CategoryListFragment extends BaseCategoryListFragment {
     PhotoStorage _photoStorage;
 
     @Bean
-    DownloadCategoryTeaserBackgroundTask _downloadCategoryTeaserTask;
+    DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
 
 
     @Override

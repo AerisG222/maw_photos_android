@@ -7,7 +7,7 @@ import us.mikeandwan.photos.models.Rating;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class SetRatingBackgroundTask {
+public class SetRatingTask {
     @Bean
     PhotoApiClient _client;
 

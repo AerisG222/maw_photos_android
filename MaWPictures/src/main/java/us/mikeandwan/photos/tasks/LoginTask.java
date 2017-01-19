@@ -7,7 +7,7 @@ import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
-public class LoginBackgroundTask {
+public class LoginTask {
     @Bean
     PhotoApiClient _client;
 

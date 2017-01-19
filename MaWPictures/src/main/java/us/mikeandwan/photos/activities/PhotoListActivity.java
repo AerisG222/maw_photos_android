@@ -50,9 +50,9 @@ import us.mikeandwan.photos.fragments.RatingDialogFragment;
 import us.mikeandwan.photos.fragments.ThumbnailListFragment;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
-import us.mikeandwan.photos.tasks.GetPhotoListBackgroundTask;
-import us.mikeandwan.photos.tasks.GetRandomPhotoBackgroundTask;
+import us.mikeandwan.photos.tasks.DownloadImageTask;
+import us.mikeandwan.photos.tasks.GetPhotoListTask;
+import us.mikeandwan.photos.tasks.GetRandomPhotoTask;
 
 
 public class PhotoListActivity extends AppCompatActivity implements IPhotoActivity {
@@ -99,13 +99,13 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     PhotoStorage _ps;
 
     @Bean
-    GetPhotoListBackgroundTask _getPhotoListTask;
+    GetPhotoListTask _getPhotoListTask;
 
     @Bean
-    GetRandomPhotoBackgroundTask _getRandomPhotoTask;
+    GetRandomPhotoTask _getRandomPhotoTask;
 
     @Bean
-    DownloadImageBackgroundTask _downloadImageTask;
+    DownloadImageTask _downloadImageTask;
 
 
     protected void afterBind() {

@@ -8,16 +8,13 @@ import android.util.Log;
 
 import net.sf.andhsli.hotspotlogin.SimpleCrypto;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Credentials;
-import us.mikeandwan.photos.models.MawSQLiteOpenHelper;
+import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.models.PhotoInfo;
 
 

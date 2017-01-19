@@ -29,7 +29,7 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
-import us.mikeandwan.photos.tasks.GetYearsBackgroundTask;
+import us.mikeandwan.photos.tasks.GetYearsTask;
 
 
 public class ModeSelectionActivity extends AppCompatActivity {
@@ -48,7 +48,7 @@ public class ModeSelectionActivity extends AppCompatActivity {
     MawDataManager _dm;
 
     @Bean
-    GetYearsBackgroundTask _getYearsTask;
+    GetYearsTask _getYearsTask;
 
 
     protected void afterBind() {

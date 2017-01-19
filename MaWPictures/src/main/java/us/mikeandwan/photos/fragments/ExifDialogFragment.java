@@ -22,7 +22,7 @@ import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.ExifData;
 import us.mikeandwan.photos.models.ExifDataFormatter;
 import us.mikeandwan.photos.services.MawAuthenticationException;
-import us.mikeandwan.photos.tasks.GetExifDataBackgroundTask;
+import us.mikeandwan.photos.tasks.GetExifDataTask;
 
 
 public class ExifDialogFragment extends BasePhotoDialogFragment {
@@ -36,7 +36,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
     @BindView(R.id.exifView) TableLayout _exifView;
 
     @Bean
-    GetExifDataBackgroundTask _getExifDataTask;
+    GetExifDataTask _getExifDataTask;
 
 
     @Override

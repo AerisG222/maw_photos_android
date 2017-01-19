@@ -32,7 +32,7 @@ import us.mikeandwan.photos.models.PhotoDownload;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadImageBackgroundTask;
+import us.mikeandwan.photos.tasks.DownloadImageTask;
 
 
 public class ThumbnailListFragment extends BasePhotoFragment {
@@ -48,7 +48,7 @@ public class ThumbnailListFragment extends BasePhotoFragment {
     PhotoStorage _photoStorage;
 
     @Bean
-    DownloadImageBackgroundTask _downloadImageTask;
+    DownloadImageTask _downloadImageTask;
 
 
     @Override

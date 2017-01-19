@@ -34,8 +34,8 @@ import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.services.MawAuthenticationException;
-import us.mikeandwan.photos.tasks.AddCommentBackgroundTask;
-import us.mikeandwan.photos.tasks.GetCommentsBackgroundTask;
+import us.mikeandwan.photos.tasks.AddCommentTask;
+import us.mikeandwan.photos.tasks.GetCommentsTask;
 
 
 public class CommentDialogFragment extends BasePhotoDialogFragment {
@@ -51,10 +51,10 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     @BindColor(R.color.primary_dark) int _colorPrimaryDark;
 
     @Bean
-    AddCommentBackgroundTask _addCommentTask;
+    AddCommentTask _addCommentTask;
 
     @Bean
-    GetCommentsBackgroundTask _getCommentsTask;
+    GetCommentsTask _getCommentsTask;
 
 
     @OnClick(R.id.addCommentButton)

@@ -32,9 +32,9 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.GetCategoriesForYearBackgroundTask;
-import us.mikeandwan.photos.tasks.GetYearsBackgroundTask;
-import us.mikeandwan.photos.tasks.LoginBackgroundTask;
+import us.mikeandwan.photos.tasks.GetCategoriesForYearTask;
+import us.mikeandwan.photos.tasks.GetYearsTask;
+import us.mikeandwan.photos.tasks.LoginTask;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -54,13 +54,13 @@ public class LoginActivity extends AppCompatActivity {
     PhotoStorage _ps;
 
     @Bean
-    LoginBackgroundTask _loginTask;
+    LoginTask _loginTask;
 
     @Bean
-    GetYearsBackgroundTask _getYearsTask;
+    GetYearsTask _getYearsTask;
 
     @Bean
-    GetCategoriesForYearBackgroundTask _getCategoriesForYearTask;
+    GetCategoriesForYearTask _getCategoriesForYearTask;
 
 
     private void cleanupLegacyStorage() {
