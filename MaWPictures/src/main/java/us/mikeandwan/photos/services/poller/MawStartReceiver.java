@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.poller;
+package us.mikeandwan.photos.services.poller;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

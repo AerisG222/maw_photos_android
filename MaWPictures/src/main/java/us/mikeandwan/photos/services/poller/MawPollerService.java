@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.poller;
+package us.mikeandwan.photos.services.poller;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -23,9 +23,9 @@ import java.util.List;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
-import us.mikeandwan.photos.data.Category;
-import us.mikeandwan.photos.data.Credentials;
-import us.mikeandwan.photos.data.MawDataManager;
+import us.mikeandwan.photos.models.Category;
+import us.mikeandwan.photos.models.Credentials;
+import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 

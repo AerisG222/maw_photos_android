@@ -3,7 +3,7 @@ package us.mikeandwan.photos.activities;
 
 import java.util.List;
 
-import us.mikeandwan.photos.data.Photo;
+import us.mikeandwan.photos.models.Photo;
 
 
 public interface IPhotoActivity {

@@ -5,7 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 
 import us.mikeandwan.photos.activities.IPhotoActivity;
-import us.mikeandwan.photos.data.Photo;
+import us.mikeandwan.photos.models.Photo;
 
 
 public class BasePhotoDialogFragment extends DialogFragment {

@@ -19,8 +19,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
-import us.mikeandwan.photos.data.ExifData;
-import us.mikeandwan.photos.data.ExifDataFormatter;
+import us.mikeandwan.photos.models.ExifData;
+import us.mikeandwan.photos.models.ExifDataFormatter;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.tasks.GetExifDataBackgroundTask;
 

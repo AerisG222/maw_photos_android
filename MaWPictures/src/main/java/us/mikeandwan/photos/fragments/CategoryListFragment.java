@@ -18,8 +18,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnItemClick;
 import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 import io.reactivex.Flowable;
@@ -27,11 +25,11 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
-import us.mikeandwan.photos.data.Category;
+import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.tasks.DownloadCategoryTeaserBackgroundTask;
-import us.mikeandwan.photos.widget.CategoryRowDetail;
+import us.mikeandwan.photos.models.ui.CategoryRowDetail;
 
 
 public class CategoryListFragment extends BaseCategoryListFragment {

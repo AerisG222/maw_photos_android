@@ -53,17 +53,17 @@
             android:label="@string/title_activity_settings" />
 
         <service
-            android:name=".poller.MawPollerService_"
+            android:name=".services.poller.MawPollerService_"
             android:icon="@drawable/ic_launcher"
             android:label="@string/service_poller_name" />
 
-        <receiver android:name=".poller.MawScheduleReceiver_" >
+        <receiver android:name=".services.poller.MawScheduleReceiver_" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".poller.MawStartReceiver_" />
+        <receiver android:name=".services.poller.MawStartReceiver_" />
 
         <provider
             android:name="com.commonsware.cwac.provider.StreamProvider"

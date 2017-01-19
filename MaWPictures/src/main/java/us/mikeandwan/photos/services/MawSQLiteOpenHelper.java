@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.data;
+package us.mikeandwan.photos.services;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.services.MawDataManager;
 
 
 @EBean(scope = EBean.Scope.Singleton)

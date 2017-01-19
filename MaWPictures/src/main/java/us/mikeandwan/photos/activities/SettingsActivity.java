@@ -17,7 +17,7 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.poller.MawScheduleReceiver;
+import us.mikeandwan.photos.services.poller.MawScheduleReceiver;
 
 
 public class SettingsActivity extends PreferenceActivity {

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.poller;
+package us.mikeandwan.photos.services.poller;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

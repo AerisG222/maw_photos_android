@@ -1,8 +1,8 @@
-package us.mikeandwan.photos.widget;
+package us.mikeandwan.photos.models.ui;
 
 import android.widget.ImageView;
 
-import us.mikeandwan.photos.data.Category;
+import us.mikeandwan.photos.models.Category;
 
 
 public class CategoryRowDetail {

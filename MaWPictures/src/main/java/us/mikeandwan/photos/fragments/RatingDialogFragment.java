@@ -15,7 +15,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
-import us.mikeandwan.photos.data.Rating;
+import us.mikeandwan.photos.models.Rating;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.tasks.GetRatingBackgroundTask;
 import us.mikeandwan.photos.tasks.SetRatingBackgroundTask;

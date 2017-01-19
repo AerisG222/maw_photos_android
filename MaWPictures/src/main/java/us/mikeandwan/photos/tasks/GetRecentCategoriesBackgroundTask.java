@@ -5,8 +5,8 @@ import android.util.Log;
 import java.util.List;
 
 import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.data.Category;
-import us.mikeandwan.photos.data.MawDataManager;
+import us.mikeandwan.photos.models.Category;
+import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.data;
+package us.mikeandwan.photos.models;
 
 
 public class Category {

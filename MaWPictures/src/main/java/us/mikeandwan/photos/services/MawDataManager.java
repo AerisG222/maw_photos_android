@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.data;
+package us.mikeandwan.photos.services;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.models.Category;
+import us.mikeandwan.photos.models.Credentials;
+import us.mikeandwan.photos.models.MawSQLiteOpenHelper;
+import us.mikeandwan.photos.models.PhotoInfo;
 
 
 @EBean(scope = EBean.Scope.Singleton)

@@ -26,16 +26,15 @@ import java.util.Set;
 
 import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.data.Category;
-import us.mikeandwan.photos.data.Comment;
-import us.mikeandwan.photos.data.CommentPhoto;
-import us.mikeandwan.photos.data.Credentials;
-import us.mikeandwan.photos.data.ExifData;
-import us.mikeandwan.photos.data.MawDataManager;
-import us.mikeandwan.photos.data.Photo;
-import us.mikeandwan.photos.data.PhotoAndCategory;
-import us.mikeandwan.photos.data.RatePhoto;
-import us.mikeandwan.photos.data.Rating;
+import us.mikeandwan.photos.models.Category;
+import us.mikeandwan.photos.models.Comment;
+import us.mikeandwan.photos.models.CommentPhoto;
+import us.mikeandwan.photos.models.Credentials;
+import us.mikeandwan.photos.models.ExifData;
+import us.mikeandwan.photos.models.Photo;
+import us.mikeandwan.photos.models.PhotoAndCategory;
+import us.mikeandwan.photos.models.RatePhoto;
+import us.mikeandwan.photos.models.Rating;
 
 
 public class PhotoApiClient {

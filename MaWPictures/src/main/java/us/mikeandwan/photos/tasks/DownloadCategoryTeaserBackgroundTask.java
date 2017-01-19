@@ -4,7 +4,7 @@ import android.util.Log;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.services.PhotoApiClient;
-import us.mikeandwan.photos.widget.CategoryRowDetail;
+import us.mikeandwan.photos.models.ui.CategoryRowDetail;
 
 
 public class DownloadCategoryTeaserBackgroundTask {

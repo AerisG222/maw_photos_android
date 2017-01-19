@@ -3,7 +3,7 @@ package us.mikeandwan.photos.tasks;
 import android.util.Log;
 
 import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.data.PhotoAndCategory;
+import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 

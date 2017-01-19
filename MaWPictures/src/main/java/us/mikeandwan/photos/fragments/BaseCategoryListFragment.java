@@ -6,7 +6,7 @@ import android.app.Fragment;
 import java.util.List;
 
 import us.mikeandwan.photos.activities.ICategoryListActivity;
-import us.mikeandwan.photos.data.Category;
+import us.mikeandwan.photos.models.Category;
 
 public class BaseCategoryListFragment extends Fragment {
     List<Category> _categories;

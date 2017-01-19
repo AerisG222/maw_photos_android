@@ -3,8 +3,8 @@ package us.mikeandwan.photos.tasks;
 import android.util.Log;
 
 import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.data.PhotoDownload;
-import us.mikeandwan.photos.data.PhotoSize;
+import us.mikeandwan.photos.models.PhotoDownload;
+import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
