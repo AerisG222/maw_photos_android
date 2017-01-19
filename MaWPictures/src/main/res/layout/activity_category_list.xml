@@ -18,14 +18,14 @@
 
     <fragment
         android:id="@+id/category_list_fragment"
-        android:name="us.mikeandwan.photos.fragments.CategoryListFragment_"
+        android:name="us.mikeandwan.photos.fragments.CategoryListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
     <fragment
         android:id="@+id/category_thumbnails_fragment"
-        android:name="us.mikeandwan.photos.fragments.CategoryThumbnailsFragment_"
+        android:name="us.mikeandwan.photos.fragments.CategoryThumbnailsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
