@@ -2,14 +2,21 @@ package us.mikeandwan.photos.tasks;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.ExifData;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetExifDataTask {
-    @Bean
-    PhotoApiClient _client;
+    private PhotoApiClient _client;
+
+
+    @Inject
+    public GetExifDataTask(PhotoApiClient client) {
+        _client = client;
+    }
 
 
     public ExifData call(int photoId) throws Exception {

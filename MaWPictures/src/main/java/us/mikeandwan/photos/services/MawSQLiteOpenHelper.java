@@ -1,31 +1,27 @@
 package us.mikeandwan.photos.services;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.services.MawDataManager;
 
 
-@EBean(scope = EBean.Scope.Singleton)
-class MawSQLiteOpenHelper extends SQLiteOpenHelper {
+public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "maw";
 
-    @Bean
-    MawDataManager _dataManager;
 
-
-    MawSQLiteOpenHelper(Context context) {
+    @Inject
+    public MawSQLiteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -119,7 +115,9 @@ class MawSQLiteOpenHelper extends SQLiteOpenHelper {
         }
 
         for (Integer year : years) {
-            _dataManager.addYear(year);
+            ContentValues values = new ContentValues();
+            values.put("year", year);
+            db.insert("year", null, values);
         }
     }
 }

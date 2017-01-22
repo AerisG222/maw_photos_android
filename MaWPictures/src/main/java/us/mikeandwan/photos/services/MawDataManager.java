@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.services;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -11,27 +10,22 @@ import net.sf.andhsli.hotspotlogin.SimpleCrypto;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Credentials;
-import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.models.PhotoInfo;
 
 
-@EBean(scope = EBean.Scope.Singleton)
 public class MawDataManager {
     private static final String _seed = "Z@9{9^WSi)Rgf:Bjr|$L2f9.wK$fQH(_tiLs+\"4~p#i0u+[BBcSgEck!_0}PaJeF";
-    private SQLiteDatabase _db;
-    private boolean _autoClose;
-
-    @Bean
-    MawSQLiteOpenHelper _dbHelper;
+    private MawSQLiteOpenHelper _dbHelper;
 
 
-    public MawDataManager(Context context) {
-        // if a db is not provided, we will open/close the connection automatically, set _autoclose
-        // to true, so we know to close up our connection when a call is complete
-        _autoClose = true;
+    @Inject
+    public MawDataManager(MawSQLiteOpenHelper dbHelper) {
+        _dbHelper = dbHelper;
     }
 
 
@@ -54,7 +48,7 @@ public class MawDataManager {
         } catch (Exception ex) {
             Log.e(MawApplication.LOG_TAG, "Error when saving credentials: " + ex.getMessage());
         } finally {
-            if (_autoClose && db != null && db.isOpen()) {
+            if (db != null && db.isOpen()) {
                 db.close();
             }
         }
@@ -83,7 +77,7 @@ public class MawDataManager {
                 c.close();
             }
 
-            if (_autoClose && db != null && db.isOpen()) {
+            if (db != null && db.isOpen()) {
                 db.close();
             }
         }
@@ -113,7 +107,7 @@ public class MawDataManager {
                 c.close();
             }
 
-            if (_autoClose && db != null && db.isOpen()) {
+            if (db != null && db.isOpen()) {
                 db.close();
             }
         }
@@ -143,7 +137,7 @@ public class MawDataManager {
                 c.close();
             }
 
-            if (_autoClose && db != null && db.isOpen()) {
+            if (db != null && db.isOpen()) {
                 db.close();
             }
         }
@@ -173,7 +167,7 @@ public class MawDataManager {
                 c.close();
             }
 
-            if (_autoClose && db != null && db.isOpen()) {
+            if (db != null && db.isOpen()) {
                 db.close();
             }
         }
@@ -203,7 +197,7 @@ public class MawDataManager {
                 c.close();
             }
 
-            if (_autoClose && db != null && db.isOpen()) {
+            if (db != null && db.isOpen()) {
                 db.close();
             }
         }
@@ -304,7 +298,7 @@ public class MawDataManager {
         } catch (Exception ex) {
             Log.e(MawApplication.LOG_TAG, "error adding record: " + ex.getMessage());
         } finally {
-            if (_autoClose && db != null && db.isOpen()) {
+            if (db != null && db.isOpen()) {
                 db.close();
             }
         }
@@ -312,14 +306,10 @@ public class MawDataManager {
 
 
     private SQLiteDatabase getDatabase(boolean isWritable) {
-        if (_db != null) {
-            return _db;
+        if (isWritable) {
+            return _dbHelper.getWritableDatabase();
         } else {
-            if (isWritable) {
-                return _dbHelper.getWritableDatabase();
-            } else {
-                return _dbHelper.getReadableDatabase();
-            }
+            return _dbHelper.getReadableDatabase();
         }
     }
 }

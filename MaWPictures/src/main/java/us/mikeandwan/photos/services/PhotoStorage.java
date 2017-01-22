@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 
 
@@ -28,6 +30,7 @@ public class PhotoStorage {
     private Context _context;
 
 
+    @Inject
     public PhotoStorage(Context context) {
         _context = context;
     }

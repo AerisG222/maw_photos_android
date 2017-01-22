@@ -2,6 +2,8 @@ package us.mikeandwan.photos.tasks;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.PhotoDownload;
 import us.mikeandwan.photos.models.PhotoSize;
@@ -9,12 +11,14 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class DownloadImageTask {
-    @Bean
-    PhotoApiClient _client;
+    private PhotoApiClient _client;
 
-    public void setPhotoClient(PhotoApiClient client) {
+
+    @Inject
+    public DownloadImageTask(PhotoApiClient client) {
         _client = client;
     }
+
 
     public PhotoDownload call(PhotoDownload photoDownload, PhotoSize size) throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to download photo: " + photoDownload.getMawPhoto().getId());

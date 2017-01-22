@@ -4,6 +4,8 @@ import android.util.Log;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
@@ -11,8 +13,13 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class AddCommentTask {
-    @Bean
-    PhotoApiClient _client;
+    private PhotoApiClient _client;
+
+
+    @Inject
+    public AddCommentTask(PhotoApiClient client) {
+        _client = client;
+    }
 
 
     public List<Comment> call(CommentPhoto cp) throws Exception {

@@ -20,12 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
@@ -44,11 +48,10 @@ public class ModeSelectionActivity extends AppCompatActivity {
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.modeExpandableListView) ExpandableListView _modeExpandableListView;
 
-    @Bean
-    MawDataManager _dm;
+    @Inject MawDataManager _dm;
+    @Inject GetYearsTask _getYearsTask;
 
-    @Bean
-    GetYearsTask _getYearsTask;
+    private TaskComponent _component;
 
 
     protected void afterBind() {
@@ -75,11 +78,20 @@ public class ModeSelectionActivity extends AppCompatActivity {
     }
 
 
+    TaskComponent component() {
+        if(_component == null) {
+            //_component = DaggerTaskComponent
+        }
+
+        return _component;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mode_selection);
         ButterKnife.bind(this);
+
         afterBind();
     }
 

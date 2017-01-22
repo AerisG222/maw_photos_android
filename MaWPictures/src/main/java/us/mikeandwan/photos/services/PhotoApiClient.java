@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
@@ -66,12 +68,8 @@ public class PhotoApiClient {
 
     private boolean _isSecondAttempt;
     private Context _context;
-
-    @Bean
-    PhotoStorage _photoStorage;
-
-    @Bean
-    MawDataManager _dataManager;
+    private PhotoStorage _photoStorage;
+    private MawDataManager _dataManager;
 
 
     static {
@@ -79,8 +77,11 @@ public class PhotoApiClient {
     }
 
 
-    public PhotoApiClient(Context context) {
+    @Inject
+    public PhotoApiClient(Context context, PhotoStorage photoStorage, MawDataManager dataManager) {
         _context = context;
+        _photoStorage = photoStorage;
+        _dataManager = dataManager;
     }
 
 

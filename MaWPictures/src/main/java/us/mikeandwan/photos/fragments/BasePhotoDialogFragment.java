@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.fragments;
 
-
 import android.app.DialogFragment;
 import android.content.Context;
 

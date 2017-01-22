@@ -47,8 +47,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         _photoList = activity.getPhotoList();
         _photoStorage = photoStorage;
         _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        _downloadImageTask = new DownloadImageTask();
-        _downloadImageTask.setPhotoClient(photoClient);
+        _downloadImageTask = new DownloadImageTask(photoClient);
     }
 
 

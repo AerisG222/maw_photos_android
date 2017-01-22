@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -28,11 +30,8 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     @BindView(R.id.yourRatingBar) RatingBar _yourRatingBar;
     @BindView(R.id.averageRatingBar) RatingBar _averageRatingBar;
 
-    @Bean
-    GetRatingTask _getRatingTask;
-
-    @Bean
-    SetRatingTask _setRatingTask;
+    @Inject GetRatingTask _getRatingTask;
+    @Inject SetRatingTask _setRatingTask;
 
 
     protected void afterBind() {

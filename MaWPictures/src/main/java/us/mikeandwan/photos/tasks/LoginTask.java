@@ -2,14 +2,21 @@ package us.mikeandwan.photos.tasks;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class LoginTask {
-    @Bean
-    PhotoApiClient _client;
+    private PhotoApiClient _client;
+
+
+    @Inject
+    public LoginTask(PhotoApiClient client) {
+        _client = client;
+    }
 
 
     public Boolean call(Credentials creds) throws Exception {

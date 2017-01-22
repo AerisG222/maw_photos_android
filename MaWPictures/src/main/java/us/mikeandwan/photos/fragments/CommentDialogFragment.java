@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,11 +52,8 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     @BindColor(R.color.primary) int _colorPrimary;
     @BindColor(R.color.primary_dark) int _colorPrimaryDark;
 
-    @Bean
-    AddCommentTask _addCommentTask;
-
-    @Bean
-    GetCommentsTask _getCommentsTask;
+    @Inject AddCommentTask _addCommentTask;
+    @Inject GetCommentsTask _getCommentsTask;
 
 
     @OnClick(R.id.addCommentButton)

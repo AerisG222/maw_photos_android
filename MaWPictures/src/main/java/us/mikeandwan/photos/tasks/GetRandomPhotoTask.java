@@ -2,14 +2,21 @@ package us.mikeandwan.photos.tasks;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetRandomPhotoTask {
-    @Bean
-    PhotoApiClient _client;
+    private PhotoApiClient _client;
+
+
+    @Inject
+    public GetRandomPhotoTask(PhotoApiClient client) {
+        _client = client;
+    }
 
 
     public PhotoAndCategory call() throws Exception {

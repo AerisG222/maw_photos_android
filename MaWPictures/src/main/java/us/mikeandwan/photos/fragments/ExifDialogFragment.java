@@ -10,6 +10,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,8 +37,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
 
     @BindView(R.id.exifView) TableLayout _exifView;
 
-    @Bean
-    GetExifDataTask _getExifDataTask;
+    @Inject GetExifDataTask _getExifDataTask;
 
 
     @Override

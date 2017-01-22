@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,6 +31,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.DaggerTaskComponent;
+import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.PhotoStorage;
@@ -37,9 +41,10 @@ import us.mikeandwan.photos.tasks.GetYearsTask;
 import us.mikeandwan.photos.tasks.LoginTask;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Credentials _creds = new Credentials();
+    private TaskComponent _taskComponent;
 
     @BindView(R.id.username) EditText _usernameView;
     @BindView(R.id.password) EditText _passwordView;
@@ -47,20 +52,11 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.login_form) View _loginFormView;
     @BindView(R.id.login_button) Button _loginButton;
 
-    @Bean
-    MawDataManager _dm;
-
-    @Bean
-    PhotoStorage _ps;
-
-    @Bean
-    LoginTask _loginTask;
-
-    @Bean
-    GetYearsTask _getYearsTask;
-
-    @Bean
-    GetCategoriesForYearTask _getCategoriesForYearTask;
+    @Inject MawDataManager _dm;
+    @Inject PhotoStorage _ps;
+    @Inject LoginTask _loginTask;
+    @Inject GetYearsTask _getYearsTask;
+    @Inject GetCategoriesForYearTask _getCategoriesForYearTask;
 
 
     private void cleanupLegacyStorage() {
@@ -86,6 +82,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        _taskComponent = DaggerTaskComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .taskModule(getTaskModule())
+                .build();
+
+        _taskComponent.inject(this);
 
         _passwordView.setOnEditorActionListener((view, actionId, event) -> onPaswordEditorAction(view, actionId, event));
 

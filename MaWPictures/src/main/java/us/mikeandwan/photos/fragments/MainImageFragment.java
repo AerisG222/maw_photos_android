@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import com.example.touch.FullScreenImageAdapter;
 import com.example.touch.TouchViewPager;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -23,11 +25,8 @@ public class MainImageFragment extends BasePhotoFragment {
 
     @BindView(R.id.pager) TouchViewPager _pager;
 
-    @Bean
-    PhotoStorage _photoStorage;
-
-    @Bean
-    PhotoApiClient _photoClient;
+    @Inject PhotoStorage _photoStorage;
+    @Inject PhotoApiClient _photoClient;
 
 
     @Override

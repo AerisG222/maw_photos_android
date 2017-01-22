@@ -2,14 +2,21 @@ package us.mikeandwan.photos.tasks;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Rating;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetRatingTask {
-    @Bean
-    PhotoApiClient _client;
+    private PhotoApiClient _client;
+
+
+    @Inject
+    public GetRatingTask(PhotoApiClient client) {
+        _client = client;
+    }
 
 
     public Rating call(int photoId) throws Exception {

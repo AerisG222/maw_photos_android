@@ -20,6 +20,8 @@ import android.util.Log;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
@@ -33,8 +35,8 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 public class MawPollerService extends Service {
     private ServiceHandler _serviceHandler;
 
-    @Bean
-    PhotoApiClient _client;
+    @Inject PhotoApiClient _client;
+    @Inject MawDataManager _dm;
 
 
     @Override
@@ -121,8 +123,7 @@ public class MawPollerService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            MawDataManager dm = new MawDataManager(getBaseContext());
-            int maxId = dm.getLatestCategoryId();
+            int maxId = _dm.getLatestCategoryId();
             int totalCount = 0;
 
             if (!_client.isConnected()) {
@@ -131,7 +132,7 @@ public class MawPollerService extends Service {
             }
 
             if (!_client.isAuthenticated()) {
-                Credentials creds = dm.getCredentials();
+                Credentials creds = _dm.getCredentials();
 
                 if (!_client.authenticate(creds.getUsername(), creds.getPassword())) {
                     Log.e(MawApplication.LOG_TAG, "unable to authenticate - will not check for new photos");
@@ -149,7 +150,7 @@ public class MawPollerService extends Service {
                             Log.d(MawApplication.LOG_TAG, "unable to download teaser: " + category.getTeaserPhotoInfo().getPath());
                         }
 
-                        dm.addCategory(category);
+                        _dm.addCategory(category);
                     }
 
                     totalCount = MawApplication.getNotificationCount() + categories.size();

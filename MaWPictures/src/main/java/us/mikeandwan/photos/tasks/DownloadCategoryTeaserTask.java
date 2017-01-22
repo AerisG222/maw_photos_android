@@ -2,14 +2,21 @@ package us.mikeandwan.photos.tasks;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.models.ui.CategoryRowDetail;
 
 
 public class DownloadCategoryTeaserTask {
-    @Bean
-    PhotoApiClient _client;
+    private PhotoApiClient _client;
+
+
+    @Inject
+    public DownloadCategoryTeaserTask(PhotoApiClient client) {
+        _client = client;
+    }
 
 
     public CategoryRowDetail call(CategoryRowDetail rowDetail) throws Exception {

@@ -16,6 +16,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -44,11 +46,8 @@ public class ThumbnailListFragment extends BasePhotoFragment {
     @BindView(R.id.horizontalScrollView) HorizontalScrollView _horizontalScrollView;
     @BindView(R.id.imageLayout) LinearLayout _imageLayout;
 
-    @Bean
-    PhotoStorage _photoStorage;
-
-    @Bean
-    DownloadImageTask _downloadImageTask;
+    @Inject PhotoStorage _photoStorage;
+    @Inject DownloadImageTask _downloadImageTask;
 
 
     @Override

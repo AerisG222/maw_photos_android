@@ -17,11 +17,14 @@ import android.widget.ImageView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.MawDataManager;
@@ -42,11 +45,8 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
 
     @BindView(R.id.toolbar) Toolbar _toolbar;
 
-    @Bean
-    MawDataManager _dataManager;
-
-    @Bean
-    GetRecentCategoriesTask _getRecentCategoriesTask;
+    @Inject MawDataManager _dataManager;
+    @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
 
 
     protected void afterBind() {
@@ -119,11 +119,6 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
         super.onDestroy();
         disposables.clear(); // do not send event after activity has been destroyed
     }
-
-
-    //protected void onMenuHomeClick() {
-    //    finish();
-    //}
 
 
     public void onMenuSettingsClick(MenuItem menuItem) {

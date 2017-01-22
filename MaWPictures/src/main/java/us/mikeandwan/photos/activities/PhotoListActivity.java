@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Flowable;
@@ -63,6 +65,12 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     private static final int RANDOM_INITIAL_COUNT = 20;
     private static final int PREFETCH_COUNT = 2;
 
+    private static final String STATE_INDEX = "index";
+    private static final String STATE_IS_RANDOM_VIEW = "is_random_view";
+    private static final String STATE_DISPLAY_RANDOM_IMAGE = "display_random_image";
+    private static final String STATE_PLAYING_SLIDESHOW = "playing_slideshow";
+    private static final String STATE_PHOTO_LIST = "photo_list";
+
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Activity _theActivity;
     private ScheduledThreadPoolExecutor _slideshowExecutor;
@@ -80,32 +88,16 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.bottomLayout) LinearLayout _bottomLayout;
 
-    @InstanceState
-    protected int _index = 0;
+    @Inject PhotoStorage _ps;
+    @Inject GetPhotoListTask _getPhotoListTask;
+    @Inject GetRandomPhotoTask _getRandomPhotoTask;
+    @Inject DownloadImageTask _downloadImageTask;
 
-    @InstanceState
-    protected boolean _isRandomView;
-
-    @InstanceState
-    protected boolean _displayedRandomImage;
-
-    @InstanceState
-    protected boolean _playingSlideshow;
-
-    @InstanceState
-    protected ArrayList<Photo> _photoList = new ArrayList<>();
-
-    @Bean
-    PhotoStorage _ps;
-
-    @Bean
-    GetPhotoListTask _getPhotoListTask;
-
-    @Bean
-    GetRandomPhotoTask _getRandomPhotoTask;
-
-    @Bean
-    DownloadImageTask _downloadImageTask;
+    private int _index = 0;
+    private boolean _isRandomView;
+    private boolean _displayedRandomImage;
+    private boolean _playingSlideshow;
+    private ArrayList<Photo> _photoList = new ArrayList<>();
 
 
     protected void afterBind() {
@@ -143,6 +135,14 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
         _url = getIntent().getStringExtra("URL");
         _name = getIntent().getStringExtra("NAME");
 
+        if(savedInstanceState != null) {
+            _index = savedInstanceState.getInt(STATE_INDEX);
+            _isRandomView = savedInstanceState.getBoolean(STATE_IS_RANDOM_VIEW);
+            _displayedRandomImage = savedInstanceState.getBoolean(STATE_DISPLAY_RANDOM_IMAGE);
+            _playingSlideshow = savedInstanceState.getBoolean(STATE_PLAYING_SLIDESHOW);
+            _photoList = (ArrayList<Photo>) savedInstanceState.getSerializable(STATE_PHOTO_LIST);
+        }
+
         afterBind();
     }
 
@@ -157,6 +157,17 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
         return true;
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(STATE_INDEX, _index);
+        outState.putBoolean(STATE_IS_RANDOM_VIEW, _isRandomView);
+        outState.putBoolean(STATE_DISPLAY_RANDOM_IMAGE, _displayedRandomImage);
+        outState.putBoolean(STATE_PLAYING_SLIDESHOW, _playingSlideshow);
+        outState.putSerializable(STATE_PHOTO_LIST, _photoList);
+    }
 
     @Override
     protected void onDestroy() {

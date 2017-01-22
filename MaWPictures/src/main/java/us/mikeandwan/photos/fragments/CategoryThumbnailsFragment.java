@@ -15,6 +15,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
@@ -37,11 +39,8 @@ public class CategoryThumbnailsFragment extends BaseCategoryListFragment {
 
     @BindView(R.id.gridview) GridView _gridView;
 
-    @Bean
-    PhotoStorage _photoStorage;
-
-    @Bean
-    DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
+    @Inject PhotoStorage _photoStorage;
+    @Inject DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
 
 
     @Override

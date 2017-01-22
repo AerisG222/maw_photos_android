@@ -4,14 +4,21 @@ import android.util.Log;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class GetPhotoListTask {
-    @Bean
-    PhotoApiClient _client;
+    private PhotoApiClient _client;
+
+
+    @Inject
+    public GetPhotoListTask(PhotoApiClient client) {
+        _client = client;
+    }
 
 
     public List<Photo> call(String url) throws Exception {
