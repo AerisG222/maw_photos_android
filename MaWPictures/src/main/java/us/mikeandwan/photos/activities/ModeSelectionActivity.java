@@ -35,7 +35,7 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetYearsTask;
 
 
-public class ModeSelectionActivity extends BaseActivity {
+public class ModeSelectionActivity extends BaseActivity implements HasComponent<TaskComponent> {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private final List<Map<String, String>> _groupData = new ArrayList<>();
     private final List<List<Map<String, String>>> _childData = new ArrayList<>();
@@ -50,6 +50,11 @@ public class ModeSelectionActivity extends BaseActivity {
 
     @Inject MawDataManager _dm;
     @Inject GetYearsTask _getYearsTask;
+
+
+    public TaskComponent getComponent() {
+        return _taskComponent;
+    }
 
 
     protected void afterBind() {

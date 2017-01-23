@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 import dagger.Component;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.activities.BaseActivity;
-import us.mikeandwan.photos.fragments.MainImageFragment;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoApiClient;
@@ -27,9 +26,6 @@ public interface ApplicationComponent {
 
     // activities
     void inject(BaseActivity activity);
-
-    // fragments
-    void inject(MainImageFragment fragment);
 
     // services
     void inject(MawDataManager dataManager);

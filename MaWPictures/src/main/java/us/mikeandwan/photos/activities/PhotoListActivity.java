@@ -58,7 +58,7 @@ import us.mikeandwan.photos.tasks.GetPhotoListTask;
 import us.mikeandwan.photos.tasks.GetRandomPhotoTask;
 
 
-public class PhotoListActivity extends BaseActivity implements IPhotoActivity {
+public class PhotoListActivity extends BaseActivity implements IPhotoActivity, HasComponent<TaskComponent> {
     private static final float FADE_START_ALPHA = 1.0f;
     public static final float FADE_END_ALPHA = 0.2f;
     public static final int FADE_DURATION = 4200;
@@ -100,6 +100,11 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity {
     private boolean _displayedRandomImage;
     private boolean _playingSlideshow;
     private ArrayList<Photo> _photoList = new ArrayList<>();
+
+
+    public TaskComponent getComponent() {
+        return _taskComponent;
+    }
 
 
     protected void afterBind() {

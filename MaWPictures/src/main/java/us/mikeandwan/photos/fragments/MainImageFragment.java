@@ -15,6 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
 
@@ -37,6 +38,14 @@ public class MainImageFragment extends BasePhotoFragment {
         afterBind();
 
         return view;
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        this.getComponent(TaskComponent.class).inject(this);
     }
 
 

@@ -29,6 +29,7 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.IPhotoActivity;
 import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.activities.PhotoListActivity;
+import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoDownload;
 import us.mikeandwan.photos.models.PhotoSize;
@@ -56,6 +57,14 @@ public class ThumbnailListFragment extends BasePhotoFragment {
         _unbinder = ButterKnife.bind(this, view);
 
         return view;
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        this.getComponent(TaskComponent.class).inject(this);
     }
 
 

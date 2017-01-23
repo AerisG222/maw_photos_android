@@ -33,6 +33,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
+import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.services.MawAuthenticationException;
@@ -97,6 +98,14 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
         afterBind();
 
         return view;
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        this.getComponent(TaskComponent.class).inject(this);
     }
 
 

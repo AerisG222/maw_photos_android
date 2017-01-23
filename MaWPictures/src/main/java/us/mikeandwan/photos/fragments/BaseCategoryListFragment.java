@@ -1,14 +1,12 @@
 package us.mikeandwan.photos.fragments;
 
-import android.app.Fragment;
-
 import java.util.List;
 
 import us.mikeandwan.photos.activities.ICategoryListActivity;
 import us.mikeandwan.photos.models.Category;
 
 
-public class BaseCategoryListFragment extends Fragment {
+public class BaseCategoryListFragment extends BaseFragment {
     List<Category> _categories;
 
 

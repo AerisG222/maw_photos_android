@@ -34,7 +34,7 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
 
 
-public class CategoryListActivity extends BaseActivity implements ICategoryListActivity {
+public class CategoryListActivity extends BaseActivity implements ICategoryListActivity, HasComponent<TaskComponent> {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private int _year;
     private List<Category> _categories;
@@ -59,6 +59,11 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
             ViewCompat.setElevation(_toolbar, 8);
         }
+    }
+
+
+    public TaskComponent getComponent() {
+        return _taskComponent;
     }
 
 

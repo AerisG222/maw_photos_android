@@ -40,7 +40,7 @@ import us.mikeandwan.photos.tasks.GetYearsTask;
 import us.mikeandwan.photos.tasks.LoginTask;
 
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements HasComponent<TaskComponent> {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Credentials _creds = new Credentials();
     private TaskComponent _taskComponent;
@@ -56,6 +56,11 @@ public class LoginActivity extends BaseActivity {
     @Inject LoginTask _loginTask;
     @Inject GetYearsTask _getYearsTask;
     @Inject GetCategoriesForYearTask _getCategoriesForYearTask;
+
+
+    public TaskComponent getComponent() {
+        return _taskComponent;
+    }
 
 
     private void cleanupLegacyStorage() {
