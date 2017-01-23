@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -40,6 +39,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.DaggerTaskComponent;
+import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.PhotoDownload;
@@ -57,7 +58,7 @@ import us.mikeandwan.photos.tasks.GetPhotoListTask;
 import us.mikeandwan.photos.tasks.GetRandomPhotoTask;
 
 
-public class PhotoListActivity extends AppCompatActivity implements IPhotoActivity {
+public class PhotoListActivity extends BaseActivity implements IPhotoActivity {
     private static final float FADE_START_ALPHA = 1.0f;
     public static final float FADE_END_ALPHA = 0.2f;
     public static final int FADE_DURATION = 4200;
@@ -83,6 +84,7 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
     private MainImageToolbarFragment _imageToolbarFragment;
     private MainImageFragment _mainImageFragment;
     private MenuItem _menuShare;
+    private TaskComponent _taskComponent;
 
     @BindView(R.id.progressBar) ProgressBar _progressBar;
     @BindView(R.id.toolbar) Toolbar _toolbar;
@@ -127,6 +129,13 @@ public class PhotoListActivity extends AppCompatActivity implements IPhotoActivi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_list);
         ButterKnife.bind(this);
+
+        _taskComponent = DaggerTaskComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .taskModule(getTaskModule())
+                .build();
+
+        _taskComponent.inject(this);
 
         _thumbnailListFragment = (ThumbnailListFragment) getFragmentManager().findFragmentById(R.id.thumbnailListFragment);
         _imageToolbarFragment = (MainImageToolbarFragment) getFragmentManager().findFragmentById(R.id.mainImageToolbarFragment);

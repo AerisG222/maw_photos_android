@@ -3,7 +3,6 @@ package us.mikeandwan.photos.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,8 +26,8 @@ import butterknife.ButterKnife;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawAuthenticationException;
@@ -36,7 +35,7 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetYearsTask;
 
 
-public class ModeSelectionActivity extends AppCompatActivity {
+public class ModeSelectionActivity extends BaseActivity {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private final List<Map<String, String>> _groupData = new ArrayList<>();
     private final List<List<Map<String, String>>> _childData = new ArrayList<>();
@@ -44,14 +43,13 @@ public class ModeSelectionActivity extends AppCompatActivity {
     private SimpleExpandableListAdapter _adapter;
     private List<Integer> _yearList;
     private MenuItem _refreshMenuItem;
+    private TaskComponent _taskComponent;
 
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.modeExpandableListView) ExpandableListView _modeExpandableListView;
 
     @Inject MawDataManager _dm;
     @Inject GetYearsTask _getYearsTask;
-
-    private TaskComponent _component;
 
 
     protected void afterBind() {
@@ -78,19 +76,18 @@ public class ModeSelectionActivity extends AppCompatActivity {
     }
 
 
-    TaskComponent component() {
-        if(_component == null) {
-            //_component = DaggerTaskComponent
-        }
-
-        return _component;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mode_selection);
         ButterKnife.bind(this);
+
+        _taskComponent = DaggerTaskComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .taskModule(getTaskModule())
+                .build();
+
+        _taskComponent.inject(this);
 
         afterBind();
     }

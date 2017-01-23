@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,8 +23,9 @@ import butterknife.ButterKnife;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.DaggerTaskComponent;
+import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.fragments.BaseCategoryListFragment;
@@ -34,7 +34,7 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
 
 
-public class CategoryListActivity extends AppCompatActivity implements ICategoryListActivity {
+public class CategoryListActivity extends BaseActivity implements ICategoryListActivity {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private int _year;
     private List<Category> _categories;
@@ -42,6 +42,7 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
     private BaseCategoryListFragment _categoryListFragment;
     private BaseCategoryListFragment _categoryThumbnailsFragment;
     private MenuItem _refreshMenuItem;
+    private TaskComponent _taskComponent;
 
     @BindView(R.id.toolbar) Toolbar _toolbar;
 
@@ -66,6 +67,13 @@ public class CategoryListActivity extends AppCompatActivity implements ICategory
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_list);
         ButterKnife.bind(this);
+
+        _taskComponent = DaggerTaskComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .taskModule(getTaskModule())
+                .build();
+
+        _taskComponent.inject(this);
 
         _year = getIntent().getIntExtra("YEAR", 0);
         _categoryListFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_list_fragment);
