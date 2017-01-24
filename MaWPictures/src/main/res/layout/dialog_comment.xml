@@ -1,43 +1,66 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/dialog_width"
-    android:padding="@dimen/dialog_horizontal_margin"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <EditText
         android:id="@+id/commentEditText"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine|textAutoCorrect"
         android:ems="30"
         android:lines="3"
         android:textAlignment="viewStart"
-        tools:ignore="LabelFor" />
+        tools:ignore="LabelFor"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="6dp"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintHorizontal_bias="1.0" />
 
     <Button
         android:id="@+id/addCommentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_below="@id/commentEditText"
-        android:text="@string/frg_comment_add_comment" />
+        android:text="@string/frg_comment_add_comment"
+        app:layout_constraintTop_toBottomOf="@+id/commentEditText"
+        app:layout_constraintRight_toRightOf="@+id/commentEditText"
+        android:layout_marginTop="8dp" />
 
     <ScrollView
         android:id="@+id/commentScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/addCommentButton"
-        android:layout_margin="4dp">
+        android:layout_width="284dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addCommentButton"
+        app:layout_constraintVertical_bias="0.0">
 
         <TableLayout
             android:id="@+id/commentTableLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:divider="@android:drawable/divider_horizontal_dim_dark"
             android:stretchColumns="*"
-            android:divider="@android:drawable/divider_horizontal_dim_dark" />
+            app:layout_constraintTop_toBottomOf="@+id/addCommentButton"
+            tools:layout_editor_absoluteX="8dp" />
 
     </ScrollView>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
