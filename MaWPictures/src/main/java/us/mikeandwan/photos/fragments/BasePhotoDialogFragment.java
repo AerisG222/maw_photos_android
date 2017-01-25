@@ -9,7 +9,6 @@ import us.mikeandwan.photos.models.Photo;
 
 
 public class BasePhotoDialogFragment extends DialogFragment {
-    @SuppressWarnings("unchecked")
     protected <C> C getComponent(Class<C> componentType) {
         return componentType.cast(((HasComponent<C>)getActivity()).getComponent());
     }

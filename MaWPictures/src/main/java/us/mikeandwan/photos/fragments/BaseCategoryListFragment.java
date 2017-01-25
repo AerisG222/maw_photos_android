@@ -7,10 +7,10 @@ import us.mikeandwan.photos.models.Category;
 
 
 public class BaseCategoryListFragment extends BaseFragment {
-    List<Category> _categories;
+    protected List<Category> _categories;
 
 
-    ICategoryListActivity getCategoryActivity() {
+    protected ICategoryListActivity getCategoryActivity() {
         return (ICategoryListActivity) getActivity();
     }
 

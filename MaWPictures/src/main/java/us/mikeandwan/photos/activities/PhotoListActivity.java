@@ -43,7 +43,6 @@ import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
-import us.mikeandwan.photos.models.PhotoDownload;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.fragments.CommentDialogFragment;
 import us.mikeandwan.photos.fragments.ExifDialogFragment;
@@ -53,7 +52,7 @@ import us.mikeandwan.photos.fragments.RatingDialogFragment;
 import us.mikeandwan.photos.fragments.ThumbnailListFragment;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadImageTask;
+import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 import us.mikeandwan.photos.tasks.GetPhotoListTask;
 import us.mikeandwan.photos.tasks.GetRandomPhotoTask;
 
@@ -93,7 +92,8 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Inject PhotoStorage _ps;
     @Inject GetPhotoListTask _getPhotoListTask;
     @Inject GetRandomPhotoTask _getRandomPhotoTask;
-    @Inject DownloadImageTask _downloadImageTask;
+    @Inject
+    DownloadPhotoTask _downloadPhotoTask;
 
     private int _index = 0;
     private boolean _isRandomView;
@@ -506,19 +506,17 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private void PrefetchMainImage(int index) {
         // start fetching next item first, if there is one, as it is more likely to move forward first
         for (int i = index + 1; i < index + PREFETCH_COUNT && i < _photoList.size(); i++) {
-            PhotoDownload pd = new PhotoDownload(_photoList.get(i), i);
-            downloadImage(pd, PhotoSize.Md);
+            downloadImage(_photoList.get(i), PhotoSize.Md);
         }
 
         for (int i = index - 1; i > index - PREFETCH_COUNT && i > 0; i--) {
-            PhotoDownload pd = new PhotoDownload(_photoList.get(i), i);
-            downloadImage(pd, PhotoSize.Md);
+            downloadImage(_photoList.get(i), PhotoSize.Md);
         }
     }
 
 
-    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size) {
-        disposables.add(Flowable.fromCallable(() -> _downloadImageTask.call(photoDownload, size))
+    private void downloadImage(final Photo photo, PhotoSize size) {
+        disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(

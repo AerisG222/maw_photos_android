@@ -8,7 +8,7 @@ import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.AddCommentTask;
 import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
-import us.mikeandwan.photos.tasks.DownloadImageTask;
+import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 import us.mikeandwan.photos.tasks.GetCategoriesForYearTask;
 import us.mikeandwan.photos.tasks.GetCommentsTask;
 import us.mikeandwan.photos.tasks.GetExifDataTask;
@@ -59,8 +59,8 @@ public class TaskModule {
 
     @Provides
     @PerActivity
-    DownloadImageTask provideDownloadImageTask(PhotoApiClient client) {
-        return new DownloadImageTask(client);
+    DownloadPhotoTask provideDownloadImageTask(PhotoApiClient client) {
+        return new DownloadPhotoTask(client);
     }
 
 

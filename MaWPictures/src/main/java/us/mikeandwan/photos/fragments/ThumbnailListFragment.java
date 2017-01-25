@@ -2,6 +2,7 @@ package us.mikeandwan.photos.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 
@@ -31,11 +31,10 @@ import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.activities.PhotoListActivity;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Photo;
-import us.mikeandwan.photos.models.PhotoDownload;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadImageTask;
+import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 
 public class ThumbnailListFragment extends BasePhotoFragment {
@@ -45,10 +44,11 @@ public class ThumbnailListFragment extends BasePhotoFragment {
     private Unbinder _unbinder;
 
     @BindView(R.id.horizontalScrollView) HorizontalScrollView _horizontalScrollView;
-    @BindView(R.id.imageLayout) LinearLayout _imageLayout;
+    @BindView(R.id.imageRecycler) RecyclerView _imageRecyclerView;
 
     @Inject PhotoStorage _photoStorage;
-    @Inject DownloadImageTask _downloadImageTask;
+    @Inject
+    DownloadPhotoTask _downloadPhotoTask;
 
 
     @Override
@@ -119,23 +119,16 @@ public class ThumbnailListFragment extends BasePhotoFragment {
             index = _thumbList.size() - 1;
         }
 
-        PhotoDownload pd = new PhotoDownload(photo, index);
-
-        displayPhotoThumbnail(pd);
+        displayPhotoThumbnail(photo, index);
     }
 
 
-    private void displayPhotoThumbnail(PhotoDownload photoDownload) {
-        if (!_photoStorage.doesExist(photoDownload.getMawPhoto().getXsInfo().getPath())) {
-            if (photoDownload.getDownloadAttempts() == 0) {
-                photoDownload.incrementDownloadCount();
-                downloadImage(photoDownload, PhotoSize.Xs);
-            } else {
-                Log.w(MawApplication.LOG_TAG, "we have already tried to download this thumbnail w/o success, not trying again");
-            }
+    private void displayPhotoThumbnail(Photo photo, int index) {
+        if (!_photoStorage.doesExist(photo.getXsInfo().getPath())) {
+                downloadImage(photo, PhotoSize.Xs, index);
         } else {
-            String file = "file://" + _photoStorage.getCachePath(photoDownload.getMawPhoto().getXsInfo().getPath());
-            ImageView thumb = _thumbList.get(photoDownload.getIndex());
+            String file = "file://" + _photoStorage.getCachePath(photo.getXsInfo().getPath());
+            ImageView thumb = _thumbList.get(index);
 
             Picasso
                 .with(getActivity())
@@ -156,13 +149,13 @@ public class ThumbnailListFragment extends BasePhotoFragment {
     }
 
 
-    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size) {
-        disposables.add(Flowable.fromCallable(() -> _downloadImageTask.call(photoDownload, size))
+    private void downloadImage(final Photo photo, PhotoSize size, int index) {
+        disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(
                         x -> {
-                            displayPhotoThumbnail(x);
+                            displayPhotoThumbnail(photo, index);
                             updateProgress();
                         },
                         ex -> handleException(ex)
@@ -189,7 +182,7 @@ public class ThumbnailListFragment extends BasePhotoFragment {
                     activity.gotoPhoto(_thumbIndex);
             });
 
-            _imageLayout.addView(image);
+            _imageRecyclerView.addView(image);
         } catch (Exception ex) {
             Log.e(MawApplication.LOG_TAG, ex.getMessage());
         }

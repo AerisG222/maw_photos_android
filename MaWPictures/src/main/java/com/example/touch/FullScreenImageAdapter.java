@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +16,15 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.IPhotoActivity;
 import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Photo;
-import us.mikeandwan.photos.models.PhotoDownload;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadImageTask;
+import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
@@ -38,7 +35,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final Dictionary<Integer, TouchImageView> _imgList = new Hashtable<>();
     private final LayoutInflater _inflater;
     private final PhotoStorage _photoStorage;
-    private final DownloadImageTask _downloadImageTask;
+    private final DownloadPhotoTask _downloadPhotoTask;
 
 
     public FullScreenImageAdapter(Context context, PhotoStorage photoStorage, PhotoApiClient photoClient, IPhotoActivity activity) {
@@ -47,7 +44,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         _photoList = activity.getPhotoList();
         _photoStorage = photoStorage;
         _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        _downloadImageTask = new DownloadImageTask(photoClient);
+        _downloadPhotoTask = new DownloadPhotoTask(photoClient);
     }
 
 
@@ -72,8 +69,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         TouchImageView img = (TouchImageView) v.findViewById(R.id.imgDisplay);
 
         _imgList.put(position, img);
-        PhotoDownload pd = new PhotoDownload(_photoList.get(position), position);
-        displayImage(pd);
+        displayImage(_photoList.get(position));
 
         container.addView(v);
 
@@ -88,19 +84,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
 
-    private void displayImage(PhotoDownload photoDownload) {
-        String path = photoDownload.getMawPhoto().getMdInfo().getPath();
+    private void displayImage(Photo photo) {
+        String path = photo.getMdInfo().getPath();
 
         if (!_photoStorage.doesExist(path)) {
-            if (photoDownload.getDownloadAttempts() == 0) {
-                photoDownload.incrementDownloadCount();
-                downloadImage(photoDownload, PhotoSize.Md);
-            } else {
-                Log.w(MawApplication.LOG_TAG, "we have already tried to download this main image w/o success, not trying again");
-            }
+                downloadImage(photo, PhotoSize.Md);
         } else {
             BitmapDrawable drawable = new BitmapDrawable(_context.getResources(), _photoStorage.get(path));
-            TouchImageView img = _imgList.get(photoDownload.getIndex());
+            TouchImageView img = _imgList.get(photo);
 
             if (img != null) {
                 img.setImageDrawable(drawable);
@@ -116,13 +107,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
 
-    private void downloadImage(final PhotoDownload photoDownload, PhotoSize size) {
-        Flowable.fromCallable(() -> _downloadImageTask.call(photoDownload, size))
+    private void downloadImage(final Photo photo, PhotoSize size) {
+        Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(
                         x -> {
-                            displayImage(x);
+                            displayImage(photo);
                             _activity.updateProgress();
                         },
                         ex -> handleException(ex)

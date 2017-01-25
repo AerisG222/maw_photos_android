@@ -8,11 +8,11 @@
     android:background="?attr/colorPrimaryDark"
     tools:ignore="Overdraw">
 
-    <LinearLayout
-        android:id="@+id/imageLayout"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/imageRecycler"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:focusableInTouchMode="false" />
+        android:scrollbars="horizontal" />
 
 </HorizontalScrollView>
