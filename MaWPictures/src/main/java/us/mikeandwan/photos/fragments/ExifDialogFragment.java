@@ -23,7 +23,7 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.ExifData;
-import us.mikeandwan.photos.models.ExifDataFormatter;
+import us.mikeandwan.photos.models.ui.ExifDataFormatter;
 import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.tasks.GetExifDataTask;
 
