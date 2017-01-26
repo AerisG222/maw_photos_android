@@ -6,8 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.touch.FullScreenImageAdapter;
-import com.example.touch.TouchViewPager;
+import us.mikeandwan.photos.models.ui.FullScreenImageAdapter;
 
 import javax.inject.Inject;
 
@@ -16,6 +15,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.TaskComponent;
+import us.mikeandwan.photos.models.ui.PhotoViewPager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
 
@@ -24,7 +24,7 @@ public class MainImageFragment extends BasePhotoFragment {
     private FullScreenImageAdapter _adapter;
     private Unbinder _unbinder;
 
-    @BindView(R.id.pager) TouchViewPager _pager;
+    @BindView(R.id.pager) PhotoViewPager _pager;
 
     @Inject PhotoStorage _photoStorage;
     @Inject PhotoApiClient _photoClient;

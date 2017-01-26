@@ -95,6 +95,9 @@ dependencies {
     // reactivex
     compile "io.reactivex.rxjava2:rxjava:2.0.4"
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    // photoview
+    compile 'com.github.chrisbanes:PhotoView:1.3.1'
 }
 
 /*

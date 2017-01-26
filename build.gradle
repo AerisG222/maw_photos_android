@@ -12,9 +12,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven {
-            // https://github.com/commonsguy/cwac-provider
-            url "https://s3.amazonaws.com/repo.commonsware.com"
-        }
+        maven { url "https://s3.amazonaws.com/repo.commonsware.com" }
+        maven { url "https://jitpack.io" }
     }
 }

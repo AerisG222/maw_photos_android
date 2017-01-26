@@ -1,5 +1,4 @@
-package com.example.touch;
-
+package us.mikeandwan.photos.models.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,13 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
+import uk.co.senab.photoview.PhotoView;
+
 import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.IPhotoActivity;
 import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Photo;
@@ -32,8 +30,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final Context _context;
     private final IPhotoActivity _activity;
     private final List<Photo> _photoList;
-    private final Dictionary<Integer, TouchImageView> _imgList = new Hashtable<>();
-    private final LayoutInflater _inflater;
     private final PhotoStorage _photoStorage;
     private final DownloadPhotoTask _downloadPhotoTask;
 
@@ -43,7 +39,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         _activity = activity;
         _photoList = activity.getPhotoList();
         _photoStorage = photoStorage;
-        _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         _downloadPhotoTask = new DownloadPhotoTask(photoClient);
     }
 
@@ -62,40 +57,30 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        View v = _inflater.inflate(R.layout.fullscreen_image, container, false);
+        PhotoView photoView = new PhotoView(container.getContext());
 
-        v.setTag(position);
+        displayImage(photoView, _photoList.get(position));
 
-        TouchImageView img = (TouchImageView) v.findViewById(R.id.imgDisplay);
+        container.addView(photoView);
 
-        _imgList.put(position, img);
-        displayImage(_photoList.get(position));
-
-        container.addView(v);
-
-        return v;
+        return photoView;
     }
 
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((RelativeLayout) object);
-        _imgList.remove(position);
     }
 
 
-    private void displayImage(Photo photo) {
+    private void displayImage(PhotoView view, Photo photo) {
         String path = photo.getMdInfo().getPath();
 
         if (!_photoStorage.doesExist(path)) {
-                downloadImage(photo, PhotoSize.Md);
+            downloadImage(view, photo, PhotoSize.Md);
         } else {
             BitmapDrawable drawable = new BitmapDrawable(_context.getResources(), _photoStorage.get(path));
-            TouchImageView img = _imgList.get(photo);
-
-            if (img != null) {
-                img.setImageDrawable(drawable);
-            }
+            view.setImageDrawable(drawable);
         }
     }
 
@@ -107,13 +92,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
 
-    private void downloadImage(final Photo photo, PhotoSize size) {
+    private void downloadImage(final PhotoView view, final Photo photo, PhotoSize size) {
         Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(
                         x -> {
-                            displayImage(photo);
+                            displayImage(view, photo);
                             _activity.updateProgress();
                         },
                         ex -> handleException(ex)
