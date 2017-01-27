@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
@@ -158,7 +159,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         disposables.add(
                 Flowable.fromCallable(() -> _getRecentCategoriesTask.call())
                         .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.single())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 x -> onSyncComplete(x),
                                 ex -> onException(ex)

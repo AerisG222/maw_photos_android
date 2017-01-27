@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
@@ -346,7 +347,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private void initPhotoList(String url) {
         disposables.add(Flowable.fromCallable(() -> _getPhotoListTask.call(url))
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> onGetPhotoList(x),
                         ex -> handleException(ex)
@@ -378,7 +379,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private void fetchRandom() {
         disposables.add(Flowable.fromCallable(() -> _getRandomPhotoTask.call())
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> onGetRandom(x),
                         ex -> handleException(ex)
@@ -518,7 +519,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private void downloadImage(final Photo photo, PhotoSize size) {
         disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> updateProgress(),
                         ex -> handleException(ex)

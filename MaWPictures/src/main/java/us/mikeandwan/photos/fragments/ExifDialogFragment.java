@@ -17,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
@@ -166,7 +167,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
     private void getExifData() {
         disposables.add(Flowable.fromCallable(() -> _getExifDataTask.call(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> displayExifData(x),
                         ex -> handleException(ex)

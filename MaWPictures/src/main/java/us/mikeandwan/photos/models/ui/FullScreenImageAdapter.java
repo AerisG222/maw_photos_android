@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.view.PagerAdapter;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import uk.co.senab.photoview.PhotoView;
 
 import java.util.List;
@@ -95,7 +95,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private void downloadImage(final PhotoView view, final Photo photo, PhotoSize size) {
         Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> {
                             displayImage(view, photo);

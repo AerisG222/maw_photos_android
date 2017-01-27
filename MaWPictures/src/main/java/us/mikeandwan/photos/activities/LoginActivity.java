@@ -26,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
@@ -40,6 +41,7 @@ import us.mikeandwan.photos.tasks.GetYearsTask;
 import us.mikeandwan.photos.tasks.LoginTask;
 
 
+// TODO: change how we cache credentials for server side encryption
 public class LoginActivity extends BaseActivity implements HasComponent<TaskComponent> {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Credentials _creds = new Credentials();
@@ -72,7 +74,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
                     return true;
                 })
                         .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.single())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 x -> Log.i(MawApplication.LOG_TAG, "completed wipe"),
                                 ex -> Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage())
@@ -174,7 +176,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
             disposables.add(
                     Flowable.fromCallable(() -> _loginTask.call(_creds))
                             .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.single())
+                            .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     x -> completeLoginProcess(x),
                                     ex -> { Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage()); }
@@ -202,7 +204,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
                 disposables.add(
                         Flowable.fromCallable(() -> _getYearsTask.call())
                                 .subscribeOn(Schedulers.io())
-                                .observeOn(Schedulers.single())
+                                .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
                                         x -> getCategories(x),
                                         ex -> { Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage()); }
@@ -225,7 +227,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
                     .flatMapIterable(x -> x)
                     .map(x -> _getCategoriesForYearTask.call(x))
                     .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> goToModeSelection(),
                             ex -> Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage())

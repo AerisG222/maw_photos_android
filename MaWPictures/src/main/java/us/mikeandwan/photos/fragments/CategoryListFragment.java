@@ -2,6 +2,7 @@ package us.mikeandwan.photos.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,11 +42,14 @@ public class CategoryListFragment extends BaseCategoryListFragment {
 
         _adapter = new CategoryRecyclerAdapter(_activity, _photoStorage, _downloadCategoryTeaserTask, categories);
 
+        LinearLayoutManager llm = new LinearLayoutManager(_activity);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        _categoryRecyclerView.setLayoutManager(llm);
         _categoryRecyclerView.setAdapter(_adapter);
     }
 
 
-    @OnItemSelected(R.id.category_recycler_view)
+    //@OnItemSelected(R.id.category_recycler_view)
     void onCategoryListItemClick(AdapterView<?> parent, View view, int position, long id) {
         Category category = (Category) parent.getItemAtPosition((position));
 
@@ -73,7 +77,11 @@ public class CategoryListFragment extends BaseCategoryListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        _adapter.dispose();
+
+        if(_adapter != null) {
+            _adapter.dispose();
+        }
+
         _unbinder.unbind();
     }
 

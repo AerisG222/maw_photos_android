@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
@@ -65,7 +66,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
 
             _disposables.add(Flowable.fromCallable(() -> _downloadCategoryTeaserTask.call(category))
                     .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> displayCategory(category, viewHolder),
                             ex -> handleException(ex)
@@ -88,6 +89,8 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
 
     private void displayCategory(Category category, CategoryRecyclerAdapter.ViewHolder viewHolder) {
         String file = "file://" + _photoStorage.getCachePath(category.getTeaserPhotoInfo().getPath());
+
+        viewHolder._nameTextView.setText(category.getName());
 
         Picasso
                 .with(_context)

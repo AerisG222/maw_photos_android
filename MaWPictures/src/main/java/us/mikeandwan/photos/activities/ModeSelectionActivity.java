@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
@@ -162,7 +163,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         disposables.add(
             Flowable.fromCallable(() -> _getYearsTask.call())
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.single())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 x -> onSyncComplete(x),
                 ex -> {

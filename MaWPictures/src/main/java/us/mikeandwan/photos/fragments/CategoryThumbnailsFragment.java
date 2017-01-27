@@ -63,7 +63,11 @@ public class CategoryThumbnailsFragment extends BaseCategoryListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        _adapter.dispose();
+
+        if(_adapter != null) {
+            _adapter.dispose();
+        }
+
         _unbinder.unbind();
     }
 

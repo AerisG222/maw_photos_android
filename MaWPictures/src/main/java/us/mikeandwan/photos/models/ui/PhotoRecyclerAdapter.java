@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
@@ -59,7 +60,7 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<PhotoRecyclerAdap
 
             _disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, PhotoSize.Xs))
                     .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> displayPhoto(photo, viewHolder),
                             ex -> handleException(ex)

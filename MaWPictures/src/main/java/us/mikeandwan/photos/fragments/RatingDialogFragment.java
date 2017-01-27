@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
@@ -40,7 +41,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                 if (fromUser) {
                     disposables.add(Flowable.fromCallable(() -> _setRatingTask.call(getCurrentPhoto().getId(), Math.round(rating)))
                             .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.single())
+                            .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     x -> displayRating(x),
                                     ex -> handleException(ex)
@@ -103,7 +104,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
 
         disposables.add(Flowable.fromCallable(() -> _getRatingTask.call(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> displayRating(x),
                         ex -> handleException(ex)

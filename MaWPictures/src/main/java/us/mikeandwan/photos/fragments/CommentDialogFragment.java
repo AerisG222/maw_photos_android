@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
@@ -68,7 +69,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
 
             disposables.add(Flowable.fromCallable(() -> _addCommentTask.call(cp))
                     .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> {
                                 _commentEditText.setText("");
@@ -128,7 +129,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     private void getComments() {
         disposables.add(Flowable.fromCallable(() -> _getCommentsTask.call(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> displayComments(x),
                         ex -> handleException(ex)
