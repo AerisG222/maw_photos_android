@@ -2,6 +2,7 @@ package us.mikeandwan.photos.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -58,10 +59,14 @@ public class CategoryListFragment extends BaseCategoryListFragment {
         View view = inflater.inflate(R.layout.fragment_category_list, container, false);
         _unbinder = ButterKnife.bind(this, view);
 
-        //_categoryRecyclerView.setHasFixedSize(true);
+        _categoryRecyclerView.setHasFixedSize(true);
+
         LinearLayoutManager llm = new LinearLayoutManager(_activity);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _categoryRecyclerView.setLayoutManager(llm);
+
+        DividerItemDecoration dec = new DividerItemDecoration(_categoryRecyclerView.getContext(), llm.getOrientation());
+        _categoryRecyclerView.addItemDecoration(dec);
 
         return view;
     }
