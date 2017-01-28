@@ -13,6 +13,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -116,14 +118,14 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView _thumbnailImageView;
-        public TextView _nameTextView;
+        @BindView(R.id.thumbnailImageView) public ImageView _thumbnailImageView;
+        @BindView(R.id.categoryNameTextView) public TextView _nameTextView;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            _nameTextView = (TextView) itemView.findViewById(R.id.categoryNameTextView);
-            _thumbnailImageView = (ImageView) itemView.findViewById(R.id.thumbnailImageView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }
