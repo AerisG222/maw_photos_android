@@ -14,9 +14,11 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Category;
@@ -32,6 +34,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
     private final Context _context;
     private final PhotoStorage _photoStorage;
     private final DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
+    private final PublishSubject<Category> onClickSubject = PublishSubject.create();
 
 
     public CategoryRecyclerAdapter(Context context, PhotoStorage photoStorage, DownloadCategoryTeaserTask downloadTeaserTask, List<Category> categoryList) {
@@ -52,7 +55,9 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
 
     @Override
     public void onBindViewHolder(CategoryRecyclerAdapter.ViewHolder viewHolder, int position) {
-        Category category = _categoryList.get(position);
+        final Category category = _categoryList.get(position);
+
+        viewHolder.itemView.setOnClickListener(v -> onClickSubject.onNext(category));
 
         viewHolder._nameTextView.setText(category.getName());
 
@@ -76,6 +81,11 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
     @Override
     public int getItemCount() {
         return _categoryList.size();
+    }
+
+
+    public Observable<Category> getClicks(){
+        return onClickSubject.hide();
     }
 
 

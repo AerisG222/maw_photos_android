@@ -42,15 +42,10 @@ public class CategoryListFragment extends BaseCategoryListFragment {
         super.setCategories(categories);
 
         _adapter = new CategoryRecyclerAdapter(_activity, _photoStorage, _downloadCategoryTeaserTask, categories);
+
+        _adapter.getClicks().subscribe(c -> getCategoryActivity().selectCategory(c));
+
         _categoryRecyclerView.setAdapter(_adapter);
-    }
-
-
-    //@OnItemSelected(R.id.category_recycler_view)
-    void onCategoryListItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Category category = (Category) parent.getItemAtPosition((position));
-
-        getCategoryActivity().selectCategory(category);
     }
 
 
