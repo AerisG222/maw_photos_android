@@ -41,10 +41,6 @@ public class CategoryListFragment extends BaseCategoryListFragment {
         super.setCategories(categories);
 
         _adapter = new CategoryRecyclerAdapter(_activity, _photoStorage, _downloadCategoryTeaserTask, categories);
-
-        LinearLayoutManager llm = new LinearLayoutManager(_activity);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        _categoryRecyclerView.setLayoutManager(llm);
         _categoryRecyclerView.setAdapter(_adapter);
     }
 
@@ -61,6 +57,11 @@ public class CategoryListFragment extends BaseCategoryListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_category_list, container, false);
         _unbinder = ButterKnife.bind(this, view);
+
+        //_categoryRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(_activity);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        _categoryRecyclerView.setLayoutManager(llm);
 
         return view;
     }
