@@ -225,7 +225,10 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
         disposables.add(
                 Flowable.just(years)
                     .flatMapIterable(x -> x)
-                    .map(x -> _getCategoriesForYearTask.call(x))
+                    .map(x -> {
+                        _dm.addYear(x);
+                        return _getCategoriesForYearTask.call(x);
+                    })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(

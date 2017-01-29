@@ -18,6 +18,8 @@ import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.models.PhotoInfo;
 
 
+// https://nfrolov.wordpress.com/2014/08/16/android-sqlitedatabase-locking-and-multi-threading/
+//   recommends not closing db given its shared nature...
 public class MawDataManager {
     private static final String _seed = "Z@9{9^WSi)Rgf:Bjr|$L2f9.wK$fQH(_tiLs+\"4~p#i0u+[BBcSgEck!_0}PaJeF";
     private MawSQLiteOpenHelper _dbHelper;
@@ -47,10 +49,6 @@ public class MawDataManager {
             }
         } catch (Exception ex) {
             Log.e(MawApplication.LOG_TAG, "Error when saving credentials: " + ex.getMessage());
-        } finally {
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
         }
     }
 
@@ -75,10 +73,6 @@ public class MawDataManager {
         } finally {
             if (c != null && !c.isClosed()) {
                 c.close();
-            }
-
-            if (db != null && db.isOpen()) {
-                db.close();
             }
         }
 
@@ -106,10 +100,6 @@ public class MawDataManager {
             if (c != null && !c.isClosed()) {
                 c.close();
             }
-
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
         }
 
         return result;
@@ -135,10 +125,6 @@ public class MawDataManager {
         } finally {
             if (c != null && !c.isClosed()) {
                 c.close();
-            }
-
-            if (db != null && db.isOpen()) {
-                db.close();
             }
         }
 
@@ -166,10 +152,6 @@ public class MawDataManager {
             if (c != null && !c.isClosed()) {
                 c.close();
             }
-
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
         }
 
         return result;
@@ -196,10 +178,6 @@ public class MawDataManager {
             if (c != null && !c.isClosed()) {
                 c.close();
             }
-
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
         }
 
         return result;
@@ -225,10 +203,6 @@ public class MawDataManager {
         } finally {
             if (c != null && !c.isClosed()) {
                 c.close();
-            }
-
-            if (db != null && db.isOpen()) {
-                db.close();
             }
         }
 
@@ -297,19 +271,12 @@ public class MawDataManager {
             }
         } catch (Exception ex) {
             Log.e(MawApplication.LOG_TAG, "error adding record: " + ex.getMessage());
-        } finally {
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
         }
     }
 
 
     private SQLiteDatabase getDatabase(boolean isWritable) {
-        if (isWritable) {
-            return _dbHelper.getWritableDatabase();
-        } else {
-            return _dbHelper.getReadableDatabase();
-        }
+        // no real difference between read/write dbs, so just use writable as we will need to write eventually
+        return _dbHelper.getWritableDatabase();
     }
 }
