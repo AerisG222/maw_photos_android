@@ -196,7 +196,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     //}
 
 
-    protected void onMenuItemSettings(MenuItem menuItem) {
+    public void onMenuItemSettings(MenuItem menuItem) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
