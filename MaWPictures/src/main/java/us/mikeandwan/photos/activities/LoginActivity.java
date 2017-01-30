@@ -11,14 +11,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -65,24 +60,6 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     }
 
 
-    private void cleanupLegacyStorage() {
-        Log.i(MawApplication.LOG_TAG, "starting to wipe");
-
-        disposables.add(
-                Flowable.fromCallable(() -> {
-                    _ps.wipeLegacyCache();
-                    return true;
-                })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                x -> Log.i(MawApplication.LOG_TAG, "completed wipe"),
-                                ex -> Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage())
-                        )
-        );
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +72,6 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
                 .build();
 
         _taskComponent.inject(this);
-
-        _passwordView.setOnEditorActionListener((view, actionId, event) -> onPaswordEditorAction(view, actionId, event));
 
         cleanupLegacyStorage();
 
@@ -130,15 +105,6 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
         NotificationManager mgr = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         mgr.cancel(0);
         MawApplication.setNotificationCount(0);
-    }
-
-
-    public boolean onPaswordEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-        if (id == R.id.login || id == EditorInfo.IME_NULL) {
-            attemptLogin();
-            return true;
-        }
-        return false;
     }
 
 
@@ -179,7 +145,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     x -> completeLoginProcess(x),
-                                    ex -> { Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage()); }
+                                    ex -> Log.w(MawApplication.LOG_TAG, "error authenticating: " + ex.getMessage())
                             )
             );
         }
@@ -187,6 +153,8 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
 
 
     private void completeLoginProcess(boolean success) {
+        Log.i(MawApplication.LOG_TAG, "login result: " + success);
+
         if (success) {
             // set the creds before it is blanked out below
             _dm.setCredentials(_creds.getUsername(), _creds.getPassword());
@@ -203,11 +171,14 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
             if (_dm.getPhotoYears().size() == 0) {
                 disposables.add(
                         Flowable.fromCallable(() -> _getYearsTask.call())
+                                .flatMapIterable(x -> x)
+                                .map(x -> _getCategoriesForYearTask.call(x))
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
-                                        x -> getCategories(x),
-                                        ex -> { Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage()); }
+                                        x -> Log.i(MawApplication.LOG_TAG, "next: " + x.get(0).getYear()),
+                                        ex -> Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage()),
+                                        () -> { Log.i(MawApplication.LOG_TAG, "completed"); goToModeSelection(); }
                                 )
                 );
             } else {
@@ -221,29 +192,29 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     }
 
 
-    private void getCategories(List<Integer> years) {
-        disposables.add(
-                Flowable.just(years)
-                    .flatMapIterable(x -> x)
-                    .map(x -> {
-                        _dm.addYear(x);
-                        return _getCategoriesForYearTask.call(x);
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            x -> goToModeSelection(),
-                            ex -> Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage())
-                    )
-        );
-    }
-
-
     private void goToModeSelection() {
         Intent intent = new Intent(this, ModeSelectionActivity.class);
         startActivity(intent);
 
         showProgress(false);
+    }
+
+
+    private void cleanupLegacyStorage() {
+        Log.i(MawApplication.LOG_TAG, "starting to wipe");
+
+        disposables.add(
+                Flowable.fromCallable(() -> {
+                    _ps.wipeLegacyCache();
+                    return true;
+                })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                x -> Log.i(MawApplication.LOG_TAG, "completed wipe"),
+                                ex -> Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage())
+                        )
+        );
     }
 
 
