@@ -24,7 +24,7 @@ import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 
-public class PhotoRecyclerAdapter extends RecyclerView.Adapter<PhotoRecyclerAdapter.ViewHolder> {
+public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecyclerAdapter.ViewHolder> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
     private final List<Photo> _photoList;
@@ -32,7 +32,7 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<PhotoRecyclerAdap
     private final DownloadPhotoTask _downloadPhotoTask;
 
 
-    public PhotoRecyclerAdapter(Context context, PhotoStorage photoStorage, DownloadPhotoTask downloadPhotoTask, List<Photo> photoList) {
+    public ThumbnailRecyclerAdapter(Context context, PhotoStorage photoStorage, DownloadPhotoTask downloadPhotoTask, List<Photo> photoList) {
         _context = context;
         _photoStorage = photoStorage;
         _photoList = photoList;
@@ -41,16 +41,19 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<PhotoRecyclerAdap
 
 
     @Override
-    public PhotoRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ThumbnailRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         ImageView view = new ImageView(context);
 
-        return new PhotoRecyclerAdapter.ViewHolder(view);
+        view.setScaleType(ImageView.ScaleType.CENTER);
+        view.setPadding(2, 0, 2, 0);
+
+        return new ThumbnailRecyclerAdapter.ViewHolder(view);
     }
 
 
     @Override
-    public void onBindViewHolder(PhotoRecyclerAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(ThumbnailRecyclerAdapter.ViewHolder viewHolder, int position) {
         Photo photo = _photoList.get(position);
 
         if (_photoStorage.doesExist(photo.getXsInfo().getPath())) {
@@ -76,7 +79,7 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<PhotoRecyclerAdap
     }
 
 
-    private void displayPhoto(Photo photo, PhotoRecyclerAdapter.ViewHolder viewHolder) {
+    private void displayPhoto(Photo photo, ThumbnailRecyclerAdapter.ViewHolder viewHolder) {
         String file = "file://" + _photoStorage.getCachePath(photo.getXsInfo().getPath());
 
         Picasso

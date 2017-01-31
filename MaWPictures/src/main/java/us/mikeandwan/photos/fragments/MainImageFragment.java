@@ -35,8 +35,6 @@ public class MainImageFragment extends BasePhotoFragment {
         View view = inflater.inflate(R.layout.fragment_main_image, container, false);
         _unbinder = ButterKnife.bind(this, view);
 
-        afterBind();
-
         return view;
     }
 
@@ -46,6 +44,8 @@ public class MainImageFragment extends BasePhotoFragment {
         super.onActivityCreated(savedInstanceState);
 
         this.getComponent(TaskComponent.class).inject(this);
+
+        afterBind();
     }
 
 

@@ -93,8 +93,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Inject PhotoStorage _ps;
     @Inject GetPhotoListTask _getPhotoListTask;
     @Inject GetRandomPhotoTask _getRandomPhotoTask;
-    @Inject
-    DownloadPhotoTask _downloadPhotoTask;
+    @Inject DownloadPhotoTask _downloadPhotoTask;
 
     private int _index = 0;
     private boolean _isRandomView;
@@ -120,11 +119,13 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             ViewCompat.setElevation(_toolbar, 8);
         }
 
+        /*
         _thumbnailScrollView = _thumbnailListFragment.getThumbnailScrollView();
         _thumbnailScrollView.setOnTouchListener((view, event) -> {
                 fade(_thumbnailScrollView);
                 return false;
         });
+        */
 
         fade();
     }
@@ -294,11 +295,13 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void fade(View view) {
+        /*
         AlphaAnimation alpha = new AlphaAnimation(FADE_START_ALPHA, FADE_END_ALPHA);
         alpha.setDuration(FADE_DURATION);
         alpha.setFillAfter(true);
 
         view.startAnimation(alpha);
+        */
     }
 
 
@@ -358,9 +361,11 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
+
     private void onGetPhotoList(List<Photo> list) {
         _index = 0;
         _photoList.addAll(list);
+
         _thumbnailListFragment.addPhotoList(list);
 
         onGatherPhotoListComplete();
