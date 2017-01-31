@@ -75,7 +75,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Activity _theActivity;
     private ScheduledThreadPoolExecutor _slideshowExecutor;
-    private HorizontalScrollView _thumbnailScrollView;
     private HashSet<Integer> _randomPhotoIds;
     private int _taskCount = 0;
     private String _url;
@@ -119,13 +118,10 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             ViewCompat.setElevation(_toolbar, 8);
         }
 
-        /*
-        _thumbnailScrollView = _thumbnailListFragment.getThumbnailScrollView();
-        _thumbnailScrollView.setOnTouchListener((view, event) -> {
-                fade(_thumbnailScrollView);
+        _thumbnailListFragment.getView().setOnTouchListener((view, event) -> {
+                fade(_thumbnailListFragment.getView());
                 return false;
         });
-        */
 
         fade();
     }
@@ -290,18 +286,16 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private void fade() {
         fade(_toolbar);
         fade(_imageToolbarFragment.getView());
-        fade(_thumbnailScrollView);
+        fade(_thumbnailListFragment.getView());
     }
 
 
     private void fade(View view) {
-        /*
         AlphaAnimation alpha = new AlphaAnimation(FADE_START_ALPHA, FADE_END_ALPHA);
         alpha.setDuration(FADE_DURATION);
         alpha.setFillAfter(true);
 
         view.startAnimation(alpha);
-        */
     }
 
 
