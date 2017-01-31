@@ -3,12 +3,9 @@ package us.mikeandwan.photos.models.ui;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import uk.co.senab.photoview.PhotoView;
-import us.mikeandwan.photos.MawApplication;
 
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
