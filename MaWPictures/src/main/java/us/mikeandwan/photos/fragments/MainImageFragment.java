@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
+import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.ui.FullScreenImageAdapter;
 
 import javax.inject.Inject;
@@ -45,18 +48,6 @@ public class MainImageFragment extends BasePhotoFragment {
 
         this.getComponent(TaskComponent.class).inject(this);
 
-        afterBind();
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        _unbinder.unbind();
-    }
-
-
-    protected void afterBind() {
         _adapter = new FullScreenImageAdapter(getActivity(), _photoStorage, _photoClient, getPhotoActivity());
 
         _pager.setPageMargin(20);
@@ -78,6 +69,13 @@ public class MainImageFragment extends BasePhotoFragment {
                 // do nothing
             }
         });
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        _unbinder.unbind();
     }
 
 

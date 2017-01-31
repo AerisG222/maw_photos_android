@@ -105,32 +105,13 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    protected void afterBind() {
-        _theActivity = this;
-
-        if (_toolbar != null) {
-            setSupportActionBar(_toolbar);
-
-            getSupportActionBar().setTitle(_name);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-            ViewCompat.setElevation(_toolbar, 8);
-        }
-
-        _thumbnailListFragment.getView().setOnTouchListener((view, event) -> {
-                fade(_thumbnailListFragment.getView());
-                return false;
-        });
-
-        fade();
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_list);
         ButterKnife.bind(this);
+
+        _theActivity = this;
 
         _taskComponent = DaggerTaskComponent.builder()
                 .applicationComponent(getApplicationComponent())
@@ -143,6 +124,11 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         _imageToolbarFragment = (MainImageToolbarFragment) getFragmentManager().findFragmentById(R.id.mainImageToolbarFragment);
         _mainImageFragment = (MainImageFragment) getFragmentManager().findFragmentById(R.id.mainImageFragment);
 
+        _thumbnailListFragment.getView().setOnTouchListener((view, event) -> {
+            fade(_thumbnailListFragment.getView());
+            return false;
+        });
+
         _url = getIntent().getStringExtra("URL");
         _name = getIntent().getStringExtra("NAME");
 
@@ -153,8 +139,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             _playingSlideshow = savedInstanceState.getBoolean(STATE_PLAYING_SLIDESHOW);
             _photoList = (ArrayList<Photo>) savedInstanceState.getSerializable(STATE_PHOTO_LIST);
         }
-
-        afterBind();
     }
 
 
@@ -206,8 +190,19 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
+        if (_toolbar != null) {
+            setSupportActionBar(_toolbar);
+
+            getSupportActionBar().setTitle(_name);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            ViewCompat.setElevation(_toolbar, 8);
+        }
+
         displayToolbar(sharedPrefs.getBoolean("display_toolbar", true));
         displayThumbnails(sharedPrefs.getBoolean("display_thumbnails", true));
+
+        fade();
 
         // if we are coming back from an orientation change, we might already have a valid list
         // populated.  if so, use the original list.
@@ -359,8 +354,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         _index = 0;
         _photoList.addAll(list);
 
-        _thumbnailListFragment.addPhotoList(list);
-
         onGatherPhotoListComplete();
     }
 
@@ -399,7 +392,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         _index = 0;
         _photoList.add(result.getPhoto());
-        _thumbnailListFragment.addPhoto((result.getPhoto()));
 
         Log.d(MawApplication.LOG_TAG, "random photo: " + result.getPhoto().getId());
 
