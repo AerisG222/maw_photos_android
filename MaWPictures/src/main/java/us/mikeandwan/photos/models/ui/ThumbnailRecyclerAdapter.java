@@ -85,7 +85,7 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
         Picasso
                 .with(_context)
                 .load(file)
-                .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
+                .resizeDimen(R.dimen.photo_list_thumbnail_size, R.dimen.photo_list_thumbnail_size)
                 .centerCrop()
                 .into(viewHolder._thumbnailImageView);
     }

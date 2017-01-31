@@ -69,7 +69,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((RelativeLayout) object);
+        container.removeView((PhotoView) object);
     }
 
 

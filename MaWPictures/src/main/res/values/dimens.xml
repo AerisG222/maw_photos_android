@@ -18,7 +18,7 @@
     <dimen name="category_list_item_height">64dp</dimen>
 
     <!-- photo list -->
-    <dimen name="photo_list_thumbnail_size">32dp</dimen>
+    <dimen name="photo_list_thumbnail_size">40dp</dimen>
 
     <!-- dialogs -->
     <dimen name="dialog_width">300dp</dimen>
