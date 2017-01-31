@@ -5,7 +5,9 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
+import uk.co.senab.photoview.PhotoView;
 import us.mikeandwan.photos.MawApplication;
 
 
@@ -42,12 +44,8 @@ public class PhotoViewPager extends ViewPager {
 
 
     public void rotateImage(int direction) {
-        /*
-        View v = findViewWithTag(getCurrentItem());
-        TouchImageView tiv = (TouchImageView) v.findViewById(R.id.imgDisplay);
+        PhotoView pv = (PhotoView) findViewWithTag(getCurrentItem());
 
-        tiv.rotateImage(direction);
-        */
-        Log.w(MawApplication.LOG_TAG, "how do we rotate the photoview?");
+        pv.setRotation(pv.getRotation() + (direction * 90));
     }
 }
