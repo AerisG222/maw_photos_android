@@ -6,9 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
-import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.ui.FullScreenImageAdapter;
 
 import javax.inject.Inject;
@@ -50,7 +47,6 @@ public class MainImageFragment extends BasePhotoFragment {
 
         _adapter = new FullScreenImageAdapter(getActivity(), _photoStorage, _photoClient, getPhotoActivity());
 
-        _pager.setPageMargin(20);
         _pager.setAdapter(_adapter);
 
         _pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

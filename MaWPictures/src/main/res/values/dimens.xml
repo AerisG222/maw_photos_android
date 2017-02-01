@@ -13,14 +13,10 @@
 
     <!-- category list items -->
     <dimen name="category_list_thumbnail_size">60dp</dimen>
-    <dimen name="category_list_thumbnail_margin_end">2dp</dimen>
-    <dimen name="category_list_item_padding">2dp</dimen>
-    <dimen name="category_list_item_height">64dp</dimen>
 
     <!-- photo list -->
     <dimen name="photo_list_thumbnail_size">40dp</dimen>
 
     <!-- dialogs -->
-    <dimen name="dialog_width">300dp</dimen>
     <dimen name="dialog_horizontal_margin">6dp</dimen>
 </resources>

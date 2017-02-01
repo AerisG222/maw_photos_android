@@ -77,6 +77,12 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
 
     @Override
     public void onResume() {
+        // http://stackoverflow.com/a/24213921
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
         getRatings();
 
         super.onResume();

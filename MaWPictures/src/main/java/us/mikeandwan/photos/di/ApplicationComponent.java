@@ -11,6 +11,7 @@ import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
+import us.mikeandwan.photos.services.poller.MawPollerService;
 
 
 @Singleton
@@ -32,4 +33,5 @@ public interface ApplicationComponent {
     void inject(MawSQLiteOpenHelper sqliteOpenHelper);
     void inject(PhotoApiClient client);
     void inject(PhotoStorage photoStorage);
+    void inject(MawPollerService service);
 }

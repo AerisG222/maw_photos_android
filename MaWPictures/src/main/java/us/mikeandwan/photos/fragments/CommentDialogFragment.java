@@ -84,19 +84,15 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     }
 
 
-    protected void afterBind() {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //View view = inflater.inflate(R.layout.dialog_comment, container, false);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_comment, container, false);
+        _unbinder = ButterKnife.bind(this, view);
+
         getDialog().setTitle("Comments");
 
         _commentEditText.requestFocus();
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_comment, container, false);
-        _unbinder = ButterKnife.bind(this, view);
-
-        afterBind();
 
         return view;
     }
@@ -112,6 +108,12 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
 
     @Override
     public void onResume() {
+        // http://stackoverflow.com/a/24213921
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
         getComments();
 
         super.onResume();
@@ -158,7 +160,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
         for (int i = comments.size() - 1; i >= 0; i--) {
             Comment comment = comments.get(i);
 
-            Context ctx = getContext();
+            Context ctx = getActivity();
 
             TableRow titleRow = new TableRow(ctx);
             TableRow commentRow = new TableRow(ctx);
