@@ -51,18 +51,6 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
 
 
-    protected void afterBind() {
-        if (_toolbar != null) {
-            setSupportActionBar(_toolbar);
-
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(String.valueOf(_year));
-
-            ViewCompat.setElevation(_toolbar, 8);
-        }
-    }
-
-
     public TaskComponent getComponent() {
         return _taskComponent;
     }
@@ -85,7 +73,14 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         _categoryListFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_list_fragment);
         _categoryThumbnailsFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_thumbnails_fragment);
 
-        afterBind();
+        if (_toolbar != null) {
+            setSupportActionBar(_toolbar);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(String.valueOf(_year));
+
+            ViewCompat.setElevation(_toolbar, 8);
+        }
     }
 
 

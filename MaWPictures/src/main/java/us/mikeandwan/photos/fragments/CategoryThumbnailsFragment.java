@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ public class CategoryThumbnailsFragment extends BaseCategoryListFragment {
     public void setCategories(List<Category> categories) {
         super.setCategories(categories);
 
-        _adapter = new CategoryThumbnailArrayAdapter(getActivity(), _photoStorage, _downloadCategoryTeaserTask, categories, _gridView.getColumnWidth());
+        _adapter = new CategoryThumbnailArrayAdapter(getActivity(), _photoStorage, _downloadCategoryTeaserTask, categories);
 
         _gridView.setAdapter(_adapter);
     }

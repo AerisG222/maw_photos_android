@@ -9,7 +9,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- category thumbnail items -->
-    <dimen name="category_grid_thumbnail_size">100dp</dimen>
+    <dimen name="category_grid_thumbnail_size">120dp</dimen>
 
     <!-- category list items -->
     <dimen name="category_list_thumbnail_size">60dp</dimen>

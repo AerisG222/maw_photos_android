@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -29,16 +31,14 @@ public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
     private final List<Category> _categories;
     private final PhotoStorage _photoStorage;
     private final DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
-    private final int _columnWidth;
 
 
-    public CategoryThumbnailArrayAdapter(Context context, PhotoStorage photoStorage, DownloadCategoryTeaserTask downloadTeaserTask, List<Category> categories, int columnWidth) {
+    public CategoryThumbnailArrayAdapter(Context context, PhotoStorage photoStorage, DownloadCategoryTeaserTask downloadTeaserTask, List<Category> categories) {
         super(context, R.layout.category_list_item, categories);
         _context = context;
         _categories = categories;
         _photoStorage = photoStorage;
         _downloadCategoryTeaserTask = downloadTeaserTask;
-        _columnWidth = columnWidth;
     }
 
 
@@ -79,7 +79,7 @@ public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
         Picasso
                 .with(_context)
                 .load(file)
-                .resize(_columnWidth, _columnWidth)
+                .resize(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)
                 .centerCrop()
                 .into(imageView);
     }

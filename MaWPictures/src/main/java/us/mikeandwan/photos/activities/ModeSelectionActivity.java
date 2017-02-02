@@ -58,30 +58,6 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     }
 
 
-    protected void afterBind() {
-        if (_toolbar != null) {
-            setSupportActionBar(_toolbar);
-            ViewCompat.setElevation(_toolbar, 8);
-        }
-
-        _modeExpandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) ->
-                onItemClicked(parent, v, groupPosition, childPosition, id)
-        );
-
-        _adapter = new SimpleExpandableListAdapter(this,
-            _groupData,
-            android.R.layout.simple_expandable_list_item_1,
-            new String[]{"NAME"},
-            new int[]{android.R.id.text1},
-            _childData,
-            android.R.layout.simple_expandable_list_item_2,
-            new String[]{"NAME"},
-            new int[]{android.R.id.text1});
-
-        initModeList();
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +71,26 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
         _taskComponent.inject(this);
 
-        afterBind();
+        if (_toolbar != null) {
+            setSupportActionBar(_toolbar);
+            ViewCompat.setElevation(_toolbar, 8);
+        }
+
+        _modeExpandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) ->
+                onItemClicked(parent, v, groupPosition, childPosition, id)
+        );
+
+        _adapter = new SimpleExpandableListAdapter(this,
+                _groupData,
+                android.R.layout.simple_expandable_list_item_1,
+                new String[]{"NAME"},
+                new int[]{android.R.id.text1},
+                _childData,
+                android.R.layout.simple_expandable_list_item_2,
+                new String[]{"NAME"},
+                new int[]{android.R.id.text1});
+
+        initModeList();
     }
 
 

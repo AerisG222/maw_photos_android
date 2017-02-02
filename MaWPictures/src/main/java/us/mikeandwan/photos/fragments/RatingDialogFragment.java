@@ -36,32 +36,27 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     @Inject SetRatingTask _setRatingTask;
 
 
-    protected void afterBind() {
-        _yourRatingBar.setOnRatingBarChangeListener((_ratingBar, rating, fromUser) -> {
-                if (fromUser) {
-                    disposables.add(Flowable.fromCallable(() -> _setRatingTask.call(getCurrentPhoto().getId(), Math.round(rating)))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    x -> displayRating(x),
-                                    ex -> handleException(ex)
-                            )
-                    );
-
-                    updateProgress();
-                }
-        });
-
-        getDialog().setTitle("Ratings");
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_rating, container, false);
         _unbinder = ButterKnife.bind(this, view);
 
-        afterBind();
+        _yourRatingBar.setOnRatingBarChangeListener((_ratingBar, rating, fromUser) -> {
+            if (fromUser) {
+                disposables.add(Flowable.fromCallable(() -> _setRatingTask.call(getCurrentPhoto().getId(), Math.round(rating)))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                x -> displayRating(x),
+                                ex -> handleException(ex)
+                        )
+                );
+
+                updateProgress();
+            }
+        });
+
+        getDialog().setTitle("Ratings");
 
         return view;
     }

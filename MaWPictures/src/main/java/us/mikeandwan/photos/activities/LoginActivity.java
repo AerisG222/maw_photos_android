@@ -75,18 +75,6 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
 
         cleanupLegacyStorage();
 
-        afterBind();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        disposables.clear(); // do not send event after activity has been destroyed
-    }
-
-
-    protected void afterBind() {
         ResetNotifications();
         ViewCompat.setElevation(_progressView, 20);
 
@@ -98,6 +86,13 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
 
             attemptLogin();
         }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposables.clear(); // do not send event after activity has been destroyed
     }
 
 
