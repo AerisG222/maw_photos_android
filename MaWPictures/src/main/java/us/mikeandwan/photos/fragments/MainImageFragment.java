@@ -21,13 +21,13 @@ import us.mikeandwan.photos.services.PhotoStorage;
 
 
 public class MainImageFragment extends BasePhotoFragment {
-    private FullScreenImageAdapter _adapter;
     private Unbinder _unbinder;
 
     @BindView(R.id.pager) PhotoViewPager _pager;
 
     @Inject PhotoStorage _photoStorage;
     @Inject PhotoApiClient _photoClient;
+    @Inject FullScreenImageAdapter _adapter;
 
 
     @Override
@@ -44,8 +44,6 @@ public class MainImageFragment extends BasePhotoFragment {
         super.onActivityCreated(savedInstanceState);
 
         this.getComponent(TaskComponent.class).inject(this);
-
-        _adapter = new FullScreenImageAdapter(getActivity(), _photoStorage, _photoClient, getPhotoActivity());
 
         _pager.setAdapter(_adapter);
 

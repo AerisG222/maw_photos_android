@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -50,7 +49,7 @@ import us.mikeandwan.photos.fragments.MainImageFragment;
 import us.mikeandwan.photos.fragments.MainImageToolbarFragment;
 import us.mikeandwan.photos.fragments.RatingDialogFragment;
 import us.mikeandwan.photos.fragments.ThumbnailListFragment;
-import us.mikeandwan.photos.services.MawAuthenticationException;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 import us.mikeandwan.photos.tasks.GetPhotoListTask;
@@ -92,6 +91,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Inject GetPhotoListTask _getPhotoListTask;
     @Inject GetRandomPhotoTask _getRandomPhotoTask;
     @Inject DownloadPhotoTask _downloadPhotoTask;
+    @Inject AuthenticationExceptionHandler _authHandler;
 
     private int _index = 0;
     private boolean _isRandomView;
@@ -132,6 +132,8 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         _url = getIntent().getStringExtra("URL");
         _name = getIntent().getStringExtra("NAME");
 
+        updateToolbar(_toolbar, String.valueOf(_name));
+
         if(savedInstanceState != null) {
             _index = savedInstanceState.getInt(STATE_INDEX);
             _isRandomView = savedInstanceState.getBoolean(STATE_IS_RANDOM_VIEW);
@@ -171,11 +173,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    //public void onMenuItemHome(MenuItem menuItem) {
-    //    finish();
-    //}
-
-
     public void onMenuItemSettings(MenuItem menuItem) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
@@ -189,15 +186,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         Log.i(MawApplication.LOG_TAG, "onResume - PhotoListActivity");
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
-        if (_toolbar != null) {
-            setSupportActionBar(_toolbar);
-
-            getSupportActionBar().setTitle(_name);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-            ViewCompat.setElevation(_toolbar, 8);
-        }
 
         displayToolbar(sharedPrefs.getBoolean("display_toolbar", true));
         displayThumbnails(sharedPrefs.getBoolean("display_thumbnails", true));
@@ -341,7 +329,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> onGetPhotoList(x),
-                        ex -> handleException(ex)
+                        ex -> _authHandler.handleException(ex)
                 )
         );
 
@@ -373,7 +361,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> onGetRandom(x),
-                        ex -> handleException(ex)
+                        ex -> _authHandler.handleException(ex)
                 )
         );
 
@@ -396,13 +384,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         Log.d(MawApplication.LOG_TAG, "random photo: " + result.getPhoto().getId());
 
         onRandomPhotoFetched();
-    }
-
-
-    private void handleException(Throwable ex) {
-        if (ex.getCause() instanceof MawAuthenticationException) {
-            startActivity(new Intent(this, LoginActivity.class));
-        }
     }
 
 
@@ -512,7 +493,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> updateProgress(),
-                        ex -> handleException(ex)
+                        ex -> _authHandler.handleException(ex)
                 )
         );
 

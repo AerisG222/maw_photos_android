@@ -15,7 +15,7 @@ import us.mikeandwan.photos.fragments.ThumbnailListFragment;
 
 
 @PerActivity
-@Component(dependencies = ApplicationComponent.class, modules = TaskModule.class )
+@Component(dependencies = ApplicationComponent.class, modules = {AdapterModule.class, TaskModule.class} )
 public interface TaskComponent {
     // https://github.com/google/dagger/issues/468
     // https://code.google.com/p/android/issues/detail?id=223549

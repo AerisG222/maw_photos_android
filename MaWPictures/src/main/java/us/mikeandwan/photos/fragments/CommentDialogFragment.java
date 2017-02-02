@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -33,11 +32,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
-import us.mikeandwan.photos.services.MawAuthenticationException;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.tasks.AddCommentTask;
 import us.mikeandwan.photos.tasks.GetCommentsTask;
 
@@ -56,6 +54,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
 
     @Inject AddCommentTask _addCommentTask;
     @Inject GetCommentsTask _getCommentsTask;
+    @Inject AuthenticationExceptionHandler _authHandler;
 
 
     @OnClick(R.id.addCommentButton)
@@ -75,7 +74,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
                                 _commentEditText.setText("");
                                 displayComments(x);
                             },
-                            ex -> handleException(ex)
+                            ex -> _authHandler.handleException(ex)
                     )
             );
 
@@ -134,18 +133,11 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> displayComments(x),
-                        ex -> handleException(ex)
+                        ex -> _authHandler.handleException(ex)
                 )
         );
 
         updateProgress();
-    }
-
-
-    private void handleException(Throwable ex) {
-        if (ex.getCause() instanceof MawAuthenticationException) {
-            startActivity(new Intent(getActivity(), LoginActivity.class));
-        }
     }
 
 

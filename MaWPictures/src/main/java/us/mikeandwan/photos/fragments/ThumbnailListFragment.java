@@ -23,7 +23,6 @@ import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 
 public class ThumbnailListFragment extends BasePhotoFragment {
-    private ThumbnailRecyclerAdapter _adapter;
     private Unbinder _unbinder;
 
     @BindView(R.id.imageRecycler) RecyclerView _thumbnailRecyclerView;
@@ -31,7 +30,7 @@ public class ThumbnailListFragment extends BasePhotoFragment {
     @Inject Activity _activity;
     @Inject PhotoStorage _photoStorage;
     @Inject DownloadPhotoTask _downloadPhotoTask;
-
+    @Inject ThumbnailRecyclerAdapter _adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,7 +51,7 @@ public class ThumbnailListFragment extends BasePhotoFragment {
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
         _thumbnailRecyclerView.setLayoutManager(llm);
 
-        _adapter = new ThumbnailRecyclerAdapter(_activity, _photoStorage, _downloadPhotoTask, getPhotoListActivity().getPhotoList());
+        _adapter.setPhotoList(getPhotoListActivity().getPhotoList());
         _thumbnailRecyclerView.setAdapter(_adapter);
     }
 

@@ -25,7 +25,6 @@ import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
 
 
 public class CategoryListFragment extends BaseCategoryListFragment {
-    private CategoryRecyclerAdapter _adapter;
     private Unbinder _unbinder;
 
     @BindView(R.id.category_recycler_view) RecyclerView _categoryRecyclerView;
@@ -33,14 +32,14 @@ public class CategoryListFragment extends BaseCategoryListFragment {
     @Inject Activity _activity;
     @Inject PhotoStorage _photoStorage;
     @Inject DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
+    @Inject CategoryRecyclerAdapter _adapter;
 
 
     @Override
     public void setCategories(List<Category> categories) {
         super.setCategories(categories);
 
-        _adapter = new CategoryRecyclerAdapter(_activity, _photoStorage, _downloadCategoryTeaserTask, categories);
-
+        _adapter.setCategoryList(categories);
         _adapter.getClicks().subscribe(c -> getCategoryActivity().selectCategory(c));
 
         _categoryRecyclerView.setAdapter(_adapter);

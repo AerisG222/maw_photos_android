@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.activities.BaseActivity;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoApiClient;
@@ -22,6 +23,7 @@ public interface ApplicationComponent {
     MawDataManager mawDataManager();
     PhotoStorage photoStorage();
     PhotoApiClient photoApiClient();
+    AuthenticationExceptionHandler authenticationExceptionHandler();
 
     void inject(MawApplication application);
 
@@ -34,4 +36,5 @@ public interface ApplicationComponent {
     void inject(PhotoApiClient client);
     void inject(PhotoStorage photoStorage);
     void inject(MawPollerService service);
+    void inject(AuthenticationExceptionHandler authenticationExceptionHandler);
 }

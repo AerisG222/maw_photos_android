@@ -1,16 +1,14 @@
 package us.mikeandwan.photos.models.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -18,9 +16,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.MawAuthenticationException;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
 
@@ -28,17 +25,18 @@ import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
 public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
-    private final List<Category> _categories;
     private final PhotoStorage _photoStorage;
     private final DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
+    private final AuthenticationExceptionHandler _authHandler;
 
 
-    public CategoryThumbnailArrayAdapter(Context context, PhotoStorage photoStorage, DownloadCategoryTeaserTask downloadTeaserTask, List<Category> categories) {
-        super(context, R.layout.category_list_item, categories);
+    public CategoryThumbnailArrayAdapter(Context context, PhotoStorage photoStorage, DownloadCategoryTeaserTask downloadTeaserTask, AuthenticationExceptionHandler authHandler) {
+        super(context, R.layout.category_list_item, new ArrayList<>());
+
         _context = context;
-        _categories = categories;
         _photoStorage = photoStorage;
         _downloadCategoryTeaserTask = downloadTeaserTask;
+        _authHandler = authHandler;
     }
 
 
@@ -52,7 +50,7 @@ public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
             imageView = (ImageView) convertView;
         }
 
-        Category category = _categories.get(position);
+        Category category = this.getItem(position);
 
         if (_photoStorage.doesExist(category.getTeaserPhotoInfo().getPath())) {
             displayCategory(category, imageView);
@@ -64,12 +62,18 @@ public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> displayCategory(category, imageView),
-                            ex -> handleException(ex)
+                            ex -> _authHandler.handleException(ex)
                     )
             );
         }
 
         return imageView;
+    }
+
+
+    public void setCategories(List<Category> categories) {
+        this.clear();
+        this.addAll(categories);
     }
 
 
@@ -87,12 +91,5 @@ public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
 
     public void dispose() {
         _disposables.dispose();
-    }
-
-
-    private void handleException(Throwable ex) {
-        if (ex.getCause() instanceof MawAuthenticationException) {
-            _context.startActivity(new Intent(_context, LoginActivity.class));
-        }
     }
 }

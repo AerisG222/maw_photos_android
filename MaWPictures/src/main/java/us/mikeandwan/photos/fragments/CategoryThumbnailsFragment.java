@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -26,19 +25,19 @@ import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
 
 public class CategoryThumbnailsFragment extends BaseCategoryListFragment {
     private Unbinder _unbinder;
-    private CategoryThumbnailArrayAdapter _adapter;
 
     @BindView(R.id.gridview) GridView _gridView;
 
     @Inject PhotoStorage _photoStorage;
     @Inject DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
+    @Inject CategoryThumbnailArrayAdapter _adapter;
 
 
     @Override
     public void setCategories(List<Category> categories) {
         super.setCategories(categories);
 
-        _adapter = new CategoryThumbnailArrayAdapter(getActivity(), _photoStorage, _downloadCategoryTeaserTask, categories);
+        _adapter.setCategories(categories);
 
         _gridView.setAdapter(_adapter);
     }

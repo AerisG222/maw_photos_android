@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -73,14 +72,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         _categoryListFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_list_fragment);
         _categoryThumbnailsFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_thumbnails_fragment);
 
-        if (_toolbar != null) {
-            setSupportActionBar(_toolbar);
-
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(String.valueOf(_year));
-
-            ViewCompat.setElevation(_toolbar, 8);
-        }
+        updateToolbar(_toolbar, String.valueOf(_year));
     }
 
 

@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +20,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.ExifData;
 import us.mikeandwan.photos.models.ui.ExifDataFormatter;
-import us.mikeandwan.photos.services.MawAuthenticationException;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.tasks.GetExifDataTask;
 
 
@@ -40,6 +38,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
     @BindView(R.id.exifView) TableLayout _exifView;
 
     @Inject GetExifDataTask _getExifDataTask;
+    @Inject AuthenticationExceptionHandler _authHandler;
 
 
     @Override
@@ -170,18 +169,11 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> displayExifData(x),
-                        ex -> handleException(ex)
+                        ex -> _authHandler.handleException(ex)
                 )
         );
 
         updateProgress();
-    }
-
-
-    private void handleException(Throwable ex) {
-        if (ex.getCause() instanceof MawAuthenticationException) {
-            startActivity(new Intent(getActivity(), LoginActivity.class));
-        }
     }
 
 

@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +16,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Rating;
-import us.mikeandwan.photos.services.MawAuthenticationException;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.tasks.GetRatingTask;
 import us.mikeandwan.photos.tasks.SetRatingTask;
 
@@ -34,6 +32,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
 
     @Inject GetRatingTask _getRatingTask;
     @Inject SetRatingTask _setRatingTask;
+    @Inject AuthenticationExceptionHandler _authHandler;
 
 
     @Override
@@ -48,7 +47,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 x -> displayRating(x),
-                                ex -> handleException(ex)
+                                ex -> _authHandler.handleException(ex)
                         )
                 );
 
@@ -92,13 +91,6 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     }
 
 
-    private void handleException(Throwable ex) {
-        if (ex.getCause() instanceof MawAuthenticationException) {
-            startActivity(new Intent(getContext(), LoginActivity.class));
-        }
-    }
-
-
     private void getRatings() {
         _yourRatingBar.setRating(0);
         _averageRatingBar.setRating(0);
@@ -108,7 +100,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> displayRating(x),
-                        ex -> handleException(ex)
+                        ex -> _authHandler.handleException(ex)
                 )
         );
 

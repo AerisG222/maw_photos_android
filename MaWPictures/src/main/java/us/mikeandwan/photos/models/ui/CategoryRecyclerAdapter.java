@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.models.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,28 +21,28 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.MawAuthenticationException;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
 
 
-// TODO: butterknife?  dagger?
+// TODO: butterknife?
 public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecyclerAdapter.ViewHolder> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
-    private final List<Category> _categoryList;
     private final Context _context;
     private final PhotoStorage _photoStorage;
     private final DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
     private final PublishSubject<Category> onClickSubject = PublishSubject.create();
+    private final AuthenticationExceptionHandler _authHandler;
+    private List<Category> _categoryList;
 
 
-    public CategoryRecyclerAdapter(Context context, PhotoStorage photoStorage, DownloadCategoryTeaserTask downloadTeaserTask, List<Category> categoryList) {
-        _categoryList = categoryList;
+    public CategoryRecyclerAdapter(Context context, PhotoStorage photoStorage, DownloadCategoryTeaserTask downloadTeaserTask, AuthenticationExceptionHandler authHandler) {
         _context = context;
         _photoStorage = photoStorage;
         _downloadCategoryTeaserTask = downloadTeaserTask;
+        _authHandler = authHandler;
     }
 
 
@@ -73,7 +72,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> displayCategory(category, viewHolder),
-                            ex -> handleException(ex)
+                            ex -> _authHandler.handleException(ex)
                     )
             );
         }
@@ -83,6 +82,11 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
     @Override
     public int getItemCount() {
         return _categoryList.size();
+    }
+
+
+    public void setCategoryList(List<Category> categoryList) {
+        _categoryList = categoryList;
     }
 
 
@@ -107,13 +111,6 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
                 .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
                 .centerCrop()
                 .into(viewHolder._thumbnailImageView);
-    }
-
-
-    private void handleException(Throwable ex) {
-        if (ex.getCause() instanceof MawAuthenticationException) {
-            _context.startActivity(new Intent(_context, LoginActivity.class));
-        }
     }
 
 

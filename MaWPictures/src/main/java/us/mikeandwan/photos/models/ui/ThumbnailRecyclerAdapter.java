@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.models.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +15,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.activities.LoginActivity;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
-import us.mikeandwan.photos.services.MawAuthenticationException;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
@@ -27,16 +25,17 @@ import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecyclerAdapter.ViewHolder> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
-    private final List<Photo> _photoList;
     private final PhotoStorage _photoStorage;
     private final DownloadPhotoTask _downloadPhotoTask;
+    private final AuthenticationExceptionHandler _authHandler;
+    private List<Photo> _photoList;
 
 
-    public ThumbnailRecyclerAdapter(Context context, PhotoStorage photoStorage, DownloadPhotoTask downloadPhotoTask, List<Photo> photoList) {
+    public ThumbnailRecyclerAdapter(Context context, PhotoStorage photoStorage, DownloadPhotoTask downloadPhotoTask, AuthenticationExceptionHandler authHandler) {
         _context = context;
         _photoStorage = photoStorage;
-        _photoList = photoList;
         _downloadPhotoTask = downloadPhotoTask;
+        _authHandler = authHandler;
     }
 
 
@@ -66,7 +65,7 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> displayPhoto(photo, viewHolder),
-                            ex -> handleException(ex)
+                            ex -> _authHandler.handleException(ex)
                     )
             );
         }
@@ -79,6 +78,16 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     }
 
 
+    public void setPhotoList(List<Photo> photoList) {
+        _photoList = photoList;
+    }
+
+
+    public void dispose() {
+        _disposables.dispose();
+    }
+
+
     private void displayPhoto(Photo photo, ThumbnailRecyclerAdapter.ViewHolder viewHolder) {
         String file = "file://" + _photoStorage.getCachePath(photo.getXsInfo().getPath());
 
@@ -88,18 +97,6 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
                 .resizeDimen(R.dimen.photo_list_thumbnail_size, R.dimen.photo_list_thumbnail_size)
                 .centerCrop()
                 .into(viewHolder._thumbnailImageView);
-    }
-
-
-    private void handleException(Throwable ex) {
-        if (ex.getCause() instanceof MawAuthenticationException) {
-            _context.startActivity(new Intent(_context, LoginActivity.class));
-        }
-    }
-
-
-    public void dispose() {
-        _disposables.dispose();
     }
 
 
