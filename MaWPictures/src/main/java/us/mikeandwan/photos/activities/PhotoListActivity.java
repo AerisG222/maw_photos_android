@@ -19,7 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -85,7 +84,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     @BindView(R.id.progressBar) ProgressBar _progressBar;
     @BindView(R.id.toolbar) Toolbar _toolbar;
-    @BindView(R.id.bottomLayout) LinearLayout _bottomLayout;
 
     @Inject PhotoStorage _ps;
     @Inject GetPhotoListTask _getPhotoListTask;

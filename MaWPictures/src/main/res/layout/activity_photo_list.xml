@@ -38,40 +38,36 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@+id/toolbar"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="0dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="0dp"
+        app:layout_constraintVertical_bias="0.5" />
 
-    <LinearLayout
-        android:id="@+id/bottomLayout"
+    <fragment
+        android:id="@+id/mainImageToolbarFragment"
+        android:name="us.mikeandwan.photos.fragments.MainImageToolbarFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
+        android:padding="4dp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/thumbnailListFragment"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
+
+    <fragment
+        android:id="@+id/thumbnailListFragment"
+        android:name="us.mikeandwan.photos.fragments.ThumbnailListFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.5">
-
-        <fragment
-            android:id="@+id/mainImageToolbarFragment"
-            android:name="us.mikeandwan.photos.fragments.MainImageToolbarFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="4dp" />
-
-        <fragment
-            android:id="@+id/thumbnailListFragment"
-            android:name="us.mikeandwan.photos.fragments.ThumbnailListFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4dp" />
-
-    </LinearLayout>
+        app:layout_constraintLeft_toLeftOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
