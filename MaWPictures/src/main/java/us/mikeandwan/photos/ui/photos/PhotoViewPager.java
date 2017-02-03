@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.models.ui;
+package us.mikeandwan.photos.ui.photos;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

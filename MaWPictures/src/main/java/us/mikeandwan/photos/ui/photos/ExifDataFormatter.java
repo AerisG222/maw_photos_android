@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.models.ui;
+package us.mikeandwan.photos.ui.photos;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.models.ui;
+package us.mikeandwan.photos.ui.photos;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,7 +13,6 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.activities.IPhotoActivity;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;

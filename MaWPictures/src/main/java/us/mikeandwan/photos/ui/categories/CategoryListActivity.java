@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.activities;
+package us.mikeandwan.photos.ui.categories;
 
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -23,14 +23,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.ui.photos.PhotoListActivity;
+import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.MawDataManager;
-import us.mikeandwan.photos.fragments.BaseCategoryListFragment;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
+import us.mikeandwan.photos.ui.BaseActivity;
+import us.mikeandwan.photos.ui.HasComponent;
 
 
 public class CategoryListActivity extends BaseActivity implements ICategoryListActivity, HasComponent<TaskComponent> {

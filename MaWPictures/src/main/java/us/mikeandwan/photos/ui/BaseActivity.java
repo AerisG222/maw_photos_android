@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.activities;
+package us.mikeandwan.photos.ui;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;

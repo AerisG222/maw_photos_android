@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.activities;
+package us.mikeandwan.photos.ui.photos;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -36,22 +36,19 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.PhotoSize;
-import us.mikeandwan.photos.fragments.CommentDialogFragment;
-import us.mikeandwan.photos.fragments.ExifDialogFragment;
-import us.mikeandwan.photos.fragments.MainImageFragment;
-import us.mikeandwan.photos.fragments.MainImageToolbarFragment;
-import us.mikeandwan.photos.fragments.RatingDialogFragment;
-import us.mikeandwan.photos.fragments.ThumbnailListFragment;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 import us.mikeandwan.photos.tasks.GetPhotoListTask;
 import us.mikeandwan.photos.tasks.GetRandomPhotoTask;
+import us.mikeandwan.photos.ui.BaseActivity;
+import us.mikeandwan.photos.ui.HasComponent;
 
 
 public class PhotoListActivity extends BaseActivity implements IPhotoActivity, HasComponent<TaskComponent> {

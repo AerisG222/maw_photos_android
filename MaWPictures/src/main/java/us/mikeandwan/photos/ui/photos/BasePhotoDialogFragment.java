@@ -1,10 +1,9 @@
-package us.mikeandwan.photos.fragments;
+package us.mikeandwan.photos.ui.photos;
 
 import android.app.DialogFragment;
 import android.content.Context;
 
-import us.mikeandwan.photos.activities.HasComponent;
-import us.mikeandwan.photos.activities.IPhotoActivity;
+import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.models.Photo;
 
 

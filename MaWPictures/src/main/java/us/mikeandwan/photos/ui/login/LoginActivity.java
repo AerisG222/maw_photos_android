@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.activities;
+package us.mikeandwan.photos.ui.login;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -26,6 +26,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.ui.BaseActivity;
+import us.mikeandwan.photos.ui.HasComponent;
+import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Credentials;

@@ -1,12 +1,10 @@
-package us.mikeandwan.photos.fragments;
+package us.mikeandwan.photos.ui.photos;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import us.mikeandwan.photos.models.ui.FullScreenImageAdapter;
 
 import javax.inject.Inject;
 
@@ -15,7 +13,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.TaskComponent;
-import us.mikeandwan.photos.models.ui.PhotoViewPager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
 

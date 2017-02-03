@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.activities;
+package us.mikeandwan.photos.ui;
 
 
 public interface HasComponent<C> {

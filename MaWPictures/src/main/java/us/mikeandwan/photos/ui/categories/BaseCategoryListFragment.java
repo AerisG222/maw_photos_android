@@ -1,8 +1,8 @@
-package us.mikeandwan.photos.fragments;
+package us.mikeandwan.photos.ui.categories;
 
 import java.util.List;
 
-import us.mikeandwan.photos.activities.ICategoryListActivity;
+import us.mikeandwan.photos.ui.BaseFragment;
 import us.mikeandwan.photos.models.Category;
 
 

@@ -1,4 +1,4 @@
-<us.mikeandwan.photos.models.ui.PhotoViewPager
+<us.mikeandwan.photos.ui.photos.PhotoViewPager
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pager"
     android:layout_width="match_parent"

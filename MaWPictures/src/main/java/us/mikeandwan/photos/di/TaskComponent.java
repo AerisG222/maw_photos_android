@@ -1,17 +1,17 @@
 package us.mikeandwan.photos.di;
 
 import dagger.Component;
-import us.mikeandwan.photos.activities.CategoryListActivity;
-import us.mikeandwan.photos.activities.LoginActivity;
-import us.mikeandwan.photos.activities.ModeSelectionActivity;
-import us.mikeandwan.photos.activities.PhotoListActivity;
-import us.mikeandwan.photos.fragments.CategoryListFragment;
-import us.mikeandwan.photos.fragments.CategoryThumbnailsFragment;
-import us.mikeandwan.photos.fragments.CommentDialogFragment;
-import us.mikeandwan.photos.fragments.ExifDialogFragment;
-import us.mikeandwan.photos.fragments.MainImageFragment;
-import us.mikeandwan.photos.fragments.RatingDialogFragment;
-import us.mikeandwan.photos.fragments.ThumbnailListFragment;
+import us.mikeandwan.photos.ui.categories.CategoryListActivity;
+import us.mikeandwan.photos.ui.login.LoginActivity;
+import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
+import us.mikeandwan.photos.ui.photos.PhotoListActivity;
+import us.mikeandwan.photos.ui.categories.CategoryListFragment;
+import us.mikeandwan.photos.ui.categories.CategoryThumbnailsFragment;
+import us.mikeandwan.photos.ui.photos.CommentDialogFragment;
+import us.mikeandwan.photos.ui.photos.ExifDialogFragment;
+import us.mikeandwan.photos.ui.photos.MainImageFragment;
+import us.mikeandwan.photos.ui.photos.RatingDialogFragment;
+import us.mikeandwan.photos.ui.photos.ThumbnailListFragment;
 
 
 @PerActivity

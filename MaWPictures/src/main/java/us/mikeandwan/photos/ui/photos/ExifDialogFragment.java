@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.fragments;
+package us.mikeandwan.photos.ui.photos;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -22,7 +22,6 @@ import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.ExifData;
-import us.mikeandwan.photos.models.ui.ExifDataFormatter;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.tasks.GetExifDataTask;
 

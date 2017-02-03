@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.fragments;
+package us.mikeandwan.photos.ui.photos;
 
 import android.content.Context;
 import android.graphics.Typeface;

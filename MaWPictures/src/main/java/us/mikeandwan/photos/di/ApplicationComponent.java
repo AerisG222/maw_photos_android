@@ -7,8 +7,8 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.activities.BaseActivity;
-import us.mikeandwan.photos.activities.SettingsActivity;
+import us.mikeandwan.photos.ui.BaseActivity;
+import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;

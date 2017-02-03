@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.activities;
+package us.mikeandwan.photos.ui.settings;
 
 import android.annotation.TargetApi;
 import android.content.Context;

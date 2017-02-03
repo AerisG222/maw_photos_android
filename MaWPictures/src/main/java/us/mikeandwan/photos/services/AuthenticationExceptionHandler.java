@@ -3,7 +3,7 @@ package us.mikeandwan.photos.services;
 import android.content.Context;
 import android.content.Intent;
 
-import us.mikeandwan.photos.activities.LoginActivity;
+import us.mikeandwan.photos.ui.login.LoginActivity;
 
 
 public class AuthenticationExceptionHandler {

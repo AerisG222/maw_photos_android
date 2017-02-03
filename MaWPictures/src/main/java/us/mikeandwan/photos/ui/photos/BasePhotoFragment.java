@@ -1,8 +1,8 @@
-package us.mikeandwan.photos.fragments;
+package us.mikeandwan.photos.ui.photos;
 
 import android.content.Context;
 
-import us.mikeandwan.photos.activities.IPhotoActivity;
+import us.mikeandwan.photos.ui.BaseFragment;
 
 
 public class BasePhotoFragment extends BaseFragment {

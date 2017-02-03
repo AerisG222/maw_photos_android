@@ -32,7 +32,7 @@
 
     <fragment
         android:id="@+id/mainImageFragment"
-        android:name="us.mikeandwan.photos.fragments.MainImageFragment"
+        android:name="us.mikeandwan.photos.ui.photos.MainImageFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintHorizontal_bias="0.0"
@@ -48,7 +48,7 @@
 
     <fragment
         android:id="@+id/mainImageToolbarFragment"
-        android:name="us.mikeandwan.photos.fragments.MainImageToolbarFragment"
+        android:name="us.mikeandwan.photos.ui.photos.MainImageToolbarFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="4dp"
@@ -62,7 +62,7 @@
 
     <fragment
         android:id="@+id/thumbnailListFragment"
-        android:name="us.mikeandwan.photos.fragments.ThumbnailListFragment"
+        android:name="us.mikeandwan.photos.ui.photos.ThumbnailListFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingTop="4dp"

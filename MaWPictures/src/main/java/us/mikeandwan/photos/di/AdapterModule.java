@@ -4,11 +4,11 @@ import android.app.Activity;
 
 import dagger.Module;
 import dagger.Provides;
-import us.mikeandwan.photos.activities.IPhotoActivity;
-import us.mikeandwan.photos.models.ui.CategoryRecyclerAdapter;
-import us.mikeandwan.photos.models.ui.CategoryThumbnailArrayAdapter;
-import us.mikeandwan.photos.models.ui.FullScreenImageAdapter;
-import us.mikeandwan.photos.models.ui.ThumbnailRecyclerAdapter;
+import us.mikeandwan.photos.ui.photos.IPhotoActivity;
+import us.mikeandwan.photos.ui.categories.CategoryRecyclerAdapter;
+import us.mikeandwan.photos.ui.categories.CategoryThumbnailArrayAdapter;
+import us.mikeandwan.photos.ui.photos.FullScreenImageAdapter;
+import us.mikeandwan.photos.ui.photos.ThumbnailRecyclerAdapter;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;

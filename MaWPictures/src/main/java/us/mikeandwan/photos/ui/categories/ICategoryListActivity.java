@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.activities;
+package us.mikeandwan.photos.ui.categories;
 
 
 import us.mikeandwan.photos.models.Category;
