@@ -217,19 +217,17 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     private void showProgress(final boolean show) {
         _loginButton.setEnabled(!show);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            _progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            _progressView.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    _progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            _progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
+        _progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        _progressView.animate()
+                .setDuration(shortAnimTime)
+                .alpha(show ? 1 : 0)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        _progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                    }
+                });
     }
 }

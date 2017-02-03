@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.models.ui;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -40,8 +41,9 @@ public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
     }
 
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ImageView imageView;
 
         if (convertView == null) {

@@ -74,7 +74,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private HashSet<Integer> _randomPhotoIds;
     private int _taskCount = 0;
     private String _url;
-    private String _name;
     private ThumbnailListFragment _thumbnailListFragment;
     private MainImageToolbarFragment _imageToolbarFragment;
     private MainImageFragment _mainImageFragment;
@@ -128,7 +127,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         });
 
         _url = getIntent().getStringExtra("URL");
-        _name = getIntent().getStringExtra("NAME");
+        String _name = getIntent().getStringExtra("NAME");
 
         updateToolbar(_toolbar, String.valueOf(_name));
 

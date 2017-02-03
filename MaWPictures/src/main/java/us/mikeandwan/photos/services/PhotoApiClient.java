@@ -180,10 +180,9 @@ public class PhotoApiClient {
     public List<Integer> getPhotoYears() throws MawAuthenticationException {
         ensureAuthenticated(false);
 
-        String url = API_GET_PHOTO_YEARS_URL;
         JsonClient<Integer> jsonClient = new JsonClient<>(Integer.class, this);
 
-        return jsonClient.getItemList(url);
+        return jsonClient.getItemList(API_GET_PHOTO_YEARS_URL);
     }
 
 
