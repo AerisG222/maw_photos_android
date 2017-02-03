@@ -2,6 +2,7 @@ package us.mikeandwan.photos.activities;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -16,11 +17,17 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
+import javax.inject.Inject;
+
+import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.services.poller.MawScheduleReceiver;
 
 
 public class SettingsActivity extends PreferenceActivity {
+    @Inject SharedPreferences _sharedPrefs;
+
+
     @Override
     public boolean onIsMultiPane() {
         return isXLargeTablet(this);
@@ -36,6 +43,9 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ((MawApplication) getApplication()).getApplicationComponent().inject(this);
+
         getFragmentManager().beginTransaction().replace(android.R.id.content, new PhotosPreferenceFragment()).commit();
     }
 

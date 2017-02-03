@@ -1,6 +1,8 @@
 package us.mikeandwan.photos.di;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import javax.inject.Singleton;
 
@@ -22,5 +24,12 @@ public class ApplicationModule {
     @Singleton
     Application provideApplication() {
         return _application;
+    }
+
+
+    @Provides
+    @Singleton
+    SharedPreferences provideSharedPreferences(Application application) {
+        return PreferenceManager.getDefaultSharedPreferences(application);
     }
 }

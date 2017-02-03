@@ -6,26 +6,32 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Calendar;
+
+import javax.inject.Inject;
 
 import us.mikeandwan.photos.MawApplication;
 
 
 public class MawScheduleReceiver extends BroadcastReceiver {
+    @Inject SharedPreferences _sharedPrefs;
+
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(MawApplication.LOG_TAG, "> scheduleReceiver onReceive - scheduling poller");
+
+        ((MawApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
 
         schedule(context);
     }
 
 
     private void schedule(Context context) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        int repeatHours = Integer.valueOf(sharedPrefs.getString("sync_frequency", "24"));  // odd, prefs only work when string based..
+        int repeatHours = Integer.valueOf(_sharedPrefs.getString("sync_frequency", "24"));  // odd, prefs only work when string based..
 
         schedule(context, repeatHours);
     }

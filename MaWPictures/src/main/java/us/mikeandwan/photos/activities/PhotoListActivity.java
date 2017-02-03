@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -90,6 +89,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Inject GetRandomPhotoTask _getRandomPhotoTask;
     @Inject DownloadPhotoTask _downloadPhotoTask;
     @Inject AuthenticationExceptionHandler _authHandler;
+    @Inject SharedPreferences _sharedPrefs;
 
     private int _index = 0;
     private boolean _isRandomView;
@@ -183,10 +183,8 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         Log.i(MawApplication.LOG_TAG, "onResume - PhotoListActivity");
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
-        displayToolbar(sharedPrefs.getBoolean("display_toolbar", true));
-        displayThumbnails(sharedPrefs.getBoolean("display_thumbnails", true));
+        displayToolbar(_sharedPrefs.getBoolean("display_toolbar", true));
+        displayThumbnails(_sharedPrefs.getBoolean("display_thumbnails", true));
 
         fade();
 
@@ -408,8 +406,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private void startSlideshow() {
         if (_slideshowExecutor == null) {
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            int intervalSeconds = Integer.parseInt(sharedPrefs.getString("slideshow_interval", "3"));
+            int intervalSeconds = Integer.parseInt(_sharedPrefs.getString("slideshow_interval", "3"));
 
             _slideshowExecutor = new ScheduledThreadPoolExecutor(1);
             _slideshowExecutor.scheduleWithFixedDelay(() -> incrementSlideshow(), intervalSeconds, intervalSeconds, TimeUnit.SECONDS);

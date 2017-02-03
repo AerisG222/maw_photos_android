@@ -4,7 +4,6 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,9 +26,9 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Category;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.fragments.BaseCategoryListFragment;
-import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
 
@@ -48,6 +47,8 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
     @Inject MawDataManager _dataManager;
     @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
+    @Inject AuthenticationExceptionHandler _authHandler;
+    @Inject SharedPreferences _sharedPrefs;
 
 
     public TaskComponent getComponent() {
@@ -89,11 +90,10 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
     @Override
     public void onResume() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         FragmentManager fm = getFragmentManager();
         BaseCategoryListFragment fragmentToHide;
 
-        if (sharedPrefs.getBoolean("category_thumbnail_view", true)) {
+        if (_sharedPrefs.getBoolean("category_thumbnail_view", true)) {
             _activeFragment = _categoryListFragment;
             fragmentToHide = _categoryThumbnailsFragment;
         } else {
@@ -164,11 +164,9 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
 
     private void onException(Throwable ex) {
-        _refreshMenuItem.getActionView().clearAnimation();
-        _refreshMenuItem.setActionView(null);
-
-        if (ex.getCause() instanceof MawAuthenticationException) {
-            startActivity(new Intent(this, LoginActivity.class));
+        if(!_authHandler.handleException(ex)) {
+            _refreshMenuItem.getActionView().clearAnimation();
+            _refreshMenuItem.setActionView(null);
         }
     }
 

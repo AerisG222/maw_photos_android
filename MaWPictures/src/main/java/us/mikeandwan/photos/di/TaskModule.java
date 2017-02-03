@@ -30,14 +30,14 @@ public class TaskModule {
 
 
     public TaskModule(Activity activity) {
-        this._activity = activity;
+        _activity = activity;
     }
 
 
     @Provides
     @PerActivity
     Activity provideActivity() {
-        return this._activity;
+        return _activity;
     }
     // ** end workaround
     // ********************************************************************************************

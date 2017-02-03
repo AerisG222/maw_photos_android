@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,7 +36,7 @@ public class MawPollerService extends Service {
 
     @Inject PhotoApiClient _client;
     @Inject MawDataManager _dm;
-
+    @Inject SharedPreferences _sharedPrefs;
 
     @Override
     public void onCreate() {
@@ -141,8 +140,6 @@ public class MawPollerService extends Service {
                 }
             }
 
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
             try {
                 List<Category> categories = _client.getRecentCategories(maxId);
 
@@ -164,9 +161,9 @@ public class MawPollerService extends Service {
             }
 
             // force a notification about bad credentials
-            if (totalCount < 0 || (totalCount > 0 && sharedPrefs.getBoolean("notifications_new_message", true))) {
-                String ringtone = sharedPrefs.getString("notifications_new_message_ringtone", "");
-                Boolean vibrate = sharedPrefs.getBoolean("notifications_new_message_vibrate", false);
+            if (totalCount < 0 || (totalCount > 0 && _sharedPrefs.getBoolean("notifications_new_message", true))) {
+                String ringtone = _sharedPrefs.getString("notifications_new_message_ringtone", "");
+                Boolean vibrate = _sharedPrefs.getBoolean("notifications_new_message_vibrate", false);
 
                 addNotification(totalCount, ringtone, vibrate);
             }

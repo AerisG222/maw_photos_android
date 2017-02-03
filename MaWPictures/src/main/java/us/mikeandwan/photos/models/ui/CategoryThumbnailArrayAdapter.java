@@ -45,7 +45,9 @@ public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
         ImageView imageView;
 
         if (convertView == null) {
-            imageView = new ImageView(_context);
+            imageView = new ImageView(parent.getContext());
+            imageView.setMinimumHeight(R.dimen.category_grid_thumbnail_size);
+            imageView.setMinimumWidth(R.dimen.category_grid_thumbnail_size);
         } else {
             imageView = (ImageView) convertView;
         }
