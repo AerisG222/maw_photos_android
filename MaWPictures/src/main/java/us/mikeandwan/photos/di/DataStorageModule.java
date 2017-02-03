@@ -15,21 +15,21 @@ import us.mikeandwan.photos.services.PhotoStorage;
 public class DataStorageModule {
     @Provides
     @Singleton
-    public MawSQLiteOpenHelper provideMawSQLiteOpenHelper(Application application) {
+    MawSQLiteOpenHelper provideMawSQLiteOpenHelper(Application application) {
         return new MawSQLiteOpenHelper(application);
     }
 
 
     @Provides
     @Singleton
-    public MawDataManager provideMawDataManager(MawSQLiteOpenHelper sqliteHelper) {
+    MawDataManager provideMawDataManager(MawSQLiteOpenHelper sqliteHelper) {
         return new MawDataManager(sqliteHelper);
     }
 
 
     @Provides
     @Singleton
-    public PhotoStorage providePhotoStorage(Application application) {
+    PhotoStorage providePhotoStorage(Application application) {
         return new PhotoStorage(application);
     }
 }

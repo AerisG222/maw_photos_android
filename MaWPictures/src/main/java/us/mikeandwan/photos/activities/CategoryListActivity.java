@@ -148,8 +148,8 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                x -> onSyncComplete(x),
-                                ex -> onException(ex)
+                                this::onSyncComplete,
+                                this::onException
                         )
         );
 

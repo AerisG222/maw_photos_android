@@ -72,7 +72,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> displayCategory(category, viewHolder),
-                            ex -> _authHandler.handleException(ex)
+                            _authHandler::handleException
                     )
             );
         }
@@ -114,12 +114,12 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.thumbnailImageView) public ImageView _thumbnailImageView;
-        @BindView(R.id.categoryNameTextView) public TextView _nameTextView;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.thumbnailImageView) ImageView _thumbnailImageView;
+        @BindView(R.id.categoryNameTextView) TextView _nameTextView;
 
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);

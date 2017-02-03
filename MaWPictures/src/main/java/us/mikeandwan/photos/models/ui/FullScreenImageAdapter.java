@@ -94,7 +94,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                             displayImage(view, photo);
                             _activity.updateProgress();
                         },
-                        ex -> _authHandler.handleException(ex)
+                        _authHandler::handleException
                 );
 
         _activity.updateProgress();

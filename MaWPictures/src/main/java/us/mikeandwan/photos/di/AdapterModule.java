@@ -17,7 +17,7 @@ import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 
 @Module
-public class AdapterModule {
+class AdapterModule {
     @Provides
     @PerActivity
     CategoryRecyclerAdapter provideCategoryRecyclerAdapter(Activity activity, PhotoStorage photoStorage, DownloadCategoryTeaserTask task, AuthenticationExceptionHandler authHandler) {

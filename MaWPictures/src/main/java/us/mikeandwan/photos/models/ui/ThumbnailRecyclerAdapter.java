@@ -65,7 +65,7 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> displayPhoto(photo, viewHolder),
-                            ex -> _authHandler.handleException(ex)
+                            _authHandler::handleException
                     )
             );
         }
@@ -100,10 +100,10 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView _thumbnailImageView;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView _thumbnailImageView;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             _thumbnailImageView = (ImageView) itemView;

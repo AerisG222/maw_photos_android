@@ -16,14 +16,14 @@ import us.mikeandwan.photos.services.PhotoStorage;
 public class PhotoApiModule {
     @Provides
     @Singleton
-    public PhotoApiClient providePhotoApiClient(Application application, PhotoStorage photoStorage, MawDataManager dataManager) {
+    PhotoApiClient providePhotoApiClient(Application application, PhotoStorage photoStorage, MawDataManager dataManager) {
         return new PhotoApiClient(application, photoStorage, dataManager);
     }
 
 
     @Provides
     @Singleton
-    public AuthenticationExceptionHandler provideAuthenticationExceptionHandler(Application application) {
+    AuthenticationExceptionHandler provideAuthenticationExceptionHandler(Application application) {
         return new AuthenticationExceptionHandler(application);
     }
 }

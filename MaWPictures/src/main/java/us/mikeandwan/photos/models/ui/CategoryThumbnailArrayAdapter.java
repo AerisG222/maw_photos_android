@@ -66,7 +66,7 @@ public class CategoryThumbnailArrayAdapter extends ArrayAdapter<Category> {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> displayCategory(category, imageView),
-                            ex -> _authHandler.handleException(ex)
+                            _authHandler::handleException
                     )
             );
         }

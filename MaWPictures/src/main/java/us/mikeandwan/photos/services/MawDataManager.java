@@ -32,7 +32,7 @@ public class MawDataManager {
 
 
     public void setCredentials(String username, String password) {
-        SQLiteDatabase db = getDatabase(true);
+        SQLiteDatabase db = getDatabase();
         ContentValues values = new ContentValues();
 
         try {
@@ -54,7 +54,7 @@ public class MawDataManager {
 
 
     public Credentials getCredentials() {
-        SQLiteDatabase db = getDatabase(false);
+        SQLiteDatabase db = getDatabase();
         Credentials creds = new Credentials();
         Cursor c = null;
         String sql = "SELECT username, password FROM user";
@@ -81,7 +81,7 @@ public class MawDataManager {
 
 
     public int getLatestCategoryId() {
-        SQLiteDatabase db = getDatabase(false);
+        SQLiteDatabase db = getDatabase();
         int result = 0;
         Cursor c = null;
         String sql = "SELECT MAX(id) FROM image_category";
@@ -107,7 +107,7 @@ public class MawDataManager {
 
 
     public int getCategoryCount() {
-        SQLiteDatabase db = getDatabase(false);
+        SQLiteDatabase db = getDatabase();
         int result = 0;
         Cursor c = null;
         String sql = "SELECT COUNT(1) FROM image_category";
@@ -133,7 +133,7 @@ public class MawDataManager {
 
 
     public List<Category> getAllCategories() {
-        SQLiteDatabase db = getDatabase(false);
+        SQLiteDatabase db = getDatabase();
         List<Category> result = new ArrayList<>();
         Cursor c = null;
         String sql = "SELECT id, year, name, has_gps_data, teaser_image_width, teaser_image_height, teaser_image_path FROM image_category";
@@ -159,7 +159,7 @@ public class MawDataManager {
 
 
     public List<Category> getCategoriesForYear(int year) {
-        SQLiteDatabase db = getDatabase(false);
+        SQLiteDatabase db = getDatabase();
         List<Category> result = new ArrayList<>();
         Cursor c = null;
         String sql = "SELECT id, year, name, has_gps_data, teaser_image_width, teaser_image_height, teaser_image_path FROM image_category WHERE year = ? ORDER BY id DESC";
@@ -185,7 +185,7 @@ public class MawDataManager {
 
 
     public List<Integer> getPhotoYears() {
-        SQLiteDatabase db = getDatabase(false);
+        SQLiteDatabase db = getDatabase();
         Cursor c = null;
         String sql = "SELECT year FROM year ORDER BY year DESC";
         List<Integer> result = new ArrayList<>();
@@ -261,7 +261,7 @@ public class MawDataManager {
 
 
     private void addSingleRecord(String tableName, ContentValues values) {
-        SQLiteDatabase db = getDatabase(true);
+        SQLiteDatabase db = getDatabase();
 
         try {
             long result = db.insert(tableName, null, values);
@@ -275,7 +275,7 @@ public class MawDataManager {
     }
 
 
-    private SQLiteDatabase getDatabase(boolean isWritable) {
+    private SQLiteDatabase getDatabase() {
         // no real difference between read/write dbs, so just use writable as we will need to write eventually
         return _dbHelper.getWritableDatabase();
     }

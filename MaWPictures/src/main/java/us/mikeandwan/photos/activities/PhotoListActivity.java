@@ -323,7 +323,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> onGetPhotoList(x),
+                        this::onGetPhotoList,
                         ex -> _authHandler.handleException(ex)
                 )
         );
@@ -355,7 +355,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> onGetRandom(x),
+                        this::onGetRandom,
                         ex -> _authHandler.handleException(ex)
                 )
         );
@@ -408,7 +408,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             int intervalSeconds = Integer.parseInt(_sharedPrefs.getString("slideshow_interval", "3"));
 
             _slideshowExecutor = new ScheduledThreadPoolExecutor(1);
-            _slideshowExecutor.scheduleWithFixedDelay(() -> incrementSlideshow(), intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
+            _slideshowExecutor.scheduleWithFixedDelay(this::incrementSlideshow, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
         }
     }
 
@@ -420,7 +420,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             SlideshowRunnable slideshowRunnable = new SlideshowRunnable((nextIndex));
             _theActivity.runOnUiThread(slideshowRunnable);
         } else {
-            _theActivity.runOnUiThread(() -> toggleSlideshow());
+            _theActivity.runOnUiThread(this::toggleSlideshow);
         }
     }
 
@@ -541,10 +541,10 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    class SlideshowRunnable implements Runnable {
+    private class SlideshowRunnable implements Runnable {
         private final int _nextIndex;
 
-        public SlideshowRunnable(int nextIndex) {
+        SlideshowRunnable(int nextIndex) {
             _nextIndex = nextIndex;
         }
 

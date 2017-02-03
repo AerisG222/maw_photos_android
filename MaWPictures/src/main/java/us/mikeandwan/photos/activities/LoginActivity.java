@@ -139,7 +139,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
-                                    x -> completeLoginProcess(x),
+                                    this::completeLoginProcess,
                                     ex -> Log.w(MawApplication.LOG_TAG, "error authenticating: " + ex.getMessage())
                             )
             );

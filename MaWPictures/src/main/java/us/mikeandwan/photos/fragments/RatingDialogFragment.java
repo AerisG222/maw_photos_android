@@ -46,7 +46,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                x -> displayRating(x),
+                                this::displayRating,
                                 ex -> _authHandler.handleException(ex)
                         )
                 );
@@ -99,7 +99,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> displayRating(x),
+                        this::displayRating,
                         ex -> _authHandler.handleException(ex)
                 )
         );

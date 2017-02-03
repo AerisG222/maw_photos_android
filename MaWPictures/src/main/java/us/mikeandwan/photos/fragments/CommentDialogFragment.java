@@ -132,7 +132,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> displayComments(x),
+                        this::displayComments,
                         ex -> _authHandler.handleException(ex)
                 )
         );

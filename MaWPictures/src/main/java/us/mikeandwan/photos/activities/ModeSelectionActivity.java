@@ -76,9 +76,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
             ViewCompat.setElevation(_toolbar, 8);
         }
 
-        _modeExpandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) ->
-                onItemClicked(parent, v, groupPosition, childPosition, id)
-        );
+        _modeExpandableListView.setOnChildClickListener(this::onItemClicked);
 
         _adapter = new SimpleExpandableListAdapter(this,
                 _groupData,
@@ -160,7 +158,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                x -> onSyncComplete(x),
+                this::onSyncComplete,
                 ex -> {
                     _refreshMenuItem.getActionView().clearAnimation();
                     _refreshMenuItem.setActionView(null);

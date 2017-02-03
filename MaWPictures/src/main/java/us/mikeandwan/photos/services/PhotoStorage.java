@@ -36,7 +36,7 @@ public class PhotoStorage {
     }
 
 
-    public void put(String remotePath, HttpURLConnection conn) {
+    void put(String remotePath, HttpURLConnection conn) {
         File dir = new File(getRootPath(), remotePath.substring(0, remotePath.lastIndexOf('/')));
         File file = getCachePath(remotePath);
         OutputStream outputStream = null;
