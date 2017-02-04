@@ -66,7 +66,8 @@ public class TaskModule {
 
     @Provides
     @PerActivity
-    GetCategoriesForYearTask provideGetCategoriesForYearTask(MawDataManager dataManager, PhotoApiClient client) {
+    GetCategoriesForYearTask provideGetCategoriesForYearTask(MawDataManager dataManager,
+                                                             PhotoApiClient client) {
         return new GetCategoriesForYearTask(dataManager, client);
     }
 
@@ -108,14 +109,16 @@ public class TaskModule {
 
     @Provides
     @PerActivity
-    GetRecentCategoriesTask provideGetRecentCategoriesTask(MawDataManager dataManager, PhotoApiClient client) {
+    GetRecentCategoriesTask provideGetRecentCategoriesTask(MawDataManager dataManager,
+                                                           PhotoApiClient client) {
         return new GetRecentCategoriesTask(dataManager, client);
     }
 
 
     @Provides
     @PerActivity
-    GetYearsTask provideGetYearsTask(MawDataManager dataManager, PhotoApiClient client) {
+    GetYearsTask provideGetYearsTask(MawDataManager dataManager,
+                                     PhotoApiClient client) {
         return new GetYearsTask(dataManager, client);
     }
 

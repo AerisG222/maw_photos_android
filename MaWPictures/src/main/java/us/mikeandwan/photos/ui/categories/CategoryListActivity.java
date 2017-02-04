@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.ui.categories;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -40,11 +39,9 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     private final CompositeDisposable disposables = new CompositeDisposable();
     private int _year;
     private List<Category> _categories;
-    private BaseCategoryListFragment _activeFragment;
-    private BaseCategoryListFragment _categoryListFragment;
-    private BaseCategoryListFragment _categoryThumbnailsFragment;
     private MenuItem _refreshMenuItem;
     private TaskComponent _taskComponent;
+    private CategoryListFragment _listFragment;
 
     @BindView(R.id.toolbar) Toolbar _toolbar;
 
@@ -52,11 +49,6 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
     @Inject AuthenticationExceptionHandler _authHandler;
     @Inject SharedPreferences _sharedPrefs;
-
-
-    public TaskComponent getComponent() {
-        return _taskComponent;
-    }
 
 
     @Override
@@ -73,8 +65,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         _taskComponent.inject(this);
 
         _year = getIntent().getIntExtra("YEAR", 0);
-        _categoryListFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_list_fragment);
-        _categoryThumbnailsFragment = (BaseCategoryListFragment) getFragmentManager().findFragmentById(R.id.category_thumbnails_fragment);
+        _listFragment = (CategoryListFragment) getFragmentManager().findFragmentById(R.id.category_list_fragment);
 
         updateToolbar(_toolbar, String.valueOf(_year));
     }
@@ -93,26 +84,9 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
     @Override
     public void onResume() {
-        FragmentManager fm = getFragmentManager();
-        BaseCategoryListFragment fragmentToHide;
-
-        if (_sharedPrefs.getBoolean("category_thumbnail_view", true)) {
-            _activeFragment = _categoryListFragment;
-            fragmentToHide = _categoryThumbnailsFragment;
-        } else {
-            _activeFragment = _categoryThumbnailsFragment;
-            fragmentToHide = _categoryListFragment;
-        }
-
-        fm.beginTransaction()
-            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-            .show(_activeFragment)
-            .hide(fragmentToHide)
-            .commit();
-
         _categories = _dataManager.getCategoriesForYear(_year);
 
-        _activeFragment.setCategories(_categories);
+        _listFragment.setCategories(_categories);
 
         super.onResume();
     }
@@ -122,6 +96,11 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     protected void onDestroy() {
         super.onDestroy();
         disposables.clear(); // do not send event after activity has been destroyed
+    }
+
+
+    public TaskComponent getComponent() {
+        return _taskComponent;
     }
 
 
@@ -180,7 +159,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         _categories.clear();
         _categories.addAll(_dataManager.getCategoriesForYear(_year));
 
-        _activeFragment.notifyCategoriesUpdated();
+        _listFragment.notifyCategoriesUpdated();
 
         _refreshMenuItem.getActionView().clearAnimation();
         _refreshMenuItem.setActionView(null);

@@ -16,7 +16,9 @@ import us.mikeandwan.photos.services.PhotoStorage;
 public class PhotoApiModule {
     @Provides
     @Singleton
-    PhotoApiClient providePhotoApiClient(Application application, PhotoStorage photoStorage, MawDataManager dataManager) {
+    PhotoApiClient providePhotoApiClient(Application application,
+                                         PhotoStorage photoStorage,
+                                         MawDataManager dataManager) {
         return new PhotoApiClient(application, photoStorage, dataManager);
     }
 

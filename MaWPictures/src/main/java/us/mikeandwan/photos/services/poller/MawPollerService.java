@@ -33,6 +33,7 @@ import us.mikeandwan.photos.services.PhotoApiClient;
 
 public class MawPollerService extends Service {
     private ServiceHandler _serviceHandler;
+    private MawApplication _app;
 
     @Inject PhotoApiClient _client;
     @Inject MawDataManager _dm;
@@ -40,7 +41,8 @@ public class MawPollerService extends Service {
 
     @Override
     public void onCreate() {
-        ((MawApplication)getApplication()).getApplicationComponent().inject(this);
+        _app = (MawApplication) getApplication();
+        _app.getApplicationComponent().inject(this);
 
         // Start up the thread running the service.  Note that we create a
         // separate thread because the service normally runs in the process's
@@ -152,9 +154,9 @@ public class MawPollerService extends Service {
                         _dm.addCategory(category);
                     }
 
-                    totalCount = MawApplication.getNotificationCount() + categories.size();
+                    totalCount = _app.getNotificationCount() + categories.size();
 
-                    MawApplication.setNotificationCount(totalCount);
+                    _app.setNotificationCount(totalCount);
                 }
             } catch (MawAuthenticationException mae) {
                 totalCount = -1;

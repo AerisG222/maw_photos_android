@@ -9,11 +9,11 @@ import us.mikeandwan.photos.di.ApplicationComponent;
 import us.mikeandwan.photos.di.PhotoApiModule;
 
 
+// TODO: provide wrapper for settings
 public class MawApplication extends Application {
     public static final String LOG_TAG = "maw";
-    private static int _notificationCount = 0;
+    private int _notificationCount = 0;
     private ApplicationComponent _applicationComponent;
-
 
     @Override
     public void onCreate() {
@@ -27,12 +27,12 @@ public class MawApplication extends Application {
     }
 
 
-    public static int getNotificationCount() {
+    public int getNotificationCount() {
         return _notificationCount;
     }
 
 
-    public static void setNotificationCount(int count) {
+    public void setNotificationCount(int count) {
         _notificationCount = count;
     }
 

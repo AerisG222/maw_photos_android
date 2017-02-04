@@ -44,6 +44,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Credentials _creds = new Credentials();
     private TaskComponent _taskComponent;
+    private MawApplication _app;
 
     @BindView(R.id.username) EditText _usernameView;
     @BindView(R.id.password) EditText _passwordView;
@@ -68,6 +69,8 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        _app = (MawApplication) getApplication();
 
         _taskComponent = DaggerTaskComponent.builder()
                 .applicationComponent(getApplicationComponent())
@@ -102,7 +105,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     private void ResetNotifications() {
         NotificationManager mgr = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         mgr.cancel(0);
-        MawApplication.setNotificationCount(0);
+        _app.setNotificationCount(0);
     }
 
 
