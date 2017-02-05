@@ -107,7 +107,6 @@ public class CategoryListFragment extends BaseFragment {
 
             _gridAdapter.getClicks().subscribe(c -> getCategoryActivity().selectCategory(c));
 
-
             _categoryRecyclerView.setAdapter(_gridAdapter);
         }
         else {

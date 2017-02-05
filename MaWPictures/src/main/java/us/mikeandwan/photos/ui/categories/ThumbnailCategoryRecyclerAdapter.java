@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.categories;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +27,9 @@ public class ThumbnailCategoryRecyclerAdapter extends CategoryRecyclerAdapter<Th
 
     @Override
     public ThumbnailCategoryRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View imageView = new ImageView(parent.getContext());
-        imageView.setPadding(0, 0, 0, 8);
+        ImageView imageView = new ImageView(parent.getContext());
+        imageView.setPadding(4, 4, 4, 4);
+        imageView.setAdjustViewBounds(true);
 
         return new ViewHolder(imageView);
     }
