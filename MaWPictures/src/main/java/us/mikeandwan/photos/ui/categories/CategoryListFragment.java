@@ -53,7 +53,7 @@ public class CategoryListFragment extends BaseFragment {
         _viewTreeObserver = view.getViewTreeObserver();
         _viewTreeObserver.addOnGlobalLayoutListener(() -> {
             _categoryRecyclerView.post(() -> {
-                if(getView() == null || getView().getWidth() == _lastWidth) {
+                if(getView() == null) {
                     return;
                 }
 
