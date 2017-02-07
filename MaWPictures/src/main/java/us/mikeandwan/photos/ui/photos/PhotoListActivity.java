@@ -72,13 +72,13 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private int _taskCount = 0;
     private String _url;
     private ThumbnailListFragment _thumbnailListFragment;
-    private MainImageToolbarFragment _imageToolbarFragment;
     private MainImageFragment _mainImageFragment;
     private MenuItem _menuShare;
     private TaskComponent _taskComponent;
 
     @BindView(R.id.progressBar) ProgressBar _progressBar;
     @BindView(R.id.toolbar) Toolbar _toolbar;
+    @BindView(R.id.photoToolbar) PhotoToolbar _photoToolbar;
 
     @Inject PhotoStorage _ps;
     @Inject GetPhotoListTask _getPhotoListTask;
@@ -115,13 +115,18 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         _taskComponent.inject(this);
 
         _thumbnailListFragment = (ThumbnailListFragment) getFragmentManager().findFragmentById(R.id.thumbnailListFragment);
-        _imageToolbarFragment = (MainImageToolbarFragment) getFragmentManager().findFragmentById(R.id.mainImageToolbarFragment);
         _mainImageFragment = (MainImageFragment) getFragmentManager().findFragmentById(R.id.mainImageFragment);
 
         _thumbnailListFragment.getView().setOnTouchListener((view, event) -> {
             fade(_thumbnailListFragment.getView());
             return false;
         });
+
+        _photoToolbar.onCommentClicked().subscribe(x -> showComments());
+        _photoToolbar.onExifClicked().subscribe(x -> showExif());
+        _photoToolbar.onRatingClicked().subscribe(x -> showRating());
+        _photoToolbar.onRotateClicked().subscribe(this::rotatePhoto);
+        _photoToolbar.onToggleSlideshow().subscribe(x -> toggleSlideshow());
 
         _url = getIntent().getStringExtra("URL");
         String _name = getIntent().getStringExtra("NAME");
@@ -164,6 +169,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     protected void onDestroy() {
         super.onDestroy();
         disposables.clear(); // do not send event after activity has been destroyed
+        _photoToolbar.dispose();
     }
 
 
@@ -196,7 +202,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         } else {
             if(_playingSlideshow) {
                 startSlideshow();
-                _imageToolbarFragment.setSlideshowPlaying(true);
+                _photoToolbar.setSlideshowPlaying(true);
             }
 
             onGatherPhotoListComplete();
@@ -259,7 +265,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private void fade() {
         fade(_toolbar);
-        fade(_imageToolbarFragment.getView());
+        fade(_photoToolbar);
         fade(_thumbnailListFragment.getView());
     }
 
@@ -427,7 +433,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             _slideshowExecutor.shutdownNow();
             _slideshowExecutor = null;
 
-            _imageToolbarFragment.setSlideshowPlaying(false);
+            _photoToolbar.setSlideshowPlaying(false);
         }
     }
 
@@ -519,7 +525,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void displayToolbar(boolean doShow) {
-        showFragment(_imageToolbarFragment, doShow);
+        int visibility = doShow ? View.VISIBLE : View.INVISIBLE;
+
+        _photoToolbar.setVisibility(visibility);
     }
 
 
