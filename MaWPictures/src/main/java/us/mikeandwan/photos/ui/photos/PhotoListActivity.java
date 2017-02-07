@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
@@ -133,23 +132,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         });
 
         _photoPager.setAdapter(_photoPagerAdapter);
-
-        _photoPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // do nothing
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                gotoPhoto(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                // do nothing
-            }
-        });
+        _photoPager.onPhotoSelected().subscribe(this::gotoPhoto);
 
         _photoToolbar.onCommentClicked().subscribe(x -> showComments());
         _photoToolbar.onExifClicked().subscribe(x -> showExif());
