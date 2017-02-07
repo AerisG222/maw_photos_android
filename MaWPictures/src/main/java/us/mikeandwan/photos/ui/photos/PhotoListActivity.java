@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -72,13 +73,13 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private int _taskCount = 0;
     private String _url;
     private ThumbnailListFragment _thumbnailListFragment;
-    private MainImageFragment _mainImageFragment;
     private MenuItem _menuShare;
     private TaskComponent _taskComponent;
 
     @BindView(R.id.progressBar) ProgressBar _progressBar;
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.photoToolbar) PhotoToolbar _photoToolbar;
+    @BindView(R.id.photoPager) PhotoViewPager _photoPager;
 
     @Inject PhotoStorage _ps;
     @Inject GetPhotoListTask _getPhotoListTask;
@@ -86,6 +87,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Inject DownloadPhotoTask _downloadPhotoTask;
     @Inject AuthenticationExceptionHandler _authHandler;
     @Inject SharedPreferences _sharedPrefs;
+    @Inject FullScreenImageAdapter _photoPagerAdapter;
 
     private int _index = 0;
     private boolean _isRandomView;
@@ -115,11 +117,29 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         _taskComponent.inject(this);
 
         _thumbnailListFragment = (ThumbnailListFragment) getFragmentManager().findFragmentById(R.id.thumbnailListFragment);
-        _mainImageFragment = (MainImageFragment) getFragmentManager().findFragmentById(R.id.mainImageFragment);
 
         _thumbnailListFragment.getView().setOnTouchListener((view, event) -> {
             fade(_thumbnailListFragment.getView());
             return false;
+        });
+
+        _photoPager.setAdapter(_photoPagerAdapter);
+
+        _photoPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                // do nothing
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                gotoPhoto(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // do nothing
+            }
         });
 
         _photoToolbar.onCommentClicked().subscribe(x -> showComments());
@@ -306,7 +326,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     public void rotatePhoto(int direction) {
-        _mainImageFragment.rotatePhoto(direction);
+        _photoPager.rotateImage(direction);
     }
 
 
@@ -386,7 +406,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void onRandomPhotoFetched() {
-        _mainImageFragment.onPhotoListUpdated();
+        _photoPagerAdapter.notifyDataSetChanged();
 
         if (!_displayedRandomImage) {
             _displayedRandomImage = true;
@@ -398,7 +418,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void onGatherPhotoListComplete() {
-        _mainImageFragment.onPhotoListUpdated();
+        _photoPagerAdapter.notifyDataSetChanged();
 
         gotoPhoto(_index);
 
@@ -457,7 +477,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void displayMainImage(Photo photo) {
-        _mainImageFragment.onCurrentPhotoUpdated();
+        _photoPager.setCurrentItem(_index);
         _thumbnailListFragment.onCurrentPhotoUpdated();
 
         ShareActionProvider sap = (ShareActionProvider) MenuItemCompat.getActionProvider(_menuShare);

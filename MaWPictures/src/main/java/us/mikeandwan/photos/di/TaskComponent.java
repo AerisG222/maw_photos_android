@@ -7,7 +7,6 @@ import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 import us.mikeandwan.photos.ui.photos.CommentDialogFragment;
 import us.mikeandwan.photos.ui.photos.ExifDialogFragment;
-import us.mikeandwan.photos.ui.photos.MainImageFragment;
 import us.mikeandwan.photos.ui.photos.RatingDialogFragment;
 import us.mikeandwan.photos.ui.photos.ThumbnailListFragment;
 
@@ -34,7 +33,6 @@ public interface TaskComponent {
     // fragments
     void inject(CommentDialogFragment fragment);
     void inject(ExifDialogFragment fragment);
-    void inject(MainImageFragment fragment);
     void inject(RatingDialogFragment fragment);
     void inject(ThumbnailListFragment fragment);
 }
