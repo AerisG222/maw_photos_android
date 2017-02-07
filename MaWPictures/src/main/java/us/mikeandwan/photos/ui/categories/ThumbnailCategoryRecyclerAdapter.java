@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.ui.categories;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;

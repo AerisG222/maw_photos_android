@@ -3,10 +3,16 @@ package us.mikeandwan.photos.ui.categories;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -15,6 +21,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Flowable;
@@ -41,14 +48,20 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     private List<Category> _categories;
     private MenuItem _refreshMenuItem;
     private TaskComponent _taskComponent;
-    private CategoryListFragment _listFragment;
+    private ViewTreeObserver.OnGlobalLayoutListener _listener;
+    private DividerItemDecoration _decoration;
 
+    @BindDimen(R.dimen.category_grid_thumbnail_size) int _thumbSize;
+    @BindView(R.id.container) ConstraintLayout _container;
     @BindView(R.id.toolbar) Toolbar _toolbar;
+    @BindView(R.id.category_recycler_view) RecyclerView _categoryRecyclerView;
 
     @Inject MawDataManager _dataManager;
     @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
     @Inject AuthenticationExceptionHandler _authHandler;
     @Inject SharedPreferences _sharedPrefs;
+    @Inject ListCategoryRecyclerAdapter _listAdapter;
+    @Inject ThumbnailCategoryRecyclerAdapter _gridAdapter;
 
 
     @Override
@@ -56,6 +69,8 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_list);
         ButterKnife.bind(this);
+
+        _categoryRecyclerView.setHasFixedSize(true);
 
         _taskComponent = DaggerTaskComponent.builder()
                 .applicationComponent(getApplicationComponent())
@@ -65,7 +80,6 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         _taskComponent.inject(this);
 
         _year = getIntent().getIntExtra("YEAR", 0);
-        _listFragment = (CategoryListFragment) getFragmentManager().findFragmentById(R.id.category_list_fragment);
 
         updateToolbar(_toolbar, String.valueOf(_year));
     }
@@ -84,9 +98,19 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
     @Override
     public void onResume() {
-        _categories = _dataManager.getCategoriesForYear(_year);
+        // http://stackoverflow.com/questions/25396747/how-to-get-fragment-width
+        _listener = () -> _categoryRecyclerView.post(() -> {
+            int width = _container.getWidth();
 
-        _listFragment.setCategories(_categories);
+            if(width > 0) {
+                _container.getViewTreeObserver().removeOnGlobalLayoutListener(_listener);
+                updateGridSize(width);
+            }
+        });
+
+        _container.getViewTreeObserver().addOnGlobalLayoutListener(_listener);
+
+        setCategories(_dataManager.getCategoriesForYear(_year));
 
         super.onResume();
     }
@@ -124,6 +148,49 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     }
 
 
+    private void updateGridSize(int width) {
+        if (_sharedPrefs.getBoolean("category_thumbnail_view", true)) {
+            int cols = Math.max(1, (width / _thumbSize));
+            GridLayoutManager glm = new GridLayoutManager(this, cols);
+            _categoryRecyclerView.setLayoutManager(glm);
+        }
+    }
+
+
+    private void setCategories(List<Category> categories) {
+        _categories = categories;
+
+        if (_sharedPrefs.getBoolean("category_thumbnail_view", true)) {
+            _gridAdapter.setCategoryList(categories);
+
+            _gridAdapter.getClicks().subscribe(this::selectCategory);
+
+            if(_decoration != null) {
+                _categoryRecyclerView.removeItemDecoration(_decoration);
+                _decoration = null;
+            }
+
+            _categoryRecyclerView.setAdapter(_gridAdapter);
+        }
+        else {
+            _listAdapter.setCategoryList(categories);
+
+            _listAdapter.getClicks().subscribe(this::selectCategory);
+
+            LinearLayoutManager llm = new LinearLayoutManager(this);
+            llm.setOrientation(LinearLayoutManager.VERTICAL);
+            _categoryRecyclerView.setLayoutManager(llm);
+
+            if(_decoration == null) {
+                _decoration = new DividerItemDecoration(_categoryRecyclerView.getContext(), llm.getOrientation());
+                _categoryRecyclerView.addItemDecoration(_decoration);
+            }
+
+            _categoryRecyclerView.setAdapter(_listAdapter);
+        }
+    }
+
+
     private void forceSync() {
         disposables.add(
                 Flowable.fromCallable(() -> _getRecentCategoriesTask.call())
@@ -153,13 +220,23 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     }
 
 
+    private void notifyCategoriesUpdated() {
+        if (_sharedPrefs.getBoolean("category_thumbnail_view", true)) {
+            _gridAdapter.notifyDataSetChanged();
+        }
+        else {
+            _listAdapter.notifyDataSetChanged();
+        }
+    }
+
+
     private void onSyncComplete(List<Category> result) {
         // force the update to categories to come from database, and not the network result, as there
         // may have been updates already pulled from the poller
         _categories.clear();
         _categories.addAll(_dataManager.getCategoriesForYear(_year));
 
-        _listFragment.notifyCategoriesUpdated();
+        notifyCategoriesUpdated();
 
         _refreshMenuItem.getActionView().clearAnimation();
         _refreshMenuItem.setActionView(null);
