@@ -3,7 +3,6 @@ package us.mikeandwan.photos.ui.photos;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -55,7 +56,7 @@ import us.mikeandwan.photos.ui.HasComponent;
 public class PhotoListActivity extends BaseActivity implements IPhotoActivity, HasComponent<TaskComponent> {
     private static final float FADE_START_ALPHA = 1.0f;
     public static final float FADE_END_ALPHA = 0.2f;
-    public static final int FADE_DURATION = 4200;
+    public static final int FADE_DURATION = 3000;
 
     private static final int RANDOM_INITIAL_COUNT = 20;
     private static final int PREFETCH_COUNT = 2;
@@ -72,7 +73,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private HashSet<Integer> _randomPhotoIds;
     private int _taskCount = 0;
     private String _url;
-    private ThumbnailListFragment _thumbnailListFragment;
     private MenuItem _menuShare;
     private TaskComponent _taskComponent;
 
@@ -80,6 +80,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.photoToolbar) PhotoToolbar _photoToolbar;
     @BindView(R.id.photoPager) PhotoViewPager _photoPager;
+    @BindView(R.id.thumbnailPhotoRecycler) RecyclerView _thumbnailRecyclerView;
 
     @Inject PhotoStorage _ps;
     @Inject GetPhotoListTask _getPhotoListTask;
@@ -88,6 +89,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Inject AuthenticationExceptionHandler _authHandler;
     @Inject SharedPreferences _sharedPrefs;
     @Inject FullScreenImageAdapter _photoPagerAdapter;
+    @Inject ThumbnailRecyclerAdapter _thumbnailRecyclerAdapter;
 
     private int _index = 0;
     private boolean _isRandomView;
@@ -104,6 +106,15 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            _index = savedInstanceState.getInt(STATE_INDEX);
+            _isRandomView = savedInstanceState.getBoolean(STATE_IS_RANDOM_VIEW);
+            _displayedRandomImage = savedInstanceState.getBoolean(STATE_DISPLAY_RANDOM_IMAGE);
+            _playingSlideshow = savedInstanceState.getBoolean(STATE_PLAYING_SLIDESHOW);
+            _photoList = (ArrayList<Photo>) savedInstanceState.getSerializable(STATE_PHOTO_LIST);
+        }
+
         setContentView(R.layout.activity_photo_list);
         ButterKnife.bind(this);
 
@@ -116,10 +127,8 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         _taskComponent.inject(this);
 
-        _thumbnailListFragment = (ThumbnailListFragment) getFragmentManager().findFragmentById(R.id.thumbnailListFragment);
-
-        _thumbnailListFragment.getView().setOnTouchListener((view, event) -> {
-            fade(_thumbnailListFragment.getView());
+        _thumbnailRecyclerView.setOnTouchListener((view, event) -> {
+            fade(_thumbnailRecyclerView);
             return false;
         });
 
@@ -153,13 +162,12 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         updateToolbar(_toolbar, String.valueOf(_name));
 
-        if(savedInstanceState != null) {
-            _index = savedInstanceState.getInt(STATE_INDEX);
-            _isRandomView = savedInstanceState.getBoolean(STATE_IS_RANDOM_VIEW);
-            _displayedRandomImage = savedInstanceState.getBoolean(STATE_DISPLAY_RANDOM_IMAGE);
-            _playingSlideshow = savedInstanceState.getBoolean(STATE_PLAYING_SLIDESHOW);
-            _photoList = (ArrayList<Photo>) savedInstanceState.getSerializable(STATE_PHOTO_LIST);
-        }
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        _thumbnailRecyclerView.setLayoutManager(llm);
+
+        _thumbnailRecyclerAdapter.setPhotoList(getPhotoList());
+        _thumbnailRecyclerView.setAdapter(_thumbnailRecyclerAdapter);
     }
 
 
@@ -190,6 +198,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         super.onDestroy();
         disposables.clear(); // do not send event after activity has been destroyed
         _photoToolbar.dispose();
+        _thumbnailRecyclerAdapter.dispose();
     }
 
 
@@ -286,7 +295,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private void fade() {
         fade(_toolbar);
         fade(_photoToolbar);
-        fade(_thumbnailListFragment.getView());
+        fade(_thumbnailRecyclerView);
     }
 
 
@@ -478,7 +487,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private void displayMainImage(Photo photo) {
         _photoPager.setCurrentItem(_index);
-        _thumbnailListFragment.onCurrentPhotoUpdated();
+        updateThumbnail();
 
         ShareActionProvider sap = (ShareActionProvider) MenuItemCompat.getActionProvider(_menuShare);
 
@@ -540,29 +549,35 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void displayThumbnails(boolean doShow) {
-        showFragment(_thumbnailListFragment, doShow);
+        displayView(_thumbnailRecyclerView, doShow);
     }
 
 
-    private void displayToolbar(boolean doShow) {
+    private void displayToolbar(boolean doShow) { displayView(_photoToolbar, doShow); }
+
+
+    private void displayView(View view, boolean doShow) {
         int visibility = doShow ? View.VISIBLE : View.INVISIBLE;
 
-        _photoToolbar.setVisibility(visibility);
+        view.setVisibility(visibility);
     }
 
 
-    private void showFragment(Fragment f, boolean doShow) {
-        FragmentManager fm = getFragmentManager();
+    private void updateThumbnail() {
+        Photo thumb = getPhotoList().get(getCurrentIndex());
 
-        if (doShow) {
-            fm.beginTransaction()
-                .show(f)
-                .commit();
-        } else {
-            fm.beginTransaction()
-                .hide(f)
-                .commit();
-        }
+        // TODO: scroll to current photo
+        /*
+        _horizontalScrollView.smoothScrollTo(thumb.getLeft(), 0);
+
+        // TODO: consider adding generic version to a function to the photolistactivity
+        // we force the animation here to leave the alpha at 0.2, otherwise was resetting to 1.0
+        AlphaAnimation alpha = new AlphaAnimation(PhotoListActivity.FADE_END_ALPHA, PhotoListActivity.FADE_END_ALPHA);
+        alpha.setDuration(PhotoListActivity.FADE_DURATION);
+        alpha.setFillAfter(true);
+
+        _horizontalScrollView.startAnimation(alpha);
+        */
     }
 
 
@@ -572,7 +587,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         SlideshowRunnable(int nextIndex) {
             _nextIndex = nextIndex;
         }
-
 
         @Override
         public void run() {
