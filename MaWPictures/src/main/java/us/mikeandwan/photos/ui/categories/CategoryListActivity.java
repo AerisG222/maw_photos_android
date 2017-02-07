@@ -149,7 +149,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
 
     private void updateGridSize(int width) {
-        if (_sharedPrefs.getBoolean("category_thumbnail_view", true)) {
+        if (isThumbnailView()) {
             int cols = Math.max(1, (width / _thumbSize));
             GridLayoutManager glm = new GridLayoutManager(this, cols);
             _categoryRecyclerView.setLayoutManager(glm);
@@ -160,10 +160,10 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     private void setCategories(List<Category> categories) {
         _categories = categories;
 
-        if (_sharedPrefs.getBoolean("category_thumbnail_view", true)) {
+        if (isThumbnailView()) {
             _gridAdapter.setCategoryList(categories);
 
-            _gridAdapter.getClicks().subscribe(this::selectCategory);
+            _gridAdapter.onCategorySelected().subscribe(this::selectCategory);
 
             if(_decoration != null) {
                 _categoryRecyclerView.removeItemDecoration(_decoration);
@@ -175,7 +175,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         else {
             _listAdapter.setCategoryList(categories);
 
-            _listAdapter.getClicks().subscribe(this::selectCategory);
+            _listAdapter.onCategorySelected().subscribe(this::selectCategory);
 
             LinearLayoutManager llm = new LinearLayoutManager(this);
             llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -221,12 +221,17 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
 
     private void notifyCategoriesUpdated() {
-        if (_sharedPrefs.getBoolean("category_thumbnail_view", true)) {
+        if (isThumbnailView()) {
             _gridAdapter.notifyDataSetChanged();
         }
         else {
             _listAdapter.notifyDataSetChanged();
         }
+    }
+
+
+    private boolean isThumbnailView() {
+        return _sharedPrefs.getBoolean("category_thumbnail_view", true);
     }
 
 

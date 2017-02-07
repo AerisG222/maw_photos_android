@@ -23,7 +23,7 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
     protected final Context _context;
     protected final PhotoStorage _photoStorage;
     private final DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
-    private final PublishSubject<Category> onClickSubject = PublishSubject.create();
+    private final PublishSubject<Category> categorySubject = PublishSubject.create();
     private final AuthenticationExceptionHandler _authHandler;
     private List<Category> _categoryList;
 
@@ -50,7 +50,7 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
     public void onBindViewHolder(T viewHolder, int position) {
         final Category category = _categoryList.get(position);
 
-        viewHolder.itemView.setOnClickListener(v -> onClickSubject.onNext(category));
+        viewHolder.itemView.setOnClickListener(v -> categorySubject.onNext(category));
 
         if (_photoStorage.doesExist(category.getTeaserPhotoInfo().getPath())) {
             displayCategory(category, viewHolder);
@@ -78,8 +78,8 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
     }
 
 
-    Observable<Category> getClicks(){
-        return onClickSubject.hide();
+    Observable<Category> onCategorySelected(){
+        return categorySubject.hide();
     }
 
 
