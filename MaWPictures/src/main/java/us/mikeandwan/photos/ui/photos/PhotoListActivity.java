@@ -81,12 +81,12 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @BindView(R.id.photoPager) PhotoViewPager _photoPager;
     @BindView(R.id.thumbnailPhotoRecycler) RecyclerView _thumbnailRecyclerView;
 
+    @Inject SharedPreferences _sharedPrefs;
     @Inject PhotoStorage _ps;
+    @Inject AuthenticationExceptionHandler _authHandler;
     @Inject GetPhotoListTask _getPhotoListTask;
     @Inject GetRandomPhotoTask _getRandomPhotoTask;
     @Inject DownloadPhotoTask _downloadPhotoTask;
-    @Inject AuthenticationExceptionHandler _authHandler;
-    @Inject SharedPreferences _sharedPrefs;
     @Inject FullScreenImageAdapter _photoPagerAdapter;
     @Inject ThumbnailRecyclerAdapter _thumbnailRecyclerAdapter;
 
