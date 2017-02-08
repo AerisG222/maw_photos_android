@@ -56,8 +56,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         PhotoView photoView = new PhotoView(container.getContext());
-        photoView.setTag(position)
-        ;
+        photoView.setTag(position);
+
         displayImage(photoView, _photoList.get(position));
 
         container.addView(photoView);

@@ -12,22 +12,4 @@ public interface IPhotoActivity {
     Photo getCurrentPhoto();
 
     List<Photo> getPhotoList();
-
-    int getCurrentIndex();
-
-    boolean hasNext();
-
-    boolean hasPrevious();
-
-    void gotoPhoto(int index);
-
-    void showExif();
-
-    void showComments();
-
-    void showRating();
-
-    void rotatePhoto(int direction);
-
-    void toggleSlideshow();
 }
