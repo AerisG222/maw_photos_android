@@ -180,7 +180,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        disposables.clear(); // do not send event after activity has been destroyed
+        disposables.clear();
         _photoToolbar.dispose();
         _thumbnailRecyclerAdapter.dispose();
     }
