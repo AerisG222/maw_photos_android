@@ -248,16 +248,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    public boolean hasNext() {
-        return _index < _photoList.size() - 1;
-    }
-
-
-    public boolean hasPrevious() {
-        return _index > 0;
-    }
-
-
     public void gotoPhoto(int index) {
         _index = index;
         displayMainImage(_photoList.get(_index));
