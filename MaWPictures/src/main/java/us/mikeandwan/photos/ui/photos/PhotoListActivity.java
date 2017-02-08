@@ -176,6 +176,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         outState.putSerializable(STATE_PHOTO_LIST, _photoList);
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
