@@ -1,6 +1,7 @@
 package us.mikeandwan.photos;
 
 import android.app.Application;
+import android.support.v7.app.AppCompatDelegate;
 
 import us.mikeandwan.photos.di.ApplicationModule;
 import us.mikeandwan.photos.di.DaggerApplicationComponent;
@@ -18,6 +19,8 @@ public class MawApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         _applicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))

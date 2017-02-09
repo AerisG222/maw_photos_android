@@ -28,17 +28,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.services.MawDataManager;
-import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetYearsTask;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.categories.CategoryListActivity;
 import us.mikeandwan.photos.ui.HasComponent;
-import us.mikeandwan.photos.ui.login.LoginActivity;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 
 
@@ -57,6 +56,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
     @Inject MawDataManager _dm;
     @Inject GetYearsTask _getYearsTask;
+    @Inject AuthenticationExceptionHandler _authHandler;
 
 
     public TaskComponent getComponent() {
@@ -159,29 +159,19 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
 
     private void forceSync() {
+        startSyncAnimation();
+
         disposables.add(
             Flowable.fromCallable(() -> _getYearsTask.call())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                this::onSyncComplete,
-                ex -> {
-                    _refreshMenuItem.getActionView().clearAnimation();
-                    _refreshMenuItem.setActionView(null);
-
-                    if (ex.getCause() instanceof MawAuthenticationException) {
-                        startActivity(new Intent(getBaseContext(), LoginActivity.class));
-                    }
-            })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    this::onSyncComplete,
+                    ex -> {
+                        stopSyncAnimation();
+                        _authHandler.handleException(ex);
+                })
         );
-
-        ImageView iv = (ImageView) getLayoutInflater().inflate(R.layout.refresh_indicator, _toolbar, false);
-
-        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
-        rotation.setRepeatCount(Animation.INFINITE);
-        iv.startAnimation(rotation);
-
-        _refreshMenuItem.setActionView(iv);
     }
 
 
@@ -192,8 +182,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
         _adapter.notifyDataSetChanged();
 
-        _refreshMenuItem.getActionView().clearAnimation();
-        _refreshMenuItem.setActionView(null);
+        stopSyncAnimation();
     }
 
 
@@ -277,5 +266,26 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         child.put("URL", url);
 
         return child;
+    }
+
+
+    private void startSyncAnimation() {
+        ImageView iv = (ImageView) getLayoutInflater().inflate(R.layout.refresh_indicator, _toolbar, false);
+
+        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
+        rotation.setRepeatCount(Animation.INFINITE);
+        iv.startAnimation(rotation);
+
+        _refreshMenuItem.setActionView(iv);
+    }
+
+
+    private void stopSyncAnimation() {
+        View v = _refreshMenuItem.getActionView();
+
+        if(v != null) {
+            v.clearAnimation();
+            _refreshMenuItem.setActionView(null);
+        }
     }
 }

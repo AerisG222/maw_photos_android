@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -192,6 +193,8 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
 
     private void forceSync() {
+        startSyncAnimation();
+
         disposables.add(
                 Flowable.fromCallable(() -> _getRecentCategoriesTask.call())
                         .subscribeOn(Schedulers.io())
@@ -201,18 +204,12 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
                                 this::onException
                         )
         );
-
-        ImageView iv = (ImageView) getLayoutInflater().inflate(R.layout.refresh_indicator, _toolbar, false);
-
-        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
-        rotation.setRepeatCount(Animation.INFINITE);
-        iv.startAnimation(rotation);
-
-        _refreshMenuItem.setActionView(iv);
     }
 
 
     private void onException(Throwable ex) {
+        stopSyncAnimation();
+
         if(!_authHandler.handleException(ex)) {
             _refreshMenuItem.getActionView().clearAnimation();
             _refreshMenuItem.setActionView(null);
@@ -243,7 +240,27 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
         notifyCategoriesUpdated();
 
-        _refreshMenuItem.getActionView().clearAnimation();
-        _refreshMenuItem.setActionView(null);
+        stopSyncAnimation();
+    }
+
+
+    private void startSyncAnimation() {
+        ImageView iv = (ImageView) getLayoutInflater().inflate(R.layout.refresh_indicator, _toolbar, false);
+
+        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate);
+        rotation.setRepeatCount(Animation.INFINITE);
+        iv.startAnimation(rotation);
+
+        _refreshMenuItem.setActionView(iv);
+    }
+
+
+    private void stopSyncAnimation() {
+        View v = _refreshMenuItem.getActionView();
+
+        if(v != null) {
+            v.clearAnimation();
+            _refreshMenuItem.setActionView(null);
+        }
     }
 }
