@@ -72,8 +72,6 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         setContentView(R.layout.activity_category_list);
         ButterKnife.bind(this);
 
-        _categoryRecyclerView.setHasFixedSize(true);
-
         _taskComponent = DaggerTaskComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .taskModule(getTaskModule())
@@ -82,8 +80,6 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         _taskComponent.inject(this);
 
         _year = getIntent().getIntExtra("YEAR", 0);
-
-        updateToolbar(_toolbar, String.valueOf(_year));
     }
 
 
@@ -100,17 +96,23 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
     @Override
     public void onResume() {
-        // http://stackoverflow.com/questions/25396747/how-to-get-fragment-width
-        _listener = () -> _categoryRecyclerView.post(() -> {
-            int width = _container.getWidth();
+        updateToolbar(_toolbar, String.valueOf(_year));
 
-            if(width > 0) {
-                _container.getViewTreeObserver().removeOnGlobalLayoutListener(_listener);
-                updateGridSize(width);
-            }
-        });
+        _categoryRecyclerView.setHasFixedSize(true);
 
-        _container.getViewTreeObserver().addOnGlobalLayoutListener(_listener);
+        if(_categoryPrefs.getCategoryDisplay() == CategoryDisplay.ThumbnailGrid) {
+            // http://stackoverflow.com/questions/25396747/how-to-get-fragment-width
+            _listener = () -> _categoryRecyclerView.post(() -> {
+                int width = _container.getWidth();
+
+                if (width > 0) {
+                    _container.getViewTreeObserver().removeOnGlobalLayoutListener(_listener);
+                    updateGridSize(width);
+                }
+            });
+
+            _container.getViewTreeObserver().addOnGlobalLayoutListener(_listener);
+        }
 
         setCategories(_dataManager.getCategoriesForYear(_year));
 
@@ -151,11 +153,12 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
 
     private void updateGridSize(int width) {
-        if (_categoryPrefs.getCategoryDisplay() == CategoryDisplay.ThumbnailGrid) {
-            int cols = Math.max(1, (width / _thumbSize));
-            GridLayoutManager glm = new GridLayoutManager(this, cols);
-            _categoryRecyclerView.setLayoutManager(glm);
-        }
+        int cols = Math.max(1, (width / _thumbSize));
+
+        GridLayoutManager glm = new GridLayoutManager(this, cols);
+        _categoryRecyclerView.setLayoutManager(glm);
+
+        _categoryRecyclerView.getRecycledViewPool().clear();
     }
 
 
