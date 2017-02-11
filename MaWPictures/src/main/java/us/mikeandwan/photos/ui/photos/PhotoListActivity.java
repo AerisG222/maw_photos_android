@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -54,8 +57,8 @@ import us.mikeandwan.photos.ui.HasComponent;
 
 public class PhotoListActivity extends BaseActivity implements IPhotoActivity, HasComponent<TaskComponent> {
     private static final float FADE_START_ALPHA = 1.0f;
-    public static final float FADE_END_ALPHA = 0.2f;
-    public static final int FADE_DURATION = 3000;
+    private static final float FADE_END_ALPHA = 0.2f;
+    private static final int FADE_DURATION = 3000;
 
     private static final int RANDOM_INITIAL_COUNT = 20;
     private static final int PREFETCH_COUNT = 2;
@@ -72,14 +75,32 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private HashSet<Integer> _randomPhotoIds;
     private int _taskCount = 0;
     private String _url;
+    private String _name;
     private MenuItem _menuShare;
     private TaskComponent _taskComponent;
 
     @BindView(R.id.progressBar) ProgressBar _progressBar;
     @BindView(R.id.toolbar) Toolbar _toolbar;
-    @BindView(R.id.photoToolbar) PhotoToolbar _photoToolbar;
+    @BindView(R.id.photoToolbar) ConstraintLayout _photoToolbar;
+    @BindView(R.id.commentButton) ImageButton _commentButton;
+    @BindView(R.id.exifButton) ImageButton _exifButton;
+    @BindView(R.id.rotateLeftButton) ImageButton _rotateLeftButton;
+    @BindView(R.id.rotateRightButton) ImageButton _rotateRightButton;
+    @BindView(R.id.ratingButton) ImageButton _ratingButton;
+    @BindView(R.id.slideshowButton)  ImageButton _slideshowButton;
     @BindView(R.id.photoPager) PhotoViewPager _photoPager;
     @BindView(R.id.thumbnailPhotoRecycler) RecyclerView _thumbnailRecyclerView;
+
+    @OnClick(R.id.exifButton) void onExifButtonClick() {
+        showExif();
+    }
+    @OnClick(R.id.ratingButton) void onRatingButtonClick() {
+        showRating();
+    }
+    @OnClick(R.id.commentButton) void onCommentButtonClick() { showComments(); }
+    @OnClick(R.id.rotateLeftButton) void onRotateLeftButtonClick() { rotatePhoto(-1); }
+    @OnClick(R.id.rotateRightButton) void onRotateRightButtonClick() { rotatePhoto(1); }
+    @OnClick(R.id.slideshowButton) void onSlideshowButtonClick() { toggleSlideshow(); }
 
     @Inject PhotoDisplayPreference _photoPrefs;
     @Inject PhotoStorage _ps;
@@ -126,31 +147,11 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         _taskComponent.inject(this);
 
-        _thumbnailRecyclerView.setOnTouchListener((view, event) -> {
-            fade(_thumbnailRecyclerView);
-            return false;
-        });
-
         _photoPager.setAdapter(_photoPagerAdapter);
         _photoPager.onPhotoSelected().subscribe(this::gotoPhoto);
 
-        _photoToolbar.onCommentClicked().subscribe(x -> showComments());
-        _photoToolbar.onExifClicked().subscribe(x -> showExif());
-        _photoToolbar.onRatingClicked().subscribe(x -> showRating());
-        _photoToolbar.onRotateClicked().subscribe(this::rotatePhoto);
-        _photoToolbar.onToggleSlideshow().subscribe(x -> toggleSlideshow());
-
         _url = getIntent().getStringExtra("URL");
-        String _name = getIntent().getStringExtra("NAME");
-
-        updateToolbar(_toolbar, String.valueOf(_name));
-
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-        _thumbnailRecyclerView.setLayoutManager(llm);
-
-        _thumbnailRecyclerAdapter.setPhotoList(getPhotoList());
-        _thumbnailRecyclerView.setAdapter(_thumbnailRecyclerAdapter);
+        _name = getIntent().getStringExtra("NAME");
     }
 
 
@@ -181,7 +182,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     protected void onDestroy() {
         super.onDestroy();
         disposables.clear();
-        _photoToolbar.dispose();
         _thumbnailRecyclerAdapter.dispose();
     }
 
@@ -198,11 +198,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         Log.i(MawApplication.LOG_TAG, "onResume - PhotoListActivity");
 
-        displayView(_toolbar, _photoPrefs.getDoDisplayTopToolbar());
-        displayView(_photoToolbar, _photoPrefs.getDoDisplayPhotoToolbar());
-        displayView(_thumbnailRecyclerView, _photoPrefs.getDoDisplayThumbnails());
-
-        fade();
+        layoutActivity();
 
         // if we are coming back from an orientation change, we might already have a valid list
         // populated.  if so, use the original list.
@@ -216,7 +212,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         } else {
             if(_playingSlideshow) {
                 startSlideshow();
-                _photoToolbar.setSlideshowPlaying(true);
             }
 
             onGatherPhotoListComplete();
@@ -264,22 +259,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                 }
             }
         }
-    }
-
-
-    private void fade() {
-        fade(_toolbar);
-        fade(_photoToolbar);
-        fade(_thumbnailRecyclerView);
-    }
-
-
-    private void fade(View view) {
-        AlphaAnimation alpha = new AlphaAnimation(FADE_START_ALPHA, FADE_END_ALPHA);
-        alpha.setDuration(FADE_DURATION);
-        alpha.setFillAfter(true);
-
-        view.startAnimation(alpha);
     }
 
 
@@ -337,7 +316,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         updateProgress();
     }
-
 
 
     private void onGetPhotoList(List<Photo> list) {
@@ -416,6 +394,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
             _slideshowExecutor = new ScheduledThreadPoolExecutor(1);
             _slideshowExecutor.scheduleWithFixedDelay(this::incrementSlideshow, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
+            _slideshowButton.setImageResource(R.drawable.ic_stop_white_24dp);
         }
     }
 
@@ -436,8 +415,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         if (_slideshowExecutor != null) {
             _slideshowExecutor.shutdownNow();
             _slideshowExecutor = null;
-
-            _photoToolbar.setSlideshowPlaying(false);
+            _slideshowButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
         }
     }
 
@@ -524,7 +502,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void displayView(View view, boolean doShow) {
-        int visibility = doShow ? View.VISIBLE : View.INVISIBLE;
+        int visibility = doShow ? View.VISIBLE : View.GONE;
 
         view.setVisibility(visibility);
     }
@@ -545,6 +523,60 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         _horizontalScrollView.startAnimation(alpha);
         */
+    }
+
+
+    private void layoutActivity() {
+        displayView(_toolbar, _photoPrefs.getDoDisplayTopToolbar());
+        displayView(_photoToolbar, _photoPrefs.getDoDisplayPhotoToolbar());
+        displayView(_thumbnailRecyclerView, _photoPrefs.getDoDisplayThumbnails());
+
+        if(_photoPrefs.getDoDisplayTopToolbar()) {
+            updateToolbar(_toolbar, String.valueOf(_name));
+        }
+
+        if(_photoPrefs.getDoDisplayThumbnails()) {
+            LinearLayoutManager llm = new LinearLayoutManager(this);
+            llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+            _thumbnailRecyclerView.setLayoutManager(llm);
+
+            _thumbnailRecyclerAdapter.setPhotoList(_photoList);
+            _thumbnailRecyclerView.setAdapter(_thumbnailRecyclerAdapter);
+
+            if(_photoPrefs.getDoFadeControls()) {
+                _thumbnailRecyclerView.setOnTouchListener((view, event) -> {
+                    fade(_thumbnailRecyclerView);
+                    return false;
+                });
+            }
+        }
+
+        if(_photoPrefs.getDoFadeControls()) {
+            // if fade is enabled, we just fade the controls and let the photo / viewpager
+            // occupy the full screen, as it will be visible under controls
+            fade();
+        }
+        else {
+            // if we do not fade the controls, then we must reconfigure the photo layout to
+            // be within the controls that are displayed
+
+        }
+    }
+
+
+    private void fade() {
+        fade(_toolbar);
+        fade(_photoToolbar);
+        fade(_thumbnailRecyclerView);
+    }
+
+
+    private void fade(View view) {
+        AlphaAnimation alpha = new AlphaAnimation(FADE_START_ALPHA, FADE_END_ALPHA);
+        alpha.setDuration(FADE_DURATION);
+        alpha.setFillAfter(true);
+
+        view.startAnimation(alpha);
     }
 
 

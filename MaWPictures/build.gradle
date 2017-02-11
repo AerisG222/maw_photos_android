@@ -66,17 +66,17 @@ android {
 
 dependencies {
     // dagger 2
-    compile 'com.google.dagger:dagger:2.8'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
+    compile 'com.google.dagger:dagger:2.9'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.9'
 
     // butterknife
-    compile 'com.jakewharton:butterknife:8.4.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
     // android support
     compile 'com.android.support:support-annotations:25.1.1'
     compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
     compile 'com.android.support:design:25.1.1'
     compile 'com.android.support:recyclerview-v7:25.1.1'
 
@@ -84,9 +84,9 @@ dependencies {
     compile 'com.commonsware.cwac:provider:0.5.0'
 
     // jackson
-    compile 'com.fasterxml.jackson.core:jackson-core:2.8.5'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.5'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.5'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.8.6'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
 
     // picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -95,7 +95,7 @@ dependencies {
     compile 'commons-io:commons-io:2.5'
 
     // reactivex
-    compile "io.reactivex.rxjava2:rxjava:2.0.4"
+    compile "io.reactivex.rxjava2:rxjava:2.0.5"
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     // photoview
