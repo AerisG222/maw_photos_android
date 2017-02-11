@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -23,6 +22,7 @@ import javax.inject.Inject;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.prefs.NotificationPreference;
 import us.mikeandwan.photos.ui.login.LoginActivity;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Credentials;
@@ -37,7 +37,7 @@ public class MawPollerService extends Service {
 
     @Inject PhotoApiClient _client;
     @Inject MawDataManager _dm;
-    @Inject SharedPreferences _sharedPrefs;
+    @Inject NotificationPreference _notificationPref;
 
     @Override
     public void onCreate() {
@@ -163,11 +163,8 @@ public class MawPollerService extends Service {
             }
 
             // force a notification about bad credentials
-            if (totalCount < 0 || (totalCount > 0 && _sharedPrefs.getBoolean("notifications_new_message", true))) {
-                String ringtone = _sharedPrefs.getString("notifications_new_message_ringtone", "");
-                Boolean vibrate = _sharedPrefs.getBoolean("notifications_new_message_vibrate", false);
-
-                addNotification(totalCount, ringtone, vibrate);
+            if (totalCount < 0 || (totalCount > 0 && _notificationPref.getDoNotify())) {
+                addNotification(totalCount, _notificationPref.getNotificationRingtone(), _notificationPref.getDoVibrate());
             }
 
             Log.d(MawApplication.LOG_TAG, "stopping service for id " + String.valueOf(msg.arg1));

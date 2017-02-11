@@ -8,6 +8,7 @@ import us.mikeandwan.photos.di.DaggerApplicationComponent;
 import us.mikeandwan.photos.di.DataStorageModule;
 import us.mikeandwan.photos.di.ApplicationComponent;
 import us.mikeandwan.photos.di.PhotoApiModule;
+import us.mikeandwan.photos.di.PreferenceModule;
 
 
 // TODO: provide wrapper for settings
@@ -26,6 +27,7 @@ public class MawApplication extends Application {
                 .applicationModule(new ApplicationModule(this))
                 .dataStorageModule(new DataStorageModule())
                 .photoApiModule(new PhotoApiModule())
+                .preferenceModule(new PreferenceModule())
                 .build();
     }
 

@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.ui.categories;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -30,6 +29,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.prefs.CategoryDisplay;
+import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
@@ -60,7 +61,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     @Inject MawDataManager _dataManager;
     @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
     @Inject AuthenticationExceptionHandler _authHandler;
-    @Inject SharedPreferences _sharedPrefs;
+    @Inject CategoryDisplayPreference _categoryPrefs;
     @Inject ListCategoryRecyclerAdapter _listAdapter;
     @Inject ThumbnailCategoryRecyclerAdapter _gridAdapter;
 
@@ -150,7 +151,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
 
     private void updateGridSize(int width) {
-        if (isThumbnailView()) {
+        if (_categoryPrefs.getCategoryDisplay() == CategoryDisplay.ThumbnailGrid) {
             int cols = Math.max(1, (width / _thumbSize));
             GridLayoutManager glm = new GridLayoutManager(this, cols);
             _categoryRecyclerView.setLayoutManager(glm);
@@ -161,7 +162,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     private void setCategories(List<Category> categories) {
         _categories = categories;
 
-        if (isThumbnailView()) {
+        if (_categoryPrefs.getCategoryDisplay() == CategoryDisplay.ThumbnailGrid) {
             _gridAdapter.setCategoryList(categories);
 
             _gridAdapter.onCategorySelected().subscribe(this::selectCategory);
@@ -218,17 +219,12 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
 
     private void notifyCategoriesUpdated() {
-        if (isThumbnailView()) {
+        if (_categoryPrefs.getCategoryDisplay() == CategoryDisplay.ThumbnailGrid) {
             _gridAdapter.notifyDataSetChanged();
         }
         else {
             _listAdapter.notifyDataSetChanged();
         }
-    }
-
-
-    private boolean isThumbnailView() {
-        return _sharedPrefs.getBoolean("category_thumbnail_view", true);
     }
 
 

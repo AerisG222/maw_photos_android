@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -37,6 +36,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
@@ -81,7 +81,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @BindView(R.id.photoPager) PhotoViewPager _photoPager;
     @BindView(R.id.thumbnailPhotoRecycler) RecyclerView _thumbnailRecyclerView;
 
-    @Inject SharedPreferences _sharedPrefs;
+    @Inject PhotoDisplayPreference _photoPrefs;
     @Inject PhotoStorage _ps;
     @Inject AuthenticationExceptionHandler _authHandler;
     @Inject GetPhotoListTask _getPhotoListTask;
@@ -198,8 +198,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         Log.i(MawApplication.LOG_TAG, "onResume - PhotoListActivity");
 
-        displayToolbar(_sharedPrefs.getBoolean("display_toolbar", true));
-        displayThumbnails(_sharedPrefs.getBoolean("display_thumbnails", true));
+        displayView(_toolbar, _photoPrefs.getDoDisplayTopToolbar());
+        displayView(_photoToolbar, _photoPrefs.getDoDisplayPhotoToolbar());
+        displayView(_thumbnailRecyclerView, _photoPrefs.getDoDisplayThumbnails());
 
         fade();
 
@@ -411,7 +412,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private void startSlideshow() {
         if (_slideshowExecutor == null) {
-            int intervalSeconds = Integer.parseInt(_sharedPrefs.getString("slideshow_interval", "3"));
+            int intervalSeconds = _photoPrefs.getSlideshowIntervalInSeconds();
 
             _slideshowExecutor = new ScheduledThreadPoolExecutor(1);
             _slideshowExecutor.scheduleWithFixedDelay(this::incrementSlideshow, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
@@ -520,14 +521,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             toggleSlideshow();
         }
     }
-
-
-    private void displayThumbnails(boolean doShow) {
-        displayView(_thumbnailRecyclerView, doShow);
-    }
-
-
-    private void displayToolbar(boolean doShow) { displayView(_photoToolbar, doShow); }
 
 
     private void displayView(View view, boolean doShow) {

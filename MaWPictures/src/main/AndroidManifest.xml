@@ -56,7 +56,7 @@
 
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/pref_activity_settings_title" />
 
         <service
             android:name=".services.poller.MawPollerService"

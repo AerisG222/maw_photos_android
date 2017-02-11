@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -13,11 +12,11 @@ import java.util.Calendar;
 import javax.inject.Inject;
 
 import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.prefs.SyncPreference;
 
 
 public class MawScheduleReceiver extends BroadcastReceiver {
-    @Inject SharedPreferences _sharedPrefs;
-
+    @Inject SyncPreference _syncPrefs;
 
 
     @Override
@@ -31,15 +30,13 @@ public class MawScheduleReceiver extends BroadcastReceiver {
 
 
     private void schedule(Context context) {
-        int repeatHours = Integer.valueOf(_sharedPrefs.getString("sync_frequency", "24"));  // odd, prefs only work when string based..
-
-        schedule(context, repeatHours);
+        schedule(context, _syncPrefs.getSyncFrequencyInHours());
     }
 
 
     public void schedule(Context context, int repeatInHours) {
-        long repeatIntervalInMillis = repeatInHours * AlarmManager.INTERVAL_HOUR;
-        //long repeatIntervalInMillis = 20000;
+        //long repeatIntervalInMillis = repeatInHours * AlarmManager.INTERVAL_HOUR;
+        long repeatIntervalInMillis = 20000;
 
         Intent i = new Intent(context, MawStartReceiver.class);
         PendingIntent pending = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);

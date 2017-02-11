@@ -1,72 +1,77 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_header_data_sync">
-
+    <PreferenceCategory android:title="@string/pref_data_sync_header">
         <ListPreference
             android:key="sync_frequency"
-            android:title="@string/pref_title_sync_frequency"
-            android:entries="@array/pref_sync_frequency_titles"
-            android:entryValues="@array/pref_sync_frequency_values"
-            android:defaultValue="24"
+            android:title="@string/pref_data_sync_frequency_title"
+            android:summary="%s"
+            android:entries="@array/pref_data_sync_frequency_names"
+            android:entryValues="@array/pref_data_sync_frequency_values"
+            android:defaultValue="@string/pref_data_sync_frequency_default_value"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
-
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_notifications">
-
+    <PreferenceCategory android:title="@string/pref_notifications_header">
         <CheckBoxPreference
             android:key="notifications_new_message"
-            android:title="@string/pref_title_new_message_notifications"
+            android:title="@string/pref_notifications_new_message_title"
             android:defaultValue="true" />
 
         <RingtonePreference
             android:dependency="notifications_new_message"
             android:key="notifications_new_message_ringtone"
-            android:title="@string/pref_title_ringtone"
+            android:title="@string/pref_notifications_ringtone"
             android:ringtoneType="notification"
             android:defaultValue="content://settings/system/notification_sound" />
 
         <CheckBoxPreference
             android:dependency="notifications_new_message"
             android:key="notifications_new_message_vibrate"
-            android:title="@string/pref_title_vibrate"
+            android:title="@string/pref_notifications_vibrate"
             android:defaultValue="true" />
-
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_category_display">
+    <PreferenceCategory android:title="@string/pref_category_display_header">
+        <ListPreference
+            android:key="category_view_mode"
+            android:title="@string/pref_category_display_header"
+            android:summary="%s"
+            android:entries="@array/pref_category_display_names"
+            android:entryValues="@array/pref_category_display_values"
+            android:defaultValue="@string/pref_category_display_default_value" />
+    </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_photo_display_header">
         <CheckBoxPreference
-            android:key="category_thumbnail_view"
-            android:title="@string/pref_header_category_display"
-            android:defaultValue="true"
-            android:summaryOn="@string/pref_title_category_list_type_list"
-            android:summaryOff="@string/pref_title_category_list_type_thumbnails" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/pref_header_display_options">
+            android:key="display_top_toolbar"
+            android:title="@string/pref_photo_display_show_top_toolbar"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="display_toolbar"
-            android:title="@string/pref_title_show_toolbar"
+            android:title="@string/pref_photo_display_show_toolbar"
             android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="display_thumbnails"
-            android:title="@string/pref_title_show_thumbnails"
+            android:title="@string/pref_photo_display_show_thumbnails"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="fade_controls"
+            android:title="@string/pref_photo_display_fade_controls"
             android:defaultValue="true" />
 
         <ListPreference
             android:key="slideshow_interval"
-            android:title="@string/pref_title_slideshow_interval"
-            android:entries="@array/pref_slideshow_intervals"
-            android:entryValues="@array/pref_slideshow_interval_values"
-            android:defaultValue="3"
+            android:title="@string/pref_photo_display_slideshow_interval"
+            android:summary="%s"
+            android:entries="@array/pref_photo_display_slideshow_intervals"
+            android:entryValues="@array/pref_photo_display_slideshow_interval_values"
+            android:defaultValue="@string/pref_photo_display_slideshow_interval_default_value"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>
