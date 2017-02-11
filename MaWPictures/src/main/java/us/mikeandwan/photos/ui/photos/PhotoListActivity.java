@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +55,11 @@ import us.mikeandwan.photos.tasks.GetRandomPhotoTask;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 
+import static android.support.constraint.ConstraintSet.BOTTOM;
+import static android.support.constraint.ConstraintSet.LEFT;
+import static android.support.constraint.ConstraintSet.RIGHT;
+import static android.support.constraint.ConstraintSet.TOP;
+
 
 public class PhotoListActivity extends BaseActivity implements IPhotoActivity, HasComponent<TaskComponent> {
     private static final float FADE_START_ALPHA = 1.0f;
@@ -79,6 +85,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private MenuItem _menuShare;
     private TaskComponent _taskComponent;
 
+    @BindView(R.id.container) ConstraintLayout _container;
     @BindView(R.id.progressBar) ProgressBar _progressBar;
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.photoToolbar) ConstraintLayout _photoToolbar;
@@ -557,9 +564,34 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             fade();
         }
         else {
+            ConstraintSet set = new ConstraintSet();
+
+            set.constrainHeight(R.id.photoPager, 0);
+            set.constrainWidth(R.id.photoPager, 0);
+
+            set.connect(R.id.photoPager, LEFT, R.id.container, LEFT, 0);
+            set.connect(R.id.photoPager, RIGHT, R.id.container, RIGHT, 0);
+
             // if we do not fade the controls, then we must reconfigure the photo layout to
             // be within the controls that are displayed
+            if(_toolbar.isShown()) {
+                set.connect(R.id.photoPager, TOP, R.id.toolbar, BOTTOM, 0);
+            }
+            else {
+                set.connect(R.id.photoPager, TOP, R.id.container, TOP, 0);
+            }
 
+            if(_photoToolbar.isShown()) {
+                set.connect(R.id.photoPager, BOTTOM, R.id.photoToolbar, TOP, 0);
+            }
+            else if(_thumbnailRecyclerView.isShown()) {
+                set.connect(R.id.photoPager, BOTTOM, R.id.thumbnailPhotoRecycler, TOP, 0);
+            }
+            else {
+                set.connect(R.id.photoPager, BOTTOM, R.id.container, BOTTOM, 0);
+            }
+
+            set.applyTo(_container);
         }
     }
 
