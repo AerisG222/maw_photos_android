@@ -11,9 +11,11 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
@@ -28,6 +30,7 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     private final PhotoStorage _photoStorage;
     private final DownloadPhotoTask _downloadPhotoTask;
     private final AuthenticationExceptionHandler _authHandler;
+    private final PublishSubject<Integer> _thumbnailSubject = PublishSubject.create();
     private List<Photo> _photoList;
 
 
@@ -55,6 +58,8 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     public void onBindViewHolder(ThumbnailRecyclerAdapter.ViewHolder viewHolder, int position) {
         Photo photo = _photoList.get(position);
 
+        viewHolder.itemView.setOnClickListener(v -> _thumbnailSubject.onNext(position));
+
         if (_photoStorage.doesExist(photo.getXsInfo().getPath())) {
             displayPhoto(photo, viewHolder);
         } else {
@@ -80,6 +85,11 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
 
     public void setPhotoList(List<Photo> photoList) {
         _photoList = photoList;
+    }
+
+
+    public Observable<Integer> onThumbnailSelected(){
+        return _thumbnailSubject.hide();
     }
 
 

@@ -543,6 +543,8 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             _thumbnailRecyclerAdapter.setPhotoList(_photoList);
             _thumbnailRecyclerView.setAdapter(_thumbnailRecyclerAdapter);
 
+            _thumbnailRecyclerAdapter.onThumbnailSelected().subscribe(this::gotoPhoto);
+
             if(_photoPrefs.getDoFadeControls()) {
                 _thumbnailRecyclerView.setOnTouchListener((view, event) -> {
                     fade(_thumbnailRecyclerView);
