@@ -196,12 +196,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    public void onMenuItemSettings(MenuItem menuItem) {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-
     @Override
     public void onResume() {
         super.onResume();
@@ -237,6 +231,12 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         stopSlideshow();
 
         super.onPause();
+    }
+
+
+    public void onMenuItemSettings(MenuItem menuItem) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
 
@@ -519,20 +519,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void updateThumbnail() {
-        Photo thumb = getPhotoList().get(getCurrentIndex());
+        _thumbnailRecyclerView.scrollToPosition(getCurrentIndex());
 
-        // TODO: scroll to current photo
-        /*
-        _horizontalScrollView.smoothScrollTo(thumb.getLeft(), 0);
-
-        // TODO: consider adding generic version to a function to the photolistactivity
-        // we force the animation here to leave the alpha at 0.2, otherwise was resetting to 1.0
-        AlphaAnimation alpha = new AlphaAnimation(PhotoListActivity.FADE_END_ALPHA, PhotoListActivity.FADE_END_ALPHA);
-        alpha.setDuration(PhotoListActivity.FADE_DURATION);
-        alpha.setFillAfter(true);
-
-        _horizontalScrollView.startAnimation(alpha);
-        */
+        fade();
     }
 
 
@@ -600,6 +589,10 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void fade() {
+        if(!_photoPrefs.getDoFadeControls()) {
+            return;
+        }
+
         fade(_toolbar);
         fade(_photoToolbar);
         fade(_thumbnailRecyclerView);
