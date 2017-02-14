@@ -23,7 +23,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import okhttp3.Cookie;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
@@ -227,22 +226,11 @@ public class PhotoApiClient {
         rp.setPhotoId(photoId);
         rp.setRating(rating);
 
-        JsonClient<RatePhoto> jsonClient = new JsonClient<>(RatePhoto.class, this);
-
-        String paramString = jsonClient.toJson(rp);
-
         try {
-            URL url = new URL("/" /* API_SET_PHOTO_RATING_URL */);
+            Response<Float> response = _photoApi.ratePhoto(rp).execute();
 
-            HttpRequestInfo req = new HttpRequestInfo();
-            req.setMethod("POST");
-            req.setUrl(url);
-            req.setJsonParam(paramString);
-
-            HttpResponseInfo response = execute(req);
-
-            if (response != null && response.getStatusCode() == HttpURLConnection.HTTP_OK) {
-                return Float.valueOf(response.getContent());
+            if (response.isSuccessful()) {
+                return response.body();
             } else {
                 Log.w(MawApplication.LOG_TAG, "unable to save rating!");
             }
@@ -465,10 +453,10 @@ public class PhotoApiClient {
 
 
     private void tryAddXsrfHeader(HttpURLConnection conn) {
-        Cookie cookie = _cookieJar.getXsrfCookie();
+        String token = _cookieJar.getXsrfToken();
 
-        if(cookie != null) {
-            conn.setRequestProperty(XSRF_HEADER, cookie.value());
+        if(token != null) {
+            conn.setRequestProperty(XSRF_HEADER, token);
         }
     }
 }

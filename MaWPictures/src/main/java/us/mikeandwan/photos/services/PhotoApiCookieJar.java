@@ -44,6 +44,17 @@ public class PhotoApiCookieJar implements CookieJar {
     }
 
 
+    public String getXsrfToken() {
+        for(Cookie cookie : _cookies) {
+            if (XSRF_COOKIE_NAME.equalsIgnoreCase(cookie.name())) {
+                return cookie.value();
+            }
+        }
+
+        return null;
+    }
+
+
     boolean isAuthenticated() {
         boolean authCookieAvailable = false;
         boolean xsrfCookieAvailable = false;
@@ -61,16 +72,5 @@ public class PhotoApiCookieJar implements CookieJar {
         }
 
         return authCookieAvailable && xsrfCookieAvailable;
-    }
-
-
-    Cookie getXsrfCookie() {
-        for(Cookie cookie : _cookies) {
-            if (XSRF_COOKIE_NAME.equalsIgnoreCase(cookie.name())) {
-                return cookie;
-            }
-        }
-
-        return null;
     }
 }

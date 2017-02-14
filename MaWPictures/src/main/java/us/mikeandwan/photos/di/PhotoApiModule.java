@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import us.mikeandwan.photos.Constants;
@@ -19,6 +20,9 @@ import us.mikeandwan.photos.services.PhotoStorage;
 
 @Module
 public class PhotoApiModule {
+    private static final String XSRF_HEADER = "X-XSRF-TOKEN";
+
+
     @Provides
     @Singleton
     PhotoApiCookieJar provideCookieJar() {
@@ -29,9 +33,25 @@ public class PhotoApiModule {
     @Provides
     @Singleton
     OkHttpClient provideOkHttpClient(PhotoApiCookieJar cookieJar) {
-        return new OkHttpClient.Builder()
-                .cookieJar(cookieJar)
-                .build();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .cookieJar(cookieJar);
+
+        builder.networkInterceptors().add(chain -> {
+            Request srcRequest = chain.request();
+            String xsrfToken = cookieJar.getXsrfToken();
+
+            if(xsrfToken == null) {
+                return chain.proceed(srcRequest);
+            }
+
+            Request request = srcRequest.newBuilder()
+                    .addHeader(XSRF_HEADER, xsrfToken)
+                    .build();
+
+            return chain.proceed(request);
+        });
+
+        return builder.build();
     }
 
 
