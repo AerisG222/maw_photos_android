@@ -73,5 +73,5 @@ interface PhotoApi {
     Call<Float> ratePhoto(@Body RatePhoto rating);
 
     @POST("api/photos/addCommentForPhoto")
-    Call<List<Comment>> addCommentForPhoto(@Body CommentPhoto commentPhoto);
+    Call<Boolean> addCommentForPhoto(@Body CommentPhoto commentPhoto);
 }

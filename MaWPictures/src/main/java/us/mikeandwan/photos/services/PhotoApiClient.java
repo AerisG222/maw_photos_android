@@ -6,20 +6,10 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -42,11 +32,6 @@ import us.mikeandwan.photos.models.Rating;
 
 
 public class PhotoApiClient {
-    private static final int READ_TIMEOUT = 15000;
-    private static final int CONNECT_TIMEOUT = 10000;
-    private static final String XSRF_HEADER = "X-XSRF-TOKEN";
-
-    private boolean _isSecondAttempt;
     private final Context _context;
     private final PhotoStorage _photoStorage;
     private final MawDataManager _dataManager;
@@ -251,27 +236,17 @@ public class PhotoApiClient {
         cp.setComment(comment);
         cp.setPhotoId(photoId);
 
-        JsonClient<CommentPhoto> jsonClient = new JsonClient<>(CommentPhoto.class, this);
-
-        String jsonParam = jsonClient.toJson(cp);
-
         try {
-            URL url = new URL("/" /*API_ADD_PHOTO_COMMENT_URL*/);
+            Response<Boolean> response = _photoApi.addCommentForPhoto(cp).execute();
 
-            HttpRequestInfo req = new HttpRequestInfo();
-            req.setMethod("POST");
-            req.setUrl(url);
-            req.setJsonParam(jsonParam);
-
-            HttpResponseInfo response = execute(req);
-
-            if (response != null && response.getStatusCode() == HttpURLConnection.HTTP_OK) {
-                Log.w(MawApplication.LOG_TAG, "got response: " + response.getContent());
+            if(response.isSuccessful()) {
+                Log.w(MawApplication.LOG_TAG, "got response: " + response.code());
             } else {
                 Log.w(MawApplication.LOG_TAG, "unable to save comment!");
             }
-        } catch (MalformedURLException ex) {
-            Log.e(MawApplication.LOG_TAG, "invalid url!");
+        }
+        catch(Exception ex) {
+            Log.e(MawApplication.LOG_TAG, "Error trying to add comment: " + ex.getMessage());
         }
     }
 
@@ -338,107 +313,6 @@ public class PhotoApiClient {
     }
 
 
-    private HttpResponseInfo execute(HttpRequestInfo requestInfo) throws MawAuthenticationException {
-        HttpURLConnection conn = null;
-
-        try {
-            conn = (HttpURLConnection) requestInfo.getUrl().openConnection();
-            conn.setInstanceFollowRedirects(false);
-            conn.setReadTimeout(READ_TIMEOUT);
-            conn.setConnectTimeout(CONNECT_TIMEOUT);
-            conn.setRequestMethod(requestInfo.getMethod());
-
-            tryAddXsrfHeader(conn);
-
-            if (requestInfo.getJsonParam() != null) {
-                conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-            }
-
-            conn.setDoInput(true);
-
-            if (requestInfo.getParams().size() > 0 || requestInfo.getJsonParam() != null) {
-                conn.setDoOutput(true);
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-                if (requestInfo.getJsonParam() != null) {
-                    writer.write(requestInfo.getJsonParam());
-                } else {
-                    writer.write(getQuery(requestInfo.getParams()));
-                }
-
-                writer.flush();
-                writer.close();
-                os.close();
-            }
-
-            conn.connect();
-
-            // see if we are being told to redirect (in the event of session timeout), try again
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-                if (!_isSecondAttempt) {
-                    _isSecondAttempt = true;
-                    ensureAuthenticated(true);
-
-                    return execute(requestInfo);
-                } else {
-                    _isSecondAttempt = false; // reset
-                }
-            } else {
-                _isSecondAttempt = false;
-                return new HttpResponseInfo(conn.getResponseCode(), readStream(conn.getInputStream()));
-            }
-        } catch (IOException ex) {
-            Log.w(MawApplication.LOG_TAG, "> error executing http request: " + ex.getMessage());
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
-
-        return null;
-    }
-
-
-    private String readStream(InputStream in) {
-        char[] buf = new char[4096];
-        StringBuilder sb = new StringBuilder();
-        InputStreamReader reader = new InputStreamReader(in);
-
-        try {
-            for (int len = reader.read(buf); len > 0; len = reader.read(buf)) {
-                sb.append(buf, 0, len);
-            }
-        } catch (IOException ex) {
-            Log.w(MawApplication.LOG_TAG, "> error reading stream: " + ex.getMessage());
-        }
-
-        return sb.toString();
-    }
-
-
-    private String getQuery(Map<String, String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        Set<String> keys = params.keySet();
-
-        for (String key : keys) {
-            if (first) {
-                first = false;
-            } else {
-                result.append("&");
-            }
-
-            result.append(URLEncoder.encode(key, "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(params.get(key), "UTF-8"));
-        }
-
-        return result.toString();
-    }
-
-
     private void establishXsrfTokenCookie() {
         try {
             Response<Boolean> response = _photoApi.establishXsrfTokenCookie().execute();
@@ -448,15 +322,6 @@ public class PhotoApiClient {
             }
         } catch (Exception ex) {
             Log.w(MawApplication.LOG_TAG, "Error obtaining XSRF token: " + ex.getMessage());
-        }
-    }
-
-
-    private void tryAddXsrfHeader(HttpURLConnection conn) {
-        String token = _cookieJar.getXsrfToken();
-
-        if(token != null) {
-            conn.setRequestProperty(XSRF_HEADER, token);
         }
     }
 }
