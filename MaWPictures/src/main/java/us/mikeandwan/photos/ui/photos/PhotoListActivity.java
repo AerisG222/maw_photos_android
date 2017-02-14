@@ -193,6 +193,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         super.onDestroy();
         disposables.clear();
         _thumbnailRecyclerAdapter.dispose();
+        _photoPagerAdapter.dispose();
     }
 
 

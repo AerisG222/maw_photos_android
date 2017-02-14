@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import uk.co.senab.photoview.PhotoView;
 
 import java.util.List;
@@ -23,6 +24,7 @@ import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
 public class FullScreenImageAdapter extends PagerAdapter {
+    private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
     private final IPhotoActivity _activity;
     private final List<Photo> _photoList;
@@ -72,6 +74,11 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
 
+    public void dispose() {
+        _disposables.dispose();
+    }
+
+
     private void displayImage(PhotoView view, Photo photo) {
         String path = photo.getMdInfo().getPath();
 
@@ -85,7 +92,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
 
     private void downloadImage(final PhotoView view, final Photo photo, PhotoSize size) {
-        Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
+        _disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -94,7 +101,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
                             _activity.updateProgress();
                         },
                         _authHandler::handleException
-                );
+                )
+        );
 
         _activity.updateProgress();
     }
