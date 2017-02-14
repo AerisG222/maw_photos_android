@@ -52,9 +52,10 @@ public class PhotoApiModule {
     PhotoApiClient providePhotoApiClient(Application application,
                                          PhotoStorage photoStorage,
                                          MawDataManager dataManager,
+                                         OkHttpClient httpClient,
                                          Retrofit retrofit,
                                          PhotoApiCookieJar cookieJar) {
-        return new PhotoApiClient(application, photoStorage, dataManager, retrofit, cookieJar);
+        return new PhotoApiClient(application, photoStorage, dataManager, httpClient, retrofit, cookieJar);
     }
 
 

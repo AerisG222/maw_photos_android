@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import okhttp3.Cookie;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -51,17 +53,20 @@ public class PhotoApiClient {
     private final MawDataManager _dataManager;
     private final PhotoApiCookieJar _cookieJar;
     private final PhotoApi _photoApi;
+    private final OkHttpClient _httpClient;
 
 
     @Inject
     public PhotoApiClient(Context context,
                           PhotoStorage photoStorage,
                           MawDataManager dataManager,
+                          OkHttpClient httpClient,
                           Retrofit retrofit,
                           PhotoApiCookieJar cookieJar) {
         _context = context;
         _photoStorage = photoStorage;
         _dataManager = dataManager;
+        _httpClient = httpClient;
         _photoApi = retrofit.create(PhotoApi.class);
         _cookieJar = cookieJar;
     }
@@ -290,53 +295,26 @@ public class PhotoApiClient {
             Log.w(MawApplication.LOG_TAG, "you need to specify the path to the photo");
         }
 
-        // first try to get this from cache
         if (_photoStorage.doesExist(photoPath)) {
             return true;
         }
 
-        HttpURLConnection conn = null;
-
         try {
             URL url = new URL(buildPhotoUrl(photoPath));
+            Request request = new Request.Builder().url(url).build();
+            okhttp3.Response response = _httpClient.newCall(request).execute();
 
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setInstanceFollowRedirects(false);
-            conn.setReadTimeout(READ_TIMEOUT);
-            conn.setConnectTimeout(CONNECT_TIMEOUT);
-            conn.setRequestMethod("GET");
-
-            conn.connect();
-
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-                if (!_isSecondAttempt) {
-                    _isSecondAttempt = true;
-                    ensureAuthenticated(true);
-
-                    return downloadPhoto(photoPath);
-                } else {
-                    _isSecondAttempt = false; // reset
-                }
-            }
-
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                _photoStorage.put(photoPath, conn);
-
-                _isSecondAttempt = false;
+            if(response.isSuccessful()) {
+                _photoStorage.put(photoPath, response.body());
 
                 return true;
-            } else {
-                Log.w(MawApplication.LOG_TAG, "Did not receive a successful download status code: " + String.valueOf(conn.getResponseCode()));
+            }
+            else {
+                Log.w(MawApplication.LOG_TAG, "Did not receive a successful download status code: " + String.valueOf(response.code()));
             }
         } catch (IOException ex) {
             Log.w(MawApplication.LOG_TAG, "Error when getting photo blob: " + ex.getMessage());
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
         }
-
-        _isSecondAttempt = false;
 
         return false;
     }

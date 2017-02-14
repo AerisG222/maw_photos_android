@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 
 import javax.inject.Inject;
 
+import okhttp3.ResponseBody;
 import us.mikeandwan.photos.MawApplication;
 
 
@@ -36,7 +37,7 @@ public class PhotoStorage {
     }
 
 
-    void put(String remotePath, HttpURLConnection conn) {
+    void put(String remotePath, ResponseBody body) {
         File dir = new File(getRootPath(), remotePath.substring(0, remotePath.lastIndexOf('/')));
         File file = getCachePath(remotePath);
         OutputStream outputStream = null;
@@ -50,12 +51,12 @@ public class PhotoStorage {
 
         try {
             byte[] buffer = new byte[4096];
-            int n;
-            InputStream inputStream = conn.getInputStream();
+            int len;
+            InputStream inputStream = body.byteStream();
             outputStream = new FileOutputStream(file);
 
-            while ((n = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, n);
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
             }
         } catch (IOException e) {
             Log.w(MawApplication.LOG_TAG, "Error saving image file: " + e.getMessage());
