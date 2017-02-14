@@ -13,9 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,6 +23,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import okhttp3.Cookie;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
@@ -42,81 +43,27 @@ import us.mikeandwan.photos.models.Rating;
 public class PhotoApiClient {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECT_TIMEOUT = 10000;
-    private static final String AUTH_COOKIE_NAME = "maw_auth";
-    private static final String XSRF_COOKIE_NAME = "XSRF-TOKEN";
     private static final String XSRF_HEADER = "X-XSRF-TOKEN";
-    private static final String API_LOGIN_URL = Constants.SITE_URL + "api/account/login";
-    private static final String API_GET_XSRF_URL = Constants.SITE_URL + "api/account/get-xsrf-token";
-    private static final String API_GET_PHOTO_YEARS_URL = Constants.SITE_URL + "api/photos/getPhotoYears";
-    private static final String API_GET_RECENT_CATEGORIES_URL = Constants.SITE_URL + "api/photos/getRecentCategories";
-    private static final String API_GET_CATEGORY_COUNT_URL = Constants.SITE_URL + "api/photos/getCategoryCount";
-    private static final String API_CATEGORIES_FOR_YEAR_URL = Constants.SITE_URL + "api/photos/getCategoriesForYear";
-    private static final String API_PHOTOS_BY_CATEGORY_URL = Constants.SITE_URL + "api/photos/getPhotosByCategory";
-    private static final String API_PHOTOS_BY_COMMENT_DATE_URL = Constants.SITE_URL + "api/photos/getPhotosByCommentDate";
-    private static final String API_PHOTOS_BY_USER_COMMENT_DATE_URL = Constants.SITE_URL + "api/photos/getPhotosByUserCommentDate";
-    private static final String API_PHOTOS_BY_COMMENT_COUNT_URL = Constants.SITE_URL + "api/photos/getPhotosByCommentCount";
-    private static final String API_PHOTOS_BY_AVERAGE_RATING_URL = Constants.SITE_URL + "api/photos/getPhotosByAverageRating";
-    private static final String API_PHOTOS_BY_USER_RATING_URL = Constants.SITE_URL + "api/photos/getPhotosByUserRating";
-    private static final String API_GET_PHOTO_RATING_URL = Constants.SITE_URL + "api/photos/getRatingForPhoto";
-    private static final String API_SET_PHOTO_RATING_URL = Constants.SITE_URL + "api/photos/ratePhoto";
-    private static final String API_GET_PHOTO_COMMENTS_URL = Constants.SITE_URL + "api/photos/getCommentsForPhoto";
-    private static final String API_ADD_PHOTO_COMMENT_URL = Constants.SITE_URL + "api/photos/addCommentForPhoto";
-    private static final String API_GET_PHOTO_EXIF_URL = Constants.SITE_URL + "api/photos/getPhotoExifData";
-    private static final String API_GET_RANDOM_PHOTO_URL = Constants.SITE_URL + "api/photos/getRandomPhoto";
-
-    private static final CookieManager _cookieManager = new CookieManager();
 
     private boolean _isSecondAttempt;
-    private Context _context;
-    private PhotoStorage _photoStorage;
-    private MawDataManager _dataManager;
-
-
-    static {
-        CookieHandler.setDefault(_cookieManager);
-    }
+    private final Context _context;
+    private final PhotoStorage _photoStorage;
+    private final MawDataManager _dataManager;
+    private final PhotoApiCookieJar _cookieJar;
+    private final PhotoApi _photoApi;
 
 
     @Inject
-    public PhotoApiClient(Context context, PhotoStorage photoStorage, MawDataManager dataManager) {
+    public PhotoApiClient(Context context,
+                          PhotoStorage photoStorage,
+                          MawDataManager dataManager,
+                          Retrofit retrofit,
+                          PhotoApiCookieJar cookieJar) {
         _context = context;
         _photoStorage = photoStorage;
         _dataManager = dataManager;
-    }
-
-
-    public static String getCategoriesForYearUrl(int year) {
-        return API_CATEGORIES_FOR_YEAR_URL + "/" + String.valueOf(year);
-    }
-
-
-    public static String getPhotosForCategoryUrl(int categoryId) {
-        return API_PHOTOS_BY_CATEGORY_URL + "/" + String.valueOf(categoryId);
-    }
-
-
-    public static String getPhotosByCommentDateUrl(boolean newestFirst) {
-        return API_PHOTOS_BY_COMMENT_DATE_URL + "/" + String.valueOf(newestFirst);
-    }
-
-
-    public static String getPhotosByUserCommentDateUrl(boolean newestFirst) {
-        return API_PHOTOS_BY_USER_COMMENT_DATE_URL + "/" + String.valueOf(newestFirst);
-    }
-
-
-    public static String getPhotosByCommentCountUrl(boolean mostFirst) {
-        return API_PHOTOS_BY_COMMENT_COUNT_URL + "/" + String.valueOf(mostFirst);
-    }
-
-
-    public static String getPhotosByAverageRatingUrl() {
-        return API_PHOTOS_BY_AVERAGE_RATING_URL + "/true";
-    }
-
-
-    public static String getPhotosByUserRatingUrl() {
-        return API_PHOTOS_BY_USER_RATING_URL + "/true";
+        _photoApi = retrofit.create(PhotoApi.class);
+        _cookieJar = cookieJar;
     }
 
 
@@ -129,45 +76,17 @@ public class PhotoApiClient {
 
 
     public boolean isAuthenticated() {
-        List<HttpCookie> cookies = _cookieManager.getCookieStore().getCookies();
-
-        boolean authCookieAvailable = false;
-        boolean xsrfCookieAvailable = false;
-
-        for (HttpCookie cookie : cookies) {
-            if (AUTH_COOKIE_NAME.equalsIgnoreCase(cookie.getName()) && !cookie.hasExpired()) {
-                Log.i(MawApplication.LOG_TAG, "Auth cookie valid");
-                authCookieAvailable = true;
-                continue;
-            }
-
-            if (XSRF_COOKIE_NAME.equalsIgnoreCase(cookie.getName()) && !cookie.hasExpired()) {
-                Log.i(MawApplication.LOG_TAG, "XSRF cookie valid");
-                xsrfCookieAvailable = true;
-            }
-        }
-
-        Log.i(MawApplication.LOG_TAG, "");
-
-        return authCookieAvailable && xsrfCookieAvailable;
+        return _cookieJar.isAuthenticated();
     }
 
 
     public boolean authenticate(String username, String password) {
         try {
-            HttpRequestInfo info = new HttpRequestInfo();
+            Response<Boolean> result = _photoApi.authenticate(username, password).execute();
 
-            info.setUrl(new URL(API_LOGIN_URL));
-            info.setMethod("POST");
-            info.getParams().put("Username", username);
-            info.getParams().put("Password", password);
-
-            HttpResponseInfo response = execute(info);
-
-            if (response != null && response.getStatusCode() == HttpURLConnection.HTTP_OK && Boolean.valueOf(response.getContent())) {
+            if(result.isSuccessful()) {
                 establishXsrfTokenCookie();
-
-                return isAuthenticated();
+                return true;
             }
         } catch (Exception ex) {
             Log.w(MawApplication.LOG_TAG, "Error when authenticating: " + ex.getMessage());
@@ -177,89 +96,122 @@ public class PhotoApiClient {
     }
 
 
-    public List<Integer> getPhotoYears() throws MawAuthenticationException {
+    public List<Integer> getPhotoYears() throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
-        JsonClient<Integer> jsonClient = new JsonClient<>(Integer.class, this);
+        Response<List<Integer>> response = _photoApi.getPhotoYears().execute();
 
-        return jsonClient.getItemList(API_GET_PHOTO_YEARS_URL);
+        if (response.isSuccessful()) {
+            return response.body();
+        }
+
+        Log.e(MawApplication.LOG_TAG, "error getting photo years: " + response.toString());
+
+        throw new MawAuthenticationException();
     }
 
 
-    public List<Category> getCategoriesForYear(int year) throws MawAuthenticationException {
+    public List<Category> getCategoriesForYear(int year) throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
-        String url = getCategoriesForYearUrl(year);
-        JsonClient<Category> jsonClient = new JsonClient<>(Category.class, this);
+        Response<List<Category>> response = _photoApi.getCategoriesForYear(year).execute();
 
-        return jsonClient.getItemList(url);
+        return response.body();
     }
 
 
-    public List<Category> getRecentCategories(int sinceId) throws MawAuthenticationException {
+    public List<Category> getRecentCategories(int sinceId) throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
-        String url = API_GET_RECENT_CATEGORIES_URL + "/" + String.valueOf(sinceId);
-        JsonClient<Category> jsonClient = new JsonClient<>(Category.class, this);
+        Response<List<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
 
-        return jsonClient.getItemList(url);
+        return response.body();
     }
 
 
-    public int getTotalCategoryCount() throws MawAuthenticationException {
+    public int getTotalCategoryCount() throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
-        JsonClient<Integer> jsonClient = new JsonClient<>(Integer.class, this);
+        Response<Integer> response = _photoApi.getTotalCategoryCount().execute();
 
-        return jsonClient.getSingleItem(API_GET_CATEGORY_COUNT_URL);
+        return response.body();
     }
 
 
-    public List<Photo> getPhotos(String url) throws MawAuthenticationException {
+    public List<Photo> getPhotos(PhotoListType type, int categoryId) throws Exception {
         ensureAuthenticated(false);
 
-        JsonClient<Photo> jsonClient = new JsonClient<>(Photo.class, this);
+        Call<List<Photo>> call;
 
-        return jsonClient.getItemList(url);
+        switch(type) {
+            case ByCategory:
+                call = _photoApi.getPhotosByCategory(categoryId);
+                break;
+            case ByCommentsNewest:
+                call = _photoApi.getPhotosByCommentDate(true);
+                break;
+            case ByCommentsOldest:
+                call = _photoApi.getPhotosByCommentDate(false);
+                break;
+            case ByUserCommentsNewest:
+                call = _photoApi.getPhotosByUserCommentDate(true);
+                break;
+            case ByUserCommentsOldest:
+                call = _photoApi.getPhotosByUserCommentDate(false);
+                break;
+            case ByCommentCountMost:
+                call = _photoApi.getPhotosByCommentCount(true);
+                break;
+            case ByCommentCountLeast:
+                call = _photoApi.getPhotosByCommentCount(false);
+                break;
+            case ByAverageRating:
+                call = _photoApi.getPhotosByAverageRating();
+                break;
+            case ByUserRating:
+                call = _photoApi.getPhotosByUserRating();
+                break;
+            default:
+                throw new Exception("Unknown photo list type!");
+        }
+
+        return call.execute().body();
     }
 
 
-    public PhotoAndCategory getRandomPhoto() throws MawAuthenticationException {
+    public PhotoAndCategory getRandomPhoto() throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
-        JsonClient<PhotoAndCategory> jsonClient = new JsonClient<>(PhotoAndCategory.class, this);
+        Response<PhotoAndCategory> response = _photoApi.getRandomPhoto().execute();
 
-        return jsonClient.getSingleItem(API_GET_RANDOM_PHOTO_URL);
+        return response.body();
     }
 
 
-    public ExifData getExifData(int photoId) throws MawAuthenticationException {
+    public ExifData getExifData(int photoId) throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
-        String url = API_GET_PHOTO_EXIF_URL + "/" + String.valueOf(photoId);
-        JsonClient<ExifData> jsonClient = new JsonClient<>(ExifData.class, this);
+        Response<ExifData> response = _photoApi.getExifData(photoId).execute();
 
-        return jsonClient.getSingleItem(url);
+        return response.body();
     }
 
 
-    public List<Comment> getComments(int photoId) throws MawAuthenticationException {
+    public List<Comment> getComments(int photoId) throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
-        String url = API_GET_PHOTO_COMMENTS_URL + "/" + String.valueOf(photoId);
-        JsonClient<Comment> jsonClient = new JsonClient<>(Comment.class, this);
+        Response<List<Comment>> response = _photoApi.getComments(photoId).execute();
 
-        return jsonClient.getItemList(url);
+        return response.body();
     }
 
 
-    public Rating getRatings(int photoId) throws MawAuthenticationException {
+    public Rating getRatings(int photoId) throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
-        String url = API_GET_PHOTO_RATING_URL + "/" + String.valueOf(photoId);
-        JsonClient<Rating> jsonClient = new JsonClient<>(Rating.class, this);
+        Response<Rating> response = _photoApi.getRatings(photoId).execute();
 
-        return jsonClient.getSingleItem(url);
+        return response.body();
     }
 
 
@@ -275,7 +227,7 @@ public class PhotoApiClient {
         String paramString = jsonClient.toJson(rp);
 
         try {
-            URL url = new URL(API_SET_PHOTO_RATING_URL);
+            URL url = new URL("/" /* API_SET_PHOTO_RATING_URL */);
 
             HttpRequestInfo req = new HttpRequestInfo();
             req.setMethod("POST");
@@ -311,7 +263,7 @@ public class PhotoApiClient {
         String jsonParam = jsonClient.toJson(cp);
 
         try {
-            URL url = new URL(API_ADD_PHOTO_COMMENT_URL);
+            URL url = new URL("/" /*API_ADD_PHOTO_COMMENT_URL*/);
 
             HttpRequestInfo req = new HttpRequestInfo();
             req.setMethod("POST");
@@ -523,14 +475,9 @@ public class PhotoApiClient {
 
     private void establishXsrfTokenCookie() {
         try {
-            HttpRequestInfo info = new HttpRequestInfo();
+            Response<Boolean> response = _photoApi.establishXsrfTokenCookie().execute();
 
-            info.setUrl(new URL(API_GET_XSRF_URL));
-            info.setMethod("GET");
-
-            HttpResponseInfo response = execute(info);
-
-            if (response != null && response.getStatusCode() == HttpURLConnection.HTTP_OK) {
+            if (response.isSuccessful()) {
                 Log.i(MawApplication.LOG_TAG, "Obtained XSRF token");
             }
         } catch (Exception ex) {
@@ -540,23 +487,10 @@ public class PhotoApiClient {
 
 
     private void tryAddXsrfHeader(HttpURLConnection conn) {
-        HttpCookie cookie = getXsrfCookie();
+        Cookie cookie = _cookieJar.getXsrfCookie();
 
         if(cookie != null) {
-            conn.setRequestProperty(XSRF_HEADER, cookie.getValue());
+            conn.setRequestProperty(XSRF_HEADER, cookie.value());
         }
-    }
-
-
-    private HttpCookie getXsrfCookie() {
-        List<HttpCookie> cookies = _cookieManager.getCookieStore().getCookies();
-
-        for (HttpCookie cookie : cookies) {
-            if (XSRF_COOKIE_NAME.equalsIgnoreCase(cookie.getName()) ) {
-                return cookie;
-            }
-        }
-
-        return null;
     }
 }

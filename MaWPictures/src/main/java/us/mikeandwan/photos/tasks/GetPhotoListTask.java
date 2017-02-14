@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.services.PhotoApiClient;
+import us.mikeandwan.photos.services.PhotoListType;
 
 
 public class GetPhotoListTask {
@@ -21,13 +22,13 @@ public class GetPhotoListTask {
     }
 
 
-    public List<Photo> call(String url) throws Exception {
+    public List<Photo> call(PhotoListType type, int categoryId) throws Exception {
         Log.d(MawApplication.LOG_TAG, "> started to get photo list");
 
         if (!_client.isConnected()) {
             throw new Exception("Network unavailable");
         }
 
-        return _client.getPhotos(url);
+        return _client.getPhotos(type, categoryId);
     }
 }

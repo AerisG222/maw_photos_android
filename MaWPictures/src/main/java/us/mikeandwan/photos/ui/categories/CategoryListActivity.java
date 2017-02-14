@@ -31,6 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.prefs.CategoryDisplay;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
+import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
@@ -38,7 +39,6 @@ import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.MawDataManager;
-import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
@@ -146,7 +146,8 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     public void selectCategory(Category category) {
         Intent intent = new Intent(this, PhotoListActivity.class);
         intent.putExtra("NAME", category.getName());
-        intent.putExtra("URL", PhotoApiClient.getPhotosForCategoryUrl(category.getId()));
+        intent.putExtra("TYPE", PhotoListType.ByCategory.toString());
+        intent.putExtra("CATEGORY_ID", category.getId());
 
         startActivity(intent);
     }

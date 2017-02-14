@@ -27,7 +27,6 @@ import us.mikeandwan.photos.ui.login.LoginActivity;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.services.MawDataManager;
-import us.mikeandwan.photos.services.MawAuthenticationException;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
@@ -158,7 +157,7 @@ public class MawPollerService extends Service {
 
                     _app.setNotificationCount(totalCount);
                 }
-            } catch (MawAuthenticationException mae) {
+            } catch (Exception mae) {
                 totalCount = -1;
             }
 

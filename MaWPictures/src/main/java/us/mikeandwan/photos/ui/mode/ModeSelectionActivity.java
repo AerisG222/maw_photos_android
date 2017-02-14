@@ -29,11 +29,11 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
+import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.services.MawDataManager;
-import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.tasks.GetYearsTask;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.categories.CategoryListActivity;
@@ -42,6 +42,9 @@ import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 
 
 public class ModeSelectionActivity extends BaseActivity implements HasComponent<TaskComponent> {
+    private static final String KEY_NAME = "NAME";
+    private static final String KEY_TYPE = "TYPE";
+
     private final CompositeDisposable disposables = new CompositeDisposable();
     private final List<Map<String, String>> _groupData = new ArrayList<>();
     private final List<List<Map<String, String>>> _childData = new ArrayList<>();
@@ -87,11 +90,11 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         _adapter = new SimpleExpandableListAdapter(this,
                 _groupData,
                 android.R.layout.simple_expandable_list_item_1,
-                new String[]{"NAME"},
+                new String[]{KEY_NAME},
                 new int[]{android.R.id.text1},
                 _childData,
                 android.R.layout.simple_expandable_list_item_2,
-                new String[]{"NAME"},
+                new String[]{KEY_NAME},
                 new int[]{android.R.id.text1});
 
         initModeList();
@@ -142,15 +145,18 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     private boolean onItemClicked(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         Intent intent;
 
-        if (groupPosition == 0) {
+        Map<String, String> child = _childData.get(groupPosition).get(childPosition);
+        PhotoListType type = PhotoListType.valueOf(child.get(KEY_TYPE));
+
+        if (type == PhotoListType.ByCategory) {
             intent = new Intent(parent.getContext(), CategoryListActivity.class);
-            intent.putExtra("YEAR", Integer.parseInt(_childData.get(groupPosition).get(childPosition).get("NAME")));
+            intent.putExtra("YEAR", Integer.parseInt(child.get(KEY_NAME)));
         } else {
             intent = new Intent(parent.getContext(), PhotoListActivity.class);
-            intent.putExtra("NAME", _childData.get(groupPosition).get(childPosition).get("NAME"));
+            intent.putExtra("NAME", child.get(KEY_NAME));
         }
 
-        intent.putExtra("URL", _childData.get(groupPosition).get(childPosition).get("URL"));
+        intent.putExtra("TYPE", type.toString());
 
         startActivity(intent);
 
@@ -202,7 +208,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
             _yearChildren.clear();
 
             for (Integer year : _yearList) {
-                _yearChildren.add(createChild(year, PhotoApiClient.getCategoriesForYearUrl(year)));
+                _yearChildren.add(createChild(year.toString(), PhotoListType.ByCategory));
             }
         }
     }
@@ -221,27 +227,27 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         _groupData.add(createGroup("By Comments"));
         _childData.add(children);
 
-        children.add(createChild("Newest", PhotoApiClient.getPhotosByCommentDateUrl(true)));
-        children.add(createChild("Oldest", PhotoApiClient.getPhotosByCommentDateUrl(false)));
-        children.add(createChild("Your Newest", PhotoApiClient.getPhotosByUserCommentDateUrl(true)));
-        children.add(createChild("Your Oldest", PhotoApiClient.getPhotosByUserCommentDateUrl(false)));
-        children.add(createChild("Most Comments", PhotoApiClient.getPhotosByCommentCountUrl(true)));
-        children.add(createChild("Least Comments", PhotoApiClient.getPhotosByCommentCountUrl(false)));
+        children.add(createChild("Newest", PhotoListType.ByCommentsNewest));
+        children.add(createChild("Oldest", PhotoListType.ByCommentsOldest));
+        children.add(createChild("Your Newest", PhotoListType.ByUserCommentsNewest));
+        children.add(createChild("Your Oldest", PhotoListType.ByUserCommentsOldest));
+        children.add(createChild("Most Comments", PhotoListType.ByCommentCountMost));
+        children.add(createChild("Least Comments", PhotoListType.ByCommentCountLeast));
 
         // by ratings
         children = new ArrayList<>();
         _groupData.add(createGroup("By Rating"));
         _childData.add(children);
 
-        children.add(createChild("Average Rating", PhotoApiClient.getPhotosByAverageRatingUrl()));
-        children.add(createChild("Your Rating", PhotoApiClient.getPhotosByUserRatingUrl()));
+        children.add(createChild("Average Rating", PhotoListType.ByAverageRating));
+        children.add(createChild("Your Rating", PhotoListType.ByUserRating));
 
         // random
         children = new ArrayList<>();
         _groupData.add(createGroup("Random"));
         _childData.add(children);
 
-        children.add(createChild("Surprise Me!", "random"));
+        children.add(createChild("Surprise Me!", PhotoListType.Random));
 
         _modeExpandableListView.setAdapter(_adapter);
     }
@@ -249,21 +255,16 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
     private Map<String, String> createGroup(String name) {
         Map<String, String> group = new HashMap<>();
-        group.put("NAME", name);
+        group.put(KEY_NAME, name);
 
         return group;
     }
 
 
-    private Map<String, String> createChild(int name, String url) {
-        return createChild(String.valueOf(name), url);
-    }
-
-
-    private Map<String, String> createChild(String name, String url) {
+    private Map<String, String> createChild(String name, PhotoListType type) {
         Map<String, String> child = new HashMap<>();
-        child.put("NAME", name);
-        child.put("URL", url);
+        child.put(KEY_NAME, name);
+        child.put(KEY_TYPE, type.toString());
 
         return child;
     }

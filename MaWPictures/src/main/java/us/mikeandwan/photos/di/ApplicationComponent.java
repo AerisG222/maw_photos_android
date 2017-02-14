@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.di;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
 import javax.inject.Singleton;
 
@@ -27,7 +26,6 @@ import us.mikeandwan.photos.services.poller.MawScheduleReceiver;
 public interface ApplicationComponent {
     // identify which services will be available to dependent components
     Application application();
-    SharedPreferences sharedPreferences();
     CategoryDisplayPreference categoryDisplayPreference();
     NotificationPreference notificationPreference();
     PhotoDisplayPreference photoDisplayPreference();

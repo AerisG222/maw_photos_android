@@ -41,6 +41,7 @@ import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
+import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.di.DaggerTaskComponent;
 import us.mikeandwan.photos.di.TaskComponent;
@@ -80,8 +81,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private ScheduledThreadPoolExecutor _slideshowExecutor;
     private HashSet<Integer> _randomPhotoIds;
     private int _taskCount = 0;
-    private String _url;
+    private PhotoListType _type;
     private String _name;
+    private int _categoryId;
     private MenuItem _menuShare;
     private TaskComponent _taskComponent;
 
@@ -157,8 +159,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         _photoPager.setAdapter(_photoPagerAdapter);
         _photoPager.onPhotoSelected().subscribe(this::gotoPhoto);
 
-        _url = getIntent().getStringExtra("URL");
+        _type = PhotoListType.valueOf(getIntent().getStringExtra("TYPE"));
         _name = getIntent().getStringExtra("NAME");
+        _categoryId = getIntent().getIntExtra("CATEGORY_ID", -1);
     }
 
 
@@ -210,11 +213,11 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         // if we are coming back from an orientation change, we might already have a valid list
         // populated.  if so, use the original list.
         if(_photoList.isEmpty()) {
-            if (_url.equalsIgnoreCase("random")) {
+            if (_type == PhotoListType.Random) {
                 _isRandomView = true;
                 initRandomPhotos();
             } else {
-                initPhotoList(_url);
+                initPhotoList();
             }
         } else {
             if(_playingSlideshow) {
@@ -311,8 +314,8 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    private void initPhotoList(String url) {
-        disposables.add(Flowable.fromCallable(() -> _getPhotoListTask.call(url))
+    private void initPhotoList() {
+        disposables.add(Flowable.fromCallable(() -> _getPhotoListTask.call(_type, _categoryId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
