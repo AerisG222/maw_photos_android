@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.commonsware.cwac.provider.StreamProvider;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -25,7 +27,8 @@ import us.mikeandwan.photos.MawApplication;
 // TODO: this currently requires external storage, perhaps also allow this to run w/o caching - perhaps thumbnails in internal storage?
 public class PhotoStorage {
     private static final String MAW_ROOT = "maw_pictures";
-    private static final String CONTENT_URI = "content://us.mikeandwan.streamprovider/";
+    private static final String AUTHORITY = "us.mikeandwan.streamprovider";
+    private static final Uri PROVIDER = Uri.parse("content://"+AUTHORITY);
 
     private Context _context;
 
@@ -102,7 +105,11 @@ public class PhotoStorage {
     public Uri getSharingContentUri(String remotePath) {
         File file = new File(Environment.DIRECTORY_PICTURES, remotePath);
 
-        return Uri.parse(CONTENT_URI + file.getPath());
+        return PROVIDER
+                .buildUpon()
+                .appendPath(StreamProvider.getUriPrefix(AUTHORITY))
+                .appendEncodedPath(file.getPath())
+                .build();
     }
 
 
