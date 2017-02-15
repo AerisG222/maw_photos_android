@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.ui.photos;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -76,8 +75,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private static final String STATE_PLAYING_SLIDESHOW = "playing_slideshow";
     private static final String STATE_PHOTO_LIST = "photo_list";
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
-    private Activity _theActivity;
+    private final CompositeDisposable _disposables = new CompositeDisposable();
     private ScheduledThreadPoolExecutor _slideshowExecutor;
     private HashSet<Integer> _randomPhotoIds;
     private int _taskCount = 0;
@@ -147,8 +145,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         setContentView(R.layout.activity_photo_list);
         ButterKnife.bind(this);
 
-        _theActivity = this;
-
         _taskComponent = DaggerTaskComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .taskModule(getTaskModule())
@@ -190,10 +186,11 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        disposables.clear();
+        _disposables.clear();
         _thumbnailRecyclerAdapter.dispose();
         _photoPagerAdapter.dispose();
+
+        super.onDestroy();
     }
 
 
@@ -316,7 +313,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void initPhotoList() {
-        disposables.add(Flowable.fromCallable(() -> _getPhotoListTask.call(_type, _categoryId))
+        _disposables.add(Flowable.fromCallable(() -> _getPhotoListTask.call(_type, _categoryId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -347,7 +344,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void fetchRandom() {
-        disposables.add(Flowable.fromCallable(() -> _getRandomPhotoTask.call())
+        _disposables.add(Flowable.fromCallable(() -> _getRandomPhotoTask.call())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -415,9 +412,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
         if (nextIndex < _photoList.size()) {
             SlideshowRunnable slideshowRunnable = new SlideshowRunnable((nextIndex));
-            _theActivity.runOnUiThread(slideshowRunnable);
+            this.runOnUiThread(slideshowRunnable);
         } else {
-            _theActivity.runOnUiThread(this::toggleSlideshow);
+            this.runOnUiThread(this::toggleSlideshow);
         }
     }
 
@@ -478,7 +475,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void downloadImage(final Photo photo, PhotoSize size) {
-        disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
+        _disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

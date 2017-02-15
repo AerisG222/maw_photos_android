@@ -122,10 +122,11 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         disposables.clear(); // do not send event after activity has been destroyed
         _gridAdapter.dispose();
         _listAdapter.dispose();
+
+        super.onDestroy();
     }
 
 
