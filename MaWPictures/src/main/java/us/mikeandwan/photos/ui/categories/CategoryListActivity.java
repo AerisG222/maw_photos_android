@@ -45,7 +45,7 @@ import us.mikeandwan.photos.ui.HasComponent;
 
 
 public class CategoryListActivity extends BaseActivity implements ICategoryListActivity, HasComponent<TaskComponent> {
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable _disposables = new CompositeDisposable();
     private int _year;
     private List<Category> _categories;
     private MenuItem _refreshMenuItem;
@@ -122,7 +122,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
     @Override
     protected void onDestroy() {
-        disposables.clear(); // do not send event after activity has been destroyed
+        _disposables.clear(); // do not send event after activity has been destroyed
         _gridAdapter.dispose();
         _listAdapter.dispose();
 
@@ -203,7 +203,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     private void forceSync() {
         startSyncAnimation();
 
-        disposables.add(
+        _disposables.add(
                 Flowable.fromCallable(() -> _getRecentCategoriesTask.call())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

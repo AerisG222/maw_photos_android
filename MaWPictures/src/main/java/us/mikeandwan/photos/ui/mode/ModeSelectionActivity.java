@@ -45,7 +45,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     private static final String KEY_NAME = "NAME";
     private static final String KEY_TYPE = "TYPE";
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable _disposables = new CompositeDisposable();
     private final List<Map<String, String>> _groupData = new ArrayList<>();
     private final List<List<Map<String, String>>> _childData = new ArrayList<>();
     private final List<Map<String, String>> _yearChildren = new ArrayList<>();
@@ -127,7 +127,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        disposables.clear(); // do not send event after activity has been destroyed
+        _disposables.clear(); // do not send event after activity has been destroyed
     }
 
 
@@ -167,7 +167,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     private void forceSync() {
         startSyncAnimation();
 
-        disposables.add(
+        _disposables.add(
             Flowable.fromCallable(() -> _getYearsTask.call())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

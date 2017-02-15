@@ -27,7 +27,7 @@ import us.mikeandwan.photos.tasks.GetExifDataTask;
 
 
 public class ExifDialogFragment extends BasePhotoDialogFragment {
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable _disposables = new CompositeDisposable();
     private Unbinder _unbinder;
 
     @BindDimen(R.dimen._2dp) int _2dp;
@@ -70,7 +70,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        disposables.clear(); // do not send event after activity has been destroyed
+        _disposables.clear(); // do not send event after activity has been destroyed
         _unbinder.unbind();
     }
 
@@ -163,7 +163,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
 
 
     private void getExifData() {
-        disposables.add(Flowable.fromCallable(() -> _getExifDataTask.call(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> _getExifDataTask.call(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -41,7 +41,7 @@ import us.mikeandwan.photos.tasks.GetCommentsTask;
 
 
 public class CommentDialogFragment extends BasePhotoDialogFragment {
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable _disposables = new CompositeDisposable();
     private Unbinder _unbinder;
 
     @BindView(R.id.commentTableLayout) TableLayout _commentTableLayout;
@@ -66,7 +66,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
             cp.setPhotoId(getCurrentPhoto().getId());
             cp.setComment(comment);
 
-            disposables.add(Flowable.fromCallable(() -> _addCommentTask.call(cp))
+            _disposables.add(Flowable.fromCallable(() -> _addCommentTask.call(cp))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
@@ -122,13 +122,13 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        disposables.clear(); // do not send event after activity has been destroyed
+        _disposables.clear(); // do not send event after activity has been destroyed
         _unbinder.unbind();
     }
 
 
     private void getComments() {
-        disposables.add(Flowable.fromCallable(() -> _getCommentsTask.call(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> _getCommentsTask.call(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

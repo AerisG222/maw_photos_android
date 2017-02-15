@@ -24,7 +24,7 @@ import us.mikeandwan.photos.tasks.SetRatingTask;
 
 
 public class RatingDialogFragment extends BasePhotoDialogFragment {
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable _disposables = new CompositeDisposable();
     private Unbinder _unbinder;
 
     @BindView(R.id.yourRatingBar) RatingBar _yourRatingBar;
@@ -42,7 +42,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
 
         _yourRatingBar.setOnRatingBarChangeListener((_ratingBar, rating, fromUser) -> {
             if (fromUser) {
-                disposables.add(Flowable.fromCallable(() -> _setRatingTask.call(getCurrentPhoto().getId(), Math.round(rating)))
+                _disposables.add(Flowable.fromCallable(() -> _setRatingTask.call(getCurrentPhoto().getId(), Math.round(rating)))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -86,7 +86,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        disposables.clear(); // do not send event after activity has been destroyed
+        _disposables.clear(); // do not send event after activity has been destroyed
         _unbinder.unbind();
     }
 
@@ -95,7 +95,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
         _yourRatingBar.setRating(0);
         _averageRatingBar.setRating(0);
 
-        disposables.add(Flowable.fromCallable(() -> _getRatingTask.call(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> _getRatingTask.call(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -41,7 +41,7 @@ import us.mikeandwan.photos.tasks.LoginTask;
 
 // TODO: change how we cache credentials for server side encryption
 public class LoginActivity extends BaseActivity implements HasComponent<TaskComponent> {
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable _disposables = new CompositeDisposable();
     private Credentials _creds = new Credentials();
     private TaskComponent _taskComponent;
     private MawApplication _app;
@@ -98,7 +98,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        disposables.clear(); // do not send event after activity has been destroyed
+        _disposables.clear(); // do not send event after activity has been destroyed
     }
 
 
@@ -140,7 +140,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
         } else {
             showProgress(true);
 
-            disposables.add(
+            _disposables.add(
                     Flowable.fromCallable(() -> _loginTask.call(_creds))
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -170,7 +170,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
 
             // if this is the first time a user is accessing the system, prepare the initial list of categories now
             if (_dm.getPhotoYears().size() == 0) {
-                disposables.add(
+                _disposables.add(
                         Flowable.fromCallable(() -> _getYearsTask.call())
                                 .flatMapIterable(x -> x)
                                 .map(x -> _getCategoriesForYearTask.call(x))
@@ -204,7 +204,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     private void cleanupLegacyStorage() {
         Log.i(MawApplication.LOG_TAG, "starting to wipe");
 
-        disposables.add(
+        _disposables.add(
                 Flowable.fromCallable(() -> {
                     _ps.wipeLegacyCache();
                     return true;
