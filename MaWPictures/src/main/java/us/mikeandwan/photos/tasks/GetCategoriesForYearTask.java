@@ -37,9 +37,7 @@ public class GetCategoriesForYearTask {
         if (categories.size() > 0) {
             categories.removeAll(cachedCategories);
 
-            for (Category category : categories) {
-                _dm.addCategory(category);
-            }
+            _dm.addCategories(categories);
         }
 
         Log.d(MawApplication.LOG_TAG, "> completed GetCategoriesForYear(" + year + ")");

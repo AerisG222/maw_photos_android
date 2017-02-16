@@ -175,9 +175,8 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
-                                        x -> Log.i(MawApplication.LOG_TAG, "next: " + x.get(0).getYear()),
-                                        ex -> Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage()),
-                                        () -> { Log.i(MawApplication.LOG_TAG, "completed"); goToModeSelection(); }
+                                        x -> goToModeSelection(),
+                                        ex -> Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage())
                                 )
                 );
             } else {

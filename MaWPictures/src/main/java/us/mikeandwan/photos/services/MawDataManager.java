@@ -18,10 +18,6 @@ import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.models.PhotoInfo;
 
 
-// TODO: implement bulk operations that run in a transaction which should improve perf
-//       see: http://stackoverflow.com/questions/3860008/bulk-insertion-on-android-device
-//       in particular, look to do this for the initial load of categories / years
-
 // https://nfrolov.wordpress.com/2014/08/16/android-sqlitedatabase-locking-and-multi-threading/
 //   recommends not closing db given its shared nature...
 public class MawDataManager {
