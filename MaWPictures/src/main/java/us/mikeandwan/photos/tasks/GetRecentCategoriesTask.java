@@ -33,9 +33,7 @@ public class GetRecentCategoriesTask {
 
         List<Category> categories = _client.getRecentCategories(_dm.getLatestCategoryId());
 
-        for (Category category : categories) {
-            _dm.addCategory(category);
-        }
+        _dm.addCategories(categories);
 
         // new check which should cover case if the initial download was interrupted / failed
         int serverCount = _client.getTotalCategoryCount();
@@ -49,13 +47,7 @@ public class GetRecentCategoriesTask {
 
             serverCategories.removeAll(localCategories);
 
-            for (Category cat : serverCategories) {
-                // add this category to the database
-                _dm.addCategory(cat);
-
-                // also add this category to the list of categories we report as being new
-                categories.add(cat);
-            }
+            _dm.addCategories(serverCategories);
 
             Log.w(MawApplication.LOG_TAG, "> completed full refresh");
         }

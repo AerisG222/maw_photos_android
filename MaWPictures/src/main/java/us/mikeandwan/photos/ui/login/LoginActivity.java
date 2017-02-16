@@ -26,6 +26,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
@@ -55,8 +56,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     @Inject MawDataManager _dm;
     @Inject PhotoStorage _ps;
     @Inject LoginTask _loginTask;
-    @Inject GetYearsTask _getYearsTask;
-    @Inject GetCategoriesForYearTask _getCategoriesForYearTask;
+    @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
 
 
     public TaskComponent getComponent() {
@@ -171,9 +171,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
             // if this is the first time a user is accessing the system, prepare the initial list of categories now
             if (_dm.getPhotoYears().size() == 0) {
                 _disposables.add(
-                        Flowable.fromCallable(() -> _getYearsTask.call())
-                                .flatMapIterable(x -> x)
-                                .map(x -> _getCategoriesForYearTask.call(x))
+                        Flowable.fromCallable(() -> _getRecentCategoriesTask.call())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(

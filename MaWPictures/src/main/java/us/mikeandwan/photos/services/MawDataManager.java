@@ -214,7 +214,48 @@ public class MawDataManager {
     }
 
 
+    public void addCategories(List<Category> categories) {
+        List<Integer> years = getPhotoYears();
+        SQLiteDatabase db = getDatabase();
+
+        try {
+            db.beginTransaction();
+
+            for (Category category : categories) {
+                if (!years.contains(category.getYear())) {
+                    addYear(db, category.getYear());
+
+                    years.add(category.getYear());
+                }
+
+                addCategory(db, category);
+            }
+
+            db.setTransactionSuccessful();
+        }
+        catch(Exception ex) {
+            Log.e(MawApplication.LOG_TAG, "error adding categories: " + ex.getMessage());
+        }
+        finally {
+            db.endTransaction();
+        }
+    }
+
+
     public void addCategory(Category category) {
+        SQLiteDatabase db = getDatabase();
+
+        List<Integer> years = getPhotoYears();
+
+        if (!years.contains(category.getYear())) {
+            addYear(db, category.getYear());
+        }
+
+        addCategory(db, category);
+    }
+
+
+    private void addCategory(SQLiteDatabase db, Category category) {
         ContentValues values = new ContentValues();
 
         values.put("id", category.getId());
@@ -225,23 +266,37 @@ public class MawDataManager {
         values.put("teaser_image_height", category.getTeaserPhotoInfo().getHeight());
         values.put("teaser_image_path", category.getTeaserPhotoInfo().getPath());
 
-        addSingleRecord("image_category", values);
+        addSingleRecord(db, "image_category", values);
+    }
 
-        // now check to see if we also need to create the year record
-        List<Integer> years = getPhotoYears();
 
-        if (!years.contains(category.getYear())) {
-            addYear(category.getYear());
+    public void addYears(List<Integer> years) {
+        SQLiteDatabase db = getDatabase();
+
+        try {
+            db.beginTransaction();
+
+            for(int year : years) {
+                addYear(db, year);
+            }
+
+            db.setTransactionSuccessful();
+        }
+        catch(Exception ex) {
+            Log.e(MawApplication.LOG_TAG, "Error adding years: " + ex.getMessage());
+        }
+        finally {
+            db.endTransaction();
         }
     }
 
 
-    public void addYear(Integer year) {
+    private void addYear(SQLiteDatabase db, Integer year) {
         ContentValues values = new ContentValues();
 
         values.put("year", year);
 
-        addSingleRecord("year", values);
+        addSingleRecord(db, "year", values);
     }
 
 
@@ -264,9 +319,7 @@ public class MawDataManager {
     }
 
 
-    private void addSingleRecord(String tableName, ContentValues values) {
-        SQLiteDatabase db = getDatabase();
-
+    private void addSingleRecord(SQLiteDatabase db, String tableName, ContentValues values) {
         try {
             long result = db.insert(tableName, null, values);
 

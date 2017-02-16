@@ -36,9 +36,7 @@ public class GetYearsTask {
         if (years.size() > 0) {
             years.removeAll(cachedYears);
 
-            for (Integer year : years) {
-                _dm.addYear(year);
-            }
+            _dm.addYears(years);
         }
 
         Log.d(MawApplication.LOG_TAG, "> completed GetYears()");

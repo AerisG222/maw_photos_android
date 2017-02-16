@@ -11,7 +11,6 @@ import us.mikeandwan.photos.di.PhotoApiModule;
 import us.mikeandwan.photos.di.PreferenceModule;
 
 
-// TODO: provide wrapper for settings
 public class MawApplication extends Application {
     public static final String LOG_TAG = "maw";
     private int _notificationCount = 0;
