@@ -20,24 +20,24 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
+import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 
 public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecyclerAdapter.ViewHolder> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
     private final PhotoStorage _photoStorage;
-    private final DownloadPhotoTask _downloadPhotoTask;
+    private final DataServices _dataServices;
     private final AuthenticationExceptionHandler _authHandler;
     private final PublishSubject<Integer> _thumbnailSubject = PublishSubject.create();
     private List<Photo> _photoList;
 
 
-    public ThumbnailRecyclerAdapter(Context context, PhotoStorage photoStorage, DownloadPhotoTask downloadPhotoTask, AuthenticationExceptionHandler authHandler) {
+    public ThumbnailRecyclerAdapter(Context context, PhotoStorage photoStorage, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
         _context = context;
         _photoStorage = photoStorage;
-        _downloadPhotoTask = downloadPhotoTask;
+        _dataServices = dataServices;
         _authHandler = authHandler;
     }
 
@@ -65,7 +65,7 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
         } else {
             viewHolder._thumbnailImageView.setImageBitmap(_photoStorage.getPlaceholderThumbnail());
 
-            _disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, PhotoSize.Xs))
+            _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, PhotoSize.Xs))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(

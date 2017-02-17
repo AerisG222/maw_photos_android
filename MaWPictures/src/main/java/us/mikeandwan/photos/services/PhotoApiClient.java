@@ -1,8 +1,5 @@
 package us.mikeandwan.photos.services;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -32,35 +29,21 @@ import us.mikeandwan.photos.models.Rating;
 
 
 public class PhotoApiClient {
-    private final Context _context;
     private final PhotoStorage _photoStorage;
-    private final MawDataManager _dataManager;
     private final PhotoApiCookieJar _cookieJar;
     private final PhotoApi _photoApi;
     private final OkHttpClient _httpClient;
 
 
     @Inject
-    public PhotoApiClient(Context context,
-                          PhotoStorage photoStorage,
-                          MawDataManager dataManager,
+    public PhotoApiClient(PhotoStorage photoStorage,
                           OkHttpClient httpClient,
                           Retrofit retrofit,
                           PhotoApiCookieJar cookieJar) {
-        _context = context;
         _photoStorage = photoStorage;
-        _dataManager = dataManager;
         _httpClient = httpClient;
         _photoApi = retrofit.create(PhotoApi.class);
         _cookieJar = cookieJar;
-    }
-
-
-    public boolean isConnected() {
-        ConnectivityManager mgr = (ConnectivityManager)_context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = mgr.getActiveNetworkInfo();
-
-        return activeNetwork != null && activeNetwork.isConnected();
     }
 
 
@@ -289,7 +272,8 @@ public class PhotoApiClient {
         if (force || !isAuthenticated()) {
             Log.d(MawApplication.LOG_TAG, "refreshing the authentication token");
 
-            Credentials creds = _dataManager.getCredentials();
+            // TODO: how to get creds here w/o reference to db accessor?
+            Credentials creds = null; // _databaseAccessor.getCredentials();
 
             if (creds != null) {
                 String username = creds.getUsername();

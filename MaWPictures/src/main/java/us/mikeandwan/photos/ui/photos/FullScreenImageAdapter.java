@@ -17,9 +17,8 @@ import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.services.PhotoApiClient;
+import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
@@ -29,16 +28,16 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final IPhotoActivity _activity;
     private final List<Photo> _photoList;
     private final PhotoStorage _photoStorage;
-    private final DownloadPhotoTask _downloadPhotoTask;
     private final AuthenticationExceptionHandler _authHandler;
+    private final DataServices _dataServices;
 
 
-    public FullScreenImageAdapter(IPhotoActivity activity, PhotoStorage photoStorage, PhotoApiClient photoClient, AuthenticationExceptionHandler authHandler) {
+    public FullScreenImageAdapter(IPhotoActivity activity, DataServices dataServices, PhotoStorage photoStorage, AuthenticationExceptionHandler authHandler) {
         _context = (Context)activity;
         _activity = activity;
         _photoList = activity.getPhotoList();
         _photoStorage = photoStorage;
-        _downloadPhotoTask = new DownloadPhotoTask(photoClient);
+        _dataServices = dataServices;
         _authHandler = authHandler;
     }
 
@@ -92,7 +91,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
 
     private void downloadImage(final PhotoView view, final Photo photo, PhotoSize size) {
-        _disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, size))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -20,10 +20,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.di.TaskComponent;
+import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.models.ExifData;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.tasks.GetExifDataTask;
+import us.mikeandwan.photos.services.DataServices;
 
 
 public class ExifDialogFragment extends BasePhotoDialogFragment {
@@ -36,7 +36,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
 
     @BindView(R.id.exifView) TableLayout _exifView;
 
-    @Inject GetExifDataTask _getExifDataTask;
+    @Inject DataServices _dataServices;
     @Inject AuthenticationExceptionHandler _authHandler;
 
 
@@ -55,7 +55,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.getComponent(TaskComponent.class).inject(this);
+        this.getComponent(ActivityComponent.class).inject(this);
     }
 
 
@@ -163,7 +163,7 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
 
 
     private void getExifData() {
-        _disposables.add(Flowable.fromCallable(() -> _getExifDataTask.call(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.getExifData(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

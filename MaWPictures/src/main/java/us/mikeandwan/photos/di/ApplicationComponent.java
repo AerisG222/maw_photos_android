@@ -10,10 +10,11 @@ import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
 import us.mikeandwan.photos.prefs.NotificationPreference;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
 import us.mikeandwan.photos.prefs.SyncPreference;
+import us.mikeandwan.photos.services.DataServices;
+import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
@@ -30,8 +31,9 @@ public interface ApplicationComponent {
     NotificationPreference notificationPreference();
     PhotoDisplayPreference photoDisplayPreference();
     SyncPreference syncPreference();
-    MawDataManager mawDataManager();
+    DataServices dataServices();
     PhotoStorage photoStorage();
+    DatabaseAccessor databaseAccessor();
     PhotoApiClient photoApiClient();
     AuthenticationExceptionHandler authenticationExceptionHandler();
 
@@ -43,7 +45,7 @@ public interface ApplicationComponent {
     void inject(SettingsActivity activity);
 
     // services
-    void inject(MawDataManager dataManager);
+    void inject(DatabaseAccessor databaseAccessor);
     void inject(MawSQLiteOpenHelper sqliteOpenHelper);
     void inject(PhotoApiClient client);
     void inject(PhotoStorage photoStorage);

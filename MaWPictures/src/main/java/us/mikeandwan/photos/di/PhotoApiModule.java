@@ -12,7 +12,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoApiCookieJar;
 import us.mikeandwan.photos.services.PhotoStorage;
@@ -69,13 +68,11 @@ public class PhotoApiModule {
 
     @Provides
     @Singleton
-    PhotoApiClient providePhotoApiClient(Application application,
-                                         PhotoStorage photoStorage,
-                                         MawDataManager dataManager,
+    PhotoApiClient providePhotoApiClient(PhotoStorage photoStorage,
                                          OkHttpClient httpClient,
                                          Retrofit retrofit,
                                          PhotoApiCookieJar cookieJar) {
-        return new PhotoApiClient(application, photoStorage, dataManager, httpClient, retrofit, cookieJar);
+        return new PhotoApiClient(photoStorage, httpClient, retrofit, cookieJar);
     }
 
 

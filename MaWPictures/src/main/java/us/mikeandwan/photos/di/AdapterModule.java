@@ -4,16 +4,14 @@ import android.app.Activity;
 
 import dagger.Module;
 import dagger.Provides;
+import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.ui.categories.ListCategoryRecyclerAdapter;
 import us.mikeandwan.photos.ui.categories.ThumbnailCategoryRecyclerAdapter;
 import us.mikeandwan.photos.ui.photos.IPhotoActivity;
 import us.mikeandwan.photos.ui.photos.FullScreenImageAdapter;
 import us.mikeandwan.photos.ui.photos.ThumbnailRecyclerAdapter;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
-import us.mikeandwan.photos.tasks.DownloadPhotoTask;
 
 
 @Module
@@ -22,9 +20,9 @@ class AdapterModule {
     @PerActivity
     ListCategoryRecyclerAdapter provideListCategoryRecyclerAdapter(Activity activity,
                                                                    PhotoStorage photoStorage,
-                                                                   DownloadCategoryTeaserTask task,
+                                                                   DataServices dataServices,
                                                                    AuthenticationExceptionHandler authHandler) {
-        return new ListCategoryRecyclerAdapter(activity, photoStorage, task, authHandler);
+        return new ListCategoryRecyclerAdapter(activity, photoStorage, dataServices, authHandler);
     }
 
 
@@ -32,9 +30,9 @@ class AdapterModule {
     @PerActivity
     ThumbnailCategoryRecyclerAdapter provideThumbnailCategoryRecyclerAdapter(Activity activity,
                                                                              PhotoStorage photoStorage,
-                                                                             DownloadCategoryTeaserTask task,
+                                                                             DataServices dataServices,
                                                                              AuthenticationExceptionHandler authHandler) {
-        return new ThumbnailCategoryRecyclerAdapter(activity, photoStorage, task, authHandler);
+        return new ThumbnailCategoryRecyclerAdapter(activity, photoStorage, dataServices, authHandler);
     }
 
 
@@ -42,9 +40,9 @@ class AdapterModule {
     @PerActivity
     FullScreenImageAdapter provideFullScreenImageAdapter(Activity activity,
                                                          PhotoStorage photoStorage,
-                                                         PhotoApiClient photoClient,
+                                                         DataServices dataServices,
                                                          AuthenticationExceptionHandler authHandler) {
-        return new FullScreenImageAdapter((IPhotoActivity) activity, photoStorage, photoClient, authHandler);
+        return new FullScreenImageAdapter((IPhotoActivity) activity, dataServices, photoStorage, authHandler);
     }
 
 
@@ -52,8 +50,8 @@ class AdapterModule {
     @PerActivity
     ThumbnailRecyclerAdapter provideThumbnailRecyclerAdapter(Activity activity,
                                                              PhotoStorage photoStorage,
-                                                             DownloadPhotoTask task,
+                                                             DataServices dataServices,
                                                              AuthenticationExceptionHandler authHandler) {
-        return new ThumbnailRecyclerAdapter(activity, photoStorage, task, authHandler);
+        return new ThumbnailRecyclerAdapter(activity, photoStorage, dataServices, authHandler);
     }
 }

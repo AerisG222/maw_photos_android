@@ -39,19 +39,17 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.ActivityComponent;
+import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
+import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
-import us.mikeandwan.photos.di.DaggerTaskComponent;
-import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadPhotoTask;
-import us.mikeandwan.photos.tasks.GetPhotoListTask;
-import us.mikeandwan.photos.tasks.GetRandomPhotoTask;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 
@@ -61,7 +59,7 @@ import static android.support.constraint.ConstraintSet.RIGHT;
 import static android.support.constraint.ConstraintSet.TOP;
 
 
-public class PhotoListActivity extends BaseActivity implements IPhotoActivity, HasComponent<TaskComponent> {
+public class PhotoListActivity extends BaseActivity implements IPhotoActivity, HasComponent<ActivityComponent> {
     private static final float FADE_START_ALPHA = 1.0f;
     private static final float FADE_END_ALPHA = 0.2f;
     private static final int FADE_DURATION = 3000;
@@ -83,7 +81,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private String _name;
     private int _categoryId;
     private MenuItem _menuShare;
-    private TaskComponent _taskComponent;
+    private ActivityComponent _activityComponent;
 
     @BindView(R.id.container) ConstraintLayout _container;
     @BindView(R.id.progressBar) ProgressBar _progressBar;
@@ -112,9 +110,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @Inject PhotoDisplayPreference _photoPrefs;
     @Inject PhotoStorage _ps;
     @Inject AuthenticationExceptionHandler _authHandler;
-    @Inject GetPhotoListTask _getPhotoListTask;
-    @Inject GetRandomPhotoTask _getRandomPhotoTask;
-    @Inject DownloadPhotoTask _downloadPhotoTask;
+    @Inject DataServices _dataServices;
     @Inject FullScreenImageAdapter _photoPagerAdapter;
     @Inject ThumbnailRecyclerAdapter _thumbnailRecyclerAdapter;
 
@@ -125,8 +121,8 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private ArrayList<Photo> _photoList = new ArrayList<>();
 
 
-    public TaskComponent getComponent() {
-        return _taskComponent;
+    public ActivityComponent getComponent() {
+        return _activityComponent;
     }
 
 
@@ -145,12 +141,12 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         setContentView(R.layout.activity_photo_list);
         ButterKnife.bind(this);
 
-        _taskComponent = DaggerTaskComponent.builder()
+        _activityComponent = DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .taskModule(getTaskModule())
+                .activityModule(getActivityModule())
                 .build();
 
-        _taskComponent.inject(this);
+        _activityComponent.inject(this);
 
         _photoPager.setAdapter(_photoPagerAdapter);
         _photoPager.onPhotoSelected().subscribe(this::gotoPhoto);
@@ -313,7 +309,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void initPhotoList() {
-        _disposables.add(Flowable.fromCallable(() -> _getPhotoListTask.call(_type, _categoryId))
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.getPhotoList(_type, _categoryId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -344,7 +340,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void fetchRandom() {
-        _disposables.add(Flowable.fromCallable(() -> _getRandomPhotoTask.call())
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.getRandomPhoto())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -475,7 +471,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void downloadImage(final Photo photo, PhotoSize size) {
-        _disposables.add(Flowable.fromCallable(() -> _downloadPhotoTask.call(photo, size))
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, size))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

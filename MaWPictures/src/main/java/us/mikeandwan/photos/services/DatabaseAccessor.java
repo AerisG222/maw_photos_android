@@ -20,13 +20,13 @@ import us.mikeandwan.photos.models.PhotoInfo;
 
 // https://nfrolov.wordpress.com/2014/08/16/android-sqlitedatabase-locking-and-multi-threading/
 //   recommends not closing db given its shared nature...
-public class MawDataManager {
+public class DatabaseAccessor {
     private static final String _seed = "Z@9{9^WSi)Rgf:Bjr|$L2f9.wK$fQH(_tiLs+\"4~p#i0u+[BBcSgEck!_0}PaJeF";
     private MawSQLiteOpenHelper _dbHelper;
 
 
     @Inject
-    public MawDataManager(MawSQLiteOpenHelper dbHelper) {
+    public DatabaseAccessor(MawSQLiteOpenHelper dbHelper) {
         _dbHelper = dbHelper;
     }
 

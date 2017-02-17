@@ -14,15 +14,15 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
+import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
 
 
 public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     protected final Context _context;
     protected final PhotoStorage _photoStorage;
-    private final DownloadCategoryTeaserTask _downloadCategoryTeaserTask;
+    private final DataServices _dataServices;
     private final PublishSubject<Category> _categorySubject = PublishSubject.create();
     private final AuthenticationExceptionHandler _authHandler;
     private List<Category> _categoryList;
@@ -30,11 +30,11 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
 
     public CategoryRecyclerAdapter(Context context,
                                    PhotoStorage photoStorage,
-                                   DownloadCategoryTeaserTask downloadTeaserTask,
+                                   DataServices dataServices,
                                    AuthenticationExceptionHandler authHandler) {
         _context = context;
         _photoStorage = photoStorage;
-        _downloadCategoryTeaserTask = downloadTeaserTask;
+        _dataServices = dataServices;
         _authHandler = authHandler;
     }
 
@@ -55,7 +55,7 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
         if (_photoStorage.doesExist(category.getTeaserPhotoInfo().getPath())) {
             displayCategory(category, viewHolder);
         } else {
-            _disposables.add(Flowable.fromCallable(() -> _downloadCategoryTeaserTask.call(category))
+            _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadCategoryTeaser(category))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(

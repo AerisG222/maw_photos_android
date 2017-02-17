@@ -28,20 +28,21 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.ActivityComponent;
+import us.mikeandwan.photos.di.DaggerActivityComponent;
+import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
+import us.mikeandwan.photos.services.DataServices;
+import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
-import us.mikeandwan.photos.di.DaggerTaskComponent;
-import us.mikeandwan.photos.di.TaskComponent;
-import us.mikeandwan.photos.services.MawDataManager;
-import us.mikeandwan.photos.tasks.GetYearsTask;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.categories.CategoryListActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 
 
-public class ModeSelectionActivity extends BaseActivity implements HasComponent<TaskComponent> {
+public class ModeSelectionActivity extends BaseActivity implements HasComponent<ActivityComponent> {
     private static final String KEY_NAME = "NAME";
     private static final String KEY_TYPE = "TYPE";
 
@@ -52,18 +53,18 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     private SimpleExpandableListAdapter _adapter;
     private List<Integer> _yearList;
     private MenuItem _refreshMenuItem;
-    private TaskComponent _taskComponent;
+    private ActivityComponent _activityComponent;
 
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.modeExpandableListView) ExpandableListView _modeExpandableListView;
 
-    @Inject MawDataManager _dm;
-    @Inject GetYearsTask _getYearsTask;
+    @Inject DatabaseAccessor _dm;
+    @Inject DataServices _dataServices;
     @Inject AuthenticationExceptionHandler _authHandler;
 
 
-    public TaskComponent getComponent() {
-        return _taskComponent;
+    public ActivityComponent getComponent() {
+        return _activityComponent;
     }
 
 
@@ -73,12 +74,12 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         setContentView(R.layout.activity_mode_selection);
         ButterKnife.bind(this);
 
-        _taskComponent = DaggerTaskComponent.builder()
+        _activityComponent = DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .taskModule(getTaskModule())
+                .activityModule(getActivityModule())
                 .build();
 
-        _taskComponent.inject(this);
+        _activityComponent.inject(this);
 
         if (_toolbar != null) {
             setSupportActionBar(_toolbar);
@@ -168,7 +169,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         startSyncAnimation();
 
         _disposables.add(
-            Flowable.fromCallable(() -> _getYearsTask.call())
+            Flowable.fromCallable(() -> _dataServices.getRecentCategories())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -181,10 +182,8 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     }
 
 
-    private void onSyncComplete(List<Integer> years) {
-        // go back to the database rather than inspecting results, as there poller may have happened
-        // before the sync, which means that the new year would not be in the list of results
-        prepareYearChildren(years);
+    private void onSyncComplete(List<Category> categories) {
+        prepareYearChildren();
 
         _adapter.notifyDataSetChanged();
 
@@ -195,13 +194,6 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     private void prepareYearChildren() {
         List<Integer> years = _dm.getPhotoYears();
 
-        prepareYearChildren(years);
-    }
-
-
-    private void prepareYearChildren(List<Integer> years) {
-        // if we are showing this for the first time, or have a new year available in the data,
-        // show it in the interface
         if (_yearList == null || years.size() != _yearList.size()) {
             _yearList = years;
 

@@ -29,27 +29,27 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.di.ActivityComponent;
+import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.prefs.CategoryDisplay;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
+import us.mikeandwan.photos.services.DataServices;
+import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
-import us.mikeandwan.photos.di.DaggerTaskComponent;
-import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.services.MawDataManager;
-import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 
 
-public class CategoryListActivity extends BaseActivity implements ICategoryListActivity, HasComponent<TaskComponent> {
+public class CategoryListActivity extends BaseActivity implements ICategoryListActivity, HasComponent<ActivityComponent> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private int _year;
     private List<Category> _categories;
     private MenuItem _refreshMenuItem;
-    private TaskComponent _taskComponent;
+    private ActivityComponent _activityComponent;
     private ViewTreeObserver.OnGlobalLayoutListener _listener;
     private DividerItemDecoration _decoration;
 
@@ -58,8 +58,8 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.category_recycler_view) RecyclerView _categoryRecyclerView;
 
-    @Inject MawDataManager _dataManager;
-    @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
+    @Inject DataServices _dataServices;
+    @Inject DatabaseAccessor _databaseAccessor;
     @Inject AuthenticationExceptionHandler _authHandler;
     @Inject CategoryDisplayPreference _categoryPrefs;
     @Inject ListCategoryRecyclerAdapter _listAdapter;
@@ -72,12 +72,12 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         setContentView(R.layout.activity_category_list);
         ButterKnife.bind(this);
 
-        _taskComponent = DaggerTaskComponent.builder()
+        _activityComponent = DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .taskModule(getTaskModule())
+                .activityModule(getActivityModule())
                 .build();
 
-        _taskComponent.inject(this);
+        _activityComponent.inject(this);
 
         _year = getIntent().getIntExtra("YEAR", 0);
     }
@@ -114,7 +114,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
             _container.getViewTreeObserver().addOnGlobalLayoutListener(_listener);
         }
 
-        setCategories(_dataManager.getCategoriesForYear(_year));
+        setCategories(_databaseAccessor.getCategoriesForYear(_year));
 
         super.onResume();
     }
@@ -130,8 +130,8 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     }
 
 
-    public TaskComponent getComponent() {
-        return _taskComponent;
+    public ActivityComponent getComponent() {
+        return _activityComponent;
     }
 
 
@@ -204,7 +204,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         startSyncAnimation();
 
         _disposables.add(
-                Flowable.fromCallable(() -> _getRecentCategoriesTask.call())
+                Flowable.fromCallable(() -> _dataServices.getRecentCategories())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -239,7 +239,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         // force the update to categories to come from database, and not the network result, as there
         // may have been updates already pulled from the poller
         _categories.clear();
-        _categories.addAll(_dataManager.getCategoriesForYear(_year));
+        _categories.addAll(_databaseAccessor.getCategoriesForYear(_year));
 
         notifyCategoriesUpdated();
 

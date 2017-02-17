@@ -26,25 +26,22 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.tasks.GetRecentCategoriesTask;
+import us.mikeandwan.photos.di.ActivityComponent;
+import us.mikeandwan.photos.di.DaggerActivityComponent;
+import us.mikeandwan.photos.services.DataServices;
+import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
-import us.mikeandwan.photos.di.DaggerTaskComponent;
-import us.mikeandwan.photos.di.TaskComponent;
 import us.mikeandwan.photos.models.Credentials;
-import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.GetCategoriesForYearTask;
-import us.mikeandwan.photos.tasks.GetYearsTask;
-import us.mikeandwan.photos.tasks.LoginTask;
 
 
 // TODO: change how we cache credentials for server side encryption
-public class LoginActivity extends BaseActivity implements HasComponent<TaskComponent> {
+public class LoginActivity extends BaseActivity implements HasComponent<ActivityComponent> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private Credentials _creds = new Credentials();
-    private TaskComponent _taskComponent;
+    private ActivityComponent _activityComponent;
     private MawApplication _app;
 
     @BindView(R.id.username) EditText _usernameView;
@@ -53,14 +50,13 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
     @BindView(R.id.login_form) View _loginFormView;
     @BindView(R.id.login_button) Button _loginButton;
 
-    @Inject MawDataManager _dm;
+    @Inject DatabaseAccessor _dm;
     @Inject PhotoStorage _ps;
-    @Inject LoginTask _loginTask;
-    @Inject GetRecentCategoriesTask _getRecentCategoriesTask;
+    @Inject DataServices _dataServices;
 
 
-    public TaskComponent getComponent() {
-        return _taskComponent;
+    public ActivityComponent getComponent() {
+        return _activityComponent;
     }
 
 
@@ -72,12 +68,12 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
 
         _app = (MawApplication) getApplication();
 
-        _taskComponent = DaggerTaskComponent.builder()
+        _activityComponent = DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .taskModule(getTaskModule())
+                .activityModule(getActivityModule())
                 .build();
 
-        _taskComponent.inject(this);
+        _activityComponent.inject(this);
 
         cleanupLegacyStorage();
 
@@ -141,7 +137,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
             showProgress(true);
 
             _disposables.add(
-                    Flowable.fromCallable(() -> _loginTask.call(_creds))
+                    Flowable.fromCallable(() -> _dataServices.authenticate(_creds))
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
@@ -171,7 +167,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<TaskComp
             // if this is the first time a user is accessing the system, prepare the initial list of categories now
             if (_dm.getPhotoYears().size() == 0) {
                 _disposables.add(
-                        Flowable.fromCallable(() -> _getRecentCategoriesTask.call())
+                        Flowable.fromCallable(() -> _dataServices.getRecentCategories())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(

@@ -32,12 +32,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.di.TaskComponent;
+import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.tasks.AddCommentTask;
-import us.mikeandwan.photos.tasks.GetCommentsTask;
+import us.mikeandwan.photos.services.DataServices;
 
 
 public class CommentDialogFragment extends BasePhotoDialogFragment {
@@ -52,8 +51,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     @BindColor(R.color.primary) int _colorPrimary;
     @BindColor(R.color.primary_dark) int _colorPrimaryDark;
 
-    @Inject AddCommentTask _addCommentTask;
-    @Inject GetCommentsTask _getCommentsTask;
+    @Inject DataServices _dataServices;
     @Inject AuthenticationExceptionHandler _authHandler;
 
 
@@ -66,7 +64,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
             cp.setPhotoId(getCurrentPhoto().getId());
             cp.setComment(comment);
 
-            _disposables.add(Flowable.fromCallable(() -> _addCommentTask.call(cp))
+            _disposables.add(Flowable.fromCallable(() -> _dataServices.addComment(cp))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
@@ -101,7 +99,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.getComponent(TaskComponent.class).inject(this);
+        this.getComponent(ActivityComponent.class).inject(this);
     }
 
 
@@ -128,7 +126,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
 
 
     private void getComments() {
-        _disposables.add(Flowable.fromCallable(() -> _getCommentsTask.call(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.getComments(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

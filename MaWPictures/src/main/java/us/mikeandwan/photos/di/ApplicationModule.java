@@ -8,6 +8,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import us.mikeandwan.photos.services.DataServices;
+import us.mikeandwan.photos.services.DatabaseAccessor;
+import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 @Module
@@ -31,5 +34,12 @@ public class ApplicationModule {
     @Singleton
     SharedPreferences provideSharedPreferences(Application application) {
         return PreferenceManager.getDefaultSharedPreferences(application);
+    }
+
+
+    @Provides
+    @Singleton
+    DataServices provideDataServices(DatabaseAccessor databaseAccessor, PhotoApiClient photoApiClient) {
+        return new DataServices(databaseAccessor, photoApiClient);
     }
 }

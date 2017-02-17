@@ -23,10 +23,10 @@ import javax.inject.Inject;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.prefs.NotificationPreference;
+import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.ui.login.LoginActivity;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Credentials;
-import us.mikeandwan.photos.services.MawDataManager;
 import us.mikeandwan.photos.services.PhotoApiClient;
 
 
@@ -35,7 +35,8 @@ public class MawPollerService extends Service {
     private MawApplication _app;
 
     @Inject PhotoApiClient _client;
-    @Inject MawDataManager _dm;
+    @Inject
+    DatabaseAccessor _dm;
     @Inject NotificationPreference _notificationPref;
 
     @Override
@@ -127,11 +128,6 @@ public class MawPollerService extends Service {
         public void handleMessage(Message msg) {
             int maxId = _dm.getLatestCategoryId();
             int totalCount = 0;
-
-            if (!_client.isConnected()) {
-                Log.w(MawApplication.LOG_TAG, "not connected to network, skipping poll check");
-                return;
-            }
 
             if (!_client.isAuthenticated()) {
                 Credentials creds = _dm.getCredentials();

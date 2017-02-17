@@ -7,7 +7,7 @@ import dagger.Provides;
 
 
 @Module
-class ActivityModule {
+public class ActivityModule {
     private final Activity _activity;
 
 

@@ -15,16 +15,16 @@ import butterknife.ButterKnife;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
+import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.tasks.DownloadCategoryTeaserTask;
 
 
 public class ListCategoryRecyclerAdapter extends CategoryRecyclerAdapter<ListCategoryRecyclerAdapter.ViewHolder> {
     public ListCategoryRecyclerAdapter(Context context,
                                        PhotoStorage photoStorage,
-                                       DownloadCategoryTeaserTask downloadTeaserTask,
+                                       DataServices dataServices,
                                        AuthenticationExceptionHandler authHandler) {
-        super(context, photoStorage, downloadTeaserTask, authHandler);
+        super(context, photoStorage, dataServices, authHandler);
     }
 
 

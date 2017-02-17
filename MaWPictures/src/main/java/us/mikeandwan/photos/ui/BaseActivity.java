@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.di.ActivityModule;
 import us.mikeandwan.photos.di.ApplicationComponent;
-import us.mikeandwan.photos.di.TaskModule;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -24,8 +24,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    protected TaskModule getTaskModule() {
-        return new TaskModule(this);
+    protected ActivityModule getActivityModule() {
+        return new ActivityModule(this);
     }
 
 

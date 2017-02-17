@@ -16,11 +16,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.di.TaskComponent;
+import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.models.Rating;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.tasks.GetRatingTask;
-import us.mikeandwan.photos.tasks.SetRatingTask;
+import us.mikeandwan.photos.services.DataServices;
 
 
 public class RatingDialogFragment extends BasePhotoDialogFragment {
@@ -30,8 +29,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     @BindView(R.id.yourRatingBar) RatingBar _yourRatingBar;
     @BindView(R.id.averageRatingBar) RatingBar _averageRatingBar;
 
-    @Inject GetRatingTask _getRatingTask;
-    @Inject SetRatingTask _setRatingTask;
+    @Inject DataServices _dataServices;
     @Inject AuthenticationExceptionHandler _authHandler;
 
 
@@ -42,7 +40,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
 
         _yourRatingBar.setOnRatingBarChangeListener((_ratingBar, rating, fromUser) -> {
             if (fromUser) {
-                _disposables.add(Flowable.fromCallable(() -> _setRatingTask.call(getCurrentPhoto().getId(), Math.round(rating)))
+                _disposables.add(Flowable.fromCallable(() -> _dataServices.setRating(getCurrentPhoto().getId(), Math.round(rating)))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -65,7 +63,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.getComponent(TaskComponent.class).inject(this);
+        this.getComponent(ActivityComponent.class).inject(this);
     }
 
 
@@ -95,7 +93,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
         _yourRatingBar.setRating(0);
         _averageRatingBar.setRating(0);
 
-        _disposables.add(Flowable.fromCallable(() -> _getRatingTask.call(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.getRating(getCurrentPhoto().getId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

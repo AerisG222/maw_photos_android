@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import us.mikeandwan.photos.services.MawDataManager;
+import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoStorage;
 
@@ -22,8 +22,8 @@ public class DataStorageModule {
 
     @Provides
     @Singleton
-    MawDataManager provideMawDataManager(MawSQLiteOpenHelper sqliteHelper) {
-        return new MawDataManager(sqliteHelper);
+    DatabaseAccessor provideDatabaseAccessor(MawSQLiteOpenHelper sqliteHelper) {
+        return new DatabaseAccessor(sqliteHelper);
     }
 
 
