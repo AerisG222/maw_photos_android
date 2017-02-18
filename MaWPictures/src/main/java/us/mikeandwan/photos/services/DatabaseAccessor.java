@@ -31,13 +31,13 @@ public class DatabaseAccessor {
     }
 
 
-    public void setCredentials(String username, String password) {
+    public void setCredentials(Credentials credentials) {
         SQLiteDatabase db = getDatabase();
         ContentValues values = new ContentValues();
 
         try {
-            values.put("username", username);
-            values.put("password", SimpleCrypto.encrypt(_seed, password));
+            values.put("username", credentials.getUsername());
+            values.put("password", SimpleCrypto.encrypt(_seed, credentials.getPassword()));
 
             // we currently only support one user for the app, so just clear everything at the start
             db.delete("user", null, null);

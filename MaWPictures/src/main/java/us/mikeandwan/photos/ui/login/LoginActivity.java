@@ -29,12 +29,10 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.services.DataServices;
-import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
 import us.mikeandwan.photos.models.Credentials;
-import us.mikeandwan.photos.services.PhotoStorage;
 
 
 // TODO: change how we cache credentials for server side encryption
@@ -50,8 +48,6 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
     @BindView(R.id.login_form) View _loginFormView;
     @BindView(R.id.login_button) Button _loginButton;
 
-    @Inject DatabaseAccessor _dm;
-    @Inject PhotoStorage _ps;
     @Inject DataServices _dataServices;
 
 
@@ -80,7 +76,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
         ResetNotifications();
         ViewCompat.setElevation(_progressView, 20);
 
-        _creds = _dm.getCredentials();
+        _creds = _dataServices.getCredentials();
 
         if (_creds != null) {
             _usernameView.setText(_creds.getUsername());
@@ -154,7 +150,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
 
         if (success) {
             // set the creds before it is blanked out below
-            _dm.setCredentials(_creds.getUsername(), _creds.getPassword());
+            _dataServices.setCredentials(_creds);
         }
 
         // always blank out the password after an attempt
@@ -164,20 +160,15 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
         if (success) {
             Snackbar.make(_loginFormView, "Welcome, " + _creds.getUsername(), Snackbar.LENGTH_SHORT).show();
 
-            // if this is the first time a user is accessing the system, prepare the initial list of categories now
-            if (_dm.getPhotoYears().size() == 0) {
-                _disposables.add(
-                        Flowable.fromCallable(() -> _dataServices.getRecentCategories())
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(
-                                        x -> goToModeSelection(),
-                                        ex -> Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage())
-                                )
-                );
-            } else {
-                goToModeSelection();
-            }
+            _disposables.add(
+                    Flowable.fromCallable(() -> _dataServices.getRecentCategories())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    x -> goToModeSelection(),
+                                    ex -> Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage())
+                            )
+            );
         } else {
             Snackbar.make(_loginFormView, "Unable to authenticate", Snackbar.LENGTH_SHORT).show();
             _passwordView.requestFocus();
@@ -199,9 +190,9 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
 
         _disposables.add(
                 Flowable.fromCallable(() -> {
-                    _ps.wipeLegacyCache();
-                    return true;
-                })
+                            _dataServices.wipeLegacyCache();
+                            return true;
+                        })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(

@@ -92,8 +92,9 @@ public class PhotoStorage {
     }
 
 
-    public Bitmap getPlaceholderThumbnail() {
-        return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+    public String getPlaceholderThumbnail() {
+        return "file:///android_asset/placeholder.png";
+        //return "android.resource://us.mikeandwan.photos/raw/placeholder.png";
     }
 
 

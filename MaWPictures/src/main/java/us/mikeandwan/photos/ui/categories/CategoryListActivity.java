@@ -34,7 +34,6 @@ import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.prefs.CategoryDisplay;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
 import us.mikeandwan.photos.services.DataServices;
-import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
@@ -59,7 +58,6 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     @BindView(R.id.category_recycler_view) RecyclerView _categoryRecyclerView;
 
     @Inject DataServices _dataServices;
-    @Inject DatabaseAccessor _databaseAccessor;
     @Inject AuthenticationExceptionHandler _authHandler;
     @Inject CategoryDisplayPreference _categoryPrefs;
     @Inject ListCategoryRecyclerAdapter _listAdapter;
@@ -114,7 +112,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
             _container.getViewTreeObserver().addOnGlobalLayoutListener(_listener);
         }
 
-        setCategories(_databaseAccessor.getCategoriesForYear(_year));
+        setCategories(_dataServices.getCategoriesForYear(_year));
 
         super.onResume();
     }
@@ -239,7 +237,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         // force the update to categories to come from database, and not the network result, as there
         // may have been updates already pulled from the poller
         _categories.clear();
-        _categories.addAll(_databaseAccessor.getCategoriesForYear(_year));
+        _categories.addAll(_dataServices.getCategoriesForYear(_year));
 
         notifyCategoriesUpdated();
 

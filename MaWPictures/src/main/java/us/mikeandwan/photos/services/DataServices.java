@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.services;
 
+import android.net.Uri;
 import android.util.Log;
 
 import java.util.List;
@@ -16,14 +17,19 @@ import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.models.Rating;
 
 
+// TODO: update names to reflect local vs remote
 public class DataServices {
     private final DatabaseAccessor _databaseAccessor;
     private final PhotoApiClient _photoApiClient;
+    private final PhotoStorage _photoStorage;
 
 
-    public DataServices(DatabaseAccessor databaseAccessor, PhotoApiClient photoApiClient) {
+    public DataServices(DatabaseAccessor databaseAccessor,
+                        PhotoApiClient photoApiClient,
+                        PhotoStorage photoStorage) {
         _databaseAccessor = databaseAccessor;
         _photoApiClient = photoApiClient;
+        _photoStorage = photoStorage;
     }
 
 
@@ -51,41 +57,46 @@ public class DataServices {
     }
 
 
-    public boolean downloadCategoryTeaser(Category category) throws Exception {
+    public String downloadCategoryTeaser(Category category) {
         Log.d(MawApplication.LOG_TAG, "started to download teaser for category: " + category.getId());
 
-        _photoApiClient.downloadPhoto(category.getTeaserPhotoInfo().getPath());
-
-        return true;
+        return downloadPhoto(category.getTeaserPhotoInfo().getPath());
     }
 
 
-    public boolean downloadPhoto(Photo photo, PhotoSize size) throws Exception {
+    public String downloadPhoto(Photo photo, PhotoSize size) {
         Log.d(MawApplication.LOG_TAG, "started to download photo: " + photo.getId());
+
+        String path = null;
 
         switch (size) {
             case Sm:
-                _photoApiClient.downloadPhoto(photo.getSmInfo().getPath());
+                path = photo.getSmInfo().getPath();
                 break;
             case Md:
-                _photoApiClient.downloadPhoto(photo.getMdInfo().getPath());
+                path = photo.getMdInfo().getPath();
                 break;
             case Xs:
-                _photoApiClient.downloadPhoto(photo.getXsInfo().getPath());
+                path = photo.getXsInfo().getPath();
                 break;
             case Lg:
-                _photoApiClient.downloadPhoto(photo.getLgInfo().getPath());
+                path = photo.getLgInfo().getPath();
                 break;
         }
 
-        return true;
+        return downloadPhoto(path);
     }
 
 
-    public List<Category> getCategoriesForYear(int year) throws Exception {
+    public List<Category> getCategoriesForYear(int year) {
         Log.d(MawApplication.LOG_TAG, "started to get categories for year: " + year);
 
         return _databaseAccessor.getCategoriesForYear(year);
+    }
+
+
+    public String getCategoryTeaser(Category category) {
+        return downloadPhoto(category.getTeaserPhotoInfo().getPath());
     }
 
 
@@ -93,6 +104,11 @@ public class DataServices {
         Log.d(MawApplication.LOG_TAG, "started to get comments for photo: " + photoId);
 
         return _photoApiClient.getComments(photoId);
+    }
+
+
+    public Credentials getCredentials() {
+        return _databaseAccessor.getCredentials();
     }
 
 
@@ -107,6 +123,11 @@ public class DataServices {
         Log.d(MawApplication.LOG_TAG, "started to get photo list");
 
         return _photoApiClient.getPhotos(type, categoryId);
+    }
+
+
+    public List<Integer> getPhotoYears() {
+        return _databaseAccessor.getPhotoYears();
     }
 
 
@@ -135,6 +156,16 @@ public class DataServices {
     }
 
 
+    public Uri getSharingContentUri(String remotePath) {
+        return _photoStorage.getSharingContentUri(remotePath);
+    }
+
+
+    public void setCredentials(Credentials credentials) {
+        _databaseAccessor.setCredentials(credentials);
+    }
+
+
     public Rating setRating(int photoId, int rating) throws Exception {
         Log.d(MawApplication.LOG_TAG, "started to set user rating for photo: " + photoId);
 
@@ -151,5 +182,31 @@ public class DataServices {
         }
 
         return rate;
+    }
+
+
+    public void wipeLegacyCache() {
+        _photoStorage.wipeLegacyCache();
+    }
+
+
+    private String downloadPhoto(String path) {
+        String cachePath = "file://" + _photoStorage.getCachePath(path);
+
+        if (_photoStorage.doesExist(path)) {
+            return cachePath;
+        }
+        else {
+            try {
+                if(_photoApiClient.downloadPhoto(path)) {
+                    return cachePath;
+                }
+            }
+            catch(Exception ex) {
+                Log.e(MawApplication.LOG_TAG, "error downloading file [" + path + "]: " + ex.getMessage());
+            }
+        }
+
+        return _photoStorage.getPlaceholderThumbnail();
     }
 }

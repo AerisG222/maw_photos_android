@@ -49,7 +49,6 @@ import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
-import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 
@@ -108,7 +107,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @OnClick(R.id.slideshowButton) void onSlideshowButtonClick() { toggleSlideshow(); }
 
     @Inject PhotoDisplayPreference _photoPrefs;
-    @Inject PhotoStorage _ps;
     @Inject AuthenticationExceptionHandler _authHandler;
     @Inject DataServices _dataServices;
     @Inject FullScreenImageAdapter _photoPagerAdapter;
@@ -426,7 +424,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private Intent createShareIntent(Photo photo) {
         if (photo != null) {
-            Uri contentUri = _ps.getSharingContentUri(photo.getMdInfo().getPath());
+            Uri contentUri = _dataServices.getSharingContentUri(photo.getMdInfo().getPath());
 
             if (contentUri != null) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);

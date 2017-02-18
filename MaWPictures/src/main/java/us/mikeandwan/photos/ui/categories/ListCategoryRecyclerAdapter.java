@@ -16,15 +16,13 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
-import us.mikeandwan.photos.services.PhotoStorage;
 
 
 public class ListCategoryRecyclerAdapter extends CategoryRecyclerAdapter<ListCategoryRecyclerAdapter.ViewHolder> {
     public ListCategoryRecyclerAdapter(Context context,
-                                       PhotoStorage photoStorage,
                                        DataServices dataServices,
                                        AuthenticationExceptionHandler authHandler) {
-        super(context, photoStorage, dataServices, authHandler);
+        super(context, dataServices, authHandler);
     }
 
 
@@ -36,14 +34,12 @@ public class ListCategoryRecyclerAdapter extends CategoryRecyclerAdapter<ListCat
     }
 
 
-    protected void displayCategory(Category category, ListCategoryRecyclerAdapter.ViewHolder viewHolder) {
-        String file = "file://" + _photoStorage.getCachePath(category.getTeaserPhotoInfo().getPath());
-
+    protected void displayCategory(Category category, String path, ListCategoryRecyclerAdapter.ViewHolder viewHolder) {
         viewHolder._nameTextView.setText(category.getName());
 
         Picasso
                 .with(_context)
-                .load(file)
+                .load(path)
                 .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
                 .centerCrop()
                 .into(viewHolder._thumbnailImageView);

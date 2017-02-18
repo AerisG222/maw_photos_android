@@ -11,6 +11,7 @@ import dagger.Provides;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.PhotoApiClient;
+import us.mikeandwan.photos.services.PhotoStorage;
 
 
 @Module
@@ -39,7 +40,9 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    DataServices provideDataServices(DatabaseAccessor databaseAccessor, PhotoApiClient photoApiClient) {
-        return new DataServices(databaseAccessor, photoApiClient);
+    DataServices provideDataServices(DatabaseAccessor databaseAccessor,
+                                     PhotoApiClient photoApiClient,
+                                     PhotoStorage photoStorage) {
+        return new DataServices(databaseAccessor, photoApiClient, photoStorage);
     }
 }

@@ -33,7 +33,6 @@ import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
-import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.ui.BaseActivity;
@@ -58,7 +57,6 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.modeExpandableListView) ExpandableListView _modeExpandableListView;
 
-    @Inject DatabaseAccessor _dm;
     @Inject DataServices _dataServices;
     @Inject AuthenticationExceptionHandler _authHandler;
 
@@ -192,7 +190,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
 
     private void prepareYearChildren() {
-        List<Integer> years = _dm.getPhotoYears();
+        List<Integer> years = _dataServices.getPhotoYears();
 
         if (_yearList == null || years.size() != _yearList.size()) {
             _yearList = years;

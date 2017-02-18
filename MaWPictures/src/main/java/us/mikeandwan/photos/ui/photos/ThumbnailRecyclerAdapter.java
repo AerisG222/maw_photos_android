@@ -21,22 +21,19 @@ import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
-import us.mikeandwan.photos.services.PhotoStorage;
 
 
 public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecyclerAdapter.ViewHolder> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
-    private final PhotoStorage _photoStorage;
     private final DataServices _dataServices;
     private final AuthenticationExceptionHandler _authHandler;
     private final PublishSubject<Integer> _thumbnailSubject = PublishSubject.create();
     private List<Photo> _photoList;
 
 
-    public ThumbnailRecyclerAdapter(Context context, PhotoStorage photoStorage, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
+    public ThumbnailRecyclerAdapter(Context context, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
         _context = context;
-        _photoStorage = photoStorage;
         _dataServices = dataServices;
         _authHandler = authHandler;
     }
@@ -60,20 +57,14 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
 
         viewHolder.itemView.setOnClickListener(v -> _thumbnailSubject.onNext(position));
 
-        if (_photoStorage.doesExist(photo.getXsInfo().getPath())) {
-            displayPhoto(photo, viewHolder);
-        } else {
-            viewHolder._thumbnailImageView.setImageBitmap(_photoStorage.getPlaceholderThumbnail());
-
-            _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, PhotoSize.Xs))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            x -> displayPhoto(photo, viewHolder),
-                            _authHandler::handleException
-                    )
-            );
-        }
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, PhotoSize.Xs))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        x -> displayPhoto(viewHolder, x),
+                        _authHandler::handleException
+                )
+        );
     }
 
 
@@ -98,12 +89,10 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     }
 
 
-    private void displayPhoto(Photo photo, ThumbnailRecyclerAdapter.ViewHolder viewHolder) {
-        String file = "file://" + _photoStorage.getCachePath(photo.getXsInfo().getPath());
-
+    private void displayPhoto(ThumbnailRecyclerAdapter.ViewHolder viewHolder, String path) {
         Picasso
                 .with(_context)
-                .load(file)
+                .load(path)
                 .resizeDimen(R.dimen.photo_list_thumbnail_size, R.dimen.photo_list_thumbnail_size)
                 .centerCrop()
                 .into(viewHolder._thumbnailImageView);

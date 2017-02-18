@@ -1,10 +1,11 @@
 package us.mikeandwan.photos.ui.photos;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.squareup.picasso.Picasso;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -18,7 +19,6 @@ import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
-import us.mikeandwan.photos.services.PhotoStorage;
 
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
@@ -27,16 +27,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final Context _context;
     private final IPhotoActivity _activity;
     private final List<Photo> _photoList;
-    private final PhotoStorage _photoStorage;
     private final AuthenticationExceptionHandler _authHandler;
     private final DataServices _dataServices;
 
 
-    public FullScreenImageAdapter(IPhotoActivity activity, DataServices dataServices, PhotoStorage photoStorage, AuthenticationExceptionHandler authHandler) {
+    public FullScreenImageAdapter(IPhotoActivity activity, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
         _context = (Context)activity;
         _activity = activity;
         _photoList = activity.getPhotoList();
-        _photoStorage = photoStorage;
         _dataServices = dataServices;
         _authHandler = authHandler;
     }
@@ -79,24 +77,16 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
 
     private void displayImage(PhotoView view, Photo photo) {
-        String path = photo.getMdInfo().getPath();
-
-        if (!_photoStorage.doesExist(path)) {
-            downloadImage(view, photo, PhotoSize.Md);
-        } else {
-            BitmapDrawable drawable = new BitmapDrawable(_context.getResources(), _photoStorage.get(path));
-            view.setImageDrawable(drawable);
-        }
-    }
-
-
-    private void downloadImage(final PhotoView view, final Photo photo, PhotoSize size) {
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, size))
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, PhotoSize.Md))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> {
-                            displayImage(view, photo);
+                            Picasso
+                                .with(_context)
+                                .load(x)
+                                .into(view);
+
                             _activity.updateProgress();
                         },
                         _authHandler::handleException

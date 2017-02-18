@@ -15,13 +15,11 @@ import io.reactivex.subjects.PublishSubject;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
-import us.mikeandwan.photos.services.PhotoStorage;
 
 
 public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     protected final Context _context;
-    protected final PhotoStorage _photoStorage;
     private final DataServices _dataServices;
     private final PublishSubject<Category> _categorySubject = PublishSubject.create();
     private final AuthenticationExceptionHandler _authHandler;
@@ -29,11 +27,9 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
 
 
     public CategoryRecyclerAdapter(Context context,
-                                   PhotoStorage photoStorage,
                                    DataServices dataServices,
                                    AuthenticationExceptionHandler authHandler) {
         _context = context;
-        _photoStorage = photoStorage;
         _dataServices = dataServices;
         _authHandler = authHandler;
     }
@@ -43,7 +39,7 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
     public abstract T onCreateViewHolder(ViewGroup parent, int viewType);
 
 
-    protected abstract void displayCategory(Category category, T viewHolder);
+    protected abstract void displayCategory(Category category, String imageFile, T viewHolder);
 
 
     @Override
@@ -52,18 +48,14 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
 
         viewHolder.itemView.setOnClickListener(v -> _categorySubject.onNext(category));
 
-        if (_photoStorage.doesExist(category.getTeaserPhotoInfo().getPath())) {
-            displayCategory(category, viewHolder);
-        } else {
-            _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadCategoryTeaser(category))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            x -> displayCategory(category, viewHolder),
-                            _authHandler::handleException
-                    )
-            );
-        }
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.getCategoryTeaser(category))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        x -> displayCategory(category, x, viewHolder),
+                        _authHandler::handleException
+                )
+        );
     }
 
 
