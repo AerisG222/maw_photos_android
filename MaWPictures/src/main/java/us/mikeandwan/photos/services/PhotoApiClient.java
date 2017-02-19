@@ -68,43 +68,10 @@ public class PhotoApiClient {
     }
 
 
-    public List<Integer> getPhotoYears() throws MawAuthenticationException, IOException {
-        ensureAuthenticated(false);
-
-        Response<List<Integer>> response = _photoApi.getPhotoYears().execute();
-
-        if (response.isSuccessful()) {
-            return response.body();
-        }
-
-        Log.e(MawApplication.LOG_TAG, "error getting photo years: " + response.toString());
-
-        throw new MawAuthenticationException();
-    }
-
-
-    public List<Category> getCategoriesForYear(int year) throws MawAuthenticationException, IOException {
-        ensureAuthenticated(false);
-
-        Response<List<Category>> response = _photoApi.getCategoriesForYear(year).execute();
-
-        return response.body();
-    }
-
-
     public List<Category> getRecentCategories(int sinceId) throws MawAuthenticationException, IOException {
         ensureAuthenticated(false);
 
         Response<List<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
-
-        return response.body();
-    }
-
-
-    public int getTotalCategoryCount() throws MawAuthenticationException, IOException {
-        ensureAuthenticated(false);
-
-        Response<Integer> response = _photoApi.getTotalCategoryCount().execute();
 
         return response.body();
     }

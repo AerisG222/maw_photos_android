@@ -1,8 +1,6 @@
 package us.mikeandwan.photos.services;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -81,20 +79,8 @@ public class PhotoStorage {
     }
 
 
-    public Bitmap get(String remotePath) {
-        File file = getCachePath(remotePath);
-
-        if (!file.exists()) {
-            return null;
-        }
-
-        return BitmapFactory.decodeFile(file.getAbsolutePath());
-    }
-
-
     public String getPlaceholderThumbnail() {
         return "file:///android_asset/placeholder.png";
-        //return "android.resource://us.mikeandwan.photos/raw/placeholder.png";
     }
 
 

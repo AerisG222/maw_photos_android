@@ -106,58 +106,6 @@ public class DatabaseAccessor {
     }
 
 
-    public int getCategoryCount() {
-        SQLiteDatabase db = getDatabase();
-        int result = 0;
-        Cursor c = null;
-        String sql = "SELECT COUNT(1) FROM image_category";
-
-        try {
-            c = db.rawQuery(sql, null);
-
-            c.moveToFirst();
-
-            if (!c.isNull(0)) {
-                result = c.getInt(0);
-            }
-        } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error getting category count: " + ex.getMessage());
-        } finally {
-            if (c != null && !c.isClosed()) {
-                c.close();
-            }
-        }
-
-        return result;
-    }
-
-
-    public List<Category> getAllCategories() {
-        SQLiteDatabase db = getDatabase();
-        List<Category> result = new ArrayList<>();
-        Cursor c = null;
-        String sql = "SELECT id, year, name, has_gps_data, teaser_image_width, teaser_image_height, teaser_image_path FROM image_category";
-
-        try {
-            c = db.rawQuery(sql, null);
-
-            if (c.getCount() > 0) {
-                while (c.moveToNext()) {
-                    result.add(BuildCategory(c));
-                }
-            }
-        } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error getting all categories: " + ex.getMessage());
-        } finally {
-            if (c != null && !c.isClosed()) {
-                c.close();
-            }
-        }
-
-        return result;
-    }
-
-
     public List<Category> getCategoriesForYear(int year) {
         SQLiteDatabase db = getDatabase();
         List<Category> result = new ArrayList<>();
@@ -263,27 +211,6 @@ public class DatabaseAccessor {
         values.put("teaser_image_path", category.getTeaserPhotoInfo().getPath());
 
         addSingleRecord(db, "image_category", values);
-    }
-
-
-    public void addYears(List<Integer> years) {
-        SQLiteDatabase db = getDatabase();
-
-        try {
-            db.beginTransaction();
-
-            for(int year : years) {
-                addYear(db, year);
-            }
-
-            db.setTransactionSuccessful();
-        }
-        catch(Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "Error adding years: " + ex.getMessage());
-        }
-        finally {
-            db.endTransaction();
-        }
     }
 
 

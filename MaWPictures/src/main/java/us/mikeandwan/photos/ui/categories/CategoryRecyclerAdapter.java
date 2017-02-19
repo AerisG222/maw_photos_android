@@ -48,7 +48,7 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
 
         viewHolder.itemView.setOnClickListener(v -> _categorySubject.onNext(category));
 
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.getCategoryTeaser(category))
+        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadCategoryTeaser(category))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

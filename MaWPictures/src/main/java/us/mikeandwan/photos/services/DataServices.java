@@ -17,7 +17,6 @@ import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.models.Rating;
 
 
-// TODO: update names to reflect local vs remote
 public class DataServices {
     private final DatabaseAccessor _databaseAccessor;
     private final PhotoApiClient _photoApiClient;
@@ -92,11 +91,6 @@ public class DataServices {
         Log.d(MawApplication.LOG_TAG, "started to get categories for year: " + year);
 
         return _databaseAccessor.getCategoriesForYear(year);
-    }
-
-
-    public String getCategoryTeaser(Category category) {
-        return downloadPhoto(category.getTeaserPhotoInfo().getPath());
     }
 
 
