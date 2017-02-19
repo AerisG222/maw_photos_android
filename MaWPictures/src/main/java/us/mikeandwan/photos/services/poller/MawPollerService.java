@@ -23,21 +23,18 @@ import javax.inject.Inject;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.prefs.NotificationPreference;
-import us.mikeandwan.photos.services.DatabaseAccessor;
+import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.ui.login.LoginActivity;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.models.Credentials;
-import us.mikeandwan.photos.services.PhotoApiClient;
 
 
 public class MawPollerService extends Service {
     private ServiceHandler _serviceHandler;
     private MawApplication _app;
 
-    @Inject PhotoApiClient _client;
-    @Inject
-    DatabaseAccessor _dm;
+    @Inject DataServices _dataServices;
     @Inject NotificationPreference _notificationPref;
+
 
     @Override
     public void onCreate() {
@@ -126,33 +123,14 @@ public class MawPollerService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            int maxId = _dm.getLatestCategoryId();
-            int totalCount = 0;
-
-            if (!_client.isAuthenticated()) {
-                Credentials creds = _dm.getCredentials();
-
-                if (!_client.authenticate(creds.getUsername(), creds.getPassword())) {
-                    Log.e(MawApplication.LOG_TAG, "unable to authenticate - will not check for new photos");
-                }
-            }
+            int totalCount;
 
             try {
-                List<Category> categories = _client.getRecentCategories(maxId);
+                List<Category> categories = _dataServices.getRecentCategories();
 
-                if (categories.size() > 0) {
-                    for (Category category : categories) {
-                        if (!_client.downloadPhoto(category.getTeaserPhotoInfo().getPath())) {
-                            Log.d(MawApplication.LOG_TAG, "unable to download teaser: " + category.getTeaserPhotoInfo().getPath());
-                        }
+                totalCount = _app.getNotificationCount() + categories.size();
 
-                        _dm.addCategory(category);
-                    }
-
-                    totalCount = _app.getNotificationCount() + categories.size();
-
-                    _app.setNotificationCount(totalCount);
-                }
+                _app.setNotificationCount(totalCount);
             } catch (Exception mae) {
                 totalCount = -1;
             }
