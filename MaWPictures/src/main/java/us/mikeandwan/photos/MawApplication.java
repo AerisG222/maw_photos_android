@@ -3,10 +3,10 @@ package us.mikeandwan.photos;
 import android.app.Application;
 import android.support.v7.app.AppCompatDelegate;
 
+import us.mikeandwan.photos.di.ApplicationComponent;
 import us.mikeandwan.photos.di.ApplicationModule;
 import us.mikeandwan.photos.di.DaggerApplicationComponent;
 import us.mikeandwan.photos.di.DataStorageModule;
-import us.mikeandwan.photos.di.ApplicationComponent;
 import us.mikeandwan.photos.di.PhotoApiModule;
 import us.mikeandwan.photos.di.PreferenceModule;
 

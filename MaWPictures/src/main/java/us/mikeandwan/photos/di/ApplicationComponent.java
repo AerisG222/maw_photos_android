@@ -10,16 +10,16 @@ import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
 import us.mikeandwan.photos.prefs.NotificationPreference;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
 import us.mikeandwan.photos.prefs.SyncPreference;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.DatabaseAccessor;
-import us.mikeandwan.photos.ui.BaseActivity;
-import us.mikeandwan.photos.ui.settings.SettingsActivity;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.services.poller.MawPollerService;
 import us.mikeandwan.photos.services.poller.MawScheduleReceiver;
+import us.mikeandwan.photos.ui.BaseActivity;
+import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 
 @Singleton

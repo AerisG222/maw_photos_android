@@ -7,14 +7,13 @@ import android.view.ViewGroup;
 
 import com.squareup.picasso.Picasso;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import uk.co.senab.photoview.PhotoView;
-
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import uk.co.senab.photoview.PhotoView;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;

@@ -3,8 +3,8 @@ package us.mikeandwan.photos.ui.photos;
 import android.app.DialogFragment;
 import android.content.Context;
 
-import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.models.Photo;
+import us.mikeandwan.photos.ui.HasComponent;
 
 
 public class BasePhotoDialogFragment extends DialogFragment {

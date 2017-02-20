@@ -28,11 +28,11 @@ import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
+import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
-import us.mikeandwan.photos.models.Credentials;
 
 
 // TODO: change how we cache credentials for server side encryption

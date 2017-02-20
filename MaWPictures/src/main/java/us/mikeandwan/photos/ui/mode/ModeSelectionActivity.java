@@ -34,11 +34,11 @@ import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
-import us.mikeandwan.photos.ui.settings.SettingsActivity;
 import us.mikeandwan.photos.ui.BaseActivity;
-import us.mikeandwan.photos.ui.categories.CategoryListActivity;
 import us.mikeandwan.photos.ui.HasComponent;
+import us.mikeandwan.photos.ui.categories.CategoryListActivity;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
+import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 
 public class ModeSelectionActivity extends BaseActivity implements HasComponent<ActivityComponent> {

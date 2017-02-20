@@ -31,16 +31,16 @@ import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
+import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.prefs.CategoryDisplay;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
+import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
-import us.mikeandwan.photos.ui.photos.PhotoListActivity;
-import us.mikeandwan.photos.ui.settings.SettingsActivity;
-import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
+import us.mikeandwan.photos.ui.photos.PhotoListActivity;
+import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 
 public class CategoryListActivity extends BaseActivity implements ICategoryListActivity, HasComponent<ActivityComponent> {

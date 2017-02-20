@@ -22,10 +22,10 @@ import javax.inject.Inject;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
+import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.prefs.NotificationPreference;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.ui.login.LoginActivity;
-import us.mikeandwan.photos.models.Category;
 
 
 public class MawPollerService extends Service {
