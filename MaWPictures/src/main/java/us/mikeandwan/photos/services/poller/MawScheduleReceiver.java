@@ -35,8 +35,8 @@ public class MawScheduleReceiver extends BroadcastReceiver {
 
 
     public void schedule(Context context, int repeatInHours) {
-        //long repeatIntervalInMillis = repeatInHours * AlarmManager.INTERVAL_HOUR;
-        long repeatIntervalInMillis = 20000;
+        long repeatIntervalInMillis = repeatInHours * AlarmManager.INTERVAL_HOUR;
+        //long repeatIntervalInMillis = 20000;
 
         Intent i = new Intent(context, MawStartReceiver.class);
         PendingIntent pending = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
