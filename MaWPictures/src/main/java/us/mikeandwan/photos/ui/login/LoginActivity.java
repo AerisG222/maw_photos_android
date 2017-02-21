@@ -138,7 +138,10 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     this::completeLoginProcess,
-                                    ex -> Log.w(MawApplication.LOG_TAG, "error authenticating: " + ex.getMessage())
+                                    ex -> {
+                                        showProgress(false);
+                                        Log.w(MawApplication.LOG_TAG, "error authenticating: " + ex.getMessage());
+                                    }
                             )
             );
         }
@@ -166,7 +169,10 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     x -> goToModeSelection(),
-                                    ex -> Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage())
+                                    ex -> {
+                                        showProgress(false);
+                                        Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage());
+                                    }
                             )
             );
         } else {
