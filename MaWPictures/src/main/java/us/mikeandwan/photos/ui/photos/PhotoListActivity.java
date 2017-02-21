@@ -513,7 +513,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private void updateThumbnail() {
         _thumbnailRecyclerView.scrollToPosition(getCurrentIndex());
 
-        fade();
+        updateOpacity();
     }
 
 
@@ -544,12 +544,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             }
         }
 
-        if(_photoPrefs.getDoFadeControls()) {
-            // if fade is enabled, we just fade the controls and let the photo / viewpager
-            // occupy the full screen, as it will be visible under controls
-            fade();
-        }
-        else {
+        if(!_photoPrefs.getDoFadeControls()) {
             ConstraintSet set = new ConstraintSet();
 
             set.constrainHeight(R.id.photoPager, 0);
@@ -558,7 +553,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             set.connect(R.id.photoPager, LEFT, R.id.container, LEFT, 0);
             set.connect(R.id.photoPager, RIGHT, R.id.container, RIGHT, 0);
 
-            // if we do not fade the controls, then we must reconfigure the photo layout to
+            // if we do not updateOpacity the controls, then we must reconfigure the photo layout to
             // be within the controls that are displayed
             if(_toolbar.isShown()) {
                 set.connect(R.id.photoPager, TOP, R.id.toolbar, BOTTOM, 0);
@@ -579,17 +574,28 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
             set.applyTo(_container);
         }
+
+        updateOpacity();
     }
 
 
-    private void fade() {
-        if(!_photoPrefs.getDoFadeControls()) {
-            return;
+    private void updateOpacity() {
+        if(_photoPrefs.getDoFadeControls()) {
+            fade(_toolbar);
+            fade(_photoToolbar);
+            fade(_thumbnailRecyclerView);
         }
+        else {
+            appear(_toolbar);
+            appear(_photoToolbar);
+            appear(_thumbnailRecyclerView);
+        }
+    }
 
-        fade(_toolbar);
-        fade(_photoToolbar);
-        fade(_thumbnailRecyclerView);
+
+    private void appear(View view) {
+        view.clearAnimation();
+        view.setAlpha(FADE_START_ALPHA);
     }
 
 
