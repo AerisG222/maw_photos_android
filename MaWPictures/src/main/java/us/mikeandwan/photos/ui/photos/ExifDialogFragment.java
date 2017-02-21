@@ -157,22 +157,27 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
             addExifRow("Saturation Adjustment", ExifDataFormatter.formatFourDecimals(exif.getSaturationAdjustment()));
             addExifRow("Compression Quality", ExifDataFormatter.format(exif.getCompressionQuality()));
         }
-
-        updateProgress();
     }
 
 
     private void getExifData() {
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.getExifData(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> {
+                    addWork();
+                    return _dataServices.getExifData(getCurrentPhoto().getId());
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> displayExifData(x),
-                        ex -> _authHandler.handleException(ex)
+                        x -> {
+                            removeWork();
+                            displayExifData(x);
+                        },
+                        ex -> {
+                            removeWork();
+                            _authHandler.handleException(ex);
+                        }
                 )
         );
-
-        updateProgress();
     }
 
 

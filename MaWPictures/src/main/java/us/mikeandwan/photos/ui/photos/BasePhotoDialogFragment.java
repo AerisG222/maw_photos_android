@@ -23,9 +23,12 @@ public class BasePhotoDialogFragment extends DialogFragment {
     }
 
 
-    void updateProgress() {
-        getPhotoActivity().updateProgress();
+    void addWork() {
+        getPhotoActivity().addWork();
     }
+
+
+    void removeWork() { getPhotoActivity().removeWork(); }
 
 
     Photo getCurrentPhoto() {

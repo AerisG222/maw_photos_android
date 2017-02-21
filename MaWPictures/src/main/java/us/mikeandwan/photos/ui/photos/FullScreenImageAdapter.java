@@ -76,22 +76,26 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
 
     private void displayImage(PhotoView view, Photo photo) {
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, PhotoSize.Md))
+        _disposables.add(Flowable.fromCallable(() -> {
+                    _activity.addWork();
+                    return _dataServices.downloadPhoto(photo, PhotoSize.Md);
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> {
+                            _activity.removeWork();
+
                             Picasso
                                 .with(_context)
                                 .load(x)
                                 .into(view);
-
-                            _activity.updateProgress();
                         },
-                        _authHandler::handleException
+                        ex -> {
+                            _activity.removeWork();
+                            _authHandler.handleException(ex);
+                        }
                 )
         );
-
-        _activity.updateProgress();
     }
 }

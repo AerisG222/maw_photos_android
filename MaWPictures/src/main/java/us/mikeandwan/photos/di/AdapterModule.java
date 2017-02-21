@@ -47,6 +47,6 @@ class AdapterModule {
     ThumbnailRecyclerAdapter provideThumbnailRecyclerAdapter(Activity activity,
                                                              DataServices dataServices,
                                                              AuthenticationExceptionHandler authHandler) {
-        return new ThumbnailRecyclerAdapter(activity, dataServices, authHandler);
+        return new ThumbnailRecyclerAdapter((IPhotoActivity) activity, dataServices, authHandler);
     }
 }

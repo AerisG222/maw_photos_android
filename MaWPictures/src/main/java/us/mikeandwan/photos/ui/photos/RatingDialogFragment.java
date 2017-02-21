@@ -40,16 +40,23 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
 
         _yourRatingBar.setOnRatingBarChangeListener((_ratingBar, rating, fromUser) -> {
             if (fromUser) {
-                _disposables.add(Flowable.fromCallable(() -> _dataServices.setRating(getCurrentPhoto().getId(), Math.round(rating)))
+                _disposables.add(Flowable.fromCallable(() -> {
+                            addWork();
+                            return _dataServices.setRating(getCurrentPhoto().getId(), Math.round(rating));
+                        })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                this::displayRating,
-                                ex -> _authHandler.handleException(ex)
+                                x -> {
+                                    removeWork();
+                                    displayRating(x);
+                                },
+                                ex -> {
+                                    removeWork();
+                                    _authHandler.handleException(ex);
+                                }
                         )
                 );
-
-                updateProgress();
             }
         });
 
@@ -93,16 +100,23 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
         _yourRatingBar.setRating(0);
         _averageRatingBar.setRating(0);
 
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.getRating(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> {
+                    addWork();
+                    return _dataServices.getRating(getCurrentPhoto().getId());
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::displayRating,
-                        ex -> _authHandler.handleException(ex)
+                        x -> {
+                            removeWork();
+                            displayRating(x);
+                        },
+                        ex -> {
+                            removeWork();
+                            _authHandler.handleException(ex);
+                        }
                 )
         );
-
-        updateProgress();
     }
 
 
@@ -114,7 +128,5 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
             _yourRatingBar.setRating(rating.getUserRating());
             _averageRatingBar.setRating(rating.getAverageRating());
         }
-
-        updateProgress();
     }
 }

@@ -64,19 +64,24 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
             cp.setPhotoId(getCurrentPhoto().getId());
             cp.setComment(comment);
 
-            _disposables.add(Flowable.fromCallable(() -> _dataServices.addComment(cp))
+            _disposables.add(Flowable.fromCallable(() -> {
+                        addWork();
+                        return _dataServices.addComment(cp);
+                    })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             x -> {
+                                removeWork();
                                 _commentEditText.setText("");
                                 displayComments(x);
                             },
-                            ex -> _authHandler.handleException(ex)
+                            ex -> {
+                                removeWork();
+                                _authHandler.handleException(ex);
+                            }
                     )
             );
-
-            updateProgress();
         }
     }
 
@@ -126,16 +131,23 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
 
 
     private void getComments() {
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.getComments(getCurrentPhoto().getId()))
+        _disposables.add(Flowable.fromCallable(() -> {
+                    addWork();
+                    return _dataServices.getComments(getCurrentPhoto().getId());
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::displayComments,
-                        ex -> _authHandler.handleException(ex)
+                        x -> {
+                            removeWork();
+                            displayComments(x);
+                        },
+                        ex -> {
+                            removeWork();
+                            _authHandler.handleException(ex);
+                        }
                 )
         );
-
-        updateProgress();
     }
 
 
@@ -186,7 +198,5 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
             commentRow.addView(commentView);
             ((TableRow.LayoutParams) commentView.getLayoutParams()).span = 2;
         }
-
-        updateProgress();
     }
 }

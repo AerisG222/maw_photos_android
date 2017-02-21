@@ -7,7 +7,9 @@ import us.mikeandwan.photos.models.Photo;
 
 
 public interface IPhotoActivity {
-    void updateProgress();
+    void addWork();
+
+    void removeWork();
 
     Photo getCurrentPhoto();
 

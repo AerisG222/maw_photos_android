@@ -26,14 +26,17 @@ import us.mikeandwan.photos.services.DataServices;
 public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecyclerAdapter.ViewHolder> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
+    private final IPhotoActivity _activity;
     private final DataServices _dataServices;
     private final AuthenticationExceptionHandler _authHandler;
     private final PublishSubject<Integer> _thumbnailSubject = PublishSubject.create();
     private List<Photo> _photoList;
 
 
-    public ThumbnailRecyclerAdapter(Context context, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
-        _context = context;
+    public ThumbnailRecyclerAdapter(IPhotoActivity activity, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
+        _context = (Context)activity;
+        _activity = activity;
+        _photoList = activity.getPhotoList();
         _dataServices = dataServices;
         _authHandler = authHandler;
     }
@@ -57,12 +60,21 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
 
         viewHolder.itemView.setOnClickListener(v -> _thumbnailSubject.onNext(position));
 
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, PhotoSize.Xs))
+        _disposables.add(Flowable.fromCallable(() -> {
+                    _activity.addWork();
+                    return _dataServices.downloadPhoto(photo, PhotoSize.Xs);
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> displayPhoto(viewHolder, x),
-                        _authHandler::handleException
+                        x -> {
+                            _activity.removeWork();
+                            displayPhoto(viewHolder, x);
+                        },
+                        ex -> {
+                            _activity.removeWork();
+                            _authHandler.handleException(ex);
+                        }
                 )
         );
     }
@@ -71,11 +83,6 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     @Override
     public int getItemCount() {
         return _photoList.size();
-    }
-
-
-    public void setPhotoList(List<Photo> photoList) {
-        _photoList = photoList;
     }
 
 

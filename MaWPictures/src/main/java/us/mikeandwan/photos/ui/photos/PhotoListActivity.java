@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.view.MenuItemCompat;
@@ -27,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -75,7 +77,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private ScheduledThreadPoolExecutor _slideshowExecutor;
     private HashSet<Integer> _randomPhotoIds;
-    private int _taskCount = 0;
+    private AtomicInteger _taskCount = new AtomicInteger(0);
     private PhotoListType _type;
     private String _name;
     private int _categoryId;
@@ -264,14 +266,15 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    public void updateProgress() {
-        Log.d(MawApplication.LOG_TAG, "task count: " + _taskCount);
+    public void addWork() {
+        _taskCount.incrementAndGet();
+        updateProgress();
+    }
 
-        if (_taskCount > 0) {
-            _progressBar.setVisibility(View.VISIBLE);
-        } else {
-            _progressBar.setVisibility(View.INVISIBLE);
-        }
+
+    public void removeWork() {
+        _taskCount.decrementAndGet();
+        updateProgress();
     }
 
 
@@ -306,17 +309,41 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
+    @UiThread
+    private void updateProgress() {
+
+        runOnUiThread(() -> {
+            int count = _taskCount.get();
+
+            Log.d(MawApplication.LOG_TAG, "task count: " + count);
+
+            if (count > 0) {
+                _progressBar.setVisibility(View.VISIBLE);
+            } else {
+                _progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+
     private void initPhotoList() {
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.getPhotoList(_type, _categoryId))
+        _disposables.add(Flowable.fromCallable(() -> {
+                    addWork();
+                    return _dataServices.getPhotoList(_type, _categoryId);
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::onGetPhotoList,
-                        ex -> _authHandler.handleException(ex)
+                        x -> {
+                            removeWork();
+                            onGetPhotoList(x);
+                        },
+                        ex -> {
+                            removeWork();
+                            _authHandler.handleException(ex);
+                        }
                 )
         );
-
-        updateProgress();
     }
 
 
@@ -338,16 +365,23 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void fetchRandom() {
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.getRandomPhoto())
+        _disposables.add(Flowable.fromCallable(() -> {
+                    addWork();
+                    return _dataServices.getRandomPhoto();
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::onGetRandom,
-                        ex -> _authHandler.handleException(ex)
+                        x -> {
+                            removeWork();
+                            onGetRandom(x);
+                        },
+                        ex -> {
+                            removeWork();
+                            _authHandler.handleException(ex);
+                        }
                 )
         );
-
-        updateProgress();
     }
 
 
@@ -376,8 +410,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             _displayedRandomImage = true;
             gotoPhoto(0);
         }
-
-        updateProgress();
     }
 
 
@@ -385,8 +417,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         _photoPagerAdapter.notifyDataSetChanged();
 
         gotoPhoto(_index);
-
-        updateProgress();
     }
 
 
@@ -450,35 +480,37 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             sap.setShareIntent(createShareIntent(photo));
         }
 
-        PrefetchMainImage(_index);
-
-        updateProgress();
+        prefetchMainImage(_index);
     }
 
 
-    private void PrefetchMainImage(int index) {
+    private void prefetchMainImage(int index) {
         // start fetching next item first, if there is one, as it is more likely to move forward first
         for (int i = index + 1; i < index + PREFETCH_COUNT && i < _photoList.size(); i++) {
-            downloadImage(_photoList.get(i), PhotoSize.Md);
+            prefetchImage(_photoList.get(i), PhotoSize.Md);
         }
 
         for (int i = index - 1; i > index - PREFETCH_COUNT && i > 0; i--) {
-            downloadImage(_photoList.get(i), PhotoSize.Md);
+            prefetchImage(_photoList.get(i), PhotoSize.Md);
         }
     }
 
 
-    private void downloadImage(final Photo photo, PhotoSize size) {
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadPhoto(photo, size))
+    private void prefetchImage(final Photo photo, PhotoSize size) {
+        _disposables.add(Flowable.fromCallable(() -> {
+                    addWork();
+                    return _dataServices.downloadPhoto(photo, size);
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> updateProgress(),
-                        ex -> _authHandler.handleException(ex)
+                        x -> removeWork(),
+                        ex -> {
+                            removeWork();
+                            _authHandler.handleException(ex);
+                        }
                 )
         );
-
-        updateProgress();
     }
 
 
@@ -529,11 +561,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         if(_photoPrefs.getDoDisplayThumbnails()) {
             LinearLayoutManager llm = new LinearLayoutManager(this);
             llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+
             _thumbnailRecyclerView.setLayoutManager(llm);
-
-            _thumbnailRecyclerAdapter.setPhotoList(_photoList);
             _thumbnailRecyclerView.setAdapter(_thumbnailRecyclerAdapter);
-
             _thumbnailRecyclerAdapter.onThumbnailSelected().subscribe(this::gotoPhoto);
 
             if(_photoPrefs.getDoFadeControls()) {
