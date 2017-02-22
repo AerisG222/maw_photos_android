@@ -24,11 +24,13 @@ interface PhotoApi {
     @POST("api/account/login")
     Call<Boolean> authenticate(@Field("Username") String username, @Field("Password") String password);
 
+    /*
     @GET("api/photos/getPhotoYears")
     Call<List<Integer>> getPhotoYears();
 
     @GET("api/photos/getCategoriesForYear/{year}")
     Call<List<Category>> getCategoriesForYear(@Path("year") int year);
+    */
 
     @GET("api/account/get-xsrf-token")
     Call<Boolean> establishXsrfTokenCookie();
@@ -36,9 +38,11 @@ interface PhotoApi {
     @GET("api/photos/getRecentCategories/{sinceId}")
     Call<List<Category>> getRecentCategories(@Path("sinceId") int sinceId);
 
+    /*
     @GET("api/photos/getCategoryCount")
     Call<Integer> getTotalCategoryCount();
-
+    */
+    
     @GET("api/photos/getPhotoExifData/{photoId}")
     Call<ExifData> getExifData(@Path("photoId") int photoId);
 
