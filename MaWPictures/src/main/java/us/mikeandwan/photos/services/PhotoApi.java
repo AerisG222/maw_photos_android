@@ -42,7 +42,7 @@ interface PhotoApi {
     @GET("api/photos/getCategoryCount")
     Call<Integer> getTotalCategoryCount();
     */
-    
+
     @GET("api/photos/getPhotoExifData/{photoId}")
     Call<ExifData> getExifData(@Path("photoId") int photoId);
 
