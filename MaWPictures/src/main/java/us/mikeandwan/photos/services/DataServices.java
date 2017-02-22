@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.services;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
@@ -203,6 +204,10 @@ public class DataServices {
 
 
     private String downloadPhoto(String path) {
+        if(path == null || TextUtils.isEmpty(path)) {
+            return _photoStorage.getPlaceholderThumbnail();
+        }
+
         String cachePath = "file://" + _photoStorage.getCachePath(path);
 
         if (_photoStorage.doesExist(path)) {
