@@ -14,7 +14,6 @@ import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoApiCookieJar;
-import us.mikeandwan.photos.services.PhotoStorage;
 
 
 @Module
@@ -68,11 +67,10 @@ public class PhotoApiModule {
 
     @Provides
     @Singleton
-    PhotoApiClient providePhotoApiClient(PhotoStorage photoStorage,
-                                         OkHttpClient httpClient,
+    PhotoApiClient providePhotoApiClient(OkHttpClient httpClient,
                                          Retrofit retrofit,
                                          PhotoApiCookieJar cookieJar) {
-        return new PhotoApiClient(photoStorage, httpClient, retrofit, cookieJar);
+        return new PhotoApiClient(httpClient, retrofit, cookieJar);
     }
 
 

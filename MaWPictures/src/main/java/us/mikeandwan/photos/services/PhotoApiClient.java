@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.services;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
@@ -28,18 +27,15 @@ import us.mikeandwan.photos.models.Rating;
 
 
 public class PhotoApiClient {
-    private final PhotoStorage _photoStorage;
     private final PhotoApiCookieJar _cookieJar;
     private final PhotoApi _photoApi;
     private final OkHttpClient _httpClient;
 
 
     @Inject
-    public PhotoApiClient(PhotoStorage photoStorage,
-                          OkHttpClient httpClient,
+    public PhotoApiClient(OkHttpClient httpClient,
                           Retrofit retrofit,
                           PhotoApiCookieJar cookieJar) {
-        _photoStorage = photoStorage;
         _httpClient = httpClient;
         _photoApi = retrofit.create(PhotoApi.class);
         _cookieJar = cookieJar;
@@ -184,33 +180,17 @@ public class PhotoApiClient {
     }
 
 
-    public boolean downloadPhoto(String photoPath) throws MawAuthenticationException {
-        if (photoPath == null || TextUtils.isEmpty(photoPath)) {
-            Log.w(MawApplication.LOG_TAG, "you need to specify the path to the photo");
-        }
-
-        if (_photoStorage.doesExist(photoPath)) {
-            return true;
-        }
-
+    public okhttp3.Response downloadPhoto(String photoPath) {
         try {
             URL url = new URL(buildPhotoUrl(photoPath));
             Request request = new Request.Builder().url(url).build();
-            okhttp3.Response response = _httpClient.newCall(request).execute();
 
-            if(response.isSuccessful()) {
-                _photoStorage.put(photoPath, response.body());
-
-                return true;
-            }
-            else {
-                Log.w(MawApplication.LOG_TAG, "Did not receive a successful download status code: " + String.valueOf(response.code()));
-            }
+            return _httpClient.newCall(request).execute();
         } catch (IOException ex) {
             Log.w(MawApplication.LOG_TAG, "Error when getting photo blob: " + ex.getMessage());
         }
 
-        return false;
+        return null;
     }
 
 

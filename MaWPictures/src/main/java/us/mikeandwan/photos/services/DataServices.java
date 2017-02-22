@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.Response;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
@@ -209,8 +210,20 @@ public class DataServices {
         }
         else {
             try {
-                if(_photoApiClient.downloadPhoto(path)) {
-                    return cachePath;
+                Response response = _photoApiClient.downloadPhoto(path);
+
+                if(response != null) {
+                    if(response.isSuccessful()) {
+                        _photoStorage.put(path, response.body());
+
+                        response.body().close();
+                        response.close();
+
+                        return cachePath;
+                    }
+                    else {
+                        Log.e(MawApplication.LOG_TAG, "error downloading file [" + path + "]: status code: " + response.code());
+                    }
                 }
             }
             catch(Exception ex) {
