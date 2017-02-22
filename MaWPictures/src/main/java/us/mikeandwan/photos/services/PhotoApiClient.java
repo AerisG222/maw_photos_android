@@ -20,7 +20,6 @@ import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
-import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.models.ExifData;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
@@ -69,8 +68,6 @@ public class PhotoApiClient {
 
 
     public List<Category> getRecentCategories(int sinceId) throws MawAuthenticationException, IOException {
-        ensureAuthenticated(false);
-
         Response<List<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
 
         return response.body();
@@ -78,8 +75,6 @@ public class PhotoApiClient {
 
 
     public List<Photo> getPhotos(PhotoListType type, int categoryId) throws Exception {
-        ensureAuthenticated(false);
-
         Call<List<Photo>> call;
 
         switch(type) {
@@ -119,8 +114,6 @@ public class PhotoApiClient {
 
 
     public PhotoAndCategory getRandomPhoto() throws MawAuthenticationException, IOException {
-        ensureAuthenticated(false);
-
         Response<PhotoAndCategory> response = _photoApi.getRandomPhoto().execute();
 
         return response.body();
@@ -128,8 +121,6 @@ public class PhotoApiClient {
 
 
     public ExifData getExifData(int photoId) throws MawAuthenticationException, IOException {
-        ensureAuthenticated(false);
-
         Response<ExifData> response = _photoApi.getExifData(photoId).execute();
 
         return response.body();
@@ -137,8 +128,6 @@ public class PhotoApiClient {
 
 
     public List<Comment> getComments(int photoId) throws MawAuthenticationException, IOException {
-        ensureAuthenticated(false);
-
         Response<List<Comment>> response = _photoApi.getComments(photoId).execute();
 
         return response.body();
@@ -146,8 +135,6 @@ public class PhotoApiClient {
 
 
     public Rating getRatings(int photoId) throws MawAuthenticationException, IOException {
-        ensureAuthenticated(false);
-
         Response<Rating> response = _photoApi.getRatings(photoId).execute();
 
         return response.body();
@@ -155,8 +142,6 @@ public class PhotoApiClient {
 
 
     public Float setRating(int photoId, int rating) throws MawAuthenticationException {
-        ensureAuthenticated(false);
-
         RatePhoto rp = new RatePhoto();
         rp.setPhotoId(photoId);
         rp.setRating(rating);
@@ -180,8 +165,6 @@ public class PhotoApiClient {
 
 
     public void addComment(int photoId, String comment) throws MawAuthenticationException {
-        ensureAuthenticated(false);
-
         CommentPhoto cp = new CommentPhoto();
         cp.setComment(comment);
         cp.setPhotoId(photoId);
@@ -202,8 +185,6 @@ public class PhotoApiClient {
 
 
     public boolean downloadPhoto(String photoPath) throws MawAuthenticationException {
-        ensureAuthenticated(false);
-
         if (photoPath == null || TextUtils.isEmpty(photoPath)) {
             Log.w(MawApplication.LOG_TAG, "you need to specify the path to the photo");
         }
@@ -230,28 +211,6 @@ public class PhotoApiClient {
         }
 
         return false;
-    }
-
-
-    // this should only be called by methods that already expect to make network calls, otherwise android will complain
-    // about this running on the ui thread
-    void ensureAuthenticated(boolean force) throws MawAuthenticationException {
-        if (force || !isAuthenticated()) {
-            Log.d(MawApplication.LOG_TAG, "refreshing the authentication token");
-
-            // TODO: how to get creds here w/o reference to db accessor?
-            Credentials creds = null; // _databaseAccessor.getCredentials();
-
-            if (creds != null) {
-                String username = creds.getUsername();
-                String password = creds.getPassword();
-
-                if (!authenticate(username, password)) {
-                    Log.e(MawApplication.LOG_TAG, "unable to reinstate the authentication token");
-                    throw new MawAuthenticationException();
-                }
-            }
-        }
     }
 
 
