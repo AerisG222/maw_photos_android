@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:mawphotos="http://schemas.android.com/apk/res-auto"
-      xmlns:compat="http://schemas.android.com/tools">
+      xmlns:mawphotos="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_force_sync"
           android:title="@string/action_sync"
           android:icon="@drawable/ic_sync_white_24dp"
           android:orderInCategory="100"
           android:onClick="onMenuItemForceSync"
-          compat:actionViewClass="android.widget.ImageView"
           mawphotos:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_settings"

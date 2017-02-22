@@ -105,7 +105,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mode_selection, menu);
 
-        _refreshMenuItem = menu.findItem(R.id.action_settings);
+        _refreshMenuItem = menu.findItem(R.id.action_force_sync);
 
         return true;
     }
