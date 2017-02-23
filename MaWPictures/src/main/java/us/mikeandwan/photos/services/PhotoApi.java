@@ -65,7 +65,7 @@ interface PhotoApi {
     Call<List<Photo>> getPhotosByUserCommentDate(@Path("newestFirst") boolean newestFirst);
 
     @GET("api/photos/getPhotosByCommentCount/{mostFirst}")
-    Call<List<Photo>> getPhotosByCommentCount(@Path("most") boolean mostFirst);
+    Call<List<Photo>> getPhotosByCommentCount(@Path("mostFirst") boolean mostFirst);
 
     @GET("api/photos/getPhotosByAverageRating/true")
     Call<List<Photo>> getPhotosByAverageRating();
