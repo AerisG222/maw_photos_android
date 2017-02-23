@@ -48,10 +48,12 @@ android {
 
     buildTypes {
         release {
-            debuggable false
+            // shrink is apparently not supported yet by jack
+            // https://code.google.com/p/android/issues/detail?id=82168
+            //shrinkResources true
             minifyEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
-            shrinkResources true
             signingConfig signingConfigs.maw
         }
     }
