@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.photos;
 
+import android.animation.ObjectAnimator;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -19,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
@@ -311,7 +311,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     @UiThread
     private void updateProgress() {
-
         runOnUiThread(() -> {
             int count = _taskCount.get();
 
@@ -544,8 +543,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private void updateThumbnail() {
         _thumbnailRecyclerView.scrollToPosition(getCurrentIndex());
-
-        updateOpacity();
     }
 
 
@@ -630,11 +627,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void fade(View view) {
-        AlphaAnimation alpha = new AlphaAnimation(FADE_START_ALPHA, FADE_END_ALPHA);
-        alpha.setDuration(FADE_DURATION);
-        alpha.setFillAfter(true);
-
-        view.startAnimation(alpha);
+        ObjectAnimator anim = ObjectAnimator.ofFloat(view, "alpha", FADE_START_ALPHA, FADE_END_ALPHA);
+        anim.setDuration(FADE_DURATION);
+        anim.start();
     }
 
 
