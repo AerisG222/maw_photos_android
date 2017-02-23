@@ -89,7 +89,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                 new String[]{KEY_NAME},
                 new int[]{android.R.id.text1},
                 _childData,
-                android.R.layout.simple_expandable_list_item_2,
+                android.R.layout.simple_expandable_list_item_1,
                 new String[]{KEY_NAME},
                 new int[]{android.R.id.text1});
 
