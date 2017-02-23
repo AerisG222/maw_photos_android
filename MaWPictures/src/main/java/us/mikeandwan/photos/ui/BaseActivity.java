@@ -32,10 +32,11 @@ public class BaseActivity extends AppCompatActivity {
     protected void updateToolbar(Toolbar toolbar, String title) {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            ViewCompat.setElevation(toolbar, 4);
 
-            getSupportActionBar().setTitle(title);
-
-            ViewCompat.setElevation(toolbar, 8);
+            if(title != null) {
+                toolbar.setTitle(title);
+            }
         }
     }
 }

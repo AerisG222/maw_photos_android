@@ -74,7 +74,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
         cleanupLegacyStorage();
 
         ResetNotifications();
-        ViewCompat.setElevation(_progressView, 20);
+        ViewCompat.setElevation(_progressView, 4);
 
         _creds = _dataServices.getCredentials();
 

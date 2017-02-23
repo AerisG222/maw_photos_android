@@ -79,10 +79,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
         _activityComponent.inject(this);
 
-        if (_toolbar != null) {
-            setSupportActionBar(_toolbar);
-            ViewCompat.setElevation(_toolbar, 8);
-        }
+        updateToolbar(_toolbar, null);
 
         _modeExpandableListView.setOnChildClickListener(this::onItemClicked);
 
