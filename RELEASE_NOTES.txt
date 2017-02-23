@@ -1,3 +1,22 @@
+4.0:
+- rewrite / re-imagining of the app design
+- fix crash on rotate on the photo list screen
+- add more customization options to the photo list screen
+- using jack+jill w/ java 8
+- leverage OSS libraries:
+  - butterknife
+  - dagger 2
+  - okhttp
+  - retrofit (w/ jackson)
+  - photoview
+  - rxjava 2 / rxandroid 2
+- remove complicated threading code
+- use constraint layouts
+- use vector graphics where possible
+- removed use of fragments
+- optimize some code paths (ex. initialization is fast now)
+
+
 3.2:
 - fix issue with category thumbnails
 
