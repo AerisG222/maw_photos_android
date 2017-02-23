@@ -206,12 +206,12 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
         // by year
         prepareYearChildren();
-        _groupData.add(createGroup("By Year"));
+        _groupData.add(createGroup("Year"));
         _childData.add(_yearChildren);
 
         // by comments
         children = new ArrayList<>();
-        _groupData.add(createGroup("By Comments"));
+        _groupData.add(createGroup("Comments"));
         _childData.add(children);
 
         children.add(createChild("Newest", PhotoListType.ByCommentsNewest));
@@ -223,7 +223,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
         // by ratings
         children = new ArrayList<>();
-        _groupData.add(createGroup("By Rating"));
+        _groupData.add(createGroup("Rating"));
         _childData.add(children);
 
         children.add(createChild("Average Rating", PhotoListType.ByAverageRating));
