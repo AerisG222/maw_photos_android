@@ -8,7 +8,7 @@ android {
         applicationId "us.mikeandwan.pictures"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 23
+        versionCode 26
         versionName "4.0"
 
         jackOptions {
@@ -48,10 +48,14 @@ android {
 
     buildTypes {
         release {
+            // TODO: enable shrinkage
             // shrink is apparently not supported yet by jack
             // https://code.google.com/p/android/issues/detail?id=82168
             //shrinkResources true
-            minifyEnabled true
+
+            // TODO: enable minification, but am pulling my hair out with Jack
+            //       app loads, but can't move to new activity, so disabling for now
+            //minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.maw
