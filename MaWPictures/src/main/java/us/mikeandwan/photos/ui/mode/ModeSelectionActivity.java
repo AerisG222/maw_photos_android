@@ -2,6 +2,7 @@ package us.mikeandwan.photos.ui.mode;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -177,11 +178,49 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
 
     private void onSyncComplete(List<Category> categories) {
-        prepareYearChildren();
-
-        _adapter.notifyDataSetChanged();
-
         stopSyncAnimation();
+
+        int count = categories.size();
+
+        if(count == 0) {
+            Snackbar.make(_modeExpandableListView, "No updates available.", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        // TODO: simplify if/when we update api
+        /*
+        categories
+                .stream()
+                .filter(x -> !_yearList.contains(x.getYear()))
+                .collect(Collectors.toList());
+        */
+
+        List<Integer> newYears = new ArrayList<>();
+
+        for(Category cat : categories) {
+            if(!_yearList.contains(cat.getYear())) {
+                newYears.add(cat.getYear());
+            }
+        }
+
+        String year = "year";
+        String cat = "category";
+
+        if(count != 1) {
+            cat = "categories";
+        }
+
+        if(newYears.size() != 1) {
+            year = "years";
+        }
+
+        Snackbar.make(_modeExpandableListView, count + " new " + cat + " found. " + newYears.size() + " new " + year + " added.", Snackbar.LENGTH_SHORT).show();
+
+        if(newYears.size() > 0) {
+            prepareYearChildren();
+
+            _adapter.notifyDataSetChanged();
+        }
     }
 
 

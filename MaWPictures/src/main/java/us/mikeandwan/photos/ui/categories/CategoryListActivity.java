@@ -3,6 +3,7 @@ package us.mikeandwan.photos.ui.categories;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +18,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -234,14 +237,44 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
 
     private void onSyncComplete(List<Category> result) {
-        // force the update to categories to come from database, and not the network result, as there
-        // may have been updates already pulled from the poller
-        _categories.clear();
-        _categories.addAll(_dataServices.getCategoriesForYear(_year));
-
-        notifyCategoriesUpdated();
-
         stopSyncAnimation();
+
+        int count = result.size();
+
+        if(count == 0) {
+            Snackbar.make(_container, "No updates available.", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        // TODO: use streams if/when we update api
+        /*
+        result
+            .stream()
+            .filter(x -> x.getYear() == _year)
+            .collect(Collectors.toList());
+        */
+
+        List<Category> newForYear = new ArrayList<>();
+
+        for(Category cat : result) {
+            if(cat.getYear() == _year) {
+                newForYear.add(cat);
+            }
+        }
+
+        String cat = "category";
+
+        if(count != 1) {
+            cat = "categories";
+        }
+
+        Snackbar.make(_container, count + " new " + cat + " found. " + newForYear.size() + " added for " + _year + ".", Snackbar.LENGTH_SHORT).show();
+
+        if(newForYear.size() > 0) {
+            _categories.addAll(newForYear);
+
+            notifyCategoriesUpdated();
+        }
     }
 
 
