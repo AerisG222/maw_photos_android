@@ -36,7 +36,6 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     public ThumbnailRecyclerAdapter(IPhotoActivity activity, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
         _context = (Context)activity;
         _activity = activity;
-        _photoList = activity.getPhotoList();
         _dataServices = dataServices;
         _authHandler = authHandler;
     }
@@ -83,6 +82,12 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     @Override
     public int getItemCount() {
         return _photoList.size();
+    }
+
+
+    public void refreshPhotoList() {
+        _photoList = _activity.getPhotoList();
+        notifyDataSetChanged();
     }
 
 

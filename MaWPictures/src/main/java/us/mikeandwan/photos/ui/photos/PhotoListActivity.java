@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.view.MenuItemCompat;
@@ -130,6 +129,10 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        _type = PhotoListType.valueOf(getIntent().getStringExtra("TYPE"));
+        _name = getIntent().getStringExtra("NAME");
+        _categoryId = getIntent().getIntExtra("CATEGORY_ID", -1);
+
         if(savedInstanceState != null) {
             _index = savedInstanceState.getInt(STATE_INDEX);
             _isRandomView = savedInstanceState.getBoolean(STATE_IS_RANDOM_VIEW);
@@ -147,13 +150,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                 .build();
 
         _activityComponent.inject(this);
-
-        _photoPager.setAdapter(_photoPagerAdapter);
-        _photoPager.onPhotoSelected().subscribe(this::gotoPhoto);
-
-        _type = PhotoListType.valueOf(getIntent().getStringExtra("TYPE"));
-        _name = getIntent().getStringExtra("NAME");
-        _categoryId = getIntent().getIntExtra("CATEGORY_ID", -1);
     }
 
 
@@ -194,9 +190,13 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     public void onResume() {
         super.onResume();
 
-        Log.i(MawApplication.LOG_TAG, "onResume - PhotoListActivity");
+        _photoPagerAdapter.refreshPhotoList();
+        _thumbnailRecyclerAdapter.refreshPhotoList();
 
         layoutActivity();
+
+        _photoPager.setAdapter(_photoPagerAdapter);
+        _photoPager.onPhotoSelected().subscribe(this::gotoPhoto);
 
         // if we are coming back from an orientation change, we might already have a valid list
         // populated.  if so, use the original list.
@@ -219,8 +219,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     @Override
     public void onPause() {
-        Log.i(MawApplication.LOG_TAG, "onPause - PhotoListActivity");
-
         // make sure we kill the slideshow thread if we are leaving the activity to avoid errors
         stopSlideshow();
 
@@ -241,28 +239,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     public List<Photo> getPhotoList() {
         return _photoList;
-    }
-
-
-    public int getCurrentIndex() {
-        return _index;
-    }
-
-
-    public void gotoPhoto(int index) {
-        _index = index;
-        displayMainImage(_photoList.get(_index));
-
-        // try to leave a buffer of 5 images from where the user is to the end of the list
-        if (_isRandomView) {
-            int minEndingIndex = index + RANDOM_INITIAL_COUNT;
-
-            if (minEndingIndex > _photoList.size()) {
-                for (int i = _photoList.size(); i < minEndingIndex; i++) {
-                    fetchRandom();
-                }
-            }
-        }
     }
 
 
@@ -301,15 +277,14 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     public void toggleSlideshow() {
         if (_slideshowExecutor != null) {
             stopSlideshow();
-            _playingSlideshow = false;  // user toggled
+            _playingSlideshow = false;
         } else {
             startSlideshow();
-            _playingSlideshow = true;  // user toggled
+            _playingSlideshow = true;
         }
     }
 
 
-    @UiThread
     private void updateProgress() {
         runOnUiThread(() -> {
             int count = _taskCount.get();
@@ -404,6 +379,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private void onRandomPhotoFetched() {
         _photoPagerAdapter.notifyDataSetChanged();
+        _thumbnailRecyclerAdapter.notifyDataSetChanged();
 
         if (!_displayedRandomImage) {
             _displayedRandomImage = true;
@@ -414,64 +390,32 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private void onGatherPhotoListComplete() {
         _photoPagerAdapter.notifyDataSetChanged();
+        _thumbnailRecyclerAdapter.notifyDataSetChanged();
 
         gotoPhoto(_index);
     }
 
 
-    private void startSlideshow() {
-        if (_slideshowExecutor == null) {
-            int intervalSeconds = _photoPrefs.getSlideshowIntervalInSeconds();
+    public void gotoPhoto(int index) {
+        _index = index;
+        displayMainImage(_photoList.get(_index));
 
-            _slideshowExecutor = new ScheduledThreadPoolExecutor(1);
-            _slideshowExecutor.scheduleWithFixedDelay(this::incrementSlideshow, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
-            _slideshowButton.setImageResource(R.drawable.ic_stop_white_24dp);
-        }
-    }
+        // try to leave a buffer of 5 images from where the user is to the end of the list
+        if (_isRandomView) {
+            int minEndingIndex = index + RANDOM_INITIAL_COUNT;
 
-
-    private void incrementSlideshow() {
-        int nextIndex = _index + 1;
-
-        if (nextIndex < _photoList.size()) {
-            SlideshowRunnable slideshowRunnable = new SlideshowRunnable((nextIndex));
-            this.runOnUiThread(slideshowRunnable);
-        } else {
-            this.runOnUiThread(this::toggleSlideshow);
-        }
-    }
-
-
-    private void stopSlideshow() {
-        if (_slideshowExecutor != null) {
-            _slideshowExecutor.shutdownNow();
-            _slideshowExecutor = null;
-            _slideshowButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
-        }
-    }
-
-
-    private Intent createShareIntent(Photo photo) {
-        if (photo != null) {
-            Uri contentUri = _dataServices.getSharingContentUri(photo.getMdInfo().getPath());
-
-            if (contentUri != null) {
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setDataAndType(contentUri, "image/*");
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-
-                return shareIntent;
+            if (minEndingIndex > _photoList.size()) {
+                for (int i = _photoList.size(); i < minEndingIndex; i++) {
+                    fetchRandom();
+                }
             }
         }
-
-        return null;
     }
 
 
     private void displayMainImage(Photo photo) {
         _photoPager.setCurrentItem(_index);
-        updateThumbnail();
+        _thumbnailRecyclerView.scrollToPosition(_index);
 
         ShareActionProvider sap = (ShareActionProvider) MenuItemCompat.getActionProvider(_menuShare);
 
@@ -484,7 +428,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
 
     private void prefetchMainImage(int index) {
-        // start fetching next item first, if there is one, as it is more likely to move forward first
         for (int i = index + 1; i < index + PREFETCH_COUNT && i < _photoList.size(); i++) {
             prefetchImage(_photoList.get(i), PhotoSize.Md);
         }
@@ -527,22 +470,42 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    private void ensureSlideshowStopped() {
-        if (_slideshowExecutor != null) {
-            toggleSlideshow();
+    private void startSlideshow() {
+        if (_slideshowExecutor == null) {
+            int intervalSeconds = _photoPrefs.getSlideshowIntervalInSeconds();
+
+            _slideshowExecutor = new ScheduledThreadPoolExecutor(1);
+            _slideshowExecutor.scheduleWithFixedDelay(this::incrementSlideshow, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
+            _slideshowButton.setImageResource(R.drawable.ic_stop_white_24dp);
         }
     }
 
 
-    private void displayView(View view, boolean doShow) {
-        int visibility = doShow ? View.VISIBLE : View.GONE;
+    private void incrementSlideshow() {
+        int nextIndex = _index + 1;
 
-        view.setVisibility(visibility);
+        if (nextIndex < _photoList.size()) {
+            SlideshowRunnable slideshowRunnable = new SlideshowRunnable((nextIndex));
+            this.runOnUiThread(slideshowRunnable);
+        } else {
+            this.runOnUiThread(this::toggleSlideshow);
+        }
     }
 
 
-    private void updateThumbnail() {
-        _thumbnailRecyclerView.scrollToPosition(getCurrentIndex());
+    private void stopSlideshow() {
+        if (_slideshowExecutor != null) {
+            _slideshowExecutor.shutdownNow();
+            _slideshowExecutor = null;
+            _slideshowButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+        }
+    }
+
+
+    private void ensureSlideshowStopped() {
+        if (_slideshowExecutor != null) {
+            toggleSlideshow();
+        }
     }
 
 
@@ -556,9 +519,9 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         }
 
         if(_photoPrefs.getDoDisplayThumbnails()) {
-            LinearLayoutManager llm = new LinearLayoutManager(this);
-            llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+            ThumbnailLinearLayoutManager llm = new ThumbnailLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false, _index);
 
+            _thumbnailRecyclerView.setHasFixedSize(true);
             _thumbnailRecyclerView.setLayoutManager(llm);
             _thumbnailRecyclerView.setAdapter(_thumbnailRecyclerAdapter);
             _thumbnailRecyclerAdapter.onThumbnailSelected().subscribe(this::gotoPhoto);
@@ -606,6 +569,13 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
+    private void displayView(View view, boolean doShow) {
+        int visibility = doShow ? View.VISIBLE : View.GONE;
+
+        view.setVisibility(visibility);
+    }
+
+
     private void updateOpacity() {
         if(_photoPrefs.getDoFadeControls()) {
             fade(_toolbar);
@@ -630,6 +600,24 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         ObjectAnimator anim = ObjectAnimator.ofFloat(view, "alpha", FADE_START_ALPHA, FADE_END_ALPHA);
         anim.setDuration(FADE_DURATION);
         anim.start();
+    }
+
+
+    private Intent createShareIntent(Photo photo) {
+        if (photo != null) {
+            Uri contentUri = _dataServices.getSharingContentUri(photo.getMdInfo().getPath());
+
+            if (contentUri != null) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setDataAndType(contentUri, "image/*");
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+
+                return shareIntent;
+            }
+        }
+
+        return null;
     }
 
 

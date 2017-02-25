@@ -25,15 +25,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
     private final IPhotoActivity _activity;
-    private final List<Photo> _photoList;
     private final AuthenticationExceptionHandler _authHandler;
     private final DataServices _dataServices;
+    private List<Photo> _photoList;
 
 
     public FullScreenImageAdapter(IPhotoActivity activity, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
         _context = (Context)activity;
         _activity = activity;
-        _photoList = activity.getPhotoList();
         _dataServices = dataServices;
         _authHandler = authHandler;
     }
@@ -72,6 +71,12 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     public void dispose() {
         _disposables.dispose();
+    }
+
+
+    public void refreshPhotoList() {
+        _photoList = _activity.getPhotoList();
+        notifyDataSetChanged();
     }
 
 
