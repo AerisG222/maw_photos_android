@@ -177,7 +177,7 @@ public class DataServices {
     }
 
 
-    public Rating setRating(int photoId, int rating) throws IOException, MawAuthenticationException {
+    public Rating setRating(int photoId, int rating) throws MawAuthenticationException {
         Log.d(MawApplication.LOG_TAG, "started to set user rating for photo: " + photoId);
 
         ensureAuthenticated();

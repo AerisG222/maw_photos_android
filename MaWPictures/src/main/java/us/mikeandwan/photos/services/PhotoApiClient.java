@@ -63,7 +63,7 @@ public class PhotoApiClient {
     }
 
 
-    public List<Category> getRecentCategories(int sinceId) throws MawAuthenticationException, IOException {
+    public List<Category> getRecentCategories(int sinceId) throws IOException {
         Response<List<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
 
         return response.body();
@@ -109,35 +109,35 @@ public class PhotoApiClient {
     }
 
 
-    public PhotoAndCategory getRandomPhoto() throws MawAuthenticationException, IOException {
+    public PhotoAndCategory getRandomPhoto() throws IOException {
         Response<PhotoAndCategory> response = _photoApi.getRandomPhoto().execute();
 
         return response.body();
     }
 
 
-    public ExifData getExifData(int photoId) throws MawAuthenticationException, IOException {
+    public ExifData getExifData(int photoId) throws IOException {
         Response<ExifData> response = _photoApi.getExifData(photoId).execute();
 
         return response.body();
     }
 
 
-    public List<Comment> getComments(int photoId) throws MawAuthenticationException, IOException {
+    public List<Comment> getComments(int photoId) throws IOException {
         Response<List<Comment>> response = _photoApi.getComments(photoId).execute();
 
         return response.body();
     }
 
 
-    public Rating getRatings(int photoId) throws MawAuthenticationException, IOException {
+    public Rating getRatings(int photoId) throws IOException {
         Response<Rating> response = _photoApi.getRatings(photoId).execute();
 
         return response.body();
     }
 
 
-    public Float setRating(int photoId, int rating) throws MawAuthenticationException {
+    public Float setRating(int photoId, int rating) {
         RatePhoto rp = new RatePhoto();
         rp.setPhotoId(photoId);
         rp.setRating(rating);
@@ -160,7 +160,7 @@ public class PhotoApiClient {
     }
 
 
-    public void addComment(int photoId, String comment) throws MawAuthenticationException {
+    public void addComment(int photoId, String comment) {
         CommentPhoto cp = new CommentPhoto();
         cp.setComment(comment);
         cp.setPhotoId(photoId);

@@ -21,7 +21,12 @@ public class MawScheduleReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(MawApplication.LOG_TAG, "> scheduleReceiver onReceive - scheduling poller");
+        if(!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+            Log.d(MawApplication.LOG_TAG, "scheduleReceiver onReceive: did *NOT* match the BOOT COMPLETED event - aborting");
+            return;
+        }
+
+        Log.d(MawApplication.LOG_TAG, "scheduleReceiver onReceive - scheduling poller");
 
         ((MawApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
 
