@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
-import uk.co.senab.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoView;
 
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
