@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.services;
 
 import android.content.Context;
+import android.icu.util.Output;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -40,7 +42,6 @@ public class PhotoStorage {
     void put(String remotePath, ResponseBody body) {
         File dir = new File(getRootPath(), remotePath.substring(0, remotePath.lastIndexOf('/')));
         File file = getCachePath(remotePath);
-        OutputStream outputStream = null;
 
         if(!dir.exists()) {
             if(!dir.mkdirs()) {
@@ -48,27 +49,38 @@ public class PhotoStorage {
                 return;
             }
         }
-
-        try {
-            byte[] buffer = new byte[4096];
-            int len;
-            InputStream inputStream = body.byteStream();
-            outputStream = new FileOutputStream(file);
-
-            while ((len = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, len);
+        else
+        {
+            if(file.exists()) {
+                return;
             }
+        }
+
+        // use a unique id here so if we end up downloading the same file 2 times, we don't try to
+        // write to the same temp file.  As such, with the final rename, a valid complete file should
+        // be put in place
+        File tempFile = getCachePath(remotePath + "." + UUID.randomUUID().toString() + ".tmp");
+
+        try(OutputStream outputStream = new FileOutputStream(tempFile)) {
+            outputStream.write(body.bytes());
+            outputStream.flush();
+            outputStream.close();
+
+            tempFile.renameTo(file);
         } catch (IOException e) {
             Log.w(MawApplication.LOG_TAG, "Error saving image file: " + e.getMessage());
         } finally {
-            if (outputStream != null) {
+            if(tempFile.exists())
+            {
                 try {
-                    outputStream.close();
+                    tempFile.delete();
                 } catch (Exception ex) {
                     // swallow
                 }
             }
         }
+
+        Log.d(MawApplication.LOG_TAG, tempFile.getName());
     }
 
 
