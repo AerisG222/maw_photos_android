@@ -1,10 +1,8 @@
 package us.mikeandwan.photos.services;
 
 import android.content.Context;
-import android.icu.util.Output;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.commonsware.cwac.provider.StreamProvider;
@@ -15,7 +13,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 

@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import us.mikeandwan.photos.di.ActivityModule;
 import us.mikeandwan.photos.di.ApplicationComponent;
 
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

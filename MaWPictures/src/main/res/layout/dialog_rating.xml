@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:numStars="5"
         android:clickable="true"
+        android:focusable="true"
         android:stepSize="1"
         tools:layout_constraintTop_creator="1"
         tools:layout_constraintRight_creator="1"
