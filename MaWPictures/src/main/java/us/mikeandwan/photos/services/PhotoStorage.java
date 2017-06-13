@@ -4,6 +4,7 @@ import android.content.Context;
 import android.icu.util.Output;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.commonsware.cwac.provider.StreamProvider;
@@ -59,7 +60,7 @@ public class PhotoStorage {
         // use a unique id here so if we end up downloading the same file 2 times, we don't try to
         // write to the same temp file.  As such, with the final rename, a valid complete file should
         // be put in place
-        File tempFile = getCachePath(remotePath + "." + UUID.randomUUID().toString() + ".tmp");
+        File tempFile = new File(getTempRootPath(), UUID.randomUUID().toString() + ".tmp");
 
         try(OutputStream outputStream = new FileOutputStream(tempFile)) {
             outputStream.write(body.bytes());
@@ -79,8 +80,6 @@ public class PhotoStorage {
                 }
             }
         }
-
-        Log.d(MawApplication.LOG_TAG, tempFile.getName());
     }
 
 
@@ -130,7 +129,7 @@ public class PhotoStorage {
 
     public void wipeTempFiles() {
         try {
-            wipe(getRootPath(), new TempFileFilter());
+            FileUtils.deleteDirectory(getTempRootPath());
         } catch(IOException ex) {
             Log.e(MawApplication.LOG_TAG, "Unable to delete temp files: " + ex.getMessage());
         }
@@ -188,6 +187,17 @@ public class PhotoStorage {
     }
 
 
+    private File getTempRootPath() {
+        File dir = new File(getRootPath() + "/" + "temp");
+
+        if(!dir.exists()) {
+            dir.mkdir();
+        }
+
+        return dir;
+    }
+
+
     private class DirectoryFilter implements FileFilter {
         public boolean accept(File file) {
             return file.isDirectory();
@@ -201,13 +211,6 @@ public class PhotoStorage {
                                           "fuller".equalsIgnoreCase(file.getName()) ||
                                           "fullsize".equalsIgnoreCase(file.getName()) ||
                                           "orig".equalsIgnoreCase(file.getName()));
-        }
-    }
-
-
-    private class TempFileFilter implements FileFilter {
-        public boolean accept(File file) {
-            return file.isFile() && file.getName().endsWith(".tmp");
         }
     }
 }
