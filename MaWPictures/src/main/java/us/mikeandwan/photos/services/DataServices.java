@@ -203,6 +203,12 @@ public class DataServices {
     }
 
 
+    public void wipeTempFiles() { _photoStorage.wipeTempFiles(); }
+
+
+    public void wipeCache() { _photoStorage.wipeCache(); }
+
+
     private String downloadPhoto(String path) {
         if(path == null || TextUtils.isEmpty(path)) {
             return _photoStorage.getPlaceholderThumbnail();

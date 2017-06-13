@@ -138,6 +138,29 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     }
 
 
+    public void onWipeCache(MenuItem menuItem) {
+        _disposables.add(
+            Flowable.fromCallable(() -> {
+                    _dataServices.wipeCache();
+                    return true;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::onWipeComplete,
+                        ex -> {
+                            stopSyncAnimation();
+                            _authHandler.handleException(ex);
+                        })
+        );
+    }
+
+
+    private void onWipeComplete(boolean b) {
+        Snackbar.make(_toolbar, "Wipe complete.", Snackbar.LENGTH_SHORT).show();
+    }
+
+
     private boolean onItemClicked(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         Intent intent;
 

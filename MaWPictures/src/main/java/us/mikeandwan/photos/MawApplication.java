@@ -28,6 +28,8 @@ public class MawApplication extends Application {
                 .photoApiModule(new PhotoApiModule())
                 .preferenceModule(new PreferenceModule())
                 .build();
+
+        _applicationComponent.dataServices().wipeTempFiles();
     }
 
 

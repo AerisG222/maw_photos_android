@@ -120,12 +120,28 @@ public class PhotoStorage {
     public void wipeLegacyCache() {
         wipePriorCache();
 
-        File dir = new File(getLegacyRootPath());
-
         try {
-            FileUtils.deleteDirectory(dir);
+            FileUtils.deleteDirectory(getLegacyRootPath());
         } catch (IOException ex) {
             Log.e(MawApplication.LOG_TAG, "Unable to delete legacy directory: " + ex.getMessage());
+        }
+    }
+
+
+    public void wipeTempFiles() {
+        try {
+            wipe(getRootPath(), new TempFileFilter());
+        } catch(IOException ex) {
+            Log.e(MawApplication.LOG_TAG, "Unable to delete temp files: " + ex.getMessage());
+        }
+    }
+
+
+    public void wipeCache() {
+        try {
+            FileUtils.deleteDirectory(getRootPath());
+        } catch (IOException ex) {
+            Log.e(MawApplication.LOG_TAG, "Unable to wipe cache: " + ex.getMessage());
         }
     }
 
@@ -135,45 +151,63 @@ public class PhotoStorage {
         // (fullsize, fuller, orig, etc).  this kills the older cache as they will no longer
         // be referenced
         try {
-            wipePrior(getRootPath());
+            wipe(getRootPath(), new PriorDirectoryFilter());
         } catch (IOException ex) {
             Log.e(MawApplication.LOG_TAG, "Unable to delete newer cache directory: " + ex.getMessage());
         }
     }
 
 
-    private void wipePrior(File dir) throws IOException {
-        if(dir == null) {
+    private void wipe(File dir, FileFilter filter) throws IOException {
+        if(dir == null || dir.isFile()) {
             return;
         }
 
-        if(isPrior(dir)) {
-            FileUtils.deleteDirectory(dir);
-            return;
+        // remove files/directories matching the filter
+        for (File file : dir.listFiles(filter)) {
+            if (file.isFile()) {
+                file.delete();
+            } else {
+                try {
+                    FileUtils.deleteDirectory(dir);
+                } catch(IOException ex) {
+                    Log.e(MawApplication.LOG_TAG, "Unable to delete directory: " + ex.getMessage());
+                }
+            }
         }
 
-        for(File subdir : dir.listFiles(new DirectoryFilter())) {
-            wipePrior(subdir);
+        // recurse through any remaining directories
+        for (File file : dir.listFiles(new DirectoryFilter())) {
+            wipe(file, filter);
         }
     }
 
 
-    private String getLegacyRootPath() {
-        return String.valueOf(Environment.getExternalStorageDirectory()) + "/" + MAW_ROOT;
-    }
-
-
-    private boolean isPrior(File dir) {
-        return dir.isDirectory() && ("thumbnails".equalsIgnoreCase(dir.getName()) ||
-                                     "fuller".equalsIgnoreCase(dir.getName()) ||
-                                     "fullsize".equalsIgnoreCase(dir.getName()) ||
-                                     "orig".equalsIgnoreCase(dir.getName()));
+    private File getLegacyRootPath() {
+        return new File(String.valueOf(Environment.getExternalStorageDirectory()) + "/" + MAW_ROOT);
     }
 
 
     private class DirectoryFilter implements FileFilter {
         public boolean accept(File file) {
             return file.isDirectory();
+        }
+    }
+
+
+    private class PriorDirectoryFilter implements FileFilter {
+        public boolean accept(File file) {
+            return file.isDirectory() && ("thumbnails".equalsIgnoreCase(file.getName()) ||
+                                          "fuller".equalsIgnoreCase(file.getName()) ||
+                                          "fullsize".equalsIgnoreCase(file.getName()) ||
+                                          "orig".equalsIgnoreCase(file.getName()));
+        }
+    }
+
+
+    private class TempFileFilter implements FileFilter {
+        public boolean accept(File file) {
+            return file.isFile() && file.getName().endsWith(".tmp");
         }
     }
 }

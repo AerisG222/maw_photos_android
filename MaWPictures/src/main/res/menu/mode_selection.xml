@@ -14,4 +14,10 @@
           android:orderInCategory="100"
           android:onClick="onMenuItemSettings"
           mawphotos:showAsAction="never" />
+
+    <item android:id="@+id/action_wipe_cache"
+        android:title="@string/action_wipe_cache"
+        android:orderInCategory="100"
+        android:onClick="onWipeCache"
+        mawphotos:showAsAction="never" />
 </menu>
