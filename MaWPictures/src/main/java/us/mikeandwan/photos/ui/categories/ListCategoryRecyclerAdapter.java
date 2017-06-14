@@ -34,6 +34,12 @@ public class ListCategoryRecyclerAdapter extends CategoryRecyclerAdapter<ListCat
     }
 
 
+    @Override
+    protected String downloadCategoryTeaser(Category category) {
+        return _dataServices.downloadCategoryTeaser(category);
+    }
+
+
     protected void displayCategory(Category category, String path, ListCategoryRecyclerAdapter.ViewHolder viewHolder) {
         viewHolder._nameTextView.setText(category.getName());
 

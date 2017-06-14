@@ -68,6 +68,13 @@ public class DataServices {
     }
 
 
+    public String downloadMdCategoryTeaser(Category category) {
+        Log.d(MawApplication.LOG_TAG, "started to download md teaser for category: " + category.getId());
+
+        return downloadPhoto(category.getTeaserPhotoInfo().getPath().replace("/xs", "/md/"));
+    }
+
+
     public String downloadPhoto(Photo photo, PhotoSize size) {
         Log.d(MawApplication.LOG_TAG, "started to download photo: " + photo.getId());
 

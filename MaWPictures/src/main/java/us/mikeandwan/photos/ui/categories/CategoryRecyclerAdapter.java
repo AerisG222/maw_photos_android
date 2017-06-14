@@ -20,7 +20,7 @@ import us.mikeandwan.photos.services.DataServices;
 public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     protected final Context _context;
-    private final DataServices _dataServices;
+    protected final DataServices _dataServices;
     private final PublishSubject<Category> _categorySubject = PublishSubject.create();
     private final AuthenticationExceptionHandler _authHandler;
     private List<Category> _categoryList;
@@ -42,13 +42,16 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
     protected abstract void displayCategory(Category category, String imageFile, T viewHolder);
 
 
+    protected abstract String downloadCategoryTeaser(Category category);
+
+
     @Override
     public void onBindViewHolder(T viewHolder, int position) {
         final Category category = _categoryList.get(position);
 
         viewHolder.itemView.setOnClickListener(v -> _categorySubject.onNext(category));
 
-        _disposables.add(Flowable.fromCallable(() -> _dataServices.downloadCategoryTeaser(category))
+        _disposables.add(Flowable.fromCallable(() -> downloadCategoryTeaser(category))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

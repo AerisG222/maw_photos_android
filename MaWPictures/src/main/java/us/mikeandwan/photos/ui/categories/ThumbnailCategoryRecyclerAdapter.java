@@ -32,6 +32,12 @@ public class ThumbnailCategoryRecyclerAdapter extends CategoryRecyclerAdapter<Th
     }
 
 
+    @Override
+    protected String downloadCategoryTeaser(Category category) {
+        return _dataServices.downloadMdCategoryTeaser(category);
+    }
+
+
     protected void displayCategory(Category category, String path, ThumbnailCategoryRecyclerAdapter.ViewHolder viewHolder) {
         Picasso
                 .with(_context)
