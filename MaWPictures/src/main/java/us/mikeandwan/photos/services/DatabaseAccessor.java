@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import net.sf.andhsli.hotspotlogin.SimpleCrypto;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +19,14 @@ import us.mikeandwan.photos.models.PhotoInfo;
 // https://nfrolov.wordpress.com/2014/08/16/android-sqlitedatabase-locking-and-multi-threading/
 //   recommends not closing db given its shared nature...
 public class DatabaseAccessor {
-    private static final String _seed = "Z@9{9^WSi)Rgf:Bjr|$L2f9.wK$fQH(_tiLs+\"4~p#i0u+[BBcSgEck!_0}PaJeF";
     private MawSQLiteOpenHelper _dbHelper;
+    private EncryptionService _encryptionService;
 
 
     @Inject
-    public DatabaseAccessor(MawSQLiteOpenHelper dbHelper) {
+    public DatabaseAccessor(MawSQLiteOpenHelper dbHelper, EncryptionService encryptionService) {
         _dbHelper = dbHelper;
+        _encryptionService = encryptionService;
     }
 
 
@@ -37,7 +36,7 @@ public class DatabaseAccessor {
 
         try {
             values.put("username", credentials.getUsername());
-            values.put("password", SimpleCrypto.encrypt(_seed, credentials.getPassword()));
+            values.put("password", _encryptionService.encrypt(credentials.getPassword()));
 
             // we currently only support one user for the app, so just clear everything at the start
             db.delete("user", null, null);
@@ -66,7 +65,7 @@ public class DatabaseAccessor {
                 c.moveToFirst();
 
                 creds.setUsername(c.getString(0));
-                creds.setPassword(SimpleCrypto.decrypt(_seed, c.getString(1)));
+                creds.setPassword(_encryptionService.decrypt(c.getString(1)));
             }
         } catch (Exception ex) {
             Log.e(MawApplication.LOG_TAG, "Error when retrieving credentials: " + ex.getMessage());

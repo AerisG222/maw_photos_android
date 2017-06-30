@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.models.KeyStore;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
 import us.mikeandwan.photos.prefs.NotificationPreference;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
@@ -13,6 +14,7 @@ import us.mikeandwan.photos.prefs.SyncPreference;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.DatabaseAccessor;
+import us.mikeandwan.photos.services.EncryptionService;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
@@ -23,7 +25,7 @@ import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 
 @Singleton
-@Component(modules = {ApplicationModule.class, DataStorageModule.class, PhotoApiModule.class, PreferenceModule.class})
+@Component(modules = {ApplicationModule.class, DataStorageModule.class, PhotoApiModule.class, PreferenceModule.class, EncryptionModule.class})
 public interface ApplicationComponent {
     // identify which services will be available to dependent components
     Application application();
@@ -36,6 +38,8 @@ public interface ApplicationComponent {
     DatabaseAccessor databaseAccessor();
     PhotoApiClient photoApiClient();
     AuthenticationExceptionHandler authenticationExceptionHandler();
+    KeyStore keyStore();
+    EncryptionService encryptionServices();
 
 
     void inject(MawApplication application);
@@ -52,4 +56,6 @@ public interface ApplicationComponent {
     void inject(MawPollerService service);
     void inject(MawScheduleReceiver scheduleReceiver);
     void inject(AuthenticationExceptionHandler authenticationExceptionHandler);
+    void inject(KeyStore keystore);
+    void inject(EncryptionService encryptionService);
 }
