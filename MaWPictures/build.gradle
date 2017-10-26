@@ -45,16 +45,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            debuggable true
+            javaCompileOptions.annotationProcessorOptions.argument('butterknife.debuggable', 'true')
+        }
         release {
-            // TODO: enable shrinkage
-            // shrink is apparently not supported yet by jack
-            // https://code.google.com/p/android/issues/detail?id=82168
+            // TODO:
             //shrinkResources true
-
-            // TODO: enable minification, but am pulling my hair out with Jack
-            //       app loads, but can't move to new activity, so disabling for now
             //minifyEnabled true
+
             debuggable false
+            javaCompileOptions.annotationProcessorOptions.argument('butterknife.debuggable', 'false')
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.maw
         }
@@ -69,19 +70,19 @@ android {
 
 dependencies {
     // dagger 2
-    compile 'com.google.dagger:dagger:2.11'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+    compile 'com.google.dagger:dagger:2.12'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
 
     // butterknife
-    compile 'com.jakewharton:butterknife:8.6.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // android support
-    compile 'com.android.support:support-annotations:25.4.0'
-    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:support-annotations:27.0.0'
+    compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:design:25.4.0'
-    compile 'com.android.support:recyclerview-v7:25.4.0'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:recyclerview-v7:26.1.0'
 
     // retrofit
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
@@ -97,9 +98,9 @@ dependencies {
     compile 'commons-io:commons-io:2.5'
 
     // reactivex
-    compile "io.reactivex.rxjava2:rxjava:2.1.1"
+    compile "io.reactivex.rxjava2:rxjava:2.1.5"
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     // photoview
-    compile 'com.github.chrisbanes:PhotoView:2.0.0'
+    compile 'com.github.chrisbanes:PhotoView:2.1.3'
 }
