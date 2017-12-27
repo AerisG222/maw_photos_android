@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '26.0.3'
 
     defaultConfig {
         applicationId "us.mikeandwan.pictures"
@@ -70,15 +70,15 @@ android {
 
 dependencies {
     // dagger 2
-    compile 'com.google.dagger:dagger:2.12'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
+    compile 'com.google.dagger:dagger:2.14.1'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.14.1'
 
     // butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // android support
-    compile 'com.android.support:support-annotations:27.0.0'
+    compile 'com.android.support:support-annotations:27.0.2'
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:26.1.0'
@@ -89,7 +89,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-jackson:2.3.0'
 
     // stream provider
-    compile 'com.commonsware.cwac:provider:0.5.2'
+    compile 'com.commonsware.cwac:provider:0.5.3'
 
     // picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -98,7 +98,7 @@ dependencies {
     compile 'commons-io:commons-io:2.5'
 
     // reactivex
-    compile "io.reactivex.rxjava2:rxjava:2.1.5"
+    compile "io.reactivex.rxjava2:rxjava:2.1.8"
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     // photoview
