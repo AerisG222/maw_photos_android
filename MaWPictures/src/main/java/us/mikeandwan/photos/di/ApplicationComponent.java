@@ -2,19 +2,22 @@ package us.mikeandwan.photos.di;
 
 import android.app.Application;
 
+import net.openid.appauth.AuthorizationService;
+import net.openid.appauth.AuthorizationServiceConfiguration;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
+import okhttp3.OkHttpClient;
 import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.models.KeyStore;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
 import us.mikeandwan.photos.prefs.NotificationPreference;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
 import us.mikeandwan.photos.prefs.SyncPreference;
+import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.DatabaseAccessor;
-import us.mikeandwan.photos.services.EncryptionService;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
@@ -25,7 +28,7 @@ import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 
 @Singleton
-@Component(modules = {ApplicationModule.class, DataStorageModule.class, PhotoApiModule.class, PreferenceModule.class, EncryptionModule.class})
+@Component(modules = {ApplicationModule.class, DataStorageModule.class, PhotoApiModule.class, PreferenceModule.class})
 public interface ApplicationComponent {
     // identify which services will be available to dependent components
     Application application();
@@ -38,9 +41,9 @@ public interface ApplicationComponent {
     DatabaseAccessor databaseAccessor();
     PhotoApiClient photoApiClient();
     AuthenticationExceptionHandler authenticationExceptionHandler();
-    KeyStore keyStore();
-    EncryptionService encryptionServices();
-
+    AuthorizationServiceConfiguration authorizationServiceConfiguration();
+    AuthStateManager authStateManager();
+    OkHttpClient okHttpClient();
 
     void inject(MawApplication application);
 
@@ -51,11 +54,12 @@ public interface ApplicationComponent {
     // services
     void inject(DatabaseAccessor databaseAccessor);
     void inject(MawSQLiteOpenHelper sqliteOpenHelper);
+    void inject(OkHttpClient okHttpClient);
     void inject(PhotoApiClient client);
     void inject(PhotoStorage photoStorage);
     void inject(MawPollerService service);
     void inject(MawScheduleReceiver scheduleReceiver);
     void inject(AuthenticationExceptionHandler authenticationExceptionHandler);
-    void inject(KeyStore keystore);
-    void inject(EncryptionService encryptionService);
+    void inject(AuthorizationServiceConfiguration authorizationServiceConfiguration);
+    void inject(AuthStateManager authStateManager);
 }

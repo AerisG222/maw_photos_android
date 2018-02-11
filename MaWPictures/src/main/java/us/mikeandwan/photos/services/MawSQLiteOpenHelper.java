@@ -16,7 +16,7 @@ import us.mikeandwan.photos.MawApplication;
 
 
 public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "maw";
 
 
@@ -32,7 +32,6 @@ public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
 
         createYearTable(db);
         createCategoryTable(db);
-        createUserTable(db);
     }
 
 
@@ -47,6 +46,10 @@ public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
 
         if (i < 3) {
             updateCategoryTeaserPath(sqLiteDatabase);
+        }
+
+        if (i < 4) {
+            removeUserTable(sqLiteDatabase);
         }
     }
 
@@ -74,12 +77,8 @@ public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
 
-    private void createUserTable(SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS user ("
-            + "    username TEXT NOT NULL,"
-            + "    password TEXT NOT NULL,"
-            + "    PRIMARY KEY (username)"
-            + ")";
+    private void removeUserTable(SQLiteDatabase db) {
+        String sql = "DROP TABLE IF EXISTS user;";
 
         db.execSQL(sql);
     }

@@ -4,8 +4,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -20,62 +18,55 @@ import us.mikeandwan.photos.models.Rating;
 
 
 interface PhotoApi {
-    @FormUrlEncoded
-    @POST("api/account/login")
-    Call<Boolean> authenticate(@Field("Username") String username, @Field("Password") String password);
-
     /*
-    @GET("api/photos/getPhotoYears")
+    @GET("photos/getPhotoYears")
     Call<List<Integer>> getPhotoYears();
 
-    @GET("api/photos/getCategoriesForYear/{year}")
+    @GET("photos/getCategoriesForYear/{year}")
     Call<List<Category>> getCategoriesForYear(@Path("year") int year);
     */
 
-    @GET("api/account/get-xsrf-token")
-    Call<Boolean> establishXsrfTokenCookie();
-
-    @GET("api/photos/getRecentCategories/{sinceId}")
+    @GET("photos/getRecentCategories/{sinceId}")
     Call<List<Category>> getRecentCategories(@Path("sinceId") int sinceId);
 
     /*
-    @GET("api/photos/getCategoryCount")
+    @GET("photos/getCategoryCount")
     Call<Integer> getTotalCategoryCount();
     */
 
-    @GET("api/photos/getPhotoExifData/{photoId}")
+    @GET("photos/getPhotoExifData/{photoId}")
     Call<ExifData> getExifData(@Path("photoId") int photoId);
 
-    @GET("api/photos/getRandomPhoto")
+    @GET("photos/getRandomPhoto")
     Call<PhotoAndCategory> getRandomPhoto();
 
-    @GET("api/photos/getCommentsForPhoto/{photoId}")
+    @GET("photos/getCommentsForPhoto/{photoId}")
     Call<List<Comment>> getComments(@Path("photoId") int photoId);
 
-    @GET("api/photos/getRatingForPhoto/{photoId}")
+    @GET("photos/getRatingForPhoto/{photoId}")
     Call<Rating> getRatings(@Path("photoId") int photoId);
 
-    @GET("api/photos/getPhotosByCategory/{categoryId}")
+    @GET("photos/getPhotosByCategory/{categoryId}")
     Call<List<Photo>> getPhotosByCategory(@Path("categoryId") int categoryId);
 
-    @GET("api/photos/getPhotosByCommentDate/{newestFirst}")
+    @GET("photos/getPhotosByCommentDate/{newestFirst}")
     Call<List<Photo>> getPhotosByCommentDate(@Path("newestFirst") boolean newestFirst);
 
-    @GET("api/photos/getPhotosByUserCommentDate/{newestFirst}")
+    @GET("photos/getPhotosByUserCommentDate/{newestFirst}")
     Call<List<Photo>> getPhotosByUserCommentDate(@Path("newestFirst") boolean newestFirst);
 
-    @GET("api/photos/getPhotosByCommentCount/{mostFirst}")
+    @GET("photos/getPhotosByCommentCount/{mostFirst}")
     Call<List<Photo>> getPhotosByCommentCount(@Path("mostFirst") boolean mostFirst);
 
-    @GET("api/photos/getPhotosByAverageRating/true")
+    @GET("photos/getPhotosByAverageRating/true")
     Call<List<Photo>> getPhotosByAverageRating();
 
-    @GET("api/photos/getPhotosByUserRating/true")
+    @GET("photos/getPhotosByUserRating/true")
     Call<List<Photo>> getPhotosByUserRating();
 
-    @POST("api/photos/ratePhoto")
+    @POST("photos/ratePhoto")
     Call<Float> ratePhoto(@Body RatePhoto rating);
 
-    @POST("api/photos/addCommentForPhoto")
+    @POST("photos/addCommentForPhoto")
     Call<Boolean> addCommentForPhoto(@Body CommentPhoto commentPhoto);
 }

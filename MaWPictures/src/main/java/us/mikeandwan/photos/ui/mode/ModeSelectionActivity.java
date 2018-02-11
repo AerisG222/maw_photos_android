@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.mode;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -27,6 +28,7 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
@@ -53,6 +55,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     private List<Integer> _yearList;
     private MenuItem _refreshMenuItem;
     private ActivityComponent _activityComponent;
+    private MawApplication _app;
 
     @BindView(R.id.toolbar) Toolbar _toolbar;
     @BindView(R.id.modeExpandableListView) ExpandableListView _modeExpandableListView;
@@ -71,6 +74,8 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mode_selection);
         ButterKnife.bind(this);
+
+        _app = (MawApplication) getApplication();
 
         _activityComponent = DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
@@ -94,6 +99,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                 new int[]{android.R.id.text1});
 
         initModeList();
+        resetNotifications();
     }
 
 
@@ -153,6 +159,13 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                             _authHandler.handleException(ex);
                         })
         );
+    }
+
+
+    private void resetNotifications() {
+        NotificationManager mgr = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        mgr.cancel(0);
+        _app.setNotificationCount(0);
     }
 
 

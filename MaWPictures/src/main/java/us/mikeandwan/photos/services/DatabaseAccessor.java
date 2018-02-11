@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.models.PhotoInfo;
 
 
@@ -20,62 +19,11 @@ import us.mikeandwan.photos.models.PhotoInfo;
 //   recommends not closing db given its shared nature...
 public class DatabaseAccessor {
     private MawSQLiteOpenHelper _dbHelper;
-    private EncryptionService _encryptionService;
 
 
     @Inject
-    public DatabaseAccessor(MawSQLiteOpenHelper dbHelper, EncryptionService encryptionService) {
+    public DatabaseAccessor(MawSQLiteOpenHelper dbHelper) {
         _dbHelper = dbHelper;
-        _encryptionService = encryptionService;
-    }
-
-
-    public void setCredentials(Credentials credentials) {
-        SQLiteDatabase db = getDatabase();
-        ContentValues values = new ContentValues();
-
-        try {
-            values.put("username", credentials.getUsername());
-            values.put("password", _encryptionService.encrypt(credentials.getPassword()));
-
-            // we currently only support one user for the app, so just clear everything at the start
-            db.delete("user", null, null);
-
-            long result = db.insert("user", null, values);
-
-            if (result == -1) {
-                Log.w(MawApplication.LOG_TAG, "Error when trying to insert a new user record");
-            }
-        } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "Error when saving credentials: " + ex.getMessage());
-        }
-    }
-
-
-    public Credentials getCredentials() {
-        SQLiteDatabase db = getDatabase();
-        Credentials creds = new Credentials();
-        Cursor c = null;
-        String sql = "SELECT username, password FROM user";
-
-        try {
-            c = db.rawQuery(sql, null);
-
-            if (c.getCount() > 0) {
-                c.moveToFirst();
-
-                creds.setUsername(c.getString(0));
-                creds.setPassword(_encryptionService.decrypt(c.getString(1)));
-            }
-        } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "Error when retrieving credentials: " + ex.getMessage());
-        } finally {
-            if (c != null && !c.isClosed()) {
-                c.close();
-            }
-        }
-
-        return creds;
     }
 
 

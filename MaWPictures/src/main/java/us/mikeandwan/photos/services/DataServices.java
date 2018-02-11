@@ -12,7 +12,6 @@ import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
-import us.mikeandwan.photos.models.Credentials;
 import us.mikeandwan.photos.models.ExifData;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
@@ -38,26 +37,9 @@ public class DataServices {
     public List<Comment> addComment(CommentPhoto cp) throws IOException, MawAuthenticationException {
         Log.d(MawApplication.LOG_TAG, "started to add comment for photo: " + cp.getPhotoId());
 
-        ensureAuthenticated();
-
         _photoApiClient.addComment(cp.getPhotoId(), cp.getComment());
 
         return _photoApiClient.getComments(cp.getPhotoId());
-    }
-
-
-    public Boolean authenticate(Credentials creds) {
-        Log.d(MawApplication.LOG_TAG, "started to authenticate");
-
-        if (_photoApiClient.authenticate(creds.getUsername(), creds.getPassword())) {
-            Log.i(MawApplication.LOG_TAG, "authenticated");
-
-            return true;
-        } else {
-            Log.i(MawApplication.LOG_TAG, "authentication failed");
-
-            return false;
-        }
     }
 
 
@@ -109,21 +91,12 @@ public class DataServices {
     public List<Comment> getComments(int photoId) throws IOException, MawAuthenticationException {
         Log.d(MawApplication.LOG_TAG, "started to get comments for photo: " + photoId);
 
-        ensureAuthenticated();
-
         return _photoApiClient.getComments(photoId);
-    }
-
-
-    public Credentials getCredentials() {
-        return _databaseAccessor.getCredentials();
     }
 
 
     public ExifData getExifData(int photoId) throws Exception {
         Log.d(MawApplication.LOG_TAG, "started to get exif data for photo: " + photoId);
-
-        ensureAuthenticated();
 
         return _photoApiClient.getExifData(photoId);
     }
@@ -131,8 +104,6 @@ public class DataServices {
 
     public List<Photo> getPhotoList(PhotoListType type, int categoryId) throws Exception {
         Log.d(MawApplication.LOG_TAG, "started to get photo list");
-
-        ensureAuthenticated();
 
         return _photoApiClient.getPhotos(type, categoryId);
     }
@@ -146,8 +117,6 @@ public class DataServices {
     public PhotoAndCategory getRandomPhoto() throws IOException, MawAuthenticationException {
         Log.d(MawApplication.LOG_TAG, "started to get random photo");
 
-        ensureAuthenticated();
-
         return _photoApiClient.getRandomPhoto();
     }
 
@@ -155,16 +124,12 @@ public class DataServices {
     public Rating getRating(int photoId) throws IOException, MawAuthenticationException {
         Log.d(MawApplication.LOG_TAG, "started to get rating for photo: " + photoId);
 
-        ensureAuthenticated();
-
         return _photoApiClient.getRatings(photoId);
     }
 
 
     public List<Category> getRecentCategories() throws IOException, MawAuthenticationException {
         Log.d(MawApplication.LOG_TAG, "started to get recent categories");
-
-        ensureAuthenticated();
 
         List<Category> categories = _photoApiClient.getRecentCategories(_databaseAccessor.getLatestCategoryId());
 
@@ -179,15 +144,8 @@ public class DataServices {
     }
 
 
-    public void setCredentials(Credentials credentials) {
-        _databaseAccessor.setCredentials(credentials);
-    }
-
-
     public Rating setRating(int photoId, int rating) throws MawAuthenticationException {
         Log.d(MawApplication.LOG_TAG, "started to set user rating for photo: " + photoId);
-
-        ensureAuthenticated();
 
         Float averageRating = _photoApiClient.setRating(photoId, rating);
 
@@ -250,24 +208,5 @@ public class DataServices {
         }
 
         return _photoStorage.getPlaceholderThumbnail();
-    }
-
-
-    private void ensureAuthenticated() throws MawAuthenticationException {
-        if (!_photoApiClient.isAuthenticated()) {
-            Log.d(MawApplication.LOG_TAG, "refreshing the authentication token");
-
-            Credentials creds = _databaseAccessor.getCredentials();
-
-            if (creds != null) {
-                if (!authenticate(creds)) {
-                    Log.e(MawApplication.LOG_TAG, "unable to reinstate the authentication token");
-                    throw new MawAuthenticationException();
-                }
-            }
-            else {
-                throw new MawAuthenticationException();
-            }
-        }
     }
 }

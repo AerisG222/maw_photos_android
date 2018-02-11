@@ -10,6 +10,10 @@
     <string name="service_poller_name">mikeandwan.us Poller</string>
     <string name="title_activity_category_list">CategoryList</string>
 
+    <!-- auth -->
+    <string name="auth_client_id">maw_photos_android</string>
+    <string name="auth_scheme_redirect_uri">us.mikeandwan.photos:/signin-oidc</string>
+
     <!-- category list item -->
     <string name="li_category_thumbnail_description">Thumbnail</string>
 
@@ -35,4 +39,5 @@
     <string name="frg_toolbar_rotate_left">Rotate Left</string>
     <string name="frg_toolbar_rotate_right">Rotate Right</string>
     <string name="frg_toolbar_toggle_slideshow">Toggle Slideshow</string>
+    <string name="title_activity_initial_load">InitialLoadActivity</string>
 </resources>

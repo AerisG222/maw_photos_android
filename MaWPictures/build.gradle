@@ -1,17 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.3'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
 
     defaultConfig {
         applicationId "us.mikeandwan.pictures"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 32
         versionName "4.3"
 
         vectorDrawables.useSupportLibrary = true
+
+        manifestPlaceholders = [
+            'appAuthRedirectScheme': 'us.mikeandwan.photos'
+        ]
     }
 
     compileOptions {
@@ -21,7 +25,7 @@ android {
 
     signingConfigs {
         maw {
-            if(new File(RELEASE_STORE_FILE).exists()) {
+            if (new File(RELEASE_STORE_FILE).exists()) {
                 storeFile file(RELEASE_STORE_FILE)
                 storePassword RELEASE_STORE_PASSWORD
                 keyAlias RELEASE_KEY_ALIAS
@@ -79,14 +83,21 @@ dependencies {
 
     // android support
     compile 'com.android.support:support-annotations:27.0.2'
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:design:26.1.0'
-    compile 'com.android.support:recyclerview-v7:26.1.0'
+    compile 'com.android.support:design:27.0.2'
+    compile 'com.android.support:recyclerview-v7:27.0.2'
 
-    // retrofit
+    // appauth
+    compile 'net.openid:appauth:0.7.0'
+
+    // retrofit (pulls in okhttp)
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-jackson:2.3.0'
+
+    // okhttp httpurlconnection (keep in sync w/ retrofit)
+    //compile 'com.squareup.okhttp3.okhttp-urlconnection:3.8.0'
+    compile group: 'com.squareup.okhttp3', name: 'okhttp-urlconnection', version: '3.8.0'
 
     // stream provider
     compile 'com.commonsware.cwac:provider:0.5.3'

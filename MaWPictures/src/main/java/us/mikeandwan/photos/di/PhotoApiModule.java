@@ -1,55 +1,91 @@
 package us.mikeandwan.photos.di;
 
 import android.app.Application;
+import android.net.Uri;
+import android.util.Log;
+
+import net.openid.appauth.AuthorizationServiceConfiguration;
+
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import javax.inject.Singleton;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import us.mikeandwan.photos.Constants;
+import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.services.AuthInterceptor;
+import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.PhotoApiClient;
-import us.mikeandwan.photos.services.PhotoApiCookieJar;
 
 
 @Module
 public class PhotoApiModule {
-    private static final String XSRF_HEADER = "X-XSRF-TOKEN";
-
-
     @Provides
     @Singleton
-    PhotoApiCookieJar provideCookieJar() {
-        return new PhotoApiCookieJar();
+    AuthInterceptor provideAuthInterceptor(AuthStateManager authStateManager) {
+        return new AuthInterceptor(authStateManager);
     }
 
 
     @Provides
     @Singleton
-    OkHttpClient provideOkHttpClient(PhotoApiCookieJar cookieJar) {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .cookieJar(cookieJar);
+    OkHttpClient provideOkHttpClient(Application application, AuthInterceptor authInterceptor) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
-        builder.networkInterceptors().add(chain -> {
-            Request srcRequest = chain.request();
-            String xsrfToken = cookieJar.getXsrfToken();
+        boolean allowUntrusted = true;
 
-            if(xsrfToken == null) {
-                return chain.proceed(srcRequest);
+        // https://stackoverflow.com/questions/23103174/does-okhttp-support-accepting-self-signed-ssl-certs
+        if (allowUntrusted) {
+            try {
+                Log.w(MawApplication.LOG_TAG, "**** Allow untrusted SSL connection ****");
+
+                final TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+
+                    @Override
+                    public void checkServerTrusted(final X509Certificate[] chain,
+                                                   final String authType) throws CertificateException {
+                    }
+
+                    @Override
+                    public void checkClientTrusted(final X509Certificate[] chain,
+                                                   final String authType) throws CertificateException {
+                    }
+                }};
+
+                SSLContext sslContext = SSLContext.getInstance("SSL");
+
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                builder.sslSocketFactory(sslContext.getSocketFactory());
+
+                HostnameVerifier hostnameVerifier = (hostname, session) -> {
+                    Log.d(MawApplication.LOG_TAG, "Trust Host :" + hostname);
+                    return true;
+                };
+
+                builder.hostnameVerifier(hostnameVerifier);
             }
+            catch(Exception e) {
+                Log.e(MawApplication.LOG_TAG, "Error setting up allowance for self signed certs: " + e.getMessage());
+            }
+        }
 
-            Request request = srcRequest.newBuilder()
-                    .addHeader(XSRF_HEADER, xsrfToken)
-                    .build();
-
-            return chain.proceed(request);
-        });
-
-        return builder.build();
+        return builder
+            .addNetworkInterceptor(authInterceptor)
+            .build();
     }
 
 
@@ -58,7 +94,7 @@ public class PhotoApiModule {
     Retrofit provideRetrofit(OkHttpClient httpClient) {
         return new Retrofit
                 .Builder()
-                .baseUrl(Constants.SITE_URL)
+                .baseUrl(Constants.API_BASE_URL)
                 .addConverterFactory(JacksonConverterFactory.create())
                 .client(httpClient)
                 .build();
@@ -68,9 +104,8 @@ public class PhotoApiModule {
     @Provides
     @Singleton
     PhotoApiClient providePhotoApiClient(OkHttpClient httpClient,
-                                         Retrofit retrofit,
-                                         PhotoApiCookieJar cookieJar) {
-        return new PhotoApiClient(httpClient, retrofit, cookieJar);
+                                         Retrofit retrofit) {
+        return new PhotoApiClient(httpClient, retrofit);
     }
 
 
@@ -78,5 +113,21 @@ public class PhotoApiModule {
     @Singleton
     AuthenticationExceptionHandler provideAuthenticationExceptionHandler(Application application) {
         return new AuthenticationExceptionHandler(application);
+    }
+
+
+    @Provides
+    @Singleton
+    AuthorizationServiceConfiguration provideAuthorizationServiceConfiguration() {
+        return new AuthorizationServiceConfiguration(
+            Uri.parse(Constants.AUTH_BASE_URL + "connect/authorize"), // authorization endpoint
+            Uri.parse(Constants.AUTH_BASE_URL + "connect/token")); // token endpoint
+    }
+
+
+    @Provides
+    @Singleton
+    AuthStateManager provideAuthStateManager(Application application) {
+        return AuthStateManager.getInstance(application);
     }
 }

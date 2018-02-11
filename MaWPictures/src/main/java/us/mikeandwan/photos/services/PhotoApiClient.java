@@ -27,39 +27,15 @@ import us.mikeandwan.photos.models.Rating;
 
 
 public class PhotoApiClient {
-    private final PhotoApiCookieJar _cookieJar;
     private final PhotoApi _photoApi;
     private final OkHttpClient _httpClient;
 
 
     @Inject
     public PhotoApiClient(OkHttpClient httpClient,
-                          Retrofit retrofit,
-                          PhotoApiCookieJar cookieJar) {
+                          Retrofit retrofit) {
         _httpClient = httpClient;
         _photoApi = retrofit.create(PhotoApi.class);
-        _cookieJar = cookieJar;
-    }
-
-
-    public boolean isAuthenticated() {
-        return _cookieJar.isAuthenticated();
-    }
-
-
-    public boolean authenticate(String username, String password) {
-        try {
-            Response<Boolean> result = _photoApi.authenticate(username, password).execute();
-
-            if(result.isSuccessful()) {
-                establishXsrfTokenCookie();
-                return true;
-            }
-        } catch (Exception ex) {
-            Log.w(MawApplication.LOG_TAG, "Error when authenticating: " + ex.getMessage());
-        }
-
-        return false;
     }
 
 
@@ -196,22 +172,9 @@ public class PhotoApiClient {
 
     private static String buildPhotoUrl(String photoPath) {
         if (photoPath.startsWith("/")) {
-            return Constants.SITE_URL + photoPath.substring(1);
+            return Constants.API_BASE_URL + photoPath.substring(1);
         }
 
-        return Constants.SITE_URL + photoPath;
-    }
-
-
-    private void establishXsrfTokenCookie() {
-        try {
-            Response<Boolean> response = _photoApi.establishXsrfTokenCookie().execute();
-
-            if (response.isSuccessful()) {
-                Log.i(MawApplication.LOG_TAG, "Obtained XSRF token");
-            }
-        } catch (Exception ex) {
-            Log.w(MawApplication.LOG_TAG, "Error obtaining XSRF token: " + ex.getMessage());
-        }
+        return Constants.API_BASE_URL + photoPath;
     }
 }

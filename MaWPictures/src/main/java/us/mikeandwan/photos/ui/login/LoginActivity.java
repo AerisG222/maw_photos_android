@@ -1,54 +1,41 @@
 package us.mikeandwan.photos.ui.login;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewCompat;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+
+import net.openid.appauth.AuthState;
+import net.openid.appauth.AuthorizationRequest;
+import net.openid.appauth.AuthorizationService;
+import net.openid.appauth.AuthorizationServiceConfiguration;
+import net.openid.appauth.ResponseTypeValues;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
+import butterknife.BindString;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
-import us.mikeandwan.photos.models.Credentials;
-import us.mikeandwan.photos.services.DataServices;
+import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
-import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
+import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity;
+import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity;
 
 
-// TODO: change how we cache credentials for server side encryption
 public class LoginActivity extends BaseActivity implements HasComponent<ActivityComponent> {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-    private Credentials _creds = new Credentials();
+    @BindString(R.string.auth_client_id) String _authClientId;
+    @BindString(R.string.auth_scheme_redirect_uri) String _authSchemeRedirect;
+
+    @Inject AuthStateManager _authStateManager;
+    @Inject AuthorizationServiceConfiguration _config;
+    @Inject AuthorizationService _authService;
+
+    private Uri _authSchemeRedirectUri;
     private ActivityComponent _activityComponent;
-    private MawApplication _app;
-
-    @BindView(R.id.username) EditText _usernameView;
-    @BindView(R.id.password) EditText _passwordView;
-    @BindView(R.id.login_progress) View _progressView;
-    @BindView(R.id.login_form) View _loginFormView;
-    @BindView(R.id.login_button) Button _loginButton;
-
-    @Inject DataServices _dataServices;
 
 
     public ActivityComponent getComponent() {
@@ -62,168 +49,59 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        _app = (MawApplication) getApplication();
+        _authSchemeRedirectUri = Uri.parse(_authSchemeRedirect);
 
         _activityComponent = DaggerActivityComponent.builder()
-                .applicationComponent(getApplicationComponent())
-                .activityModule(getActivityModule())
-                .build();
+            .applicationComponent(getApplicationComponent())
+            .activityModule(getActivityModule())
+            .build();
 
         _activityComponent.inject(this);
 
-        cleanupLegacyStorage();
-
-        ResetNotifications();
-        ViewCompat.setElevation(_progressView, 4);
-
-        _creds = _dataServices.getCredentials();
-
-        if (_creds != null) {
-            _usernameView.setText(_creds.getUsername());
-            _passwordView.setText(_creds.getPassword());
-
-            attemptLogin();
-        }
+        authorize();
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        _disposables.clear(); // do not send event after activity has been destroyed
-    }
-
-
-    private void ResetNotifications() {
-        NotificationManager mgr = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        mgr.cancel(0);
-        _app.setNotificationCount(0);
-    }
-
-
-    @OnClick(R.id.login_button)
-    public void attemptLogin() {
-        _loginButton.setEnabled(false);
-
-        _creds.setUsername(_usernameView.getText().toString());
-        _creds.setPassword(_passwordView.getText().toString());
-
-        _usernameView.setError(null);
-        _passwordView.setError(null);
-
-        boolean cancel = false;
-        View focusView = null;
-
-        if (TextUtils.isEmpty(_creds.getPassword())) {
-            _passwordView.setError(getString(R.string.act_login_error_field_required));
-            focusView = _passwordView;
-            cancel = true;
-        }
-
-        if (TextUtils.isEmpty(_creds.getUsername())) {
-            _usernameView.setError(getString(R.string.act_login_error_field_required));
-            focusView = _usernameView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            showProgress(false);
-            focusView.requestFocus();
-        } else {
-            showProgress(true);
-
-            _disposables.add(
-                    Flowable.fromCallable(() -> _dataServices.authenticate(_creds))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    this::completeLoginProcess,
-                                    ex -> {
-                                        showProgress(false);
-                                        Log.w(MawApplication.LOG_TAG, "error authenticating: " + ex.getMessage());
-                                    }
-                            )
-            );
-        }
-    }
-
-
-    private void completeLoginProcess(boolean success) {
-        Log.i(MawApplication.LOG_TAG, "login result: " + success);
-
-        if (success) {
-            // set the creds before it is blanked out below
-            _dataServices.setCredentials(_creds);
-        }
-
-        // always blank out the password after an attempt
-        _creds.setPassword("");
-        _passwordView.setText("");
-
-        if (success) {
-            Snackbar.make(_loginFormView, "Welcome, " + _creds.getUsername(), Snackbar.LENGTH_SHORT).show();
-
-            _disposables.add(
-                    Flowable.fromCallable(() -> _dataServices.getRecentCategories())
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    x -> goToModeSelection(),
-                                    ex -> {
-                                        showProgress(false);
-                                        Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage());
-                                    }
-                            )
-            );
-        } else {
-            Snackbar.make(_loginFormView, "Unable to authenticate", Snackbar.LENGTH_SHORT).show();
-            _passwordView.requestFocus();
-            showProgress(false);
-        }
-    }
-
-
-    private void goToModeSelection() {
-        Intent intent = new Intent(this, ModeSelectionActivity.class);
+    private void goToInitialLoad() {
+        Intent intent = new Intent(this, InitialLoadActivity.class);
         startActivity(intent);
 
-        showProgress(false);
+        finish();
     }
 
 
-    private void cleanupLegacyStorage() {
-        Log.i(MawApplication.LOG_TAG, "starting to wipe");
+    public void authorize() {
+        if(isAuthorized()) {
+            goToInitialLoad();
+        }
 
-        _disposables.add(
-                Flowable.fromCallable(() -> {
-                            _dataServices.wipeLegacyCache();
-                            return true;
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                x -> Log.i(MawApplication.LOG_TAG, "completed wipe"),
-                                ex -> Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage())
-                        )
-        );
+        _authStateManager.replace(new AuthState(_config));
+
+        AuthorizationRequest.Builder authRequestBuilder =
+            new AuthorizationRequest.Builder(
+                _config,
+                _authClientId, // the client ID, typically pre-registered and static
+                ResponseTypeValues.CODE, // the response_type value: we want a code
+                _authSchemeRedirectUri); // the redirect URI to which the auth response is sent
+
+        AuthorizationRequest authRequest = authRequestBuilder
+            .setScopes("openid email role maw_api")
+            .build();
+
+        _authService.performAuthorizationRequest(
+            authRequest,
+            PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0),
+            PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0));
     }
 
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        _loginButton.setEnabled(!show);
+    private boolean isAuthorized() {
+        AuthState authState = _authStateManager.getCurrent();
 
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        if(authState == null) {
+            return false;
+        }
 
-        _progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        _progressView.animate()
-                .setDuration(shortAnimTime)
-                .alpha(show ? 1 : 0)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        _progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                    }
-                });
+        return authState.isAuthorized();
     }
 }
