@@ -15,7 +15,7 @@ import us.mikeandwan.photos.ui.photos.RatingDialogFragment;
 
 
 @PerActivity
-@Component(dependencies = ApplicationComponent.class, modules = { ActivityModule.class, AdapterModule.class, AuthModule.class })
+@Component(dependencies = ApplicationComponent.class, modules = { ActivityModule.class, AdapterModule.class })
 public interface ActivityComponent {
     // activities
     void inject(CategoryListActivity activity);
@@ -32,5 +32,4 @@ public interface ActivityComponent {
 
     // services
     void inject(AuthorizationService authorizationService);
-    void inject(OkHttpConnectionBuilder okHttpConnectionBuilder);
 }

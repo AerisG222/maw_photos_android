@@ -18,6 +18,7 @@ import net.openid.appauth.TokenResponse;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
@@ -30,7 +31,7 @@ import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity;
 
 public class LoginCallbackActivity extends BaseActivity implements HasComponent<ActivityComponent> {
     @Inject AuthStateManager _authStateManager;
-    @Inject AuthorizationServiceConfiguration _config;
+    @Inject Observable<AuthorizationServiceConfiguration> _config;
     @Inject AuthorizationService _authService;
 
     private ActivityComponent _activityComponent;

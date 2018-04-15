@@ -1,0 +1,15 @@
+# for dev certs to validate, we must update the hosts file and add the CA to android
+# https://www.ibm.com/blogs/sweeden/using-custom-certificates-and-hosts-file-with-android-emulator/
+# https://stackoverflow.com/questions/41117715/how-to-edit-etc-hosts-file-in-android-studio-emulator-running-in-nougat?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+#
+# to push this file, we must manually start the emulator w/ write mode
+# ./emulator -avd "Nexus_5X_API_23" -writable-system
+# ./adb remount
+# ./adb push ~/git/maw_photos_android/dev_etc_hosts /etc/hosts
+# ./adb shell
+#   > ping authdev.mikeandwan.us
+
+127.0.0.1       localhost
+::1             ip6-localhost
+
+10.0.2.2        apidev.mikeandwan.us authdev.mikeandwan.us wwwdev.mikeandwan.us

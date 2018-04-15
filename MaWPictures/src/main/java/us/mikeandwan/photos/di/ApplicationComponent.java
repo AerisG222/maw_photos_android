@@ -2,12 +2,12 @@ package us.mikeandwan.photos.di;
 
 import android.app.Application;
 
-import net.openid.appauth.AuthorizationService;
 import net.openid.appauth.AuthorizationServiceConfiguration;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
+import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
@@ -28,7 +28,7 @@ import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 
 @Singleton
-@Component(modules = {ApplicationModule.class, DataStorageModule.class, PhotoApiModule.class, PreferenceModule.class})
+@Component(modules = {ApplicationModule.class, HttpModule.class, AuthModule.class, DataStorageModule.class, PhotoApiModule.class, PreferenceModule.class})
 public interface ApplicationComponent {
     // identify which services will be available to dependent components
     Application application();
@@ -41,7 +41,7 @@ public interface ApplicationComponent {
     DatabaseAccessor databaseAccessor();
     PhotoApiClient photoApiClient();
     AuthenticationExceptionHandler authenticationExceptionHandler();
-    AuthorizationServiceConfiguration authorizationServiceConfiguration();
+    Observable<AuthorizationServiceConfiguration> authorizationServiceConfiguration();
     AuthStateManager authStateManager();
     OkHttpClient okHttpClient();
 

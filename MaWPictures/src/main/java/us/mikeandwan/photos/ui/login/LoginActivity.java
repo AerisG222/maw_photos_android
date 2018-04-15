@@ -15,6 +15,8 @@ import javax.inject.Inject;
 
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
 import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
@@ -27,11 +29,13 @@ import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity;
 
 
 public class LoginActivity extends BaseActivity implements HasComponent<ActivityComponent> {
+    private final CompositeDisposable _disposables = new CompositeDisposable();
+
     @BindString(R.string.auth_client_id) String _authClientId;
     @BindString(R.string.auth_scheme_redirect_uri) String _authSchemeRedirect;
 
     @Inject AuthStateManager _authStateManager;
-    @Inject AuthorizationServiceConfiguration _config;
+    @Inject Observable<AuthorizationServiceConfiguration> _config;
     @Inject AuthorizationService _authService;
 
     private Uri _authSchemeRedirectUri;
@@ -62,6 +66,13 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
     }
 
 
+    @Override public void onDestroy() {
+        _disposables.clear();
+
+        super.onDestroy();
+    }
+
+
     private void goToInitialLoad() {
         Intent intent = new Intent(this, InitialLoadActivity.class);
         startActivity(intent);
@@ -75,32 +86,30 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
             goToInitialLoad();
         }
 
-        _authStateManager.replace(new AuthState(_config));
+        _disposables.add(_config.subscribe((config) -> {
+            _authStateManager.replace(new AuthState(config));
 
-        AuthorizationRequest.Builder authRequestBuilder =
-            new AuthorizationRequest.Builder(
-                _config,
-                _authClientId, // the client ID, typically pre-registered and static
-                ResponseTypeValues.CODE, // the response_type value: we want a code
-                _authSchemeRedirectUri); // the redirect URI to which the auth response is sent
+            AuthorizationRequest.Builder authRequestBuilder =
+                new AuthorizationRequest.Builder(
+                    config,
+                    _authClientId, // the client ID, typically pre-registered and static
+                    ResponseTypeValues.CODE, // the response_type value: we want a code
+                    _authSchemeRedirectUri); // the redirect URI to which the auth response is sent
 
-        AuthorizationRequest authRequest = authRequestBuilder
-            .setScopes("openid email role maw_api")
-            .build();
+            AuthorizationRequest authRequest = authRequestBuilder
+                .setScopes("openid email role maw_api")
+                .build();
 
-        _authService.performAuthorizationRequest(
-            authRequest,
-            PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0),
-            PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0));
+            _authService.performAuthorizationRequest(
+                authRequest,
+                PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0),
+                PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0));
+        }));
     }
 
 
     private boolean isAuthorized() {
         AuthState authState = _authStateManager.getCurrent();
-
-        if(authState == null) {
-            return false;
-        }
 
         return authState.isAuthorized();
     }
