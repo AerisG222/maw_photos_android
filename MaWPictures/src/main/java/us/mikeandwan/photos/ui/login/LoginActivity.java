@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationRequest;
 import net.openid.appauth.AuthorizationService;
@@ -17,7 +18,6 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
-import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
@@ -36,7 +36,8 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
 
     @Inject AuthStateManager _authStateManager;
     @Inject Observable<AuthorizationServiceConfiguration> _config;
-    @Inject AuthorizationService _authService;
+    @Inject AppAuthConfiguration _appAuthConfig;
+    AuthorizationService _authService;
 
     private Uri _authSchemeRedirectUri;
     private ActivityComponent _activityComponent;
@@ -62,6 +63,9 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
 
         _activityComponent.inject(this);
 
+        // https://github.com/openid/AppAuth-Android/issues/333
+        _authService = new AuthorizationService(this, _appAuthConfig);
+
         authorize();
     }
 
@@ -84,6 +88,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
     public void authorize() {
         if(isAuthorized()) {
             goToInitialLoad();
+            return;
         }
 
         _disposables.add(_config.subscribe((config) -> {

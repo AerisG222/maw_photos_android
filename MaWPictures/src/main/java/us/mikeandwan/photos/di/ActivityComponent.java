@@ -1,7 +1,5 @@
 package us.mikeandwan.photos.di;
 
-import net.openid.appauth.AuthorizationService;
-
 import dagger.Component;
 import us.mikeandwan.photos.ui.categories.CategoryListActivity;
 import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity;
@@ -29,7 +27,4 @@ public interface ActivityComponent {
     void inject(CommentDialogFragment fragment);
     void inject(ExifDialogFragment fragment);
     void inject(RatingDialogFragment fragment);
-
-    // services
-    void inject(AuthorizationService authorizationService);
 }

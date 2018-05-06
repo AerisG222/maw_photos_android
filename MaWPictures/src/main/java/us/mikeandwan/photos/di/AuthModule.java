@@ -4,6 +4,8 @@ import android.app.Application;
 import android.net.Uri;
 import android.util.Log;
 
+import net.openid.appauth.AppAuthConfiguration;
+import net.openid.appauth.AuthorizationService;
 import net.openid.appauth.AuthorizationServiceConfiguration;
 
 import javax.inject.Singleton;
@@ -25,8 +27,31 @@ import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 public class AuthModule {
     @Provides
     @Singleton
-    AuthInterceptor provideAuthInterceptor(AuthStateManager authStateManager) {
-        return new AuthInterceptor(authStateManager);
+    AuthStateManager provideAuthStateManager(Application application) {
+        return AuthStateManager.getInstance(application);
+    }
+
+
+    @Provides
+    @Singleton
+    AppAuthConfiguration provideAppAuthConfiguration() {
+        return new AppAuthConfiguration.Builder()
+            .build();
+    }
+
+
+    @Provides
+    @Singleton
+    AuthorizationService provideAuthorizationService(Application application, AppAuthConfiguration appAuthConfig) {
+        return new AuthorizationService(application, appAuthConfig);
+    }
+
+
+    @Provides
+    @Singleton
+    AuthInterceptor provideAuthInterceptor(AuthorizationService authService,
+                                           AuthStateManager authStateManager) {
+        return new AuthInterceptor(authService, authStateManager);
     }
 
 
@@ -59,12 +84,5 @@ public class AuthModule {
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
-    }
-
-
-    @Provides
-    @Singleton
-    AuthStateManager provideAuthStateManager(Application application) {
-        return AuthStateManager.getInstance(application);
     }
 }

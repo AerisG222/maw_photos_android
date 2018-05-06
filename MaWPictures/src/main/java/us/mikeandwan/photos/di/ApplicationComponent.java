@@ -2,6 +2,8 @@ package us.mikeandwan.photos.di;
 
 import android.app.Application;
 
+import net.openid.appauth.AppAuthConfiguration;
+import net.openid.appauth.AuthorizationService;
 import net.openid.appauth.AuthorizationServiceConfiguration;
 
 import javax.inject.Singleton;
@@ -14,6 +16,7 @@ import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
 import us.mikeandwan.photos.prefs.NotificationPreference;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
 import us.mikeandwan.photos.prefs.SyncPreference;
+import us.mikeandwan.photos.services.AuthInterceptor;
 import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
@@ -44,6 +47,9 @@ public interface ApplicationComponent {
     Observable<AuthorizationServiceConfiguration> authorizationServiceConfiguration();
     AuthStateManager authStateManager();
     OkHttpClient okHttpClient();
+    AuthorizationService authorizationService();
+    AuthInterceptor authInterceptor();
+    AppAuthConfiguration appAuthConfiguration();
 
     void inject(MawApplication application);
 
@@ -62,4 +68,7 @@ public interface ApplicationComponent {
     void inject(AuthenticationExceptionHandler authenticationExceptionHandler);
     void inject(AuthorizationServiceConfiguration authorizationServiceConfiguration);
     void inject(AuthStateManager authStateManager);
+    void inject(AuthorizationService authorizationService);
+    void inject(AuthInterceptor authInterceptor);
+    void inject(AppAuthConfiguration appAuthConfiguration);
 }
