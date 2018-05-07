@@ -146,15 +146,11 @@ public class PhotoStorage {
         // with latest site, the dir names are now different (xs, sm, lg, etc) rather than
         // (fullsize, fuller, orig, etc).  this kills the older cache as they will no longer
         // be referenced
-        try {
-            wipe(getRootPath(), new PriorDirectoryFilter());
-        } catch (IOException ex) {
-            Log.e(MawApplication.LOG_TAG, "Unable to delete newer cache directory: " + ex.getMessage());
-        }
+        wipe(getRootPath(), new PriorDirectoryFilter());
     }
 
 
-    private void wipe(File dir, FileFilter filter) throws IOException {
+    private void wipe(File dir, FileFilter filter) {
         if(dir == null || dir.isFile()) {
             return;
         }

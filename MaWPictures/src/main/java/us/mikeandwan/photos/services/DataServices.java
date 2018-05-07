@@ -34,7 +34,7 @@ public class DataServices {
     }
 
 
-    public List<Comment> addComment(CommentPhoto cp) throws IOException, MawAuthenticationException {
+    public List<Comment> addComment(CommentPhoto cp) throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to add comment for photo: " + cp.getPhotoId());
 
         _photoApiClient.addComment(cp.getPhotoId(), cp.getComment());
@@ -88,7 +88,7 @@ public class DataServices {
     }
 
 
-    public List<Comment> getComments(int photoId) throws IOException, MawAuthenticationException {
+    public List<Comment> getComments(int photoId) throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to get comments for photo: " + photoId);
 
         return _photoApiClient.getComments(photoId);
@@ -114,21 +114,21 @@ public class DataServices {
     }
 
 
-    public PhotoAndCategory getRandomPhoto() throws IOException, MawAuthenticationException {
+    public PhotoAndCategory getRandomPhoto() throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to get random photo");
 
         return _photoApiClient.getRandomPhoto();
     }
 
 
-    public Rating getRating(int photoId) throws IOException, MawAuthenticationException {
+    public Rating getRating(int photoId) throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to get rating for photo: " + photoId);
 
         return _photoApiClient.getRatings(photoId);
     }
 
 
-    public List<Category> getRecentCategories() throws IOException, MawAuthenticationException {
+    public List<Category> getRecentCategories() throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to get recent categories");
 
         List<Category> categories = _photoApiClient.getRecentCategories(_databaseAccessor.getLatestCategoryId());
@@ -144,7 +144,7 @@ public class DataServices {
     }
 
 
-    public Rating setRating(int photoId, int rating) throws MawAuthenticationException {
+    public Rating setRating(int photoId, int rating) {
         Log.d(MawApplication.LOG_TAG, "started to set user rating for photo: " + photoId);
 
         Float averageRating = _photoApiClient.setRating(photoId, rating);
