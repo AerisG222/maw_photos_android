@@ -63,23 +63,20 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
         }
 
         if (response != null && response.authorizationCode != null) {
-            // authorization code exchange is required
             _authStateManager.updateAfterAuthorization(response, ex);
             exchangeAuthorizationCode(response);
         } else if (ex != null) {
-            Log.e(MawApplication.LOG_TAG, "error authenticating: " + ex.getMessage());
-            //displayNotAuthorized("Authorization flow failed: " + ex.getMessage());
+            Log.e(MawApplication.LOG_TAG, "Authorization failed: " + ex.getMessage());
         } else {
             Log.e(MawApplication.LOG_TAG, "No authorization state retained - reauthorization required");
-            //displayNotAuthorized("No authorization state retained - reauthorization required");
         }
     }
 
 
     @MainThread
     private void exchangeAuthorizationCode(AuthorizationResponse authorizationResponse) {
-        Log.d(MawApplication.LOG_TAG, "a");
-        //displayLoading("Exchanging authorization code");
+        Log.d(MawApplication.LOG_TAG, "Exchanging authorization code");
+
         performTokenRequest(
             authorizationResponse.createTokenExchangeRequest(),
             this::handleCodeExchangeResponse);
@@ -88,15 +85,15 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
 
     @MainThread
     private void performTokenRequest(TokenRequest request, AuthorizationService.TokenResponseCallback callback) {
-        Log.d(MawApplication.LOG_TAG, "b");
         ClientAuthentication clientAuthentication;
 
         try {
+            Log.d(MawApplication.LOG_TAG, "Attempting token request");
             clientAuthentication = _authStateManager.getCurrent().getClientAuthentication();
         } catch (ClientAuthentication.UnsupportedAuthenticationMethod ex) {
             Log.d(MawApplication.LOG_TAG, "Token request cannot be made, client authentication for the token "
                 + "endpoint could not be constructed (%s)", ex);
-            //displayNotAuthorized("Client authentication method is unsupported");
+
             return;
         }
 
@@ -109,20 +106,14 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
 
     @WorkerThread
     private void handleCodeExchangeResponse(@Nullable TokenResponse tokenResponse, @Nullable AuthorizationException authException) {
-        Log.d(MawApplication.LOG_TAG, "c");
-
         _authStateManager.updateAfterTokenResponse(tokenResponse, authException);
 
         if (!_authStateManager.getCurrent().isAuthorized()) {
             final String message = "Authorization Code exchange failed" + ((authException != null) ? authException.error : "");
 
-            // WrongThread inference is incorrect for lambdas
-            //noinspection WrongThread
-            // runOnUiThread(() -> displayNotAuthorized(message));
             Log.e(MawApplication.LOG_TAG, "NOT AUTHORIZED: " + message);
         } else {
-            Log.e(MawApplication.LOG_TAG, "AUTHORIZED");
-           // runOnUiThread(this::displayAuthorized);
+            Log.i(MawApplication.LOG_TAG, "AUTHORIZED");
             goToInitialLoad();
         }
     }
