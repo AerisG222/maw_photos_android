@@ -77,7 +77,10 @@ public class AuthModule {
                         emitter.onError(ex);
                     }
 
-                    emitter.onNext(serviceConfiguration);
+                    if(serviceConfiguration != null) {
+                        emitter.onNext(serviceConfiguration);
+                    }
+
                     emitter.onComplete();
                 }
             )

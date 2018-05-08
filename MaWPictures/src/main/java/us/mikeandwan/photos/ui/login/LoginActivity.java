@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthState;
@@ -16,8 +17,10 @@ import javax.inject.Inject;
 
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
+import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
@@ -38,6 +41,10 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
     @Inject Observable<AuthorizationServiceConfiguration> _config;
     @Inject AppAuthConfiguration _appAuthConfig;
     AuthorizationService _authService;
+
+    @OnClick(R.id.loginButton) void onLoginButtonClick() {
+        retryLogin();
+    }
 
     private Uri _authSchemeRedirectUri;
     private ActivityComponent _activityComponent;
@@ -109,6 +116,8 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
                 authRequest,
                 PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0),
                 PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0));
+        }, (err) -> {
+            Log.e(MawApplication.LOG_TAG, "There was an error getting OIDC configuration: " + err.getMessage());
         }));
     }
 
@@ -117,5 +126,10 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
         AuthState authState = _authStateManager.getCurrent();
 
         return authState.isAuthorized();
+    }
+
+
+    private void retryLogin() {
+        recreate();
     }
 }

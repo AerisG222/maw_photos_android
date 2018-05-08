@@ -73,8 +73,8 @@ public class InitialLoadActivity extends BaseActivity implements HasComponent<Ac
                 .subscribe(
                     x -> goToModeSelection(),
                     ex -> {
-                        //showProgress(false);
-                        Log.w(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage());
+                        Log.e(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage());
+                        goToModeSelection();
                     }
                 )
         );

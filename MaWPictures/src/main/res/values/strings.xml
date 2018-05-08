@@ -17,6 +17,9 @@
     <!-- category list item -->
     <string name="li_category_thumbnail_description">Thumbnail</string>
 
+    <!-- login activity -->
+    <string name="act_login_bg_description">Bittersweet Berries</string>
+
     <!-- add comment dialog -->
     <string name="frg_comment_add_comment">Add Comment</string>
 
