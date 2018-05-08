@@ -6,4 +6,33 @@
     android:layout_height="match_parent"
     tools:context="us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity">
 
+    <ImageView
+        android:id="@+id/loadingImageView"
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:adjustViewBounds="true"
+        android:clickable="false"
+        android:contentDescription="@string/act_login_bg_description"
+        android:cropToPadding="false"
+        android:scaleType="centerCrop"
+        android:src="@drawable/banner"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginStart="0dp" />
+
+    <TextView
+        android:id="@+id/loadingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="Loading..."
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/loadingImageView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:fontFamily="@font/tangerine"
+        android:textSize="36dp" />
+
 </android.support.constraint.ConstraintLayout>
