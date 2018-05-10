@@ -11,6 +11,8 @@ public interface IPhotoActivity {
 
     void removeWork();
 
+    void onApiException(Throwable throwable);
+
     Photo getCurrentPhoto();
 
     List<Photo> getPhotoList();

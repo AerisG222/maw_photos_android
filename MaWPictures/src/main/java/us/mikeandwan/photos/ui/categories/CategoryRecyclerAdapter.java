@@ -13,7 +13,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 
 
@@ -22,16 +21,15 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
     protected final Context _context;
     protected final DataServices _dataServices;
     private final PublishSubject<Category> _categorySubject = PublishSubject.create();
-    private final AuthenticationExceptionHandler _authHandler;
     private List<Category> _categoryList;
+    ICategoryListActivity _activity;
 
 
-    public CategoryRecyclerAdapter(Context context,
-                                   DataServices dataServices,
-                                   AuthenticationExceptionHandler authHandler) {
-        _context = context;
+    public CategoryRecyclerAdapter(ICategoryListActivity activity,
+                                   DataServices dataServices) {
+        _context = (Context) activity;
+        _activity = activity;
         _dataServices = dataServices;
-        _authHandler = authHandler;
     }
 
 
@@ -56,7 +54,7 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         x -> displayCategory(category, x, viewHolder),
-                        _authHandler::handleException
+                        ex -> _activity.onApiException(ex)
                 )
         );
     }

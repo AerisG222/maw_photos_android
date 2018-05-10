@@ -74,6 +74,7 @@ public class InitialLoadActivity extends BaseActivity implements HasComponent<Ac
                     x -> goToModeSelection(),
                     ex -> {
                         Log.e(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage());
+                        handleApiException(ex);
                         goToModeSelection();
                     }
                 )

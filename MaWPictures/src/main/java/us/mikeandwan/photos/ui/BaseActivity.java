@@ -2,10 +2,22 @@ package us.mikeandwan.photos.ui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 
+import java.net.ConnectException;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.di.ActivityModule;
 import us.mikeandwan.photos.di.ApplicationComponent;
@@ -13,11 +25,37 @@ import us.mikeandwan.photos.di.ApplicationComponent;
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
+    private final CompositeDisposable _disposables = new CompositeDisposable();
+    private final PublishSubject<String> _errorSubject = PublishSubject.create();
+
+    public void onApiException(Throwable throwable) {
+        handleApiException(throwable);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.getApplicationComponent().inject(this);
+
+        _disposables.add(_errorSubject
+            .publish(publishedItems -> publishedItems
+                .take(1)
+                .concatWith(publishedItems
+                    .skip(1)
+                    .debounce(2, TimeUnit.SECONDS)
+                )
+            )
+            .subscribe(this::showError));
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        _disposables.clear();
+
+        super.onDestroy();
     }
 
 
@@ -40,5 +78,25 @@ public class BaseActivity extends AppCompatActivity {
                 toolbar.setTitle(title);
             }
         }
+    }
+
+
+    protected void handleApiException(Throwable throwable) {
+        if(throwable == null) {
+            return;
+        }
+
+        Log.e(MawApplication.LOG_TAG, "Error accessing api: " + throwable.getMessage());
+
+        if(throwable instanceof ConnectException) {
+            _errorSubject.onNext("Unable to connect to service at this time.");
+        }
+    }
+
+
+    private void showError(String msg) {
+        View view = findViewById(android.R.id.content);
+
+        Snackbar.make(view, msg, Snackbar.LENGTH_SHORT).show();
     }
 }

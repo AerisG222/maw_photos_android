@@ -20,7 +20,6 @@ import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.services.AuthInterceptor;
 import us.mikeandwan.photos.services.AuthStateManager;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 
 
 @Module
@@ -52,13 +51,6 @@ public class AuthModule {
     AuthInterceptor provideAuthInterceptor(AuthorizationService authService,
                                            AuthStateManager authStateManager) {
         return new AuthInterceptor(authService, authStateManager);
-    }
-
-
-    @Provides
-    @Singleton
-    AuthenticationExceptionHandler provideAuthenticationExceptionHandler(Application application) {
-        return new AuthenticationExceptionHandler(application);
     }
 
 

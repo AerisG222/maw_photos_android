@@ -46,7 +46,6 @@ import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.BaseActivity;
@@ -108,7 +107,6 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     @OnClick(R.id.slideshowButton) void onSlideshowButtonClick() { toggleSlideshow(); }
 
     @Inject PhotoDisplayPreference _photoPrefs;
-    @Inject AuthenticationExceptionHandler _authHandler;
     @Inject DataServices _dataServices;
     @Inject FullScreenImageAdapter _photoPagerAdapter;
     @Inject ThumbnailRecyclerAdapter _thumbnailRecyclerAdapter;
@@ -314,7 +312,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                         },
                         ex -> {
                             removeWork();
-                            _authHandler.handleException(ex);
+                            handleApiException((ex));
                         }
                 )
         );
@@ -352,7 +350,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                         },
                         ex -> {
                             removeWork();
-                            _authHandler.handleException(ex);
+                            handleApiException(ex);
                         }
                 )
         );
@@ -449,7 +447,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                         x -> removeWork(),
                         ex -> {
                             removeWork();
-                            _authHandler.handleException(ex);
+                            handleApiException(ex);
                         }
                 )
         );

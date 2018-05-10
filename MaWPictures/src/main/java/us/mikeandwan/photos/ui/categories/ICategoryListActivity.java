@@ -5,4 +5,6 @@ import us.mikeandwan.photos.models.Category;
 
 public interface ICategoryListActivity {
     void selectCategory(Category category);
+
+    void onApiException(Throwable throwable);
 }

@@ -19,7 +19,6 @@ import io.reactivex.subjects.PublishSubject;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 
 
@@ -28,16 +27,14 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
     private final Context _context;
     private final IPhotoActivity _activity;
     private final DataServices _dataServices;
-    private final AuthenticationExceptionHandler _authHandler;
     private final PublishSubject<Integer> _thumbnailSubject = PublishSubject.create();
     private List<Photo> _photoList;
 
 
-    public ThumbnailRecyclerAdapter(IPhotoActivity activity, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
+    public ThumbnailRecyclerAdapter(IPhotoActivity activity, DataServices dataServices) {
         _context = (Context)activity;
         _activity = activity;
         _dataServices = dataServices;
-        _authHandler = authHandler;
     }
 
 
@@ -72,7 +69,7 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
                         },
                         ex -> {
                             _activity.removeWork();
-                            _authHandler.handleException(ex);
+                            _activity.onApiException(ex);
                         }
                 )
         );

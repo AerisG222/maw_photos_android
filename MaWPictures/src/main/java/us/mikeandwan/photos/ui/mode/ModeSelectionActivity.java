@@ -33,7 +33,6 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.BaseActivity;
@@ -61,7 +60,6 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     @BindView(R.id.modeExpandableListView) ExpandableListView _modeExpandableListView;
 
     @Inject DataServices _dataServices;
-    @Inject AuthenticationExceptionHandler _authHandler;
 
 
     public ActivityComponent getComponent() {
@@ -156,7 +154,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                         this::onWipeComplete,
                         ex -> {
                             stopSyncAnimation();
-                            _authHandler.handleException(ex);
+                            handleApiException(ex);
                         })
         );
     }
@@ -207,7 +205,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                     this::onSyncComplete,
                     ex -> {
                         stopSyncAnimation();
-                        _authHandler.handleException(ex);
+                        handleApiException(ex);
                 })
         );
     }

@@ -35,7 +35,6 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 
 
@@ -52,7 +51,6 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
     @BindColor(R.color.primary_dark) int _colorPrimaryDark;
 
     @Inject DataServices _dataServices;
-    @Inject AuthenticationExceptionHandler _authHandler;
 
 
     @OnClick(R.id.addCommentButton)
@@ -78,7 +76,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
                             },
                             ex -> {
                                 removeWork();
-                                _authHandler.handleException(ex);
+                                getPhotoActivity().onApiException(ex);
                             }
                     )
             );
@@ -144,7 +142,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
                         },
                         ex -> {
                             removeWork();
-                            _authHandler.handleException(ex);
+                            getPhotoActivity().onApiException(ex);
                         }
                 )
         );

@@ -18,7 +18,6 @@ import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.models.Rating;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 
 
@@ -30,7 +29,6 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
     @BindView(R.id.averageRatingBar) RatingBar _averageRatingBar;
 
     @Inject DataServices _dataServices;
-    @Inject AuthenticationExceptionHandler _authHandler;
 
 
     @Override
@@ -53,7 +51,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                                 },
                                 ex -> {
                                     removeWork();
-                                    _authHandler.handleException(ex);
+                                    getPhotoActivity().onApiException(ex);
                                 }
                         )
                 );
@@ -113,7 +111,7 @@ public class RatingDialogFragment extends BasePhotoDialogFragment {
                         },
                         ex -> {
                             removeWork();
-                            _authHandler.handleException(ex);
+                            getPhotoActivity().onApiException(ex);
                         }
                 )
         );

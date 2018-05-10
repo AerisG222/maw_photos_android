@@ -14,15 +14,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 
 
 public class ListCategoryRecyclerAdapter extends CategoryRecyclerAdapter<ListCategoryRecyclerAdapter.ViewHolder> {
-    public ListCategoryRecyclerAdapter(Context context,
-                                       DataServices dataServices,
-                                       AuthenticationExceptionHandler authHandler) {
-        super(context, dataServices, authHandler);
+    public ListCategoryRecyclerAdapter(ICategoryListActivity activity,
+                                       DataServices dataServices) {
+        super(activity, dataServices);
     }
 
 

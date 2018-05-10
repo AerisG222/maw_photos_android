@@ -18,7 +18,7 @@ public class BasePhotoDialogFragment extends DialogFragment {
     }
 
 
-    private IPhotoActivity getPhotoActivity() {
+    protected IPhotoActivity getPhotoActivity() {
         return (IPhotoActivity) getActivity();
     }
 

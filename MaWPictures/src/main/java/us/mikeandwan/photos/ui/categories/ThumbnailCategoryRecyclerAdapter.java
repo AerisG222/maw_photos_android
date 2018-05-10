@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.ui.categories;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,15 +9,13 @@ import com.squareup.picasso.Picasso;
 
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 
 
 public class ThumbnailCategoryRecyclerAdapter extends CategoryRecyclerAdapter<ThumbnailCategoryRecyclerAdapter.ViewHolder> {
-    public ThumbnailCategoryRecyclerAdapter(Context context,
-                                            DataServices dataServices,
-                                            AuthenticationExceptionHandler authHandler) {
-        super(context, dataServices, authHandler);
+    public ThumbnailCategoryRecyclerAdapter(ICategoryListActivity activity,
+                                            DataServices dataServices) {
+        super(activity, dataServices);
     }
 
 

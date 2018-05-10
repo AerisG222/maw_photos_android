@@ -16,7 +16,6 @@ import io.reactivex.schedulers.Schedulers;
 import com.github.chrisbanes.photoview.PhotoView;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoSize;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 
 
@@ -25,16 +24,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final Context _context;
     private final IPhotoActivity _activity;
-    private final AuthenticationExceptionHandler _authHandler;
     private final DataServices _dataServices;
     private List<Photo> _photoList;
 
 
-    public FullScreenImageAdapter(IPhotoActivity activity, DataServices dataServices, AuthenticationExceptionHandler authHandler) {
+    public FullScreenImageAdapter(IPhotoActivity activity, DataServices dataServices) {
         _context = (Context)activity;
         _activity = activity;
         _dataServices = dataServices;
-        _authHandler = authHandler;
     }
 
 
@@ -98,7 +95,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                         },
                         ex -> {
                             _activity.removeWork();
-                            _authHandler.handleException(ex);
+                            _activity.onApiException(ex);
                         }
                 )
         );

@@ -36,7 +36,6 @@ import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.prefs.CategoryDisplay;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.BaseActivity;
@@ -60,7 +59,6 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     @BindView(R.id.category_recycler_view) RecyclerView _categoryRecyclerView;
 
     @Inject DataServices _dataServices;
-    @Inject AuthenticationExceptionHandler _authHandler;
     @Inject CategoryDisplayPreference _categoryPrefs;
     @Inject ListCategoryRecyclerAdapter _listAdapter;
     @Inject ThumbnailCategoryRecyclerAdapter _gridAdapter;
@@ -127,6 +125,11 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         _listAdapter.dispose();
 
         super.onDestroy();
+    }
+
+
+    public void onApiException(Throwable throwable) {
+        handleApiException(throwable);
     }
 
 
@@ -218,10 +221,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     private void onException(Throwable ex) {
         stopSyncAnimation();
 
-        if(!_authHandler.handleException(ex)) {
-            _refreshMenuItem.getActionView().clearAnimation();
-            _refreshMenuItem.setActionView(null);
-        }
+        handleApiException(ex);
     }
 
 

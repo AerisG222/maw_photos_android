@@ -18,7 +18,6 @@ import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
 import us.mikeandwan.photos.prefs.SyncPreference;
 import us.mikeandwan.photos.services.AuthInterceptor;
 import us.mikeandwan.photos.services.AuthStateManager;
-import us.mikeandwan.photos.services.AuthenticationExceptionHandler;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
@@ -43,7 +42,6 @@ public interface ApplicationComponent {
     PhotoStorage photoStorage();
     DatabaseAccessor databaseAccessor();
     PhotoApiClient photoApiClient();
-    AuthenticationExceptionHandler authenticationExceptionHandler();
     Observable<AuthorizationServiceConfiguration> authorizationServiceConfiguration();
     AuthStateManager authStateManager();
     OkHttpClient okHttpClient();
@@ -65,7 +63,6 @@ public interface ApplicationComponent {
     void inject(PhotoStorage photoStorage);
     void inject(MawPollerService service);
     void inject(MawScheduleReceiver scheduleReceiver);
-    void inject(AuthenticationExceptionHandler authenticationExceptionHandler);
     void inject(AuthorizationServiceConfiguration authorizationServiceConfiguration);
     void inject(AuthStateManager authStateManager);
     void inject(AuthorizationService authorizationService);
