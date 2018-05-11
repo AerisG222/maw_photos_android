@@ -9,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import net.openid.appauth.AuthorizationException;
+
 import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
@@ -90,6 +92,9 @@ public class BaseActivity extends AppCompatActivity {
 
         if(throwable instanceof ConnectException) {
             _errorSubject.onNext("Unable to connect to service at this time.");
+        }
+        else if(throwable instanceof AuthorizationException) {
+            _errorSubject.onNext("Authorization failed.");
         }
     }
 

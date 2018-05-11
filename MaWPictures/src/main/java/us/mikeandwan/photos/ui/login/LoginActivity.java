@@ -116,8 +116,9 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
                 authRequest,
                 PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0),
                 PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0));
-        }, (err) -> {
-            Log.e(MawApplication.LOG_TAG, "There was an error getting OIDC configuration: " + err.getMessage());
+        }, (ex) -> {
+            Log.e(MawApplication.LOG_TAG, "There was an error getting OIDC configuration: " + ex.getMessage());
+            handleApiException(ex);
         }));
     }
 
