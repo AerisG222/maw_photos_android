@@ -18,6 +18,7 @@ import net.openid.appauth.TokenResponse;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
@@ -27,12 +28,17 @@ import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity;
+import us.mikeandwan.photos.ui.login.LoginActivity;
 
 
 public class LoginCallbackActivity extends BaseActivity implements HasComponent<ActivityComponent> {
     @Inject AuthStateManager _authStateManager;
     @Inject Observable<AuthorizationServiceConfiguration> _config;
     @Inject AuthorizationService _authService;
+
+    @OnClick(R.id.retryLoginButton) void onLoginButtonClick() {
+        retryLogin();
+    }
 
     private ActivityComponent _activityComponent;
 
@@ -121,6 +127,14 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
 
     private void goToInitialLoad() {
         Intent intent = new Intent(this, InitialLoadActivity.class);
+        startActivity(intent);
+
+        finish();
+    }
+
+
+    private void retryLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
 
         finish();
