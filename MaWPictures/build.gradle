@@ -91,6 +91,10 @@ dependencies {
     // appauth
     implementation 'net.openid:appauth:0.7.0'
 
+    // ****
+    // NOTE: retrofit 2.4 and okhttp 3.10 failed to work, so becareful when upgrading
+    // ****
+    
     // retrofit (pulls in okhttp)
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
