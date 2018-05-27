@@ -109,13 +109,13 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
                     _authSchemeRedirectUri); // the redirect URI to which the auth response is sent
 
             AuthorizationRequest authRequest = authRequestBuilder
-                .setScopes("openid email role maw_api")
+                .setScopes("openid offline_access email role maw_api")
                 .build();
 
             _authService.performAuthorizationRequest(
                 authRequest,
                 PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0),
-                PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0));
+                PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0));
         }, (ex) -> {
             Log.e(MawApplication.LOG_TAG, "There was an error getting OIDC configuration: " + ex.getMessage());
             handleApiException(ex);

@@ -60,6 +60,16 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
             .build();
 
         _activityComponent.inject(this);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if(_authStateManager.getCurrent().isAuthorized()) {
+            goToInitialLoad();
+        }
 
         AuthorizationResponse response = AuthorizationResponse.fromIntent(getIntent());
         AuthorizationException ex = AuthorizationException.fromIntent(getIntent());
@@ -77,7 +87,6 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
             Log.e(MawApplication.LOG_TAG, "No authorization state retained - reauthorization required");
         }
     }
-
 
     @MainThread
     private void exchangeAuthorizationCode(AuthorizationResponse authorizationResponse) {
@@ -119,7 +128,11 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
 
             Log.e(MawApplication.LOG_TAG, "NOT AUTHORIZED: " + message);
         } else {
-            Log.i(MawApplication.LOG_TAG, "AUTHORIZED");
+            Log.d(MawApplication.LOG_TAG, "AUTHORIZED");
+            Log.d(MawApplication.LOG_TAG, "auth token: " + _authStateManager.getCurrent().getAccessToken());
+            Log.d(MawApplication.LOG_TAG, "refresh token: " + _authStateManager.getCurrent().getRefreshToken());
+            Log.d(MawApplication.LOG_TAG, "id token: " + _authStateManager.getCurrent().getIdToken());
+
             goToInitialLoad();
         }
     }
