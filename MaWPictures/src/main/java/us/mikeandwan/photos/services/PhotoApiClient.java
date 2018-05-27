@@ -172,9 +172,9 @@ public class PhotoApiClient {
 
     private static String buildPhotoUrl(String photoPath) {
         if (photoPath.startsWith("/")) {
-            return Constants.API_BASE_URL + photoPath.substring(1);
+            return Constants.WWW_BASE_URL + photoPath;
         }
 
-        return Constants.API_BASE_URL + photoPath;
+        return Constants.WWW_BASE_URL + "/" + photoPath;
     }
 }
