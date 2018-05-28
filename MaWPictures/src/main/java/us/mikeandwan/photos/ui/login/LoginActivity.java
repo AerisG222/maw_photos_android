@@ -109,7 +109,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
                     _authSchemeRedirectUri); // the redirect URI to which the auth response is sent
 
             AuthorizationRequest authRequest = authRequestBuilder
-                .setScopes("openid offline_access email role maw_api")
+                .setScopes("openid offline_access profile email role maw_api")
                 .build();
 
             _authService.performAuthorizationRequest(
