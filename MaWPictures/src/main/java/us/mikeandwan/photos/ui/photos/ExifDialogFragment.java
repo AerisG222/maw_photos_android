@@ -148,12 +148,6 @@ public class ExifDialogFragment extends BasePhotoDialogFragment {
             addExifRow("Light Value", ExifDataFormatter.formatFourDecimals(exif.getLightValue()));
             addExifRow("Scale Factor 35 Efl", ExifDataFormatter.formatOneDecimal(exif.getScaleFactor35Efl()));
             addExifRow("Shutter Speed", ExifDataFormatter.format(exif.getShutterSpeed()));
-
-            // processing info
-            addExifRow("Raw Conversion Mode", ExifDataFormatter.format(exif.getRawConversionMode()));
-            addExifRow("Sigmoidal Contrast Adjustment", ExifDataFormatter.formatFourDecimals(exif.getSigmoidalContrastAdjustment()));
-            addExifRow("Saturation Adjustment", ExifDataFormatter.formatFourDecimals(exif.getSaturationAdjustment()));
-            addExifRow("Compression Quality", ExifDataFormatter.format(exif.getCompressionQuality()));
         }
     }
 

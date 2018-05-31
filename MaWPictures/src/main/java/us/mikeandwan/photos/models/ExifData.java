@@ -82,12 +82,6 @@ public class ExifData {
     private Double _scaleFactor35Efl;
     private String _shutterSpeed;
 
-    // processing info
-    private String _rawConversionMode;
-    private Double _sigmoidalContrastAdjustment;
-    private Double _saturationAdjustment;
-    private Short _compressionQuality;
-
 
     // exif
     public void setBitsPerSample(Short bitsPerSample) {
@@ -380,23 +374,6 @@ public class ExifData {
         _shutterSpeed = shutterSpeed;
     }
 
-    // processing info
-    public void setRawConversionMode(String rawConversionMode) {
-        _rawConversionMode = rawConversionMode;
-    }
-
-    public void setSigmoidalContrastAdjustment(Double sigmoidalContrastAdjustment) {
-        _sigmoidalContrastAdjustment = sigmoidalContrastAdjustment;
-    }
-
-    public void setSaturationAdjustment(Double saturationAdjustment) {
-        _saturationAdjustment = saturationAdjustment;
-    }
-
-    public void setCompressionQuality(Short compressionQuality) {
-        _compressionQuality = compressionQuality;
-    }
-
 
     // exif
     public Short getBitsPerSample() {
@@ -687,22 +664,5 @@ public class ExifData {
 
     public String getShutterSpeed() {
         return _shutterSpeed;
-    }
-
-    // processing info
-    public String getRawConversionMode() {
-        return _rawConversionMode;
-    }
-
-    public Double getSigmoidalContrastAdjustment() {
-        return _sigmoidalContrastAdjustment;
-    }
-
-    public Double getSaturationAdjustment() {
-        return _saturationAdjustment;
-    }
-
-    public Short getCompressionQuality() {
-        return _compressionQuality;
     }
 }
