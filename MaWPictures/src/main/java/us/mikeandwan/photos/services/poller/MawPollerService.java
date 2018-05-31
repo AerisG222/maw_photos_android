@@ -93,12 +93,13 @@ public class MawPollerService extends Service {
 
         PendingIntent detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "maw_channel");
         builder.setContentTitle(title);
         builder.setContentText(contentText);
         builder.setSmallIcon(R.drawable.ic_stat_notify);
         builder.setContentIntent(detailsIntent);
         builder.setAutoCancel(true);
+        builder.setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE);
 
         if (!TextUtils.isEmpty(ringtone)) {
             builder.setSound(Uri.parse(ringtone));
