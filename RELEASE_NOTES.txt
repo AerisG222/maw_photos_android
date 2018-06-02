@@ -1,3 +1,7 @@
+5.0:
+- authentication overhaul to coincide with new website
+- update dependencies
+
 4.0:
 - rewrite / re-imagining of the app design
 - fix crash on rotate on the photo list screen
