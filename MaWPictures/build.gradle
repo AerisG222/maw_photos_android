@@ -8,8 +8,8 @@ android {
         applicationId "us.mikeandwan.pictures"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 33
-        versionName "5.0"
+        versionCode 34
+        versionName "5.1"
 
         vectorDrawables.useSupportLibrary = true
 
