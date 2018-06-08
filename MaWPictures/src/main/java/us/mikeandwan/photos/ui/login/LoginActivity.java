@@ -29,6 +29,7 @@ import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity;
 import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity;
+import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
 
 
 public class LoginActivity extends BaseActivity implements HasComponent<ActivityComponent> {
@@ -92,9 +93,20 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
     }
 
 
+    private void goToModeSelection() {
+        Intent intent = new Intent(this, ModeSelectionActivity.class);
+        startActivity(intent);
+
+        finish();
+    }
+
+
     public void authorize() {
         if(isAuthorized()) {
-            goToInitialLoad();
+            // we go to mode selection here, because if a user has previously gained access,
+            // if they are off/slow network, then they get stuck for a bit on the blank loading
+            // screen which might not be needed - so take them straight in
+            goToModeSelection();
             return;
         }
 
