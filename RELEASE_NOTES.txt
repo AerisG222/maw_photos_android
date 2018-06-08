@@ -1,3 +1,6 @@
+5.1:
+- go immediately to mode screen if already logged in (improved experience when there is poor network condition)
+
 5.0:
 - authentication overhaul to coincide with new website
 - update dependencies
