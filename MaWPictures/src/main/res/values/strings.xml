@@ -5,6 +5,7 @@
     <string name="action_sync">Sync</string>
     <string name="action_share">Share</string>
     <string name="action_wipe_cache">Wipe Cache</string>
+    <string name="action_reauthenticate">Re-Authenticate</string>
     <string name="title_activity_mode_selection">Browse By:</string>
     <string name="title_activity_photo_list">Photos</string>
     <string name="service_poller_name">mikeandwan.us Poller</string>
@@ -35,4 +36,5 @@
     <string name="frg_toolbar_rotate_right">Rotate Right</string>
     <string name="frg_toolbar_toggle_slideshow">Toggle Slideshow</string>
     <string name="title_activity_initial_load">InitialLoadActivity</string>
+
 </resources>

@@ -16,8 +16,14 @@
           mawphotos:showAsAction="never" />
 
     <item android:id="@+id/action_wipe_cache"
-        android:title="@string/action_wipe_cache"
-        android:orderInCategory="100"
-        android:onClick="onWipeCache"
-        mawphotos:showAsAction="never" />
+          android:title="@string/action_wipe_cache"
+          android:orderInCategory="100"
+          android:onClick="onWipeCache"
+          mawphotos:showAsAction="never" />
+
+    <item android:id="@+id/action_reauthenticate"
+          android:title="@string/action_reauthenticate"
+          android:orderInCategory="100"
+          android:onClick="onReauthenticate"
+          mawphotos:showAsAction="never" />
 </menu>

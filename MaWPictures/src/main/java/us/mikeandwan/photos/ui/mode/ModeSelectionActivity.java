@@ -33,11 +33,13 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.models.Category;
+import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.categories.CategoryListActivity;
+import us.mikeandwan.photos.ui.login.LoginActivity;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
@@ -60,7 +62,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     @BindView(R.id.modeExpandableListView) ExpandableListView _modeExpandableListView;
 
     @Inject DataServices _dataServices;
-
+    @Inject AuthStateManager _authStateManager;
 
     public ActivityComponent getComponent() {
         return _activityComponent;
@@ -157,6 +159,16 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                             handleApiException(ex);
                         })
         );
+    }
+
+
+    public void onReauthenticate(MenuItem menuItem) {
+        _authStateManager.replace(null);
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+
+        finish();
     }
 
 
