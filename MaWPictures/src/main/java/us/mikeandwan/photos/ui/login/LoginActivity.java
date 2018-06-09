@@ -85,14 +85,6 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
     }
 
 
-    private void goToInitialLoad() {
-        Intent intent = new Intent(this, InitialLoadActivity.class);
-        startActivity(intent);
-
-        finish();
-    }
-
-
     private void goToModeSelection() {
         Intent intent = new Intent(this, ModeSelectionActivity.class);
         startActivity(intent);
