@@ -17,10 +17,13 @@ import us.mikeandwan.photos.MawApplication;
 
 
 public class AuthInterceptor implements Interceptor {
+    private static final long ABSOLUTE_CACHE_EXPIRATION_MILLIS = 30000; // 30s
     private AuthStateManager _authStateManager;
     private AuthorizationService _authService;
 
-    private String _accessToken;
+    private final Object _lockObject = new Object();
+    private String _cachedAccessToken = null;
+    private long _cacheExpireMillis = 0;
 
 
     public AuthInterceptor(AuthorizationService authService, AuthStateManager authStateManager) {
@@ -43,45 +46,53 @@ public class AuthInterceptor implements Interceptor {
 
     // https://www.programcreek.com/java-api-examples/?code=approov/AppAuth-OAuth2-Books-Demo/AppAuth-OAuth2-Books-Demo-master/app/src/main/java/com/criticalblue/auth/demo/auth/AuthRepo.java
     private String getAccessToken() {
-        CountDownLatch actionComplete = new CountDownLatch(1);
-        AuthState authState = _authStateManager.getCurrent();
-
-        if(!authState.isAuthorized()) {
-            Log.e(MawApplication.LOG_TAG, "NOT AUTHORIZED!");
-
-            return null;
+        if(_cachedAccessToken != null && System.currentTimeMillis() < _cacheExpireMillis) {
+            return _cachedAccessToken;
         }
 
-        authState.performActionWithFreshTokens(_authService, (String authToken,
-                                                              String idToken,
-                                                              AuthorizationException ex) -> {
-            if(ex != null) {
-                Log.e(MawApplication.LOG_TAG, "Error getting fresh access token: " + ex.getMessage());
-            } else {
-                Log.d(MawApplication.LOG_TAG, "Got updated access token: " + authToken);
-                Log.d(MawApplication.LOG_TAG, "access tokens are equal: " + authToken.equals(_authStateManager.getCurrent().getAccessToken()));
+        synchronized (_lockObject) {
+            if(_cachedAccessToken != null && System.currentTimeMillis() < _cacheExpireMillis) {
+                return _cachedAccessToken;
             }
 
-            _accessToken = authToken;
-            actionComplete.countDown();
-        });
+            CountDownLatch actionComplete = new CountDownLatch(1);
+            AuthState authState = _authStateManager.getCurrent();
 
-        boolean complete;
+            if (!authState.isAuthorized()) {
+                Log.e(MawApplication.LOG_TAG, "NOT AUTHORIZED!");
 
-        try {
-            complete = actionComplete.await(5000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException ex) {
-            complete = false;
+                return null;
+            }
+
+            authState.performActionWithFreshTokens(_authService, (String authToken,
+                                                                  String idToken,
+                                                                  AuthorizationException ex) -> {
+                if (ex != null) {
+                    Log.e(MawApplication.LOG_TAG, "Error getting fresh access token: " + ex.getMessage());
+                } else {
+                    Log.d(MawApplication.LOG_TAG, "Got updated access token: " + authToken);
+                    Log.d(MawApplication.LOG_TAG, "access tokens are equal: " + authToken.equals(_authStateManager.getCurrent().getAccessToken()));
+                }
+
+                _cachedAccessToken = authToken;
+                actionComplete.countDown();
+            });
+
+            boolean complete;
+
+            try {
+                complete = actionComplete.await(5000, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException ex) {
+                complete = false;
+            }
+
+            if (!complete) {
+                _cachedAccessToken = null;
+            }
+
+            _cacheExpireMillis += System.currentTimeMillis() + ABSOLUTE_CACHE_EXPIRATION_MILLIS;
+
+            return _cachedAccessToken;
         }
-
-        if (!complete) {
-            _accessToken = null;
-        }
-
-        String token = _accessToken;
-
-        _accessToken = null;
-
-        return token;
     }
 }
