@@ -90,7 +90,7 @@ public class AuthInterceptor implements Interceptor {
                 _cachedAccessToken = null;
             }
 
-            _cacheExpireMillis += System.currentTimeMillis() + ABSOLUTE_CACHE_EXPIRATION_MILLIS;
+            _cacheExpireMillis = System.currentTimeMillis() + ABSOLUTE_CACHE_EXPIRATION_MILLIS;
 
             return _cachedAccessToken;
         }
