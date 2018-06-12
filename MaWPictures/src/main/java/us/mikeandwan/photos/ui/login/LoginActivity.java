@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
-import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationRequest;
 import net.openid.appauth.AuthorizationService;
@@ -27,7 +26,6 @@ import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
-import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity;
 import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity;
 import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
 
@@ -40,7 +38,6 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
 
     @Inject AuthStateManager _authStateManager;
     @Inject Observable<AuthorizationServiceConfiguration> _config;
-    @Inject AppAuthConfiguration _appAuthConfig;
     AuthorizationService _authService;
 
     @OnClick(R.id.loginButton) void onLoginButtonClick() {
@@ -72,7 +69,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
         _activityComponent.inject(this);
 
         // https://github.com/openid/AppAuth-Android/issues/333
-        _authService = new AuthorizationService(this, _appAuthConfig);
+        _authService = new AuthorizationService(this);
 
         authorize();
     }

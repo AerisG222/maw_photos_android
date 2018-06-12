@@ -4,7 +4,6 @@ import android.app.Application;
 import android.net.Uri;
 import android.util.Log;
 
-import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthorizationService;
 import net.openid.appauth.AuthorizationServiceConfiguration;
 
@@ -33,16 +32,8 @@ public class AuthModule {
 
     @Provides
     @Singleton
-    AppAuthConfiguration provideAppAuthConfiguration() {
-        return new AppAuthConfiguration.Builder()
-            .build();
-    }
-
-
-    @Provides
-    @Singleton
-    AuthorizationService provideAuthorizationService(Application application, AppAuthConfiguration appAuthConfig) {
-        return new AuthorizationService(application, appAuthConfig);
+    AuthorizationService provideAuthorizationService(Application application) {
+        return new AuthorizationService(application);
     }
 
 

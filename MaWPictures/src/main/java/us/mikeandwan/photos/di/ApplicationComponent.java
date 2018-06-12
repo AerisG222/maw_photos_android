@@ -47,7 +47,6 @@ public interface ApplicationComponent {
     OkHttpClient okHttpClient();
     AuthorizationService authorizationService();
     AuthInterceptor authInterceptor();
-    AppAuthConfiguration appAuthConfiguration();
 
     void inject(MawApplication application);
 
@@ -67,5 +66,4 @@ public interface ApplicationComponent {
     void inject(AuthStateManager authStateManager);
     void inject(AuthorizationService authorizationService);
     void inject(AuthInterceptor authInterceptor);
-    void inject(AppAuthConfiguration appAuthConfiguration);
 }
