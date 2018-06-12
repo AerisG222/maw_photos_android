@@ -1,3 +1,6 @@
+5.3:
+- fix a lame error introduced in the last fix >=|
+
 5.2:
 - try to fix a threading issue when refreshing the access token
 - provide way to force re-authentication
