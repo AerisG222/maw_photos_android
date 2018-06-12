@@ -79,7 +79,6 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
         }
 
         if (response != null && response.authorizationCode != null) {
-            _authStateManager.updateAfterAuthorization(response, ex);
             exchangeAuthorizationCode(response);
         } else if (ex != null) {
             Log.e(MawApplication.LOG_TAG, "Authorization failed: " + ex.getMessage());
@@ -87,6 +86,7 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
             Log.e(MawApplication.LOG_TAG, "No authorization state retained - reauthorization required");
         }
     }
+
 
     @MainThread
     private void exchangeAuthorizationCode(AuthorizationResponse authorizationResponse) {
