@@ -54,9 +54,10 @@ public class SettingsActivity extends PreferenceActivity {
 
         if (preference.getKey().equals("sync_frequency")) {
             if (!stringValue.equals(preference.getSharedPreferences().getString("sync_frequency", "24"))) {
-                // TODO: update schedule
-                //MawScheduleReceiver receiver = new MawScheduleReceiver();
-                //receiver.schedule(preference.getContext(), Integer.parseInt(stringValue));
+                //TODO: set the schedule here
+                //long millis = Integer.parseInt(stringValue) * 60 * 60 * 1000;
+
+                //_updateScheduler.schedule(false, millis);
             }
         }
 

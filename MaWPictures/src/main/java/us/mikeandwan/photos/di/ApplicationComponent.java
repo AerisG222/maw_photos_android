@@ -2,6 +2,7 @@ package us.mikeandwan.photos.di;
 
 import android.app.Application;
 import android.app.job.JobScheduler;
+import android.content.SharedPreferences;
 
 import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthorizationService;
@@ -49,6 +50,7 @@ public interface ApplicationComponent {
     AuthorizationService authorizationService();
     AuthInterceptor authInterceptor();
     UpdateCategoriesJobScheduler updateCategoriesJobScheduler();
+    SharedPreferences sharedPreferences();
 
     void inject(MawApplication application);
 

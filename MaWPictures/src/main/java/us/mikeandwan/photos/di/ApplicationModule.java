@@ -15,7 +15,6 @@ import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
 import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler;
-import us.mikeandwan.photos.services.UpdateCategoriesJobService;
 
 
 @Module
@@ -51,8 +50,8 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    UpdateCategoriesJobScheduler provideUpdateCategoriesJobScheduler(JobScheduler jobScheduler) {
-        return new UpdateCategoriesJobScheduler(jobScheduler);
+    UpdateCategoriesJobScheduler provideUpdateCategoriesJobScheduler(Application application, JobScheduler jobScheduler) {
+        return new UpdateCategoriesJobScheduler(application, jobScheduler);
     }
 
 

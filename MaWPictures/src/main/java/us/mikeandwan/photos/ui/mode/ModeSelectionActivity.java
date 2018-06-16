@@ -3,6 +3,7 @@ package us.mikeandwan.photos.ui.mode;
 import android.app.NotificationManager;
 import android.app.job.JobScheduler;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -66,6 +67,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     @Inject DataServices _dataServices;
     @Inject AuthStateManager _authStateManager;
     @Inject UpdateCategoriesJobScheduler _updateScheduler;
+    @Inject SharedPreferences _sharedPrefs;
 
 
     public ActivityComponent getComponent() {
@@ -102,6 +104,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                 new String[]{KEY_NAME},
                 new int[]{android.R.id.text1});
 
+        scheduleUpdateJob();
         initModeList();
         resetNotifications();
     }
@@ -173,6 +176,16 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         startActivity(intent);
 
         finish();
+    }
+
+
+    private void scheduleUpdateJob() {
+        // TODO: implement a wrapper around preferences and expose via service held in di
+        String hours = _sharedPrefs.getString("sync_frequency", "24");
+
+        long millis = Integer.parseInt(hours) * 60 * 60 * 1000;
+
+        _updateScheduler.schedule(false, millis);
     }
 
 
