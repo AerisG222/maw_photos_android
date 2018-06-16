@@ -20,12 +20,12 @@ import javax.inject.Inject;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.services.poller.MawScheduleReceiver;
+import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler;
 
 
 public class SettingsActivity extends PreferenceActivity {
     @Inject SharedPreferences _sharedPrefs;
-
+    @Inject UpdateCategoriesJobScheduler _updateScheduler;
 
     @Override
     public boolean onIsMultiPane() {
@@ -54,8 +54,9 @@ public class SettingsActivity extends PreferenceActivity {
 
         if (preference.getKey().equals("sync_frequency")) {
             if (!stringValue.equals(preference.getSharedPreferences().getString("sync_frequency", "24"))) {
-                MawScheduleReceiver receiver = new MawScheduleReceiver();
-                receiver.schedule(preference.getContext(), Integer.parseInt(stringValue));
+                // TODO: update schedule
+                //MawScheduleReceiver receiver = new MawScheduleReceiver();
+                //receiver.schedule(preference.getContext(), Integer.parseInt(stringValue));
             }
         }
 

@@ -1,6 +1,8 @@
 package us.mikeandwan.photos.di;
 
 import android.app.Application;
+import android.app.job.JobScheduler;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -12,6 +14,8 @@ import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
+import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler;
+import us.mikeandwan.photos.services.UpdateCategoriesJobService;
 
 
 @Module
@@ -35,6 +39,20 @@ public class ApplicationModule {
     @Singleton
     SharedPreferences provideSharedPreferences(Application application) {
         return PreferenceManager.getDefaultSharedPreferences(application);
+    }
+
+
+    @Provides
+    @Singleton
+    JobScheduler provideJobScheduler(Application application) {
+        return (JobScheduler) application.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+    }
+
+
+    @Provides
+    @Singleton
+    UpdateCategoriesJobScheduler provideUpdateCategoriesJobScheduler(JobScheduler jobScheduler) {
+        return new UpdateCategoriesJobScheduler(jobScheduler);
     }
 
 

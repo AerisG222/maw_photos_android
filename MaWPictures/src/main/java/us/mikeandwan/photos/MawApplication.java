@@ -13,6 +13,8 @@ import us.mikeandwan.photos.di.PreferenceModule;
 
 public class MawApplication extends Application {
     public static final String LOG_TAG = "maw";
+    public static final int JOB_ID_UPDATE_CATEGORY = 2;
+
     private int _notificationCount = 0;
     private ApplicationComponent _applicationComponent;
 

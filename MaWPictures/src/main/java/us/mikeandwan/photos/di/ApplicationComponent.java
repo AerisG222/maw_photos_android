@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.di;
 
 import android.app.Application;
+import android.app.job.JobScheduler;
 
 import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthorizationService;
@@ -23,8 +24,8 @@ import us.mikeandwan.photos.services.DatabaseAccessor;
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper;
 import us.mikeandwan.photos.services.PhotoApiClient;
 import us.mikeandwan.photos.services.PhotoStorage;
-import us.mikeandwan.photos.services.poller.MawPollerService;
-import us.mikeandwan.photos.services.poller.MawScheduleReceiver;
+import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler;
+import us.mikeandwan.photos.services.UpdateCategoriesJobService;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
@@ -47,6 +48,7 @@ public interface ApplicationComponent {
     OkHttpClient okHttpClient();
     AuthorizationService authorizationService();
     AuthInterceptor authInterceptor();
+    UpdateCategoriesJobScheduler updateCategoriesJobScheduler();
 
     void inject(MawApplication application);
 
@@ -60,8 +62,8 @@ public interface ApplicationComponent {
     void inject(OkHttpClient okHttpClient);
     void inject(PhotoApiClient client);
     void inject(PhotoStorage photoStorage);
-    void inject(MawPollerService service);
-    void inject(MawScheduleReceiver scheduleReceiver);
+    void inject(UpdateCategoriesJobScheduler scheduler);
+    void inject(UpdateCategoriesJobService service);
     void inject(AuthorizationServiceConfiguration authorizationServiceConfiguration);
     void inject(AuthStateManager authStateManager);
     void inject(AuthorizationService authorizationService);

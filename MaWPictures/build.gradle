@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "us.mikeandwan.pictures"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 36
         versionName "5.3"

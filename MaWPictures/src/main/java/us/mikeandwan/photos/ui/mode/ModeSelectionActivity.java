@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.mode;
 
 import android.app.NotificationManager;
+import android.app.job.JobScheduler;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -36,6 +37,7 @@ import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
+import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.categories.CategoryListActivity;
@@ -63,6 +65,8 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
     @Inject DataServices _dataServices;
     @Inject AuthStateManager _authStateManager;
+    @Inject UpdateCategoriesJobScheduler _updateScheduler;
+
 
     public ActivityComponent getComponent() {
         return _activityComponent;
