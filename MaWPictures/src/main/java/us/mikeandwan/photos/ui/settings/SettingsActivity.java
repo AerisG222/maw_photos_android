@@ -25,7 +25,6 @@ import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler;
 
 public class SettingsActivity extends PreferenceActivity {
     @Inject SharedPreferences _sharedPrefs;
-    @Inject UpdateCategoriesJobScheduler _updateScheduler;
 
     @Override
     public boolean onIsMultiPane() {
@@ -54,10 +53,11 @@ public class SettingsActivity extends PreferenceActivity {
 
         if (preference.getKey().equals("sync_frequency")) {
             if (!stringValue.equals(preference.getSharedPreferences().getString("sync_frequency", "24"))) {
-                //TODO: set the schedule here
-                //long millis = Integer.parseInt(stringValue) * 60 * 60 * 1000;
+                UpdateCategoriesJobScheduler updateScheduler = MawApplication.getInstance().getApplicationComponent().updateCategoriesJobScheduler();
 
-                //_updateScheduler.schedule(false, millis);
+                long millis = Integer.parseInt(stringValue) * 60 * 60 * 1000;
+
+                updateScheduler.schedule(false, millis);
             }
         }
 

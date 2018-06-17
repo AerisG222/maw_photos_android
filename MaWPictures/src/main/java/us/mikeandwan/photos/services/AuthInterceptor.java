@@ -71,7 +71,6 @@ public class AuthInterceptor implements Interceptor {
                     Log.e(MawApplication.LOG_TAG, "Error getting fresh access token: " + ex.getMessage());
                 } else {
                     Log.d(MawApplication.LOG_TAG, "Got updated access token: " + authToken);
-                    Log.d(MawApplication.LOG_TAG, "access tokens are equal: " + authToken.equals(_authStateManager.getCurrent().getAccessToken()));
                 }
 
                 _cachedAccessToken = authToken;
