@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.ui.mode;
 
 import android.app.NotificationManager;
-import android.app.job.JobScheduler;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -180,7 +179,6 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
 
     private void scheduleUpdateJob() {
-        // TODO: implement a wrapper around preferences and expose via service held in di
         String hours = _sharedPrefs.getString("sync_frequency", "24");
 
         long millis = Integer.parseInt(hours) * 60 * 60 * 1000;

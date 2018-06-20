@@ -14,12 +14,8 @@ import net.openid.appauth.AuthorizationException;
 import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.di.ActivityModule;
 import us.mikeandwan.photos.di.ApplicationComponent;

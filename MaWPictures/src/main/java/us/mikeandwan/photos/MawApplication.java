@@ -14,6 +14,7 @@ import us.mikeandwan.photos.di.PreferenceModule;
 public class MawApplication extends Application {
     public static final String LOG_TAG = "maw";
     public static final int JOB_ID_UPDATE_CATEGORY = 2;
+    private static MawApplication _app;
 
     private int _notificationCount = 0;
     private ApplicationComponent _applicationComponent;
@@ -21,6 +22,8 @@ public class MawApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        _app = this;
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
@@ -47,5 +50,10 @@ public class MawApplication extends Application {
 
     public ApplicationComponent getApplicationComponent() {
         return _applicationComponent;
+    }
+
+
+    public static MawApplication getInstance() {
+        return _app;
     }
 }

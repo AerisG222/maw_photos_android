@@ -1,3 +1,6 @@
+5.4:
+- migrate from poller to jobservice
+
 5.3:
 - fix a lame error introduced in the last fix >=|
 
