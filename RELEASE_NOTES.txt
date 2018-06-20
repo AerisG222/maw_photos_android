@@ -1,3 +1,6 @@
+5.5:
+- another attempt to get refresh tokens working properly
+
 5.4:
 - migrate from poller to jobservice
 
