@@ -46,12 +46,12 @@ public class AuthInterceptor implements Interceptor {
 
     // https://www.programcreek.com/java-api-examples/?code=approov/AppAuth-OAuth2-Books-Demo/AppAuth-OAuth2-Books-Demo-master/app/src/main/java/com/criticalblue/auth/demo/auth/AuthRepo.java
     private String getAccessToken() {
-        if(_cachedAccessToken != null && System.currentTimeMillis() < _cacheExpireMillis) {
+        if (_cachedAccessToken != null && System.currentTimeMillis() < _cacheExpireMillis) {
             return _cachedAccessToken;
         }
 
         synchronized (_lockObject) {
-            if(_cachedAccessToken != null && System.currentTimeMillis() < _cacheExpireMillis) {
+            if (_cachedAccessToken != null && System.currentTimeMillis() < _cacheExpireMillis) {
                 return _cachedAccessToken;
             }
 
@@ -81,12 +81,15 @@ public class AuthInterceptor implements Interceptor {
             boolean complete;
 
             try {
-                complete = actionComplete.await(5000, TimeUnit.MILLISECONDS);
+                complete = actionComplete.await(10000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException ex) {
                 complete = false;
             }
 
-            if (!complete) {
+            if (complete) {
+                // if we succeed, make sure we store the updated state
+                _authStateManager.replace(_authStateManager.getCurrent());
+            } else {
                 _cachedAccessToken = null;
             }
 
