@@ -32,6 +32,7 @@ public class UpdateCategoriesJobService extends JobService {
 
     @Inject DataServices _dataServices;
     @Inject NotificationPreference _notificationPref;
+    @Inject NotificationManager _notificationManager;
 
 
     @Override
@@ -117,13 +118,14 @@ public class UpdateCategoriesJobService extends JobService {
 
         PendingIntent detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "maw_channel");
-        builder.setContentTitle(title);
-        builder.setContentText(contentText);
-        builder.setSmallIcon(R.drawable.ic_stat_notify);
-        builder.setContentIntent(detailsIntent);
-        builder.setAutoCancel(true);
-        builder.setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
+                .setSmallIcon(R.drawable.ic_stat_notify)
+                .setContentTitle(title)
+                .setContentText(contentText)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(detailsIntent)
+                .setAutoCancel(true)
+                .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE);
 
         if (!TextUtils.isEmpty(ringtone)) {
             builder.setSound(Uri.parse(ringtone));
@@ -135,10 +137,8 @@ public class UpdateCategoriesJobService extends JobService {
 
         Notification notification = builder.build();
 
-        NotificationManager mgr = (NotificationManager) getApplication().getSystemService(NOTIFICATION_SERVICE);
-
-        if(mgr != null) {
-            mgr.notify(0, notification);
+        if(_notificationManager != null) {
+            _notificationManager.notify(0, notification);
         }
     }
 }

@@ -11,6 +11,10 @@
     <string name="service_poller_name">mikeandwan.us Poller</string>
     <string name="title_activity_category_list">CategoryList</string>
 
+    <!-- notifications -->
+    <string name="channel_name_new_categories">New Category Notification</string>
+    <string name="channel_description_new_categories">Notification to highlight when new photo categories are available</string>
+
     <!-- auth -->
     <string name="auth_client_id">maw_photos_android</string>
     <string name="auth_scheme_redirect_uri">us.mikeandwan.photos:/signin-oidc</string>

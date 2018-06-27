@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.di;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.SharedPreferences;
 
 import net.openid.appauth.AuthorizationService;
@@ -36,6 +37,7 @@ public interface ApplicationComponent {
     Application application();
     CategoryDisplayPreference categoryDisplayPreference();
     NotificationPreference notificationPreference();
+    NotificationManager notificationManager();
     PhotoDisplayPreference photoDisplayPreference();
     SyncPreference syncPreference();
     DataServices dataServices();
