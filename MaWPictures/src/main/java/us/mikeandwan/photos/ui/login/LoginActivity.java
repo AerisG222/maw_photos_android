@@ -77,6 +77,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
 
     @Override public void onDestroy() {
         _disposables.clear();
+        _authService.dispose();
 
         super.onDestroy();
     }
