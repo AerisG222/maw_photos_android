@@ -163,11 +163,6 @@ public class DataServices {
     }
 
 
-    public void wipeLegacyCache() {
-        _photoStorage.wipeLegacyCache();
-    }
-
-
     public void wipeTempFiles() { _photoStorage.wipeTempFiles(); }
 
 

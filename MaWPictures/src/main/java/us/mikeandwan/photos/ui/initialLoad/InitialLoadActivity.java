@@ -88,24 +88,4 @@ public class InitialLoadActivity extends BaseActivity implements HasComponent<Ac
 
         finish();
     }
-
-
-    /* TODO: delete? / re-enable?
-    private void cleanupLegacyStorage() {
-        Log.i(MawApplication.LOG_TAG, "starting to wipe");
-
-        _disposables.add(
-                Flowable.fromCallable(() -> {
-                            _dataServices.wipeLegacyCache();
-                            return true;
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                x -> Log.i(MawApplication.LOG_TAG, "completed wipe"),
-                                ex -> Log.w(MawApplication.LOG_TAG, "error wiping: " + ex.getMessage())
-                        )
-        );
-    }
-    */
 }

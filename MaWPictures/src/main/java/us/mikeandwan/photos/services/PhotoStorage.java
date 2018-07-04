@@ -10,7 +10,6 @@ import com.commonsware.cwac.provider.StreamProvider;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,9 +21,7 @@ import okhttp3.ResponseBody;
 import us.mikeandwan.photos.MawApplication;
 
 
-// TODO: this currently requires external storage, perhaps also allow this to run w/o caching - perhaps thumbnails in internal storage?
 public class PhotoStorage {
-    private static final String MAW_ROOT = "maw_pictures";
     private static final String AUTHORITY = "us.mikeandwan.streamprovider";
     private static final Uri PROVIDER = Uri.parse("content://"+AUTHORITY);
 
@@ -113,17 +110,6 @@ public class PhotoStorage {
     }
 
 
-    public void wipeLegacyCache() {
-        wipePriorCache();
-
-        try {
-            FileUtils.deleteDirectory(getLegacyRootPath());
-        } catch (IOException ex) {
-            Log.e(MawApplication.LOG_TAG, "Unable to delete legacy directory: " + ex.getMessage());
-        }
-    }
-
-
     public void wipeTempFiles() {
         try {
             FileUtils.deleteDirectory(getTempRootPath());
@@ -142,44 +128,6 @@ public class PhotoStorage {
     }
 
 
-    private void wipePriorCache() {
-        // with latest site, the dir names are now different (xs, sm, lg, etc) rather than
-        // (fullsize, fuller, orig, etc).  this kills the older cache as they will no longer
-        // be referenced
-        wipe(getRootPath(), new PriorDirectoryFilter());
-    }
-
-
-    private void wipe(File dir, FileFilter filter) {
-        if(dir == null || dir.isFile()) {
-            return;
-        }
-
-        // remove files/directories matching the filter
-        for (File file : dir.listFiles(filter)) {
-            if (file.isFile()) {
-                file.delete();
-            } else {
-                try {
-                    FileUtils.deleteDirectory(dir);
-                } catch(IOException ex) {
-                    Log.e(MawApplication.LOG_TAG, "Unable to delete directory: " + ex.getMessage());
-                }
-            }
-        }
-
-        // recurse through any remaining directories
-        for (File file : dir.listFiles(new DirectoryFilter())) {
-            wipe(file, filter);
-        }
-    }
-
-
-    private File getLegacyRootPath() {
-        return new File(String.valueOf(Environment.getExternalStorageDirectory()) + "/" + MAW_ROOT);
-    }
-
-
     private File getTempRootPath() {
         File dir = new File(getRootPath() + "/" + "temp");
 
@@ -188,22 +136,5 @@ public class PhotoStorage {
         }
 
         return dir;
-    }
-
-
-    private class DirectoryFilter implements FileFilter {
-        public boolean accept(File file) {
-            return file.isDirectory();
-        }
-    }
-
-
-    private class PriorDirectoryFilter implements FileFilter {
-        public boolean accept(File file) {
-            return file.isDirectory() && ("thumbnails".equalsIgnoreCase(file.getName()) ||
-                                          "fuller".equalsIgnoreCase(file.getName()) ||
-                                          "fullsize".equalsIgnoreCase(file.getName()) ||
-                                          "orig".equalsIgnoreCase(file.getName()));
-        }
     }
 }
