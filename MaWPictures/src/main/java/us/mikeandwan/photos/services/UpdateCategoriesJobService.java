@@ -119,7 +119,7 @@ public class UpdateCategoriesJobService extends JobService {
         PendingIntent detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
-                .setSmallIcon(R.drawable.ic_stat_notify)
+                .setSmallIcon(R.drawable.ic_status_notification)
                 .setContentTitle(title)
                 .setContentText(contentText)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
