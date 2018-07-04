@@ -1,3 +1,9 @@
+5.7:
+- remove permissions that are no longer necessary
+- improved launch and status icons
+- update app name to mirror what is displayed on Google Play
+- simplify settings and always check for new categories (every 4hrs)
+
 5.6:
 - try to improve notifications on newer android versions
 
