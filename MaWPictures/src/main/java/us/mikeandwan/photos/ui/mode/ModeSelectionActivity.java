@@ -49,6 +49,7 @@ import us.mikeandwan.photos.ui.settings.SettingsActivity;
 public class ModeSelectionActivity extends BaseActivity implements HasComponent<ActivityComponent> {
     private static final String KEY_NAME = "NAME";
     private static final String KEY_TYPE = "TYPE";
+    private static final long FOUR_HOURS_IN_MILLIS = 4 * 60 * 60 * 1000;  // 4 hours
 
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private final List<Map<String, String>> _groupData = new ArrayList<>();
@@ -103,7 +104,8 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                 new String[]{KEY_NAME},
                 new int[]{android.R.id.text1});
 
-        scheduleUpdateJob();
+        _updateScheduler.schedule(false, FOUR_HOURS_IN_MILLIS);
+
         initModeList();
         resetNotifications();
     }
@@ -175,15 +177,6 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
         startActivity(intent);
 
         finish();
-    }
-
-
-    private void scheduleUpdateJob() {
-        String hours = _sharedPrefs.getString("sync_frequency", "24");
-
-        long millis = Integer.parseInt(hours) * 60 * 60 * 1000;
-
-        _updateScheduler.schedule(false, millis);
     }
 
 
