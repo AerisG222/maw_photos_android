@@ -105,9 +105,8 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
     public void onResume() {
         updateToolbar(_toolbar, "Upload Queue");
 
-        _disposables.add(Observable
-            .interval(1000, 2000, TimeUnit.MILLISECONDS)
-            .map(x -> _dataServices.getFilesQueuedForUpload())
+        _disposables.add(_dataServices
+            .getFileQueueObservable()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -188,19 +187,16 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
                     }
                 }
 
-                File[] files = _dataServices.getFilesQueuedForUpload();
-
-                return new FilesQueuedResult(count, files);
+                return count;
             })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    result -> {
-                        if(result.getCount() == 0) {
+                    count -> {
+                        if(count == 0) {
                             Snackbar.make(_layout, "Unable to add items to the upload queue =(", Snackbar.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(_layout, "Added " + result.getCount() + " item(s) to the upload queue.", Snackbar.LENGTH_SHORT).show();
-                            updateListing(result.getQueuedFiles());
+                            Snackbar.make(_layout, "Added " + count + " item(s) to the upload queue.", Snackbar.LENGTH_SHORT).show();
                         }
                     },
                     ex -> {

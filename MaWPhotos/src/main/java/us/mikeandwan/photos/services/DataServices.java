@@ -11,6 +11,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 import okhttp3.Response;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
@@ -27,6 +29,7 @@ public class DataServices {
     private final DatabaseAccessor _databaseAccessor;
     private final PhotoApiClient _photoApiClient;
     private final PhotoStorage _photoStorage;
+    private final BehaviorSubject<File[]> _fileQueueSubject;
 
 
     public DataServices(DatabaseAccessor databaseAccessor,
@@ -35,6 +38,11 @@ public class DataServices {
         _databaseAccessor = databaseAccessor;
         _photoApiClient = photoApiClient;
         _photoStorage = photoStorage;
+
+        File[] queuedFiles = _photoStorage.getQueuedFilesForUpload();
+
+        _fileQueueSubject = BehaviorSubject.create();
+        _fileQueueSubject.onNext(queuedFiles);
     }
 
 
@@ -167,13 +175,20 @@ public class DataServices {
     }
 
 
-    public File[] getFilesQueuedForUpload() {
-        return _photoStorage.getQueuedFilesForUpload();
+    public Observable<File[]> getFileQueueObservable()
+    {
+        return _fileQueueSubject;
     }
 
 
     public boolean enequeFileToUpload(InputStream inputStream, String mimeType) {
-        return _photoStorage.enqueueFileToUpload(inputStream, mimeType);
+        boolean result = _photoStorage.enqueueFileToUpload(inputStream, mimeType);
+
+        if(result) {
+            _fileQueueSubject.onNext(_photoStorage.getQueuedFilesForUpload());
+        }
+
+        return result;
     }
 
 
