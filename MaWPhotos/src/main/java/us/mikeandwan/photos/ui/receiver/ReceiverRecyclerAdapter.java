@@ -28,7 +28,7 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
     private File[] _queuedFiles;
     private final Activity _activity;
     private final MimeTypeMap _mimeMap = MimeTypeMap.getSingleton();
-
+    private int _itemSize = 120;
 
     public ReceiverRecyclerAdapter(Activity activity) {
         _activity = activity;
@@ -50,6 +50,9 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
         String type = _mimeMap.getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName()));
         ViewHolder vh = (ViewHolder) holder;
 
+        vh._layout.setMaxHeight(_itemSize);
+        vh._layout.setMaxWidth(_itemSize);
+
         if(type.startsWith("image")) {
             vh._videoView.setVisibility(View.GONE);
             vh._imageView.setVisibility(View.VISIBLE);
@@ -57,7 +60,8 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
             Picasso
                 .with(_activity)
                 .load(file)
-                .resizeDimen(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)
+                .resize(_itemSize, _itemSize)
+                //.resizeDimen(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)
                 .centerCrop()
                 .into(vh._imageView);
         } else if(type.startsWith("video")) {
@@ -75,6 +79,11 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
     }
 
 
+    public void setItemSize(int size) {
+        _itemSize = size;
+    }
+
+
     public void setQueuedFiles(File[] files) {
         _queuedFiles = files;
 
@@ -83,6 +92,7 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+        final ConstraintLayout _layout;
         final ImageView _imageView;
         final VideoView _videoView;
 
@@ -90,6 +100,7 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
         ViewHolder(View itemView) {
             super(itemView);
 
+            _layout = (ConstraintLayout) itemView;
             _imageView = itemView.findViewById(R.id.receiverListImageView);
             _videoView = itemView.findViewById(R.id.receiverListVideoView);
         }

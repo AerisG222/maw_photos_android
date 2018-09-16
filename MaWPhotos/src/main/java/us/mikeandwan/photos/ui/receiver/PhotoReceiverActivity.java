@@ -5,9 +5,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.ViewTreeObserver;
@@ -40,8 +42,6 @@ import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
 public class PhotoReceiverActivity extends BaseActivity implements HasComponent<ActivityComponent> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private ActivityComponent _activityComponent;
-    private ViewTreeObserver.OnGlobalLayoutListener _listener;
-    private boolean _layoutInitialized = false;
 
     @Inject DataServices _dataServices;
     @Inject ReceiverRecyclerAdapter _receiverAdapter;
@@ -68,19 +68,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
         _recyclerView.setHasFixedSize(true);
         _recyclerView.setAdapter(_receiverAdapter);
-        updateLayoutManager(0);
-
-        // http://stackoverflow.com/questions/25396747/how-to-get-fragment-width
-        _listener = () -> _recyclerView.post(() -> {
-            int width = _layout.getWidth();
-
-            if (width > 0) {
-                _layout.getViewTreeObserver().removeOnGlobalLayoutListener(_listener);
-                updateLayoutManager(width);
-            }
-        });
-
-        _layout.getViewTreeObserver().addOnGlobalLayoutListener(_listener);
+        setLayoutManager();
 
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -140,15 +128,18 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
     }
 
 
-    private void updateLayoutManager(int width) {
-        int cols = Math.max(1, (width / _thumbSize));
+    private void setLayoutManager() {
+        // https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int cols = displayMetrics.widthPixels / _thumbSize;
 
-        GridLayoutManager glm = new GridLayoutManager(this, cols);
+        GridLayoutManager glm = new GridLayoutManager(this, Math.max(1, cols));
         _recyclerView.setLayoutManager(glm);
+        _recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        _receiverAdapter.setItemSize(displayMetrics.widthPixels / cols);
 
         _recyclerView.getRecycledViewPool().clear();
-
-        _layoutInitialized = true;
     }
 
 
@@ -218,9 +209,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
 
     private void updateListing(File[] files) {
-        if(_layoutInitialized) {
-            _receiverAdapter.setQueuedFiles(files);
-        }
+        _receiverAdapter.setQueuedFiles(files);
     }
 
 
