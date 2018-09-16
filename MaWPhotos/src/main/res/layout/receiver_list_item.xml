@@ -9,6 +9,32 @@
     android:layout_marginBottom="1dp">
 
     <ImageView
+        android:id="@+id/photoIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:contentDescription="[photo]"
+        android:elevation="@dimen/_2dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_camera_icon" />
+
+    <ImageView
+        android:id="@+id/videoIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:contentDescription="[video]"
+        android:elevation="@dimen/_2dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_video_icon" />
+
+    <ImageView
         android:id="@+id/receiverListImageView"
         android:layout_width="0dp"
         android:layout_height="0dp"

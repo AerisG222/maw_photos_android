@@ -53,26 +53,12 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
         String type = _mimeMap.getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName()));
         ViewHolder vh = (ViewHolder) holder;
 
-        vh._layout.setMaxHeight(_itemSize);
-        vh._layout.setMaxWidth(_itemSize);
+        vh.setItemSize(_itemSize);
 
         if(type.startsWith("image")) {
-            vh._videoView.setVisibility(View.GONE);
-            vh._imageView.setVisibility(View.VISIBLE);
-
-            Picasso
-                .with(_activity)
-                .load(file)
-                .resize(_itemSize, _itemSize)
-                //.resizeDimen(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)
-                .centerCrop()
-                .into(vh._imageView);
+            vh.setImage(file);
         } else if(type.startsWith("video")) {
-            vh._videoView.setVisibility(View.VISIBLE);
-            vh._imageView.setVisibility(View.GONE);
-
-            vh._videoView.setVideoURI(Uri.parse("file://" + file.getPath()));
-            vh._videoView.start();
+            vh.setVideo(file);
         }
     }
 
@@ -97,8 +83,11 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         final ConstraintLayout _layout;
-        final ImageView _imageView;
-        final VideoView _videoView;
+        private final ImageView _cameraIcon;
+        private final ImageView _videoIcon;
+        private final ImageView _imageView;
+        private final VideoView _videoView;
+        private int _itemSize;
 
 
         ViewHolder(View itemView) {
@@ -107,11 +96,51 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
             _layout = (ConstraintLayout) itemView;
             _imageView = itemView.findViewById(R.id.receiverListImageView);
             _videoView = itemView.findViewById(R.id.receiverListVideoView);
+            _cameraIcon = itemView.findViewById(R.id.photoIcon);
+            _videoIcon = itemView.findViewById(R.id.videoIcon);
 
             _videoView.setOnPreparedListener(mp -> {
                 mp.setLooping(true);
                 mp.setVolume(0, 0);
             });
+        }
+
+
+        public void setItemSize(int size) {
+
+            _itemSize = size;
+
+            _layout.setMaxHeight(_itemSize);
+            _layout.setMaxWidth(_itemSize);
+        }
+
+
+        public void setVideo(File file) {
+            _cameraIcon.setVisibility(View.GONE);
+            _imageView.setVisibility(View.GONE);
+
+            _videoView.setVisibility(View.VISIBLE);
+            _videoIcon.setVisibility(View.VISIBLE);
+
+            _videoView.setVideoURI(Uri.parse("file://" + file.getPath()));
+            _videoView.start();
+        }
+
+
+        public void setImage(File file) {
+            _videoIcon.setVisibility(View.GONE);
+            _videoView.setVisibility(View.GONE);
+
+            _imageView.setVisibility(View.VISIBLE);
+            _cameraIcon.setVisibility(View.VISIBLE);
+
+            Picasso
+                    .with(_imageView.getContext())
+                    .load(file)
+                    .resize(_itemSize, _itemSize)
+                    //.resizeDimen(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)
+                    .centerCrop()
+                    .into(_imageView);
         }
     }
 }
