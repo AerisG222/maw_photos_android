@@ -108,7 +108,10 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
             _imageView = itemView.findViewById(R.id.receiverListImageView);
             _videoView = itemView.findViewById(R.id.receiverListVideoView);
 
-            _videoView.setOnPreparedListener(mp -> mp.setLooping(true));
+            _videoView.setOnPreparedListener(mp -> {
+                mp.setLooping(true);
+                mp.setVolume(0, 0);
+            });
         }
     }
 }
