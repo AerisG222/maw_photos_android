@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.view.ViewTreeObserver;
 
 import java.io.File;
@@ -36,6 +37,8 @@ import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
+import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity;
+import us.mikeandwan.photos.ui.login.LoginActivity;
 import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
 
 
@@ -103,7 +106,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
         updateToolbar(_toolbar, "Upload Queue");
 
         _disposables.add(Observable
-            .interval(1000, 10000, TimeUnit.MILLISECONDS)
+            .interval(1000, 2000, TimeUnit.MILLISECONDS)
             .map(x -> _dataServices.getFilesQueuedForUpload())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -213,8 +216,8 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
     }
 
 
-    private void goHome() {
-        Intent intent = new Intent(this, ModeSelectionActivity.class);
+    public void onReturnToPhotos(View view) {
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
 
         finish();
