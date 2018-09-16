@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.commonsware.cwac.provider.StreamProvider;
 
@@ -12,7 +13,9 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -94,6 +97,42 @@ public class PhotoStorage {
     }
 
 
+    public File[] getQueuedFilesForUpload() {
+        File uploadDir = getUploadDir();
+
+        return uploadDir.listFiles();
+    }
+
+
+    public boolean enqueueFileToUpload(InputStream inputStream, String mimeType) {
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        String extension = map.getExtensionFromMimeType(mimeType);
+        File file = getNewUploadFilePath(extension);
+
+        try(OutputStream outputStream = new FileOutputStream(file)) {
+            byte[] buf = new byte[4096];
+
+            while (true) {
+                int bytesRead = inputStream.read(buf);
+
+                if (bytesRead == -1) {
+                    break;
+                }
+
+                outputStream.write(buf, 0, bytesRead);
+            }
+
+            outputStream.flush();
+        } catch (IOException e) {
+            Log.w(MawApplication.LOG_TAG, "Error saving image file: " + e.getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+
     public Uri getSharingContentUri(String remotePath) {
         File file = new File(Environment.DIRECTORY_PICTURES, remotePath);
 
@@ -107,6 +146,25 @@ public class PhotoStorage {
 
     private File getRootPath() {
         return _context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    }
+
+
+    private File getUploadDir() {
+        File uploadDir = new File(getRootPath(), "__upload");
+
+        if(!uploadDir.exists()) {
+            uploadDir.mkdir();
+        }
+
+        return uploadDir;
+    }
+
+
+    private File getNewUploadFilePath(String extension) {
+        File uploadDir = getUploadDir();
+        String uuid = UUID.randomUUID().toString();
+
+        return new File(uploadDir, uuid + "." + extension);
     }
 
 

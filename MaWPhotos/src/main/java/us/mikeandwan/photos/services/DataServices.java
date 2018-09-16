@@ -4,7 +4,11 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Response;
@@ -160,6 +164,16 @@ public class DataServices {
         }
 
         return rate;
+    }
+
+
+    public File[] getFilesQueuedForUpload() {
+        return _photoStorage.getQueuedFilesForUpload();
+    }
+
+
+    public boolean enequeFileToUpload(InputStream inputStream, String mimeType) {
+        return _photoStorage.enqueueFileToUpload(inputStream, mimeType);
     }
 
 

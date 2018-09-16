@@ -10,6 +10,7 @@ import us.mikeandwan.photos.ui.photos.CommentDialogFragment;
 import us.mikeandwan.photos.ui.photos.ExifDialogFragment;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
 import us.mikeandwan.photos.ui.photos.RatingDialogFragment;
+import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity;
 
 
 @PerActivity
@@ -22,6 +23,7 @@ public interface ActivityComponent {
     void inject(LoginCallbackActivity activity);
     void inject(ModeSelectionActivity activity);
     void inject(PhotoListActivity activity);
+    void inject(PhotoReceiverActivity activity);
 
     // fragments
     void inject(CommentDialogFragment fragment);

@@ -11,6 +11,7 @@ import us.mikeandwan.photos.ui.categories.ThumbnailCategoryRecyclerAdapter;
 import us.mikeandwan.photos.ui.photos.FullScreenImageAdapter;
 import us.mikeandwan.photos.ui.photos.IPhotoActivity;
 import us.mikeandwan.photos.ui.photos.ThumbnailRecyclerAdapter;
+import us.mikeandwan.photos.ui.receiver.ReceiverRecyclerAdapter;
 
 
 @Module
@@ -44,5 +45,12 @@ class AdapterModule {
     ThumbnailRecyclerAdapter provideThumbnailRecyclerAdapter(Activity activity,
                                                              DataServices dataServices) {
         return new ThumbnailRecyclerAdapter((IPhotoActivity) activity, dataServices);
+    }
+
+
+    @Provides
+    @PerActivity
+    ReceiverRecyclerAdapter provideReceiverRecyclerAdapter(Activity activity) {
+        return new ReceiverRecyclerAdapter(activity);
     }
 }
