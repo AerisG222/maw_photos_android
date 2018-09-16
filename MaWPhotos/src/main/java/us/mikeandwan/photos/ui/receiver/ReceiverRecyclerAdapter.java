@@ -1,6 +1,8 @@
 package us.mikeandwan.photos.ui.receiver;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.squareup.picasso.Callback;
@@ -68,7 +71,8 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
             vh._videoView.setVisibility(View.VISIBLE);
             vh._imageView.setVisibility(View.GONE);
 
-            vh._videoView.setVideoPath(file.getAbsolutePath());
+            vh._videoView.setVideoURI(Uri.parse("file://" + file.getPath()));
+            vh._videoView.start();
         }
     }
 
@@ -103,6 +107,8 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
             _layout = (ConstraintLayout) itemView;
             _imageView = itemView.findViewById(R.id.receiverListImageView);
             _videoView = itemView.findViewById(R.id.receiverListVideoView);
+
+            _videoView.setOnPreparedListener(mp -> mp.setLooping(true));
         }
     }
 }
