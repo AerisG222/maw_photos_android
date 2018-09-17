@@ -12,13 +12,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.view.ViewTreeObserver;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -26,7 +23,6 @@ import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -37,14 +33,12 @@ import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
-import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity;
-import us.mikeandwan.photos.ui.login.LoginActivity;
-import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
 
 
 public class PhotoReceiverActivity extends BaseActivity implements HasComponent<ActivityComponent> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private ActivityComponent _activityComponent;
+    private boolean _fromShareEvent;
 
     @Inject DataServices _dataServices;
     @Inject ReceiverRecyclerAdapter _receiverAdapter;
@@ -79,6 +73,8 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
         if(isValidType(type))
         {
+            _fromShareEvent = true;
+
             switch(action) {
                 case Intent.ACTION_SEND:
                     handleSendSingle(intent);
@@ -209,13 +205,5 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
     private void updateListing(File[] files) {
         _receiverAdapter.setQueuedFiles(files);
-    }
-
-
-    public void onReturnToPhotos(View view) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-
-        finish();
     }
 }

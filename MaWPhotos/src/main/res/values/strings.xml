@@ -5,6 +5,7 @@
     <string name="action_sync">Sync</string>
     <string name="action_share">Share</string>
     <string name="action_wipe_cache">Wipe Cache</string>
+    <string name="action_view_upload_queue">View Upload Queue</string>
     <string name="action_reauthenticate">Re-Authenticate</string>
     <string name="title_activity_mode_selection">Browse By:</string>
     <string name="title_activity_photo_list">Photos</string>

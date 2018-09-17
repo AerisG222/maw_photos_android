@@ -50,6 +50,7 @@ import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
+import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 import static android.support.constraint.ConstraintSet.BOTTOM;
@@ -226,6 +227,12 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     public void onMenuItemSettings(MenuItem menuItem) {
         Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+
+    public void onViewUploadQueueClick(MenuItem menuItem) {
+        Intent intent = new Intent(this, PhotoReceiverActivity.class);
         startActivity(intent);
     }
 

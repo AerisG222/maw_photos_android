@@ -41,6 +41,7 @@ import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
+import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 
@@ -148,6 +149,11 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         forceSync();
     }
 
+
+    public void onViewUploadQueueClick(MenuItem menuItem) {
+        Intent intent = new Intent(this, PhotoReceiverActivity.class);
+        startActivity(intent);
+    }
 
     public void selectCategory(Category category) {
         Intent intent = new Intent(this, PhotoListActivity.class);

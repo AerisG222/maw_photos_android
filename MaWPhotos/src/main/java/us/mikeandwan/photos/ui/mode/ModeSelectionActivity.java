@@ -43,6 +43,7 @@ import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.categories.CategoryListActivity;
 import us.mikeandwan.photos.ui.login.LoginActivity;
 import us.mikeandwan.photos.ui.photos.PhotoListActivity;
+import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
 
@@ -149,6 +150,12 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
     public void onMenuItemForceSync(MenuItem menuItem) {
         forceSync();
+    }
+
+
+    public void onViewUploadQueueClick(MenuItem menuItem) {
+        Intent intent = new Intent(this, PhotoReceiverActivity.class);
+        startActivity(intent);
     }
 
 
