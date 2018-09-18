@@ -15,6 +15,8 @@
     <!-- notifications -->
     <string name="channel_name_new_categories">New Category Notification</string>
     <string name="channel_description_new_categories">Notification to highlight when new photo categories are available</string>
+    <string name="channel_name_upload">Upload Notification</string>
+    <string name="channel_description_upload">Notification to highlight when files were successfully uploaded</string>
 
     <!-- auth -->
     <string name="auth_client_id">maw_photos_android</string>

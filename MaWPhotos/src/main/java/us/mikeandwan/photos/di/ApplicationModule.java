@@ -62,26 +62,8 @@ public class ApplicationModule {
     NotificationManager provideNotificationManager(Application application) {
         NotificationManager notificationManager = (NotificationManager) application.getSystemService(Application.NOTIFICATION_SERVICE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = application.getString(R.string.channel_name_new_categories);
-            String description = application.getString(R.string.channel_description_new_categories);
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build();
-            NotificationChannel channel = new NotificationChannel(MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES, name, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(description);
-            channel.enableLights(true);
-            channel.enableVibration(true);
-            channel.setVibrationPattern(new long[]{300, 300});
-            channel.setLightColor(Color.argb(255, 75, 0, 130));
-            channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), audioAttributes);
-
-            if(notificationManager != null) {
-                // Register the channel with the system; you can't change the importance
-                // or other notification behaviors after this
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
+        addNewCategoriesNotificationChannel(application, notificationManager);
+        addUploadNotificationChannel(application, notificationManager);
 
         return notificationManager;
     }
@@ -107,5 +89,53 @@ public class ApplicationModule {
                                      PhotoApiClient photoApiClient,
                                      PhotoStorage photoStorage) {
         return new DataServices(databaseAccessor, photoApiClient, photoStorage);
+    }
+
+
+    private void addNewCategoriesNotificationChannel(Application application, NotificationManager notificationManager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String name = application.getString(R.string.channel_name_new_categories);
+            String description = application.getString(R.string.channel_description_new_categories);
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+            NotificationChannel channel = new NotificationChannel(MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES, name, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(description);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{300, 300});
+            channel.setLightColor(Color.argb(255, 75, 0, 130));
+            channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), audioAttributes);
+
+            if (notificationManager != null) {
+                // Register the channel with the system; you can't change the importance
+                // or other notification behaviors after this
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+
+    private void addUploadNotificationChannel(Application application, NotificationManager notificationManager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String name = application.getString(R.string.channel_name_upload);
+            String description = application.getString(R.string.channel_description_upload);
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+            NotificationChannel channel = new NotificationChannel(MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES, name, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(description);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{300, 300});
+            channel.setLightColor(Color.argb(255, 75, 0, 130));
+            channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), audioAttributes);
+
+            if (notificationManager != null) {
+                // Register the channel with the system; you can't change the importance
+                // or other notification behaviors after this
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
     }
 }
