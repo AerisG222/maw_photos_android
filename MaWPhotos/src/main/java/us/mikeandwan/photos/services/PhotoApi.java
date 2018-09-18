@@ -2,15 +2,20 @@ package us.mikeandwan.photos.services;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.models.ExifData;
+import us.mikeandwan.photos.models.FileOperationResult;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.RatePhoto;
@@ -69,4 +74,8 @@ interface PhotoApi {
 
     @POST("photos/addCommentForPhoto")
     Call<Boolean> addCommentForPhoto(@Body CommentPhoto commentPhoto);
+
+    @Multipart
+    @POST("upload/upload")
+    Call<FileOperationResult> uploadFile(@Part MultipartBody.Part file);
 }

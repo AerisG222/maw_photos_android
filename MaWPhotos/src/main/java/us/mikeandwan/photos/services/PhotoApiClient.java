@@ -1,7 +1,11 @@
 package us.mikeandwan.photos.services;
 
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -9,9 +13,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import us.mikeandwan.photos.Constants;
@@ -20,6 +29,7 @@ import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.models.ExifData;
+import us.mikeandwan.photos.models.FileOperationResult;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.RatePhoto;
@@ -29,6 +39,7 @@ import us.mikeandwan.photos.models.Rating;
 public class PhotoApiClient {
     private final PhotoApi _photoApi;
     private final OkHttpClient _httpClient;
+    private final MimeTypeMap _map = MimeTypeMap.getSingleton();
 
 
     @Inject
@@ -164,6 +175,29 @@ public class PhotoApiClient {
             return _httpClient.newCall(request).execute();
         } catch (IOException ex) {
             Log.w(MawApplication.LOG_TAG, "Error when getting photo blob: " + ex.getMessage());
+        }
+
+        return null;
+    }
+
+
+    // https://futurestud.io/tutorials/retrofit-2-how-to-upload-files-to-server
+    public FileOperationResult uploadFile(File file) {
+        try {
+            MediaType type = MediaType.parse(_map.getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName())));
+            RequestBody requestFile = RequestBody.create(type, file.getPath());
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+            Response<FileOperationResult> response = _photoApi.uploadFile(body).execute();
+
+            if(response.isSuccessful()) {
+                Log.w(MawApplication.LOG_TAG, "upload succeeded for file: " + file.getName());
+                return response.body();
+            } else {
+                Log.w(MawApplication.LOG_TAG, "unable to upload file: " + file.getName());
+            }
+        } catch (IOException ex) {
+            Log.w(MawApplication.LOG_TAG, "Error uploading file: " + file.getName() + ": " + ex.getMessage());
         }
 
         return null;

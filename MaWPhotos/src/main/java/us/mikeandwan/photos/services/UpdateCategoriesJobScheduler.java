@@ -5,28 +5,14 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 
-import java.util.List;
-
 import us.mikeandwan.photos.MawApplication;
 
 import static android.app.job.JobInfo.NETWORK_TYPE_ANY;
 
 
-public class UpdateCategoriesJobScheduler {
-    private Application _app;
-    private JobScheduler _scheduler;
-
+public class UpdateCategoriesJobScheduler extends BaseJobScheduler {
     public UpdateCategoriesJobScheduler(Application app, JobScheduler scheduler) {
-        if(app == null) {
-            throw new IllegalArgumentException("app should not be null");
-        }
-
-        if(scheduler == null) {
-            throw new IllegalArgumentException("scheduler should not be null");
-        }
-
-        _app = app;
-        _scheduler = scheduler;
+        super(app, scheduler);
     }
 
 
@@ -52,18 +38,5 @@ public class UpdateCategoriesJobScheduler {
             .build();
 
         _scheduler.schedule(ji);
-    }
-
-
-    private JobInfo getPendingJob(int jobId) {
-        List<JobInfo> list = _scheduler.getAllPendingJobs();
-
-        for(JobInfo ji : list) {
-            if(ji.getId() == jobId) {
-                return ji;
-            }
-        }
-
-        return null;
     }
 }

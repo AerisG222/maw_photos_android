@@ -14,7 +14,9 @@ import us.mikeandwan.photos.di.PreferenceModule;
 public class MawApplication extends Application {
     public static final String LOG_TAG = "maw";
     public static final String NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES = "notify_new_categories";
+    public static final String NOTIFICATION_CHANNEL_ID_UPLOAD_FILES = "files_uploaded";
     public static final int JOB_ID_UPDATE_CATEGORY = 2;
+    public static final int JOB_ID_UPLOAD_FILES = 3;
     private static MawApplication _app;
 
     private int _notificationCount = 0;

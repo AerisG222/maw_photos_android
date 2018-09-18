@@ -192,6 +192,28 @@ public class DataServices {
     }
 
 
+    public int uploadQueuedFiles() {
+        int uploadCount = 0;
+        File[] files = getFileQueueObservable().blockingFirst();
+
+        while(files != null && files.length > 0) {
+            for (File file : files) {
+                try {
+                    _photoApiClient.uploadFile(file);
+                    uploadCount++;
+                } catch (Exception ex) {
+                    Log.e(MawApplication.LOG_TAG, "error uploading file: " + ex.getMessage());
+                    break;
+                }
+            }
+
+            files = getFileQueueObservable().blockingFirst();
+        }
+
+        return uploadCount;
+    }
+
+
     public void wipeTempFiles() { _photoStorage.wipeTempFiles(); }
 
 
