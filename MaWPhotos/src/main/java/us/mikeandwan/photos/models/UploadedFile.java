@@ -1,22 +1,25 @@
 package us.mikeandwan.photos.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 
 public class UploadedFile {
-    private FileLocation _fileLocation;
+    private FileLocation _location;
     private Date _creationTime;
     private long _sizeInBytes;
 
 
-    public FileLocation getFileLocation() {
-        return _fileLocation;
+    public FileLocation getLocation() {
+        return _location;
     }
 
-    public void setFileLocation(FileLocation fileLocation) {
-        _fileLocation = fileLocation;
+    public void setLocation(FileLocation fileLocation) {
+        _location = fileLocation;
     }
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS", timezone="EST")
     public Date getCreationTime() {
         return _creationTime;
     }

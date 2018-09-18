@@ -31,6 +31,7 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.services.DataServices;
+import us.mikeandwan.photos.services.UploadJobScheduler;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 
@@ -42,6 +43,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
     @Inject DataServices _dataServices;
     @Inject ReceiverRecyclerAdapter _receiverAdapter;
+    @Inject UploadJobScheduler _uploadScheduler;
 
     @BindDimen(R.dimen.category_grid_thumbnail_size) int _thumbSize;
     @BindView(R.id.receiver_recycler_view) RecyclerView _recyclerView;
@@ -83,6 +85,9 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
                     handleSendMultiple(intent);
                     break;
             }
+
+            // try to force a reschedule to get this to run immediately
+            _uploadScheduler.schedule(true);
         }
     }
 

@@ -182,7 +182,7 @@ public class PhotoApiClient {
 
 
     // https://futurestud.io/tutorials/retrofit-2-how-to-upload-files-to-server
-    public FileOperationResult uploadFile(File file) {
+    public FileOperationResult uploadFile(File file) throws IOException {
         try {
             MediaType type = MediaType.parse(_map.getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName())));
             RequestBody requestFile = RequestBody.create(type, file.getPath());
@@ -198,6 +198,7 @@ public class PhotoApiClient {
             }
         } catch (IOException ex) {
             Log.w(MawApplication.LOG_TAG, "Error uploading file: " + file.getName() + ": " + ex.getMessage());
+            throw ex;
         }
 
         return null;

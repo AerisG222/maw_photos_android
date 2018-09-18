@@ -2,18 +2,18 @@ package us.mikeandwan.photos.models;
 
 
 public class FileOperationResult {
-    private String _fileOperation;
+    private String _operation;
     private String _relativePathSpecified;
     private UploadedFile _uploadedFile;
     private boolean _wasSuccessful;
     private String _error;
 
-    public String getFileOperation() {
-        return _fileOperation;
+    public String getOperation() {
+        return _operation;
     }
 
-    public void setFileOperation(String fileOperation) {
-        _fileOperation = fileOperation;
+    public void setOperation(String fileOperation) {
+        _operation = fileOperation;
     }
 
     public String getRelativePathSpecified() {

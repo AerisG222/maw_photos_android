@@ -133,6 +133,11 @@ public class PhotoStorage {
     }
 
 
+    public void deleteFileToUpload(File file) {
+        file.delete();
+    }
+
+
     public Uri getSharingContentUri(String remotePath) {
         File file = new File(Environment.DIRECTORY_PICTURES, remotePath);
 

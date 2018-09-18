@@ -19,6 +19,7 @@ import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.models.ExifData;
+import us.mikeandwan.photos.models.FileOperationResult;
 import us.mikeandwan.photos.models.Photo;
 import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.PhotoSize;
@@ -185,10 +186,15 @@ public class DataServices {
         boolean result = _photoStorage.enqueueFileToUpload(inputStream, mimeType);
 
         if(result) {
-            _fileQueueSubject.onNext(_photoStorage.getQueuedFilesForUpload());
+            updateQueuedFileSubject();
         }
 
         return result;
+    }
+
+
+    private void updateQueuedFileSubject() {
+        _fileQueueSubject.onNext(_photoStorage.getQueuedFilesForUpload());
     }
 
 
@@ -199,8 +205,24 @@ public class DataServices {
         while(files != null && files.length > 0) {
             for (File file : files) {
                 try {
-                    _photoApiClient.uploadFile(file);
-                    uploadCount++;
+                    FileOperationResult result = _photoApiClient.uploadFile(file);
+
+                    if(result.getWasSuccessful()) {
+                        uploadCount++;
+                        _photoStorage.deleteFileToUpload(file);
+                        updateQueuedFileSubject();
+                    }
+                    else {
+                        String err = result.getError();
+
+                        Log.e(MawApplication.LOG_TAG, "error reported when uploading file: " + err);
+
+                        // TODO: service to return error code
+                        if(err.contains("already exists")) {
+                            _photoStorage.deleteFileToUpload(file);
+                            updateQueuedFileSubject();
+                        }
+                    }
                 } catch (Exception ex) {
                     Log.e(MawApplication.LOG_TAG, "error uploading file: " + ex.getMessage());
                     break;
