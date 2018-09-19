@@ -1,8 +1,6 @@
 package us.mikeandwan.photos.ui.receiver;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -67,9 +65,6 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
         _activityComponent.inject(this);
 
-        _recyclerView.setBackgroundTintList(ColorStateList.valueOf(12222));
-        _recyclerView.setBackgroundTintMode(PorterDuff.Mode.DARKEN);
-
         _recyclerView.setHasFixedSize(true);
         _recyclerView.setAdapter(_receiverAdapter);
         setLayoutManager();
@@ -112,7 +107,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
     @Override
     protected void onDestroy() {
-        _disposables.clear(); // do not send event after activity has been destroyed
+        _disposables.clear();
 
         super.onDestroy();
     }
