@@ -69,7 +69,6 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     @Inject DataServices _dataServices;
     @Inject AuthStateManager _authStateManager;
     @Inject UpdateCategoriesJobScheduler _updateScheduler;
-    @Inject UploadJobScheduler _uploadScheduler;
     @Inject SharedPreferences _sharedPrefs;
 
 
@@ -108,7 +107,6 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
                 new int[]{android.R.id.text1});
 
         _updateScheduler.schedule(false, FOUR_HOURS_IN_MILLIS);
-        _uploadScheduler.schedule(false);
 
         initModeList();
         resetNotifications();
