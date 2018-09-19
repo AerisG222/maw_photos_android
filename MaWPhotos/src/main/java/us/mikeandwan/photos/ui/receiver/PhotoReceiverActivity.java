@@ -1,6 +1,8 @@
 package us.mikeandwan.photos.ui.receiver;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -11,7 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Menu;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.InputStream;
@@ -39,7 +41,6 @@ import us.mikeandwan.photos.ui.HasComponent;
 public class PhotoReceiverActivity extends BaseActivity implements HasComponent<ActivityComponent> {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private ActivityComponent _activityComponent;
-    private boolean _fromShareEvent;
 
     @Inject DataServices _dataServices;
     @Inject ReceiverRecyclerAdapter _receiverAdapter;
@@ -47,6 +48,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
     @BindDimen(R.dimen.category_grid_thumbnail_size) int _thumbSize;
     @BindView(R.id.receiver_recycler_view) RecyclerView _recyclerView;
+    @BindView(R.id.receiver_wifi_text_view) TextView _wifiTextView;
     @BindView(R.id.photoReceiverLayout) ConstraintLayout _layout;
     @BindView(R.id.toolbar) Toolbar _toolbar;
 
@@ -65,6 +67,9 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
         _activityComponent.inject(this);
 
+        _recyclerView.setBackgroundTintList(ColorStateList.valueOf(12222));
+        _recyclerView.setBackgroundTintMode(PorterDuff.Mode.DARKEN);
+
         _recyclerView.setHasFixedSize(true);
         _recyclerView.setAdapter(_receiverAdapter);
         setLayoutManager();
@@ -75,8 +80,6 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
         if(isValidType(type))
         {
-            _fromShareEvent = true;
-
             switch(action) {
                 case Intent.ACTION_SEND:
                     handleSendSingle(intent);
@@ -86,19 +89,8 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
                     break;
             }
 
-            // try to force a reschedule to get this to run immediately
             _uploadScheduler.schedule(true);
         }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //MenuInflater inflater = getMenuInflater();
-
-        //inflater.inflate(R.menu.category_list, menu);
-
-        return true;
     }
 
 
