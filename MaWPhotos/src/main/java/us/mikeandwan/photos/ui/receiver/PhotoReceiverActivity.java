@@ -209,6 +209,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
         return msg;
     }
 
+
     private void updateListing(File[] files) {
         _receiverAdapter.setQueuedFiles(files);
     }
