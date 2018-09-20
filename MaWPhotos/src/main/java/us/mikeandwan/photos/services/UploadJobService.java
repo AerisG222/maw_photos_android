@@ -11,6 +11,8 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -41,6 +43,7 @@ public class UploadJobService extends JobService {
         _disposables.add(_dataServices
             .getFileQueueObservable()
             .filter(files -> files != null)
+            .debounce(100, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .subscribe(
                 files -> {
