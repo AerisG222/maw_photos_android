@@ -15,7 +15,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -27,7 +29,7 @@ import us.mikeandwan.photos.MawApplication;
 public class PhotoStorage {
     private static final String AUTHORITY = "us.mikeandwan.streamprovider";
     private static final Uri PROVIDER = Uri.parse("content://"+AUTHORITY);
-
+    private static final SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH);
     private Context _context;
 
 
@@ -104,10 +106,10 @@ public class PhotoStorage {
     }
 
 
-    public boolean enqueueFileToUpload(InputStream inputStream, String mimeType) {
+    public boolean enqueueFileToUpload(int id, InputStream inputStream, String mimeType) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
         String extension = map.getExtensionFromMimeType(mimeType);
-        File file = getNewUploadFilePath(extension);
+        File file = getNewUploadFilePath(id, mimeType.substring(0, mimeType.indexOf('/')), extension);
 
         try(OutputStream outputStream = new FileOutputStream(file)) {
             byte[] buf = new byte[4096];
@@ -165,11 +167,12 @@ public class PhotoStorage {
     }
 
 
-    private File getNewUploadFilePath(String extension) {
+    private File getNewUploadFilePath(int id, String filePrefix, String extension) {
         File uploadDir = getUploadDir();
-        String uuid = UUID.randomUUID().toString();
+        Date now = new Date();
+        String filename = String.format(Locale.ENGLISH, "%s_%d_%s", filePrefix, id, _dateFormat.format(now));
 
-        return new File(uploadDir, uuid + "." + extension);
+        return new File(uploadDir, filename + "." + extension);
     }
 
 

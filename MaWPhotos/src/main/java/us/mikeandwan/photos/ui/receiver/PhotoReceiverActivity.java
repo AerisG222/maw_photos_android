@@ -171,7 +171,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
                     InputStream inputStream = getContentResolver().openInputStream(uri);
                     String type = getContentResolver().getType(uri);
 
-                    if(_dataServices.enequeFileToUpload(inputStream, type))
+                    if(_dataServices.enequeFileToUpload(count + 1, inputStream, type))
                     {
                         count++;
                     }

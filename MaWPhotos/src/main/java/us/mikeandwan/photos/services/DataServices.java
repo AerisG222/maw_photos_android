@@ -182,8 +182,8 @@ public class DataServices {
     }
 
 
-    public boolean enequeFileToUpload(InputStream inputStream, String mimeType) {
-        boolean result = _photoStorage.enqueueFileToUpload(inputStream, mimeType);
+    public boolean enequeFileToUpload(int id, InputStream inputStream, String mimeType) {
+        boolean result = _photoStorage.enqueueFileToUpload(id, inputStream, mimeType);
 
         if(result) {
             updateQueuedFileSubject();
