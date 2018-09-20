@@ -198,41 +198,32 @@ public class DataServices {
     }
 
 
-    public int uploadQueuedFiles() {
-        int uploadCount = 0;
-        File[] files = getFileQueueObservable().blockingFirst();
+    public void uploadQueuedFile(File file) throws Exception {
+        try {
+            FileOperationResult result = _photoApiClient.uploadFile(file);
 
-        while(files != null && files.length > 0) {
-            for (File file : files) {
-                try {
-                    FileOperationResult result = _photoApiClient.uploadFile(file);
+            if(result.getWasSuccessful()) {
+                _photoStorage.deleteFileToUpload(file);
+                updateQueuedFileSubject();
+            }
+            else {
+                String err = result.getError();
 
-                    if(result.getWasSuccessful()) {
-                        uploadCount++;
-                        _photoStorage.deleteFileToUpload(file);
-                        updateQueuedFileSubject();
-                    }
-                    else {
-                        String err = result.getError();
+                // TODO: service to return error code
+                if(err.contains("already exists")) {
+                    _photoStorage.deleteFileToUpload(file);
+                    updateQueuedFileSubject();
+                } else {
+                    Log.e(MawApplication.LOG_TAG, "error reported when uploading file: " + err);
 
-                        Log.e(MawApplication.LOG_TAG, "error reported when uploading file: " + err);
-
-                        // TODO: service to return error code
-                        if(err.contains("already exists")) {
-                            _photoStorage.deleteFileToUpload(file);
-                            updateQueuedFileSubject();
-                        }
-                    }
-                } catch (Exception ex) {
-                    Log.e(MawApplication.LOG_TAG, "error uploading file: " + ex.getMessage());
-                    break;
+                    throw new Exception("Error uploading file " + file.getName());
                 }
             }
+        } catch (Exception ex) {
+            Log.e(MawApplication.LOG_TAG, "error uploading file: " + ex.getMessage());
 
-            files = getFileQueueObservable().blockingFirst();
+            throw new Exception("Error uploading file " + file.getName());
         }
-
-        return uploadCount;
     }
 
 

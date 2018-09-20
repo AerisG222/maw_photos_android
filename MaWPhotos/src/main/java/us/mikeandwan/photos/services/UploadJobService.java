@@ -13,7 +13,6 @@ import android.util.Log;
 
 import javax.inject.Inject;
 
-import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.MawApplication;
@@ -25,7 +24,7 @@ import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity;
 public class UploadJobService extends JobService {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private MawApplication _app;
-    private boolean _isWorking = false;
+    private int _uploadCount = 0;
 
     @Inject DataServices _dataServices;
     @Inject NotificationPreference _notificationPref;
@@ -39,25 +38,29 @@ public class UploadJobService extends JobService {
         _app = (MawApplication) getApplication();
         _app.getApplicationComponent().inject(this);
 
-        _isWorking = true;
-
-        _disposables.add(
-            Flowable.fromCallable(this::uploadFiles)
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    x -> {
-                        _isWorking = false;
-                        jobFinished(params, false);
-                    },
-                    ex -> {
-                        Log.e(MawApplication.LOG_TAG, "error uploading files: " + ex.getMessage());
-                        _isWorking = false;
-                        jobFinished(params, false);
+        _disposables.add(_dataServices
+            .getFileQueueObservable()
+            .filter(files -> files != null)
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                files -> {
+                    if(files.length == 0) {
+                        alertIfNeeded();
+                        jobFinished(params, true);
+                    } else {
+                        _dataServices.uploadQueuedFile(files[0]);
+                        _uploadCount++;
                     }
-                )
+                },
+                ex -> {
+                    Log.e(MawApplication.LOG_TAG, "error uploading files: " + ex.getMessage());
+                    alertIfNeeded();
+                    jobFinished(params, true);
+                }
+            )
         );
 
-        return _isWorking;
+        return true;
     }
 
 
@@ -65,34 +68,24 @@ public class UploadJobService extends JobService {
     public boolean onStopJob(JobParameters params) {
         Log.d(MawApplication.LOG_TAG, "Stopping upload files job");
 
+        alertIfNeeded();
+
         _disposables.clear();
-
-        boolean needsRescheduling = _isWorking;
-
-        jobFinished(params, needsRescheduling);
-
-        return needsRescheduling;
-    }
-
-
-    private boolean uploadFiles() {
-        int uploadedCount = 0;
-
-        try {
-            uploadedCount = _dataServices.uploadQueuedFiles();
-        } catch (Exception mae) {
-            Log.e(MawApplication.LOG_TAG, "Error uploading files: " + mae.getMessage());
-        }
-
-        if (uploadedCount > 0) {
-            addNotification(_notificationPref.getNotificationRingtone(), _notificationPref.getDoVibrate());
-        }
 
         return true;
     }
 
 
-    private void addNotification(String ringtone, Boolean vibrate) {
+    private void alertIfNeeded() {
+        if(_uploadCount > 0) {
+            addNotification(_uploadCount, _notificationPref.getNotificationRingtone(), _notificationPref.getDoVibrate());
+        }
+
+        _uploadCount = 0;
+    }
+
+
+    private void addNotification(int uploadCount, String ringtone, Boolean vibrate) {
         Intent i = new Intent(Intent.ACTION_MAIN);
         i.setClass(this, PhotoReceiverActivity.class);
 
@@ -100,8 +93,8 @@ public class UploadJobService extends JobService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
             .setSmallIcon(R.drawable.ic_status_notification)
-            .setContentTitle("Media Upload Complete!")
-            .setContentText("Go to mikeandwan.us to manage your files")
+            .setContentTitle("Media Uploaded!")
+            .setContentText(uploadCount + " file(s) uploaded.  Go to mikeandwan.us to manage your files.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(detailsIntent)
             .setAutoCancel(true)
