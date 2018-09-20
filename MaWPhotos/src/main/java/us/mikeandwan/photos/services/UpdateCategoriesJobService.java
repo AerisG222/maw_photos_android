@@ -28,7 +28,6 @@ import us.mikeandwan.photos.ui.login.LoginActivity;
 public class UpdateCategoriesJobService extends JobService {
     private final CompositeDisposable _disposables = new CompositeDisposable();
     private MawApplication _app;
-    private boolean _isWorking = false;
 
     @Inject DataServices _dataServices;
     @Inject NotificationPreference _notificationPref;
@@ -42,25 +41,21 @@ public class UpdateCategoriesJobService extends JobService {
         _app = (MawApplication) getApplication();
         _app.getApplicationComponent().inject(this);
 
-        _isWorking = true;
-
-        _disposables.add(
-                Flowable.fromCallable(this::updateCategories)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(
-                                x -> {
-                                    _isWorking = false;
-                                    jobFinished(params, false);
-                                },
-                                ex -> {
-                                    Log.e(MawApplication.LOG_TAG, "error updating categories: " + ex.getMessage());
-                                    _isWorking = false;
-                                    jobFinished(params, false);
-                                }
-                        )
+        _disposables.add(Flowable
+            .fromCallable(this::updateCategories)
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                    x -> {
+                        jobFinished(params, false);
+                    },
+                    ex -> {
+                        Log.e(MawApplication.LOG_TAG, "error updating categories: " + ex.getMessage());
+                        jobFinished(params, false);
+                    }
+            )
         );
 
-        return _isWorking;
+        return true;
     }
 
 
@@ -70,11 +65,7 @@ public class UpdateCategoriesJobService extends JobService {
 
         _disposables.clear();
 
-        boolean needsRescheduling = _isWorking;
-
-        jobFinished(params, needsRescheduling);
-
-        return needsRescheduling;
+        return false;
     }
 
 
