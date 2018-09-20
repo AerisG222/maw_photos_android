@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -71,9 +72,8 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
         Intent intent = getIntent();
         String action = intent.getAction();
-        String type = intent.getType();
 
-        if(isValidType(type))
+        if(action != null)
         {
             switch(action) {
                 case Intent.ACTION_SEND:
@@ -142,53 +142,28 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
 
     void handleSendSingle(Intent intent) {
         Uri mediaUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        ArrayList<Uri> list = new ArrayList<>();
 
-        if (mediaUri != null) {
-            ArrayList<Uri> list = new ArrayList<>();
+        list.add(mediaUri);
 
-            list.add(mediaUri);
-
-            saveFiles(list);
-        }
+        saveFiles(list);
     }
 
 
     void handleSendMultiple(Intent intent) {
         ArrayList<Uri> mediaUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 
-        if (mediaUris != null) {
-            saveFiles(mediaUris);
-        }
+        saveFiles(mediaUris);
     }
 
 
     void saveFiles(ArrayList<Uri> mediaUris) {
         _disposables.add(
-            Flowable.fromCallable(() -> {
-                int count = 0;
-
-                for(Uri uri : mediaUris) {
-                    InputStream inputStream = getContentResolver().openInputStream(uri);
-                    String type = getContentResolver().getType(uri);
-
-                    if(_dataServices.enequeFileToUpload(count + 1, inputStream, type))
-                    {
-                        count++;
-                    }
-                }
-
-                return count;
-            })
+            Flowable.fromCallable(() -> enqueueFiles(mediaUris))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    count -> {
-                        if(count == 0) {
-                            Snackbar.make(_layout, "Unable to add items to the upload queue =(", Snackbar.LENGTH_SHORT).show();
-                        } else {
-                            Snackbar.make(_layout, "Added " + count + " item(s) to the upload queue.", Snackbar.LENGTH_SHORT).show();
-                        }
-                    },
+                    msg -> Snackbar.make(_layout, msg, Snackbar.LENGTH_LONG).show(),
                     ex -> {
                         Log.e(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage());
                         handleApiException(ex);
@@ -196,6 +171,43 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
                 ));
     }
 
+
+    private String enqueueFiles(ArrayList<Uri> mediaUris) throws FileNotFoundException {
+        int count = 0;
+        int unsupportedFiles = 0;
+
+        for(Uri uri : mediaUris) {
+            String type = getContentResolver().getType(uri);
+
+            if(!isValidType(type)) {
+                unsupportedFiles++;
+                continue;
+            }
+
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+
+            if(_dataServices.enequeFileToUpload(count + 1, inputStream, type))
+            {
+                count++;
+            }
+        }
+
+        String msg = "";
+
+        if(count > 0) {
+            msg += "Successfully enqueued " + count + " files for upload.";
+        }
+
+        if(unsupportedFiles > 0) {
+            if(msg.length() > 0) {
+                msg += "  ";
+            }
+
+            msg += "Unable to enqueue " + unsupportedFiles + " files.";
+        }
+
+        return msg;
+    }
 
     private void updateListing(File[] files) {
         _receiverAdapter.setQueuedFiles(files);
