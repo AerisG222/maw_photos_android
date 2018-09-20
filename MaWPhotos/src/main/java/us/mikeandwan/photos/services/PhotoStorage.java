@@ -170,7 +170,7 @@ public class PhotoStorage {
     private File getNewUploadFilePath(int id, String filePrefix, String extension) {
         File uploadDir = getUploadDir();
         Date now = new Date();
-        String filename = String.format(Locale.ENGLISH, "%s_%d_%s", filePrefix, id, _dateFormat.format(now));
+        String filename = String.format(Locale.ENGLISH, "%s_%s_%d", filePrefix, _dateFormat.format(now), id);
 
         return new File(uploadDir, filename + "." + extension);
     }
