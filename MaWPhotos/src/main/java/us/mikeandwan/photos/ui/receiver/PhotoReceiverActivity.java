@@ -83,9 +83,11 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
                     handleSendMultiple(intent);
                     break;
             }
-
-            _uploadScheduler.schedule(true);
         }
+
+        // if we end up on this page, we either have new files to upload, or a user wants to check
+        // so lets try to reschedule the job to kick it off
+        _uploadScheduler.schedule(true);
     }
 
 
