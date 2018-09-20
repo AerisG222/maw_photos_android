@@ -181,7 +181,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         if (_categoryPrefs.getCategoryDisplay() == CategoryDisplay.ThumbnailGrid) {
             _gridAdapter.setCategoryList(categories);
 
-            _gridAdapter.onCategorySelected().subscribe(this::selectCategory);
+            _disposables.add(_gridAdapter.onCategorySelected().subscribe(this::selectCategory));
 
             if(_decoration != null) {
                 _categoryRecyclerView.removeItemDecoration(_decoration);
@@ -193,7 +193,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
         else {
             _listAdapter.setCategoryList(categories);
 
-            _listAdapter.onCategorySelected().subscribe(this::selectCategory);
+            _disposables.add(_listAdapter.onCategorySelected().subscribe(this::selectCategory));
 
             LinearLayoutManager llm = new LinearLayoutManager(this);
             llm.setOrientation(LinearLayoutManager.VERTICAL);

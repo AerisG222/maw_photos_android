@@ -195,7 +195,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         layoutActivity();
 
         _photoPager.setAdapter(_photoPagerAdapter);
-        _photoPager.onPhotoSelected().subscribe(this::gotoPhoto);
+        _disposables.add(_photoPager.onPhotoSelected().subscribe(this::gotoPhoto));
 
         // if we are coming back from an orientation change, we might already have a valid list
         // populated.  if so, use the original list.
@@ -529,7 +529,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
             _thumbnailRecyclerView.setHasFixedSize(true);
             _thumbnailRecyclerView.setLayoutManager(llm);
             _thumbnailRecyclerView.setAdapter(_thumbnailRecyclerAdapter);
-            _thumbnailRecyclerAdapter.onThumbnailSelected().subscribe(this::gotoPhoto);
+            _disposables.add(_thumbnailRecyclerAdapter.onThumbnailSelected().subscribe(this::gotoPhoto));
 
             if(_photoPrefs.getDoFadeControls()) {
                 _thumbnailRecyclerView.setOnTouchListener((view, event) -> {
