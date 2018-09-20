@@ -185,7 +185,7 @@ public class PhotoApiClient {
     public FileOperationResult uploadFile(File file) throws IOException {
         try {
             MediaType type = MediaType.parse(_map.getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName())));
-            RequestBody requestFile = RequestBody.create(type, file.getPath());
+            RequestBody requestFile = RequestBody.create(type, file);
             MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
             Response<FileOperationResult> response = _photoApi.uploadFile(body).execute();
