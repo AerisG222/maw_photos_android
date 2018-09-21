@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.photos;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,7 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
 
 
     @Override
-    public ThumbnailRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ThumbnailRecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         ImageView view = new ImageView(context);
 

@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.categories;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ public class ThumbnailCategoryRecyclerAdapter extends CategoryRecyclerAdapter<Th
     }
 
 
+    @NonNull
     @Override
     public ThumbnailCategoryRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ImageView imageView = new ImageView(parent.getContext());

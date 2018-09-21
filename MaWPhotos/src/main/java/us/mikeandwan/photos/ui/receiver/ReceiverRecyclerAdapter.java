@@ -1,30 +1,24 @@
 package us.mikeandwan.photos.ui.receiver;
 
 import android.app.Activity;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.VideoView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 
-import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.services.DataServices;
 
 
 public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {

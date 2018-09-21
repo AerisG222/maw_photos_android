@@ -38,7 +38,6 @@ import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.services.DataServices;
 import us.mikeandwan.photos.services.PhotoListType;
 import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler;
-import us.mikeandwan.photos.services.UploadJobScheduler;
 import us.mikeandwan.photos.ui.BaseActivity;
 import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.categories.CategoryListActivity;

@@ -66,7 +66,7 @@ public class PhotoViewPager extends ViewPager {
 
 
     public void rotateImage(int direction) {
-        PhotoView pv = (PhotoView) findViewWithTag(getCurrentItem());
+        PhotoView pv = findViewWithTag(getCurrentItem());
 
         pv.setRotation(pv.getRotation() + (direction * 90));
     }

@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.categories;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -33,8 +34,9 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
     }
 
 
+    @NonNull
     @Override
-    public abstract T onCreateViewHolder(ViewGroup parent, int viewType);
+    public abstract T onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
 
 
     protected abstract void displayCategory(Category category, String imageFile, T viewHolder);
@@ -44,7 +46,7 @@ public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder>
 
 
     @Override
-    public void onBindViewHolder(T viewHolder, int position) {
+    public void onBindViewHolder(@NonNull T viewHolder, int position) {
         final Category category = _categoryList.get(position);
 
         viewHolder.itemView.setOnClickListener(v -> _categorySubject.onNext(category));
