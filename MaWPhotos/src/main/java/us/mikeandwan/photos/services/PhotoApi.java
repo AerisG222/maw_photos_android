@@ -22,21 +22,8 @@ import us.mikeandwan.photos.models.Rating;
 
 
 interface PhotoApi {
-    /*
-    @GET("photos/getPhotoYears")
-    Call<List<Integer>> getPhotoYears();
-
-    @GET("photos/getCategoriesForYear/{year}")
-    Call<List<Category>> getCategoriesForYear(@Path("year") int year);
-    */
-
     @GET("photos/getRecentCategories/{sinceId}")
     Call<List<Category>> getRecentCategories(@Path("sinceId") int sinceId);
-
-    /*
-    @GET("photos/getCategoryCount")
-    Call<Integer> getTotalCategoryCount();
-    */
 
     @GET("photos/getPhotoExifData/{photoId}")
     Call<ExifData> getExifData(@Path("photoId") int photoId);
@@ -52,21 +39,6 @@ interface PhotoApi {
 
     @GET("photos/getPhotosByCategory/{categoryId}")
     Call<List<Photo>> getPhotosByCategory(@Path("categoryId") int categoryId);
-
-    @GET("photos/getPhotosByCommentDate/{newestFirst}")
-    Call<List<Photo>> getPhotosByCommentDate(@Path("newestFirst") boolean newestFirst);
-
-    @GET("photos/getPhotosByUserCommentDate/{newestFirst}")
-    Call<List<Photo>> getPhotosByUserCommentDate(@Path("newestFirst") boolean newestFirst);
-
-    @GET("photos/getPhotosByCommentCount/{mostFirst}")
-    Call<List<Photo>> getPhotosByCommentCount(@Path("mostFirst") boolean mostFirst);
-
-    @GET("photos/getPhotosByAverageRating/true")
-    Call<List<Photo>> getPhotosByAverageRating();
-
-    @GET("photos/getPhotosByUserRating/true")
-    Call<List<Photo>> getPhotosByUserRating();
 
     @POST("photos/ratePhoto")
     Call<Float> ratePhoto(@Body RatePhoto rating);

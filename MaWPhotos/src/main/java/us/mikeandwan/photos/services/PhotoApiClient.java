@@ -62,30 +62,6 @@ public class PhotoApiClient {
             case ByCategory:
                 call = _photoApi.getPhotosByCategory(categoryId);
                 break;
-            case ByCommentsNewest:
-                call = _photoApi.getPhotosByCommentDate(true);
-                break;
-            case ByCommentsOldest:
-                call = _photoApi.getPhotosByCommentDate(false);
-                break;
-            case ByUserCommentsNewest:
-                call = _photoApi.getPhotosByUserCommentDate(true);
-                break;
-            case ByUserCommentsOldest:
-                call = _photoApi.getPhotosByUserCommentDate(false);
-                break;
-            case ByCommentCountMost:
-                call = _photoApi.getPhotosByCommentCount(true);
-                break;
-            case ByCommentCountLeast:
-                call = _photoApi.getPhotosByCommentCount(false);
-                break;
-            case ByAverageRating:
-                call = _photoApi.getPhotosByAverageRating();
-                break;
-            case ByUserRating:
-                call = _photoApi.getPhotosByUserRating();
-                break;
             default:
                 throw new Exception("Unknown photo list type!");
         }
