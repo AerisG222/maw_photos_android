@@ -7,13 +7,13 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
-import android.support.v7.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.view.MenuItemCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.ShareActionProvider;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,10 +53,10 @@ import us.mikeandwan.photos.ui.HasComponent;
 import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity;
 import us.mikeandwan.photos.ui.settings.SettingsActivity;
 
-import static android.support.constraint.ConstraintSet.BOTTOM;
-import static android.support.constraint.ConstraintSet.LEFT;
-import static android.support.constraint.ConstraintSet.RIGHT;
-import static android.support.constraint.ConstraintSet.TOP;
+import static androidx.constraintlayout.widget.ConstraintSet.BOTTOM;
+import static androidx.constraintlayout.widget.ConstraintSet.LEFT;
+import static androidx.constraintlayout.widget.ConstraintSet.RIGHT;
+import static androidx.constraintlayout.widget.ConstraintSet.TOP;
 
 
 public class PhotoListActivity extends BaseActivity implements IPhotoActivity, HasComponent<ActivityComponent> {

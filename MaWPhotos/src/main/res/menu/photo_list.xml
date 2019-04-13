@@ -6,7 +6,7 @@
           android:title="@string/action_share"
           android:icon="@drawable/ic_share_white_24dp"
           mawphotos:showAsAction="ifRoom"
-          mawphotos:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
+          mawphotos:actionProviderClass="androidx.appcompat.widget.ShareActionProvider" />
 
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"

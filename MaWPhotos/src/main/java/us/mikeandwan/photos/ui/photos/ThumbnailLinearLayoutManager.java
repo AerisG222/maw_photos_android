@@ -1,8 +1,8 @@
 package us.mikeandwan.photos.ui.photos;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 // this was needed to properly scroll immediately on resume (like during an orientation change)

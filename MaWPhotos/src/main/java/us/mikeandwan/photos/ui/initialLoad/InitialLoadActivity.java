@@ -2,8 +2,8 @@ package us.mikeandwan.photos.ui.initialLoad;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.snackbar.Snackbar;
 import android.util.Log;
 
 import javax.inject.Inject;
