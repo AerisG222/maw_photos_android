@@ -33,6 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
+import us.mikeandwan.photos.models.ApiCollection;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.prefs.CategoryDisplay;
 import us.mikeandwan.photos.prefs.CategoryDisplayPreference;
@@ -241,10 +242,10 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
     }
 
 
-    private void onSyncComplete(List<Category> result) {
+    private void onSyncComplete(ApiCollection<Category> result) {
         stopSyncAnimation();
 
-        int count = result.size();
+        long count = result.getCount();
 
         if(count == 0) {
             Snackbar.make(_container, "No updates available.", Snackbar.LENGTH_SHORT).show();
@@ -261,7 +262,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
 
         List<Category> newForYear = new ArrayList<>();
 
-        for(Category cat : result) {
+        for(Category cat : result.getItems()) {
             if(cat.getYear() == _year) {
                 newForYear.add(cat);
             }

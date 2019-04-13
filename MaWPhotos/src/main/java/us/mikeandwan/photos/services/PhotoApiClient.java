@@ -23,13 +23,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.models.ApiCollection;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.models.ExifData;
 import us.mikeandwan.photos.models.FileOperationResult;
 import us.mikeandwan.photos.models.Photo;
-import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.RatePhoto;
 import us.mikeandwan.photos.models.Rating;
 
@@ -48,34 +48,32 @@ public class PhotoApiClient {
     }
 
 
-    public List<Category> getRecentCategories(int sinceId) throws IOException {
-        Response<List<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
+    public ApiCollection<Category> getRecentCategories(int sinceId) throws IOException {
+        Response<ApiCollection<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
 
         return response.body();
     }
 
 
-    public List<Photo> getPhotos(PhotoListType type, int categoryId) throws Exception {
-        Call<List<Photo>> call;
-
-        switch(type) {
-            case ByCategory:
-                call = _photoApi.getPhotosByCategory(categoryId);
-                break;
-            default:
-                throw new Exception("Unknown photo list type!");
-        }
-
-        return call.execute().body();
-    }
-
-
-    public PhotoAndCategory getRandomPhoto() throws IOException {
-        Response<PhotoAndCategory> response = _photoApi.getRandomPhoto().execute();
+    public ApiCollection<Photo> getPhotos(PhotoListType type, int categoryId) throws Exception {
+        Response<ApiCollection<Photo>> response = _photoApi.getPhotosByCategory(categoryId).execute();
 
         return response.body();
     }
 
+
+    public Photo getRandomPhoto() throws IOException {
+        Response<Photo> response = _photoApi.getRandomPhoto().execute();
+
+        return response.body();
+    }
+
+
+    public ApiCollection<Photo> getRandomPhotos(int count) throws IOException {
+        Response<ApiCollection<Photo>> response = _photoApi.getRandomPhotos(count).execute();
+
+        return response.body();
+    }
 
     public ExifData getExifData(int photoId) throws IOException {
         Response<ExifData> response = _photoApi.getExifData(photoId).execute();
@@ -84,8 +82,8 @@ public class PhotoApiClient {
     }
 
 
-    public List<Comment> getComments(int photoId) throws IOException {
-        Response<List<Comment>> response = _photoApi.getComments(photoId).execute();
+    public ApiCollection<Comment> getComments(int photoId) throws IOException {
+        Response<ApiCollection<Comment>> response = _photoApi.getComments(photoId).execute();
 
         return response.body();
     }
@@ -104,10 +102,10 @@ public class PhotoApiClient {
         rp.setRating(rating);
 
         try {
-            Response<Float> response = _photoApi.ratePhoto(rp).execute();
+            Response<Rating> response = _photoApi.ratePhoto(photoId, rp).execute();
 
             if (response.isSuccessful()) {
-                return response.body();
+                return response.body().getAverageRating();
             } else {
                 Log.w(MawApplication.LOG_TAG, "unable to save rating!");
             }
@@ -127,7 +125,7 @@ public class PhotoApiClient {
         cp.setPhotoId(photoId);
 
         try {
-            Response<Boolean> response = _photoApi.addCommentForPhoto(cp).execute();
+            Response<ApiCollection<Comment>> response = _photoApi.addCommentForPhoto(photoId, cp).execute();
 
             if(response.isSuccessful()) {
                 Log.w(MawApplication.LOG_TAG, "got response: " + response.code());
@@ -141,9 +139,9 @@ public class PhotoApiClient {
     }
 
 
-    public okhttp3.Response downloadPhoto(String photoPath) {
+    public okhttp3.Response downloadPhoto(String photoUrl) {
         try {
-            URL url = new URL(buildPhotoUrl(photoPath));
+            URL url = new URL(photoUrl);
             Request request = new Request.Builder().url(url).build();
 
             return _httpClient.newCall(request).execute();
@@ -176,14 +174,5 @@ public class PhotoApiClient {
         }
 
         return null;
-    }
-
-
-    private static String buildPhotoUrl(String photoPath) {
-        if (photoPath.startsWith("/")) {
-            return Constants.WWW_BASE_URL + photoPath;
-        }
-
-        return Constants.WWW_BASE_URL + "/" + photoPath;
     }
 }

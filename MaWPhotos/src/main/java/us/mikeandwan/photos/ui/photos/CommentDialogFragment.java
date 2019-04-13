@@ -72,7 +72,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
                             x -> {
                                 removeWork();
                                 _commentEditText.setText("");
-                                displayComments(x);
+                                displayComments(x.getItems());
                             },
                             ex -> {
                                 removeWork();
@@ -138,7 +138,7 @@ public class CommentDialogFragment extends BasePhotoDialogFragment {
                 .subscribe(
                         x -> {
                             removeWork();
-                            displayComments(x);
+                            displayComments(x.getItems());
                         },
                         ex -> {
                             removeWork();

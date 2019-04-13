@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.models.PhotoInfo;
+import us.mikeandwan.photos.models.MultimediaAsset;
 
 
 // https://nfrolov.wordpress.com/2014/08/16/android-sqlitedatabase-locking-and-multi-threading/
@@ -133,29 +133,16 @@ public class DatabaseAccessor {
     }
 
 
-    public void addCategory(Category category) {
-        SQLiteDatabase db = getDatabase();
-
-        List<Integer> years = getPhotoYears();
-
-        if (!years.contains(category.getYear())) {
-            addYear(db, category.getYear());
-        }
-
-        addCategory(db, category);
-    }
-
-
     private void addCategory(SQLiteDatabase db, Category category) {
         ContentValues values = new ContentValues();
 
         values.put("id", category.getId());
         values.put("year", category.getYear());
         values.put("name", category.getName());
-        values.put("has_gps_data", category.getHasGpsData());
-        values.put("teaser_image_width", category.getTeaserPhotoInfo().getWidth());
-        values.put("teaser_image_height", category.getTeaserPhotoInfo().getHeight());
-        values.put("teaser_image_path", category.getTeaserPhotoInfo().getPath());
+        values.put("has_gps_data", false);
+        values.put("teaser_image_width", category.getTeaserImage().getWidth());
+        values.put("teaser_image_height", category.getTeaserImage().getHeight());
+        values.put("teaser_image_path", category.getTeaserImage().getUrl());
 
         addSingleRecord(db, "image_category", values);
     }
@@ -172,18 +159,18 @@ public class DatabaseAccessor {
 
     private Category BuildCategory(Cursor c) {
         Category cat = new Category();
-        PhotoInfo teaser = new PhotoInfo();
+        MultimediaAsset teaser = new MultimediaAsset();
 
-        cat.setTeaserPhotoInfo(teaser);
+        cat.setTeaserImage(teaser);
 
         cat.setId(c.getInt(0));
         cat.setYear(c.getInt(1));
         cat.setName(c.getString(2));
-        cat.setHasGpsData(c.getInt(3) == 1);
+       // cat.setHasGpsData(c.getInt(3) == 1);
 
         teaser.setWidth(c.getInt(4));
         teaser.setHeight(c.getInt(5));
-        teaser.setPath(c.getString(6));
+        teaser.setUrl(c.getString(6));
 
         return cat;
     }

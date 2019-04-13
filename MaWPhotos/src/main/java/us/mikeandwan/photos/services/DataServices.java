@@ -13,13 +13,13 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import okhttp3.Response;
 import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.models.ApiCollection;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
 import us.mikeandwan.photos.models.ExifData;
 import us.mikeandwan.photos.models.FileOperationResult;
 import us.mikeandwan.photos.models.Photo;
-import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.models.Rating;
 
@@ -45,7 +45,7 @@ public class DataServices {
     }
 
 
-    public List<Comment> addComment(CommentPhoto cp) throws IOException {
+    public ApiCollection<Comment> addComment(CommentPhoto cp) throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to add comment for photo: " + cp.getPhotoId());
 
         _photoApiClient.addComment(cp.getPhotoId(), cp.getComment());
@@ -57,14 +57,14 @@ public class DataServices {
     public String downloadCategoryTeaser(Category category) {
         Log.d(MawApplication.LOG_TAG, "started to download teaser for category: " + category.getId());
 
-        return downloadPhoto(category.getTeaserPhotoInfo().getPath());
+        return downloadPhoto(category.getTeaserImage().getUrl());
     }
 
 
     public String downloadMdCategoryTeaser(Category category) {
         Log.d(MawApplication.LOG_TAG, "started to download md teaser for category: " + category.getId());
 
-        return downloadPhoto(category.getTeaserPhotoInfo().getPath().replace("/xs", "/md/"));
+        return downloadPhoto(category.getTeaserImage().getUrl().replace("/xs", "/md/"));
     }
 
 
@@ -75,16 +75,16 @@ public class DataServices {
 
         switch (size) {
             case Sm:
-                path = photo.getSmInfo().getPath();
+                path = photo.getImageSm().getUrl();
                 break;
             case Md:
-                path = photo.getMdInfo().getPath();
+                path = photo.getImageMd().getUrl();
                 break;
             case Xs:
-                path = photo.getXsInfo().getPath();
+                path = photo.getImageXs().getUrl();
                 break;
             case Lg:
-                path = photo.getLgInfo().getPath();
+                path = photo.getImageLg().getUrl();
                 break;
         }
 
@@ -99,7 +99,7 @@ public class DataServices {
     }
 
 
-    public List<Comment> getComments(int photoId) throws IOException {
+    public ApiCollection<Comment> getComments(int photoId) throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to get comments for photo: " + photoId);
 
         return _photoApiClient.getComments(photoId);
@@ -113,7 +113,7 @@ public class DataServices {
     }
 
 
-    public List<Photo> getPhotoList(PhotoListType type, int categoryId) throws Exception {
+    public ApiCollection<Photo> getPhotoList(PhotoListType type, int categoryId) throws Exception {
         Log.d(MawApplication.LOG_TAG, "started to get photo list");
 
         return _photoApiClient.getPhotos(type, categoryId);
@@ -125,10 +125,17 @@ public class DataServices {
     }
 
 
-    public PhotoAndCategory getRandomPhoto() throws IOException {
+    public Photo getRandomPhoto() throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to get random photo");
 
         return _photoApiClient.getRandomPhoto();
+    }
+
+
+    public ApiCollection<Photo> getRandomPhotos(int count) throws IOException {
+        Log.d(MawApplication.LOG_TAG, "started to get random photos");
+
+        return _photoApiClient.getRandomPhotos(count);
     }
 
 
@@ -139,12 +146,12 @@ public class DataServices {
     }
 
 
-    public List<Category> getRecentCategories() throws IOException {
+    public ApiCollection<Category> getRecentCategories() throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to get recent categories");
 
-        List<Category> categories = _photoApiClient.getRecentCategories(_databaseAccessor.getLatestCategoryId());
+        ApiCollection<Category> categories = _photoApiClient.getRecentCategories(_databaseAccessor.getLatestCategoryId());
 
-        _databaseAccessor.addCategories(categories);
+        _databaseAccessor.addCategories(categories.getItems());
 
         return categories;
     }

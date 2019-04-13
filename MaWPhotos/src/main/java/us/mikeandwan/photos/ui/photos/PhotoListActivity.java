@@ -43,7 +43,6 @@ import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
 import us.mikeandwan.photos.models.Photo;
-import us.mikeandwan.photos.models.PhotoAndCategory;
 import us.mikeandwan.photos.models.PhotoSize;
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference;
 import us.mikeandwan.photos.services.DataServices;
@@ -315,7 +314,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
                 .subscribe(
                         x -> {
                             removeWork();
-                            onGetPhotoList(x);
+                            onGetPhotoList(x.getItems());
                         },
                         ex -> {
                             removeWork();
@@ -337,9 +336,26 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     private void initRandomPhotos() {
         _randomPhotoIds = new HashSet<>();
 
-        for (int i = 0; i < RANDOM_INITIAL_COUNT; i++) {
-            fetchRandom();
-        }
+        _disposables.add(Flowable.fromCallable(() -> {
+                    addWork();
+                    return _dataServices.getRandomPhotos(RANDOM_INITIAL_COUNT);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        x -> {
+                            removeWork();
+
+                            for(Photo p : x.getItems()) {
+                                onGetRandom(p);
+                            }
+                        },
+                        ex -> {
+                            removeWork();
+                            handleApiException(ex);
+                        }
+                )
+        );
     }
 
 
@@ -364,19 +380,19 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
     }
 
 
-    private void onGetRandom(PhotoAndCategory result)
+    private void onGetRandom(Photo result)
     {
-        if(_randomPhotoIds.contains(result.getPhoto().getId())) {
+        if(_randomPhotoIds.contains(result.getId())) {
             // avoid duplicates
             return;
         }
 
-        _randomPhotoIds.add(result.getPhoto().getId());
+        _randomPhotoIds.add(result.getId());
 
         _index = 0;
-        _photoList.add(result.getPhoto());
+        _photoList.add(result);
 
-        Log.d(MawApplication.LOG_TAG, "random photo: " + result.getPhoto().getId());
+        Log.d(MawApplication.LOG_TAG, "random photo: " + result.getId());
 
         onRandomPhotoFetched();
     }
@@ -610,7 +626,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
 
     private Intent createShareIntent(Photo photo) {
         if (photo != null) {
-            Uri contentUri = _dataServices.getSharingContentUri(photo.getMdInfo().getPath());
+            Uri contentUri = _dataServices.getSharingContentUri(photo.getImageMd().getUrl());
 
             if (contentUri != null) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);

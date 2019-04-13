@@ -33,6 +33,7 @@ import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
+import us.mikeandwan.photos.models.ApiCollection;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.services.AuthStateManager;
 import us.mikeandwan.photos.services.DataServices;
@@ -238,10 +239,10 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
     }
 
 
-    private void onSyncComplete(List<Category> categories) {
+    private void onSyncComplete(ApiCollection<Category> categories) {
         stopSyncAnimation();
 
-        int count = categories.size();
+        long count = categories.getCount();
 
         if(count == 0) {
             Snackbar.make(_modeExpandableListView, "No updates available.", Snackbar.LENGTH_SHORT).show();
@@ -258,7 +259,7 @@ public class ModeSelectionActivity extends BaseActivity implements HasComponent<
 
         List<Integer> newYears = new ArrayList<>();
 
-        for(Category cat : categories) {
+        for(Category cat : categories.getItems()) {
             if(!_yearList.contains(cat.getYear())) {
                 newYears.add(cat.getYear());
             }

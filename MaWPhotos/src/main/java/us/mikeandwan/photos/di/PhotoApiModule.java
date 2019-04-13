@@ -1,5 +1,8 @@
 package us.mikeandwan.photos.di;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -16,10 +19,13 @@ public class PhotoApiModule {
     @Provides
     @Singleton
     Retrofit provideRetrofit(OkHttpClient httpClient) {
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         return new Retrofit
                 .Builder()
                 .baseUrl(Constants.API_BASE_URL)
-                .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create(mapper))
                 .client(httpClient)
                 .build();
     }

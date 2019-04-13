@@ -5,57 +5,35 @@ public class Category {
     private int _id;
     private int _year;
     private String _name;
-    private boolean _hasGpsData;
-    private PhotoInfo _teaserInfo;
+    private MultimediaAsset _teaserImage;
 
 
     public int getId() {
         return _id;
     }
-
-
     public void setId(int id) {
         _id = id;
     }
 
-
-    public int getYear() {
-        return _year;
-    }
-
-
-    public void setYear(int year) {
-        _year = year;
-    }
-
-
     public String getName() {
         return _name;
     }
-
-
     public void setName(String name) {
         _name = name;
     }
 
-
-    public boolean getHasGpsData() {
-        return _hasGpsData;
+    public int getYear() {
+        return _year;
+    }
+    public void setYear(int year) {
+        _year = year;
     }
 
-
-    public void setHasGpsData(boolean hasGpsData) {
-        _hasGpsData = hasGpsData;
+    public MultimediaAsset getTeaserImage() {
+        return _teaserImage;
     }
-
-
-    public PhotoInfo getTeaserPhotoInfo() {
-        return _teaserInfo;
-    }
-
-
-    public void setTeaserPhotoInfo(PhotoInfo teaserInfo) {
-        _teaserInfo = teaserInfo;
+    public void setTeaserImage(MultimediaAsset teaserImage) {
+        _teaserImage = teaserImage;
     }
 
 

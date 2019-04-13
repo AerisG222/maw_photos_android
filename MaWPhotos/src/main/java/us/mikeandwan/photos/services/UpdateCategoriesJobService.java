@@ -73,7 +73,7 @@ public class UpdateCategoriesJobService extends JobService {
         int totalCount;
 
         try {
-            List<Category> categories = _dataServices.getRecentCategories();
+            List<Category> categories = _dataServices.getRecentCategories().getItems();
 
             totalCount = _app.getNotificationCount() + categories.size();
 
