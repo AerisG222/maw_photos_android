@@ -15,7 +15,7 @@ public class CategoryDisplayPreference {
     public CategoryDisplay getCategoryDisplay() {
         String val = _sharedPrefs.getString("category_view_mode", "list");
 
-        if(val.equalsIgnoreCase("list")) {
+        if(val == null || val.equalsIgnoreCase("list")) {
             return CategoryDisplay.ThumbnailAndNameList;
         }
 

@@ -9,7 +9,6 @@
     <string name="action_reauthenticate">Re-Authenticate</string>
     <string name="title_activity_mode_selection">Browse By:</string>
     <string name="title_activity_photo_list">Photos</string>
-    <string name="service_poller_name">mikeandwan.us Poller</string>
     <string name="title_activity_category_list">CategoryList</string>
 
     <!-- notifications -->

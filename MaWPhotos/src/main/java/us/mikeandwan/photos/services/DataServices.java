@@ -12,6 +12,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.ApiCollection;
 import us.mikeandwan.photos.models.Category;
@@ -256,7 +257,12 @@ public class DataServices {
                     if(response.isSuccessful()) {
                         _photoStorage.put(path, response.body());
 
-                        response.body().close();
+                        ResponseBody body = response.body();
+
+                        if(body != null) {
+                            body.close();
+                        }
+
                         response.close();
 
                         return cachePath;

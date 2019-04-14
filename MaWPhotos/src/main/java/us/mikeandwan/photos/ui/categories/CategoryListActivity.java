@@ -197,7 +197,7 @@ public class CategoryListActivity extends BaseActivity implements ICategoryListA
             _disposables.add(_listAdapter.onCategorySelected().subscribe(this::selectCategory));
 
             LinearLayoutManager llm = new LinearLayoutManager(this);
-            llm.setOrientation(LinearLayoutManager.VERTICAL);
+            llm.setOrientation(RecyclerView.VERTICAL);
             _categoryRecyclerView.setLayoutManager(llm);
 
             if(_decoration == null) {

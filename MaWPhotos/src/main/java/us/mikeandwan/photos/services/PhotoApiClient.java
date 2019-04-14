@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -18,10 +17,8 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.ApiCollection;
 import us.mikeandwan.photos.models.Category;
