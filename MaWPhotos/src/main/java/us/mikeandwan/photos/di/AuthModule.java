@@ -17,6 +17,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import us.mikeandwan.photos.Constants;
 import us.mikeandwan.photos.MawApplication;
+import us.mikeandwan.photos.services.AuthAuthenticator;
 import us.mikeandwan.photos.services.AuthInterceptor;
 import us.mikeandwan.photos.services.AuthStateManager;
 
@@ -39,9 +40,16 @@ public class AuthModule {
 
     @Provides
     @Singleton
-    AuthInterceptor provideAuthInterceptor(AuthorizationService authService,
-                                           AuthStateManager authStateManager) {
-        return new AuthInterceptor(authService, authStateManager);
+    AuthAuthenticator provideAuthAuthenticator(AuthorizationService authService,
+                                               AuthStateManager authStateManager) {
+        return new AuthAuthenticator(authService, authStateManager);
+    }
+
+
+    @Provides
+    @Singleton
+    AuthInterceptor provideAuthInterceptor(AuthStateManager authStateManager) {
+        return new AuthInterceptor(authStateManager);
     }
 
 

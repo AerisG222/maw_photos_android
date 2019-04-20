@@ -94,6 +94,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha05'
     implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
 
+    // completable future
+    implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.0'
+
     // appauth
     implementation 'net.openid:appauth:0.7.1'
 
