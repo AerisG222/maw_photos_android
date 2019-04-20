@@ -129,7 +129,7 @@ public class ReceiverRecyclerAdapter extends RecyclerView.Adapter {
             _cameraIcon.setVisibility(View.VISIBLE);
 
             Picasso
-                    .with(_imageView.getContext())
+                    .get()
                     .load(file)
                     .resize(_itemSize, _itemSize)
                     //.resizeDimen(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)

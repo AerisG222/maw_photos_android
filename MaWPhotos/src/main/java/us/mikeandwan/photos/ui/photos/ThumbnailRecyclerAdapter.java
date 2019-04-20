@@ -101,7 +101,7 @@ public class ThumbnailRecyclerAdapter extends RecyclerView.Adapter<ThumbnailRecy
 
     private void displayPhoto(ThumbnailRecyclerAdapter.ViewHolder viewHolder, String path) {
         Picasso
-                .with(_context)
+                .get()
                 .load(path)
                 .resizeDimen(R.dimen.photo_list_thumbnail_size, R.dimen.photo_list_thumbnail_size)
                 .centerCrop()

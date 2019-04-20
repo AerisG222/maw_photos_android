@@ -91,7 +91,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                             _activity.removeWork();
 
                             Picasso
-                                .with(_context)
+                                .get()
                                 .load(x)
                                 .into(view);
                         },

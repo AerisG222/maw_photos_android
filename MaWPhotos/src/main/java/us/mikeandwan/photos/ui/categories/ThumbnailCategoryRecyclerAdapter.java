@@ -39,7 +39,7 @@ public class ThumbnailCategoryRecyclerAdapter extends CategoryRecyclerAdapter<Th
 
     protected void displayCategory(Category category, String path, ThumbnailCategoryRecyclerAdapter.ViewHolder viewHolder) {
         Picasso
-                .with(_context)
+                .get()
                 .load(path)
                 .resizeDimen(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)
                 .centerCrop()

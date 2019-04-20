@@ -43,7 +43,7 @@ public class ListCategoryRecyclerAdapter extends CategoryRecyclerAdapter<ListCat
         viewHolder._nameTextView.setText(category.getName());
 
         Picasso
-                .with(_context)
+                .get()
                 .load(path)
                 .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
                 .centerCrop()
