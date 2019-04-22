@@ -73,12 +73,17 @@ public class UpdateCategoriesJobService extends JobService {
         int totalCount;
 
         try {
+            Log.d(MawApplication.LOG_TAG, "about to get recent categories");
+
             List<Category> categories = _dataServices.getRecentCategories().getItems();
 
             totalCount = _app.getNotificationCount() + categories.size();
 
+            Log.i(MawApplication.LOG_TAG, String.format("received recent categories; count: %d", totalCount));
+
             _app.setNotificationCount(totalCount);
         } catch (Exception mae) {
+            Log.e(MawApplication.LOG_TAG, String.format("Error trying to obtain recent categories: %s", mae.getMessage()));
             totalCount = -1;
         }
 
