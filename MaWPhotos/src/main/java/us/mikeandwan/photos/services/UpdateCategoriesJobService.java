@@ -46,6 +46,7 @@ public class UpdateCategoriesJobService extends JobService {
             .subscribeOn(Schedulers.io())
             .subscribe(
                     x -> {
+                        Log.i(MawApplication.LOG_TAG, "completed updating categories");
                         jobFinished(params, false);
                     },
                     ex -> {
