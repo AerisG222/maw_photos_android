@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         applicationId "us.mikeandwan.pictures"
-        minSdkVersion 24
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 44
         versionName "6.1"
@@ -51,6 +51,11 @@ android {
         debug {
             debuggable true
             javaCompileOptions.annotationProcessorOptions.argument('butterknife.debuggable', 'true')
+
+            shrinkResources true
+            minifyEnabled true
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-butterknife.pro', 'proguard-retrofit.pro', 'proguard-maw.pro'
         }
         release {
             shrinkResources true
@@ -58,7 +63,7 @@ android {
 
             debuggable false
             javaCompileOptions.annotationProcessorOptions.argument('butterknife.debuggable', 'false')
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-butterknife.pro', 'proguard-retrofit.pro', 'proguard-maw.pro'
             signingConfig signingConfigs.maw
         }
     }
