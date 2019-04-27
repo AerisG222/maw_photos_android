@@ -17,6 +17,7 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import us.mikeandwan.photos.MawApplication;
@@ -47,6 +48,16 @@ public class PhotoApiClient {
 
     public ApiCollection<Category> getRecentCategories(int sinceId) throws IOException {
         Response<ApiCollection<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
+
+        if(!response.isSuccessful()) {
+            ResponseBody body = response.errorBody();
+
+            if(body != null) {
+                Log.e(MawApplication.LOG_TAG, String.format("getRecentCategories response: %d | %s", response.code(), body.string()));
+            } else {
+                Log.e(MawApplication.LOG_TAG, String.format("getRecentCategories response: %d | %s", response.code(), response.message()));
+            }
+        }
 
         return response.body();
     }
