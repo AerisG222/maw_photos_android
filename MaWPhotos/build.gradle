@@ -55,7 +55,14 @@ android {
             shrinkResources true
             minifyEnabled true
 
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-butterknife.pro', 'proguard-retrofit.pro', 'proguard-maw.pro'
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
+                    'proguard-androidx.pro',
+                    'proguard-appauth.pro',
+                    'proguard-butterknife.pro',
+                    'proguard-okhttp.pro',
+                    'proguard-retrofit.pro',
+                    'proguard-maw.pro'
         }
         release {
             shrinkResources true
