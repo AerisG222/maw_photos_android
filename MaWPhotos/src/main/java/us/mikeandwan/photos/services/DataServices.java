@@ -163,7 +163,7 @@ public class DataServices {
     }
 
 
-    public Rating setRating(int photoId, int rating) {
+    public Rating setRating(int photoId, int rating) throws IOException {
         Log.d(MawApplication.LOG_TAG, "started to set user rating for photo: " + photoId);
 
         Float averageRating = _photoApiClient.setRating(photoId, rating);

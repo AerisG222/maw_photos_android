@@ -22,6 +22,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.models.ApiCollection;
+import us.mikeandwan.photos.models.ApiResult;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
 import us.mikeandwan.photos.models.CommentPhoto;
@@ -46,108 +47,164 @@ public class PhotoApiClient {
     }
 
 
-    public ApiCollection<Category> getRecentCategories(int sinceId) throws IOException {
+    ApiCollection<Category> getRecentCategories(int sinceId) throws IOException {
+        Log.d(MawApplication.LOG_TAG, "getRecentCategories starting");
+
         Response<ApiCollection<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
+        ApiResult<ApiCollection<Category>> result = new ApiResult<>(response);
 
-        if(!response.isSuccessful()) {
-            ResponseBody body = response.errorBody();
-
-            if(body != null) {
-                Log.e(MawApplication.LOG_TAG, String.format("getRecentCategories response: %d | %s", response.code(), body.string()));
-            } else {
-                Log.e(MawApplication.LOG_TAG, String.format("getRecentCategories response: %d | %s", response.code(), response.message()));
-            }
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("getRecentCategories failed: %s", result.getError()));
+            return null;
         }
 
-        return response.body();
+        Log.d(MawApplication.LOG_TAG, String.format("getRecentCategories succeeded: %d categories found", result.getResult().getCount()));
+
+        return result.getResult();
     }
 
 
-    public ApiCollection<Photo> getPhotos(PhotoListType type, int categoryId) throws Exception {
+    ApiCollection<Photo> getPhotos(PhotoListType type, int categoryId) throws Exception {
+        Log.d(MawApplication.LOG_TAG, "getPhotos starting");
+
         Response<ApiCollection<Photo>> response = _photoApi.getPhotosByCategory(categoryId).execute();
+        ApiResult<ApiCollection<Photo>> result = new ApiResult<>(response);
 
-        return response.body();
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("getPhotos failed: %s", result.getError()));
+            return null;
+        }
+
+        Log.d(MawApplication.LOG_TAG, String.format("getRecentCategories succeeded: %d categories found", result.getResult().getCount()));
+
+        return result.getResult();
     }
 
 
-    public Photo getRandomPhoto() throws IOException {
+    Photo getRandomPhoto() throws IOException {
+        Log.d(MawApplication.LOG_TAG, "getRandomPhoto starting");
+
         Response<Photo> response = _photoApi.getRandomPhoto().execute();
+        ApiResult<Photo> result = new ApiResult<>(response);
 
-        return response.body();
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("getRandomPhoto failed: %s", result.getError()));
+            return null;
+        }
+
+        Log.d(MawApplication.LOG_TAG, "getRandomPhoto succeeded");
+
+        return result.getResult();
     }
 
 
-    public ApiCollection<Photo> getRandomPhotos(int count) throws IOException {
+    ApiCollection<Photo> getRandomPhotos(int count) throws IOException {
+        Log.d(MawApplication.LOG_TAG, "getRandomPhotos starting");
+
         Response<ApiCollection<Photo>> response = _photoApi.getRandomPhotos(count).execute();
+        ApiResult<ApiCollection<Photo>> result = new ApiResult<>(response);
 
-        return response.body();
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("getRandomPhotos failed: %s", result.getError()));
+            return null;
+        }
+
+        Log.d(MawApplication.LOG_TAG, "getRandomPhotos succeeded");
+
+        return result.getResult();
     }
 
-    public ExifData getExifData(int photoId) throws IOException {
+    ExifData getExifData(int photoId) throws IOException {
+        Log.d(MawApplication.LOG_TAG, "getExifData starting");
+
         Response<ExifData> response = _photoApi.getExifData(photoId).execute();
+        ApiResult<ExifData> result = new ApiResult<>(response);
 
-        return response.body();
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("getExifData failed: %s", result.getError()));
+            return null;
+        }
+
+        Log.d(MawApplication.LOG_TAG, "getExifData succeeded");
+
+        return result.getResult();
     }
 
 
-    public ApiCollection<Comment> getComments(int photoId) throws IOException {
+    ApiCollection<Comment> getComments(int photoId) throws IOException {
+        Log.d(MawApplication.LOG_TAG, "getComments starting");
+
         Response<ApiCollection<Comment>> response = _photoApi.getComments(photoId).execute();
+        ApiResult<ApiCollection<Comment>> result = new ApiResult<>(response);
 
-        return response.body();
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("getComments failed: %s", result.getError()));
+            return null;
+        }
+
+        Log.d(MawApplication.LOG_TAG, String.format("getComments succeeded, %d comments found.", result.getResult().getCount()));
+
+        return result.getResult();
     }
 
 
-    public Rating getRatings(int photoId) throws IOException {
+    Rating getRatings(int photoId) throws IOException {
+        Log.d(MawApplication.LOG_TAG, "getRatings starting");
+
         Response<Rating> response = _photoApi.getRatings(photoId).execute();
+        ApiResult<Rating> result = new ApiResult<>(response);
 
-        return response.body();
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("getRatings failed: %s", result.getError()));
+            return null;
+        }
+
+        Log.d(MawApplication.LOG_TAG, "getRatings succeeded");
+
+        return result.getResult();
     }
 
 
-    public Float setRating(int photoId, int rating) {
+    Float setRating(int photoId, int rating) throws IOException {
         RatePhoto rp = new RatePhoto();
         rp.setPhotoId(photoId);
         rp.setRating(rating);
 
-        try {
-            Response<Rating> response = _photoApi.ratePhoto(photoId, rp).execute();
+        Log.d(MawApplication.LOG_TAG, "setRating starting");
 
-            if (response.isSuccessful()) {
-                return response.body().getAverageRating();
-            } else {
-                Log.w(MawApplication.LOG_TAG, "unable to save rating!");
-            }
-        } catch (MalformedURLException ex) {
-            Log.e(MawApplication.LOG_TAG, "invalid url!");
-        } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error trying to save rating: " + ex.getMessage());
+        Response<Rating> response = _photoApi.ratePhoto(photoId, rp).execute();
+        ApiResult<Rating> result = new ApiResult<>(response);
+
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("setRating failed: %s", result.getError()));
+            return null;
         }
 
-        return null;
+        Log.d(MawApplication.LOG_TAG, "setRating succeeded");
+
+        return result.getResult().getAverageRating();
     }
 
 
-    public void addComment(int photoId, String comment) {
+    void addComment(int photoId, String comment) throws IOException {
         CommentPhoto cp = new CommentPhoto();
         cp.setComment(comment);
         cp.setPhotoId(photoId);
 
-        try {
-            Response<ApiCollection<Comment>> response = _photoApi.addCommentForPhoto(photoId, cp).execute();
+        Log.d(MawApplication.LOG_TAG, "addComment starting");
 
-            if(response.isSuccessful()) {
-                Log.w(MawApplication.LOG_TAG, "got response: " + response.code());
-            } else {
-                Log.w(MawApplication.LOG_TAG, "unable to save comment!");
-            }
+        Response<ApiCollection<Comment>> response = _photoApi.addCommentForPhoto(photoId, cp).execute();
+        ApiResult<ApiCollection<Comment>> result = new ApiResult<>(response);
+
+        if(!result.isSuccess()) {
+            Log.w(MawApplication.LOG_TAG, String.format("addComment failed: %s", result.getError()));
         }
-        catch(Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "Error trying to add comment: " + ex.getMessage());
-        }
+
+        Log.d(MawApplication.LOG_TAG, "addComment succeeded");
     }
 
 
-    public okhttp3.Response downloadPhoto(String photoUrl) {
+    okhttp3.Response downloadPhoto(String photoUrl) {
         try {
             URL url = new URL(photoUrl);
             Request request = new Request.Builder().url(url).build();
@@ -162,7 +219,7 @@ public class PhotoApiClient {
 
 
     // https://futurestud.io/tutorials/retrofit-2-how-to-upload-files-to-server
-    public FileOperationResult uploadFile(File file) throws IOException {
+    FileOperationResult uploadFile(File file) throws IOException {
         try {
             MediaType type = MediaType.parse(_map.getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName())));
             RequestBody requestFile = RequestBody.create(type, file);
