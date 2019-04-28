@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
-import android.util.Log;
 
 import net.openid.appauth.AuthorizationException;
 import net.openid.appauth.AuthorizationResponse;
@@ -20,7 +19,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
@@ -81,16 +80,16 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
         if (response != null && response.authorizationCode != null) {
             exchangeAuthorizationCode(response);
         } else if (ex != null) {
-            Log.e(MawApplication.LOG_TAG, "Authorization failed: " + ex.getMessage());
+            Timber.e("Authorization failed: %s", ex.getMessage());
         } else {
-            Log.e(MawApplication.LOG_TAG, "No authorization state retained - reauthorization required");
+            Timber.e("No authorization state retained - reauthorization required");
         }
     }
 
 
     @MainThread
     private void exchangeAuthorizationCode(AuthorizationResponse authorizationResponse) {
-        Log.d(MawApplication.LOG_TAG, "Exchanging authorization code");
+        Timber.d("Exchanging authorization code");
 
         performTokenRequest(
             authorizationResponse.createTokenExchangeRequest(),
@@ -103,11 +102,10 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
         ClientAuthentication clientAuthentication;
 
         try {
-            Log.d(MawApplication.LOG_TAG, "Attempting token request");
+            Timber.d("Attempting token request");
             clientAuthentication = _authStateManager.getCurrent().getClientAuthentication();
         } catch (ClientAuthentication.UnsupportedAuthenticationMethod ex) {
-            Log.d(MawApplication.LOG_TAG, "Token request cannot be made, client authentication for the token "
-                + "endpoint could not be constructed (%s)", ex);
+            Timber.d("Token request cannot be made, client authentication for the token endpoint could not be constructed (%s)", ex.getMessage());
 
             return;
         }
@@ -126,12 +124,12 @@ public class LoginCallbackActivity extends BaseActivity implements HasComponent<
         if (!_authStateManager.getCurrent().isAuthorized()) {
             final String message = "Authorization Code exchange failed" + ((authException != null) ? authException.error : "");
 
-            Log.e(MawApplication.LOG_TAG, "NOT AUTHORIZED: " + message);
+            Timber.e("NOT AUTHORIZED: %s", message);
         } else {
-            Log.d(MawApplication.LOG_TAG, "AUTHORIZED");
-            Log.d(MawApplication.LOG_TAG, "auth token: " + _authStateManager.getCurrent().getAccessToken());
-            Log.d(MawApplication.LOG_TAG, "refresh token: " + _authStateManager.getCurrent().getRefreshToken());
-            Log.d(MawApplication.LOG_TAG, "id token: " + _authStateManager.getCurrent().getIdToken());
+            Timber.d("AUTHORIZED");
+            Timber.d("auth token: %s", _authStateManager.getCurrent().getAccessToken());
+            Timber.d("refresh token: %s", _authStateManager.getCurrent().getRefreshToken());
+            Timber.d("id token: %s", _authStateManager.getCurrent().getIdToken());
 
             goToInitialLoad();
         }

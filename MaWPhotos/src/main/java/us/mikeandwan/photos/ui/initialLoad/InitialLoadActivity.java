@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.snackbar.Snackbar;
-import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -14,7 +13,7 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
@@ -73,7 +72,7 @@ public class InitialLoadActivity extends BaseActivity implements HasComponent<Ac
                 .subscribe(
                     x -> goToModeSelection(),
                     ex -> {
-                        Log.e(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage());
+                        Timber.e("error loading categories: %s", ex.getMessage());
                         handleApiException(ex);
                         goToModeSelection();
                     }

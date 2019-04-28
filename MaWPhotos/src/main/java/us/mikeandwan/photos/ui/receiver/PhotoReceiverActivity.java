@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.io.File;
@@ -27,7 +26,7 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
@@ -165,7 +164,7 @@ public class PhotoReceiverActivity extends BaseActivity implements HasComponent<
                 .subscribe(
                     msg -> Snackbar.make(_layout, msg, Snackbar.LENGTH_LONG).show(),
                     ex -> {
-                        Log.e(MawApplication.LOG_TAG, "error loading categories: " + ex.getMessage());
+                        Timber.e("error loading categories: %s", ex.getMessage());
                         handleApiException(ex);
                     }
                 ));

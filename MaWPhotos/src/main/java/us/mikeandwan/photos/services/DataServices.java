@@ -2,7 +2,6 @@ package us.mikeandwan.photos.services;
 
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 import us.mikeandwan.photos.models.ApiCollection;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.Comment;
@@ -47,7 +46,7 @@ public class DataServices {
 
 
     public ApiCollection<Comment> addComment(CommentPhoto cp) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "started to add comment for photo: " + cp.getPhotoId());
+        Timber.d("started to add comment for photo: %s", cp.getPhotoId());
 
         _photoApiClient.addComment(cp.getPhotoId(), cp.getComment());
 
@@ -56,21 +55,21 @@ public class DataServices {
 
 
     public String downloadCategoryTeaser(Category category) {
-        Log.d(MawApplication.LOG_TAG, "started to download teaser for category: " + category.getId());
+        Timber.d("started to download teaser for category: %s", category.getId());
 
         return downloadPhoto(category.getTeaserImage().getUrl());
     }
 
 
     public String downloadMdCategoryTeaser(Category category) {
-        Log.d(MawApplication.LOG_TAG, "started to download md teaser for category: " + category.getId());
+        Timber.d("started to download md teaser for category: %s", category.getId());
 
         return downloadPhoto(category.getTeaserImage().getUrl().replace("/xs", "/md/"));
     }
 
 
     public String downloadPhoto(Photo photo, PhotoSize size) {
-        Log.d(MawApplication.LOG_TAG, "started to download photo: " + photo.getId());
+        Timber.d("started to download photo: %s", photo.getId());
 
         String path = null;
 
@@ -94,28 +93,28 @@ public class DataServices {
 
 
     public List<Category> getCategoriesForYear(int year) {
-        Log.d(MawApplication.LOG_TAG, "started to get categories for year: " + year);
+        Timber.d("started to get categories for year: %s", year);
 
         return _databaseAccessor.getCategoriesForYear(year);
     }
 
 
     public ApiCollection<Comment> getComments(int photoId) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "started to get comments for photo: " + photoId);
+        Timber.d("started to get comments for photo: %s", photoId);
 
         return _photoApiClient.getComments(photoId);
     }
 
 
     public ExifData getExifData(int photoId) throws Exception {
-        Log.d(MawApplication.LOG_TAG, "started to get exif data for photo: " + photoId);
+        Timber.d("started to get exif data for photo: %s", photoId);
 
         return _photoApiClient.getExifData(photoId);
     }
 
 
     public ApiCollection<Photo> getPhotoList(PhotoListType type, int categoryId) throws Exception {
-        Log.d(MawApplication.LOG_TAG, "started to get photo list");
+        Timber.d("started to get photo list");
 
         return _photoApiClient.getPhotos(type, categoryId);
     }
@@ -127,28 +126,28 @@ public class DataServices {
 
 
     public Photo getRandomPhoto() throws IOException {
-        Log.d(MawApplication.LOG_TAG, "started to get random photo");
+        Timber.d("started to get random photo");
 
         return _photoApiClient.getRandomPhoto();
     }
 
 
     public ApiCollection<Photo> getRandomPhotos(int count) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "started to get random photos");
+        Timber.d("started to get random photos");
 
         return _photoApiClient.getRandomPhotos(count);
     }
 
 
     public Rating getRating(int photoId) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "started to get rating for photo: " + photoId);
+        Timber.d("started to get rating for photo: %s", photoId);
 
         return _photoApiClient.getRatings(photoId);
     }
 
 
     public ApiCollection<Category> getRecentCategories() throws IOException {
-        Log.d(MawApplication.LOG_TAG, "started to get recent categories");
+        Timber.d("started to get recent categories");
 
         ApiCollection<Category> categories = _photoApiClient.getRecentCategories(_databaseAccessor.getLatestCategoryId());
 
@@ -164,7 +163,7 @@ public class DataServices {
 
 
     public Rating setRating(int photoId, int rating) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "started to set user rating for photo: " + photoId);
+        Timber.d("started to set user rating for photo: %s", photoId);
 
         Float averageRating = _photoApiClient.setRating(photoId, rating);
 
@@ -220,13 +219,13 @@ public class DataServices {
                     _photoStorage.deleteFileToUpload(file);
                     updateQueuedFileSubject();
                 } else {
-                    Log.e(MawApplication.LOG_TAG, "error reported when uploading file: " + err);
+                    Timber.e("error reported when uploading file: %s", err);
 
                     throw new Exception("Error uploading file " + file.getName());
                 }
             }
         } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error uploading file: " + ex.getMessage());
+            Timber.e("error uploading file: %s", ex.getMessage());
 
             throw new Exception("Error uploading file " + file.getName());
         }
@@ -268,12 +267,12 @@ public class DataServices {
                         return cachePath;
                     }
                     else {
-                        Log.e(MawApplication.LOG_TAG, "error downloading file [" + path + "]: status code: " + response.code());
+                        Timber.e("error downloading file [%s]: status code: %s", path, response.code());
                     }
                 }
             }
             catch(Exception ex) {
-                Log.e(MawApplication.LOG_TAG, "error downloading file [" + path + "]: " + ex.getMessage());
+                Timber.e("error downloading file [%s]: %s", path, ex.getMessage());
             }
         }
 

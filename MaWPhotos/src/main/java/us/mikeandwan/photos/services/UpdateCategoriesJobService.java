@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.List;
 
@@ -18,6 +17,7 @@ import javax.inject.Inject;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.models.Category;
@@ -36,7 +36,7 @@ public class UpdateCategoriesJobService extends JobService {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
-        Log.d(MawApplication.LOG_TAG, "Update Categories Job started");
+        Timber.d("Update Categories Job started");
 
         _app = (MawApplication) getApplication();
         _app.getApplicationComponent().inject(this);
@@ -46,11 +46,11 @@ public class UpdateCategoriesJobService extends JobService {
             .subscribeOn(Schedulers.io())
             .subscribe(
                     x -> {
-                        Log.i(MawApplication.LOG_TAG, "completed updating categories");
+                        Timber.i("completed updating categories");
                         jobFinished(params, false);
                     },
                     ex -> {
-                        Log.e(MawApplication.LOG_TAG, "error updating categories: " + ex.getMessage());
+                        Timber.e("error updating categories: %s", ex.getMessage());
                         jobFinished(params, false);
                     }
             )
@@ -62,7 +62,7 @@ public class UpdateCategoriesJobService extends JobService {
 
     @Override
     public boolean onStopJob(final JobParameters params) {
-        Log.d(MawApplication.LOG_TAG, "Update Categories Job was cancelled before completing.");
+        Timber.d("Update Categories Job was cancelled before completing.");
 
         _disposables.clear();
 
@@ -74,17 +74,17 @@ public class UpdateCategoriesJobService extends JobService {
         int totalCount;
 
         try {
-            Log.d(MawApplication.LOG_TAG, "about to get recent categories");
+            Timber.d("about to get recent categories");
 
             List<Category> categories = _dataServices.getRecentCategories().getItems();
 
             totalCount = _app.getNotificationCount() + categories.size();
 
-            Log.i(MawApplication.LOG_TAG, String.format("received recent categories; count: %d", totalCount));
+            Timber.i("received recent categories; count: %d", totalCount);
 
             _app.setNotificationCount(totalCount);
         } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, String.format("Error trying to obtain recent categories: %s", ex.getMessage()));
+            Timber.e("Error trying to obtain recent categories: %s", ex.getMessage());
             totalCount = -1;
         }
 
@@ -110,7 +110,7 @@ public class UpdateCategoriesJobService extends JobService {
         } else {
             title = "New Photos Available";
             String pluralize = count == 1 ? "category" : "categories";
-            contentText = String.valueOf(count) + " new " + pluralize;
+            contentText = count + " new " + pluralize;
         }
 
         PendingIntent detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);

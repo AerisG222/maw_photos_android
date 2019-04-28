@@ -3,14 +3,13 @@ package us.mikeandwan.photos.services;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 import us.mikeandwan.photos.models.Category;
 import us.mikeandwan.photos.models.MultimediaAsset;
 
@@ -42,7 +41,7 @@ public class DatabaseAccessor {
                 result = c.getInt(0);
             }
         } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error getting latest category id: " + ex.getMessage());
+            Timber.e("error getting latest category id: %s", ex.getMessage());
         } finally {
             if (c != null && !c.isClosed()) {
                 c.close();
@@ -68,7 +67,7 @@ public class DatabaseAccessor {
                 }
             }
         } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error getting categories: " + ex.getMessage());
+            Timber.e("error getting categories: %s", ex.getMessage());
         } finally {
             if (c != null && !c.isClosed()) {
                 c.close();
@@ -94,7 +93,7 @@ public class DatabaseAccessor {
                 }
             }
         } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error getting photo years: " + ex.getMessage());
+            Timber.e("error getting photo years: %s", ex.getMessage());
         } finally {
             if (c != null && !c.isClosed()) {
                 c.close();
@@ -125,7 +124,7 @@ public class DatabaseAccessor {
             db.setTransactionSuccessful();
         }
         catch(Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error adding categories: " + ex.getMessage());
+            Timber.e("error adding categories: %s", ex.getMessage());
         }
         finally {
             db.endTransaction();
@@ -181,10 +180,10 @@ public class DatabaseAccessor {
             long result = db.insert(tableName, null, values);
 
             if (result == -1) {
-                Log.w(MawApplication.LOG_TAG, "Error when trying to insert a new record to table: " + tableName);
+                Timber.w("Error when trying to insert a new record to table: %s", tableName);
             }
         } catch (Exception ex) {
-            Log.e(MawApplication.LOG_TAG, "error adding record: " + ex.getMessage());
+            Timber.e("error adding record: %s", ex.getMessage());
         }
     }
 

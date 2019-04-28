@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.ShareActionProvider;
 import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,7 +38,7 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
@@ -293,7 +293,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         runOnUiThread(() -> {
             int count = _taskCount.get();
 
-            Log.d(MawApplication.LOG_TAG, "task count: " + count);
+            Timber.d("task count: %d", count);
 
             if (count > 0) {
                 _progressBar.setVisibility(View.VISIBLE);
@@ -392,7 +392,7 @@ public class PhotoListActivity extends BaseActivity implements IPhotoActivity, H
         _index = 0;
         _photoList.add(result);
 
-        Log.d(MawApplication.LOG_TAG, "random photo: " + result.getId());
+        Timber.d("random photo: %s", result.getId());
 
         onRandomPhotoFetched();
     }

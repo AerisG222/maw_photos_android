@@ -1,13 +1,11 @@
 package us.mikeandwan.photos.services;
 
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.inject.Inject;
@@ -17,10 +15,9 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 import us.mikeandwan.photos.models.ApiCollection;
 import us.mikeandwan.photos.models.ApiResult;
 import us.mikeandwan.photos.models.Category;
@@ -48,118 +45,118 @@ public class PhotoApiClient {
 
 
     ApiCollection<Category> getRecentCategories(int sinceId) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "getRecentCategories starting");
+        Timber.d("getRecentCategories starting");
 
         Response<ApiCollection<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
         ApiResult<ApiCollection<Category>> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("getRecentCategories failed: %s", result.getError()));
+            Timber.w("getRecentCategories failed: %s", result.getError());
             return null;
         }
 
-        Log.d(MawApplication.LOG_TAG, String.format("getRecentCategories succeeded: %d categories found", result.getResult().getCount()));
+        Timber.d("getRecentCategories succeeded: %d categories found", result.getResult().getCount());
 
         return result.getResult();
     }
 
 
     ApiCollection<Photo> getPhotos(PhotoListType type, int categoryId) throws Exception {
-        Log.d(MawApplication.LOG_TAG, "getPhotos starting");
+        Timber.d("getPhotos starting");
 
         Response<ApiCollection<Photo>> response = _photoApi.getPhotosByCategory(categoryId).execute();
         ApiResult<ApiCollection<Photo>> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("getPhotos failed: %s", result.getError()));
+            Timber.w("getPhotos failed: %s", result.getError());
             return null;
         }
 
-        Log.d(MawApplication.LOG_TAG, String.format("getRecentCategories succeeded: %d categories found", result.getResult().getCount()));
+        Timber.d("getRecentCategories succeeded: %d categories found", result.getResult().getCount());
 
         return result.getResult();
     }
 
 
     Photo getRandomPhoto() throws IOException {
-        Log.d(MawApplication.LOG_TAG, "getRandomPhoto starting");
+        Timber.d("getRandomPhoto starting");
 
         Response<Photo> response = _photoApi.getRandomPhoto().execute();
         ApiResult<Photo> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("getRandomPhoto failed: %s", result.getError()));
+            Timber.w("getRandomPhoto failed: %s", result.getError());
             return null;
         }
 
-        Log.d(MawApplication.LOG_TAG, "getRandomPhoto succeeded");
+        Timber.d("getRandomPhoto succeeded");
 
         return result.getResult();
     }
 
 
     ApiCollection<Photo> getRandomPhotos(int count) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "getRandomPhotos starting");
+        Timber.d("getRandomPhotos starting");
 
         Response<ApiCollection<Photo>> response = _photoApi.getRandomPhotos(count).execute();
         ApiResult<ApiCollection<Photo>> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("getRandomPhotos failed: %s", result.getError()));
+            Timber.w("getRandomPhotos failed: %s", result.getError());
             return null;
         }
 
-        Log.d(MawApplication.LOG_TAG, "getRandomPhotos succeeded");
+        Timber.d("getRandomPhotos succeeded");
 
         return result.getResult();
     }
 
     ExifData getExifData(int photoId) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "getExifData starting");
+        Timber.d("getExifData starting");
 
         Response<ExifData> response = _photoApi.getExifData(photoId).execute();
         ApiResult<ExifData> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("getExifData failed: %s", result.getError()));
+            Timber.w("getExifData failed: %s", result.getError());
             return null;
         }
 
-        Log.d(MawApplication.LOG_TAG, "getExifData succeeded");
+        Timber.d("getExifData succeeded");
 
         return result.getResult();
     }
 
 
     ApiCollection<Comment> getComments(int photoId) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "getComments starting");
+        Timber.d("getComments starting");
 
         Response<ApiCollection<Comment>> response = _photoApi.getComments(photoId).execute();
         ApiResult<ApiCollection<Comment>> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("getComments failed: %s", result.getError()));
+            Timber.w("getComments failed: %s", result.getError());
             return null;
         }
 
-        Log.d(MawApplication.LOG_TAG, String.format("getComments succeeded, %d comments found.", result.getResult().getCount()));
+        Timber.d("getComments succeeded, %d comments found.", result.getResult().getCount());
 
         return result.getResult();
     }
 
 
     Rating getRatings(int photoId) throws IOException {
-        Log.d(MawApplication.LOG_TAG, "getRatings starting");
+        Timber.d("getRatings starting");
 
         Response<Rating> response = _photoApi.getRatings(photoId).execute();
         ApiResult<Rating> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("getRatings failed: %s", result.getError()));
+            Timber.w("getRatings failed: %s", result.getError());
             return null;
         }
 
-        Log.d(MawApplication.LOG_TAG, "getRatings succeeded");
+        Timber.d("getRatings succeeded");
 
         return result.getResult();
     }
@@ -170,17 +167,17 @@ public class PhotoApiClient {
         rp.setPhotoId(photoId);
         rp.setRating(rating);
 
-        Log.d(MawApplication.LOG_TAG, "setRating starting");
+        Timber.d("setRating starting");
 
         Response<Rating> response = _photoApi.ratePhoto(photoId, rp).execute();
         ApiResult<Rating> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("setRating failed: %s", result.getError()));
+            Timber.w("setRating failed: %s", result.getError());
             return null;
         }
 
-        Log.d(MawApplication.LOG_TAG, "setRating succeeded");
+        Timber.d("setRating succeeded");
 
         return result.getResult().getAverageRating();
     }
@@ -191,16 +188,16 @@ public class PhotoApiClient {
         cp.setComment(comment);
         cp.setPhotoId(photoId);
 
-        Log.d(MawApplication.LOG_TAG, "addComment starting");
+        Timber.d("addComment starting");
 
         Response<ApiCollection<Comment>> response = _photoApi.addCommentForPhoto(photoId, cp).execute();
         ApiResult<ApiCollection<Comment>> result = new ApiResult<>(response);
 
         if(!result.isSuccess()) {
-            Log.w(MawApplication.LOG_TAG, String.format("addComment failed: %s", result.getError()));
+            Timber.w("addComment failed: %s", result.getError());
         }
 
-        Log.d(MawApplication.LOG_TAG, "addComment succeeded");
+        Timber.d("addComment succeeded");
     }
 
 
@@ -211,7 +208,7 @@ public class PhotoApiClient {
 
             return _httpClient.newCall(request).execute();
         } catch (IOException ex) {
-            Log.w(MawApplication.LOG_TAG, "Error when getting photo blob: " + ex.getMessage());
+            Timber.w("Error when getting photo blob: %s", ex.getMessage());
         }
 
         return null;
@@ -228,13 +225,13 @@ public class PhotoApiClient {
             Response<FileOperationResult> response = _photoApi.uploadFile(body).execute();
 
             if(response.isSuccessful()) {
-                Log.w(MawApplication.LOG_TAG, "upload succeeded for file: " + file.getName());
+                Timber.w("upload succeeded for file: %s", file.getName());
                 return response.body();
             } else {
-                Log.w(MawApplication.LOG_TAG, "unable to upload file: " + file.getName());
+                Timber.w("unable to upload file: %s", file.getName());
             }
         } catch (IOException ex) {
-            Log.w(MawApplication.LOG_TAG, "Error uploading file: " + file.getName() + ": " + ex.getMessage());
+            Timber.w("Error uploading file: %s: %s", file.getName(), ex.getMessage());
             throw ex;
         }
 

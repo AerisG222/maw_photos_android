@@ -3,7 +3,6 @@ package us.mikeandwan.photos.services;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.commonsware.cwac.provider.StreamProvider;
@@ -23,7 +22,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import okhttp3.ResponseBody;
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 
 
 public class PhotoStorage {
@@ -45,7 +44,7 @@ public class PhotoStorage {
 
         if(!dir.exists()) {
             if(!dir.mkdirs()) {
-                Log.e(MawApplication.LOG_TAG, "Error creating photo directory hierarchy: " + dir.getName());
+                Timber.e("Error creating photo directory hierarchy: %s", dir.getName());
                 return;
             }
         }
@@ -68,7 +67,7 @@ public class PhotoStorage {
 
             tempFile.renameTo(file);
         } catch (IOException e) {
-            Log.w(MawApplication.LOG_TAG, "Error saving image file: " + e.getMessage());
+            Timber.w("Error saving image file: %s", e.getMessage());
         } finally {
             if(tempFile.exists())
             {
@@ -126,7 +125,7 @@ public class PhotoStorage {
 
             outputStream.flush();
         } catch (IOException e) {
-            Log.w(MawApplication.LOG_TAG, "Error saving image file: " + e.getMessage());
+            Timber.w("Error saving image file: %s", e.getMessage());
 
             return false;
         }
@@ -180,7 +179,7 @@ public class PhotoStorage {
         try {
             FileUtils.deleteDirectory(getTempRootPath());
         } catch(IOException ex) {
-            Log.e(MawApplication.LOG_TAG, "Unable to delete temp files: " + ex.getMessage());
+            Timber.e("Unable to delete temp files: %s", ex.getMessage());
         }
     }
 
@@ -189,7 +188,7 @@ public class PhotoStorage {
         try {
             FileUtils.deleteDirectory(getRootPath());
         } catch (IOException ex) {
-            Log.e(MawApplication.LOG_TAG, "Unable to wipe cache: " + ex.getMessage());
+            Timber.e("Unable to wipe cache: %s", ex.getMessage());
         }
     }
 

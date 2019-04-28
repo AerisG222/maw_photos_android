@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +17,7 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.prefs.NotificationPreference;
@@ -36,7 +36,7 @@ public class UploadJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Log.d(MawApplication.LOG_TAG, "Starting upload files job");
+        Timber.d("Starting upload files job");
 
         _app = (MawApplication) getApplication();
         _app.getApplicationComponent().inject(this);
@@ -57,7 +57,7 @@ public class UploadJobService extends JobService {
                     }
                 },
                 ex -> {
-                    Log.e(MawApplication.LOG_TAG, "error uploading files: " + ex.getMessage());
+                    Timber.e("error uploading files: %s", ex.getMessage());
                     alertIfNeeded();
                     jobFinished(params, true);
                 }
@@ -70,7 +70,7 @@ public class UploadJobService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.d(MawApplication.LOG_TAG, "Stopping upload files job");
+        Timber.d("Stopping upload files job");
 
         alertIfNeeded();
 

@@ -2,7 +2,6 @@ package us.mikeandwan.photos.di;
 
 import android.app.Application;
 import android.net.Uri;
-import android.util.Log;
 
 import net.openid.appauth.AuthorizationService;
 import net.openid.appauth.AuthorizationServiceConfiguration;
@@ -15,8 +14,8 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import us.mikeandwan.photos.Constants;
-import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.services.AuthAuthenticator;
 import us.mikeandwan.photos.services.AuthInterceptor;
 import us.mikeandwan.photos.services.AuthStateManager;
@@ -64,7 +63,7 @@ public class AuthModule {
                 Uri.parse(Constants.AUTH_BASE_URL),
                 (serviceConfiguration, ex) -> {
                     if (ex != null) {
-                        Log.e(MawApplication.LOG_TAG, "failed to fetch openidc configuration");
+                        Timber.e("failed to fetch openidc configuration");
                         emitter.onError(ex);
                     }
 

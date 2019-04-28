@@ -6,7 +6,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.core.view.ViewCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
+
 import android.view.View;
 
 import net.openid.appauth.AuthorizationException;
@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.PublishSubject;
+import timber.log.Timber;
 import us.mikeandwan.photos.MawApplication;
 import us.mikeandwan.photos.di.ActivityModule;
 import us.mikeandwan.photos.di.ApplicationComponent;
@@ -84,7 +85,7 @@ public class BaseActivity extends AppCompatActivity {
             return;
         }
 
-        Log.e(MawApplication.LOG_TAG, "Error accessing api: " + throwable.getMessage());
+        Timber.e("Error accessing api: %s", throwable.getMessage());
 
         if(throwable instanceof ConnectException) {
             _errorSubject.onNext("Unable to connect to service at this time.");

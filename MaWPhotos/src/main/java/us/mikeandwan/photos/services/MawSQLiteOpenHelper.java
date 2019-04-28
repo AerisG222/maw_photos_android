@@ -5,14 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 
 
 public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
@@ -28,7 +27,7 @@ public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(MawApplication.LOG_TAG, "> creating sqlite db");
+        Timber.d("> creating sqlite db");
 
         createYearTable(db);
         createCategoryTable(db);
@@ -37,7 +36,7 @@ public class MawSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
-        Log.d(MawApplication.LOG_TAG, "> upgrading sqlite db from " + String.valueOf(i) + " to " + String.valueOf(i2) + ".");
+        Timber.d("> upgrading sqlite db from %d to %d", i, i2);
 
         if (i < 2) {
             createYearTable(sqLiteDatabase);

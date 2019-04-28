@@ -130,4 +130,7 @@ dependencies {
 
     // photoview
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
+    // timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 }

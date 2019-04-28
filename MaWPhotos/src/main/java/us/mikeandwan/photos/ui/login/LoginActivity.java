@@ -4,7 +4,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationRequest;
@@ -19,7 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
-import us.mikeandwan.photos.MawApplication;
+import timber.log.Timber;
 import us.mikeandwan.photos.R;
 import us.mikeandwan.photos.di.ActivityComponent;
 import us.mikeandwan.photos.di.DaggerActivityComponent;
@@ -119,7 +118,7 @@ public class LoginActivity extends BaseActivity implements HasComponent<Activity
                 PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0),
                 PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0));
         }, (ex) -> {
-            Log.e(MawApplication.LOG_TAG, "There was an error getting OIDC configuration: " + ex.getMessage());
+            Timber.e("There was an error getting OIDC configuration: %s", ex.getMessage());
             handleApiException(ex);
         }));
     }

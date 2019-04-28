@@ -3,16 +3,17 @@ package us.mikeandwan.photos;
 import android.app.Application;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import timber.log.Timber;
 import us.mikeandwan.photos.di.ApplicationComponent;
 import us.mikeandwan.photos.di.ApplicationModule;
 import us.mikeandwan.photos.di.DaggerApplicationComponent;
 import us.mikeandwan.photos.di.DataStorageModule;
 import us.mikeandwan.photos.di.PhotoApiModule;
 import us.mikeandwan.photos.di.PreferenceModule;
+import us.mikeandwan.photos.services.CrashReportingTree;
 
 
 public class MawApplication extends Application {
-    public static final String LOG_TAG = "maw";
     public static final String NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES = "notify_new_categories";
     public static final String NOTIFICATION_CHANNEL_ID_UPLOAD_FILES = "files_uploaded";
     public static final int JOB_ID_UPDATE_CATEGORY = 2;
@@ -27,6 +28,12 @@ public class MawApplication extends Application {
         super.onCreate();
 
         _app = this;
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        } else {
+            Timber.plant(new CrashReportingTree());
+        }
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 

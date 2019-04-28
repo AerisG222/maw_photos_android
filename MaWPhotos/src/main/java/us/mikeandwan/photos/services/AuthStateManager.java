@@ -20,7 +20,6 @@ import android.content.SharedPreferences;
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationException;
@@ -33,6 +32,8 @@ import org.json.JSONException;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+
+import timber.log.Timber;
 
 /**
  * An example persistence mechanism for an {@link AuthState} instance.
@@ -140,7 +141,7 @@ public class AuthStateManager {
             try {
                 return AuthState.jsonDeserialize(currentState);
             } catch (JSONException ex) {
-                Log.w(TAG, "Failed to deserialize stored auth state - discarding");
+                Timber.w("Failed to deserialize stored auth state - discarding");
                 return new AuthState();
             }
         } finally {
