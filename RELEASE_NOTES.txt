@@ -1,3 +1,9 @@
+6.2:
+- sdk + library updates
+
+6.1:
+- improved logging
+
 6.0:
 - introduce ability to receive photos and videos shared from other apps, then upload these to mikeandwan.us
 
