@@ -11,13 +11,3 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-
-allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://s3.amazonaws.com/repo.commonsware.com" }
-        maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com" }
-        google()
-    }
-}
