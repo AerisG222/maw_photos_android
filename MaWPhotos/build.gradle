@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 31
@@ -91,6 +92,10 @@ android {
 }
 
 dependencies {
+    // kotlin
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
     // dagger 2
     implementation 'com.google.dagger:dagger:2.38.1'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.38.1'
@@ -134,4 +139,8 @@ dependencies {
 
     // timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+}
+
+repositories {
+    mavenCentral()
 }
