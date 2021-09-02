@@ -117,7 +117,7 @@ dependencies {
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.1'
 
     // appauth
-    implementation 'net.openid:appauth:0.7.1'
+    implementation 'net.openid:appauth:0.10.0'
 
     // retrofit (pulls in okhttp)
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
