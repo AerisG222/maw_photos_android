@@ -1,19 +1,11 @@
-package us.mikeandwan.photos.ui.photos;
+package us.mikeandwan.photos.ui.photos
 
+import us.mikeandwan.photos.models.Photo
 
-import java.util.List;
-
-import us.mikeandwan.photos.models.Photo;
-
-
-public interface IPhotoActivity {
-    void addWork();
-
-    void removeWork();
-
-    void onApiException(Throwable throwable);
-
-    Photo getCurrentPhoto();
-
-    List<Photo> getPhotoList();
+interface IPhotoActivity {
+    fun addWork()
+    fun removeWork()
+    fun onApiException(throwable: Throwable?)
+    val currentPhoto: Photo?
+    val photoList: List<Photo?>?
 }

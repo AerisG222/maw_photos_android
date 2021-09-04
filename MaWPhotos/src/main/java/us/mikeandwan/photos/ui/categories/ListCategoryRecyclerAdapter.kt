@@ -1,65 +1,57 @@
-package us.mikeandwan.photos.ui.categories;
+package us.mikeandwan.photos.ui.categories
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import us.mikeandwan.photos.services.DataServices
+import android.view.ViewGroup
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
+import us.mikeandwan.photos.R
+import com.squareup.picasso.Picasso
+import androidx.recyclerview.widget.RecyclerView
+import android.widget.TextView
+import us.mikeandwan.photos.models.Category
 
-import com.squareup.picasso.Picasso;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.DataServices;
-
-
-public class ListCategoryRecyclerAdapter extends CategoryRecyclerAdapter<ListCategoryRecyclerAdapter.ViewHolder> {
-    public ListCategoryRecyclerAdapter(ICategoryListActivity activity,
-                                       DataServices dataServices) {
-        super(activity, dataServices);
+class ListCategoryRecyclerAdapter(
+    activity: ICategoryListActivity?,
+    dataServices: DataServices?
+) : CategoryRecyclerAdapter<ListCategoryRecyclerAdapter.ViewHolder?>(
+    activity!!, dataServices!!
+) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val categoryView =
+            LayoutInflater.from(parent.context).inflate(R.layout.category_list_item, parent, false)
+        return ViewHolder(categoryView)
     }
 
-
-    @NonNull
-    @Override
-    public ListCategoryRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View categoryView = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list_item, parent, false);
-
-        return new ViewHolder(categoryView);
+    override fun downloadCategoryTeaser(category: Category?): String? {
+        return _dataServices.downloadCategoryTeaser(category)
     }
 
-
-    @Override
-    protected String downloadCategoryTeaser(Category category) {
-        return _dataServices.downloadCategoryTeaser(category);
-    }
-
-
-    protected void displayCategory(Category category, String path, ListCategoryRecyclerAdapter.ViewHolder viewHolder) {
-        viewHolder._nameTextView.setText(category.getName());
-
+    override fun displayCategory(
+        category: Category?,
+        path: String?,
+        viewHolder: ViewHolder?
+    ) {
+        viewHolder!!._nameTextView!!.text = category!!.name
         Picasso
-                .get()
-                .load(path)
-                .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
-                .centerCrop()
-                .into(viewHolder._thumbnailImageView);
+            .get()
+            .load(path)
+            .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
+            .centerCrop()
+            .into(viewHolder._thumbnailImageView)
     }
 
+    class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
+        @JvmField
+        @BindView(R.id.thumbnailImageView)
+        var _thumbnailImageView: ImageView? = null
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.thumbnailImageView) ImageView _thumbnailImageView;
-        @BindView(R.id.categoryNameTextView) TextView _nameTextView;
+        @JvmField
+        @BindView(R.id.categoryNameTextView)
+        var _nameTextView: TextView? = null
 
-
-        ViewHolder(View itemView) {
-            super(itemView);
-
-            ButterKnife.bind(this, itemView);
+        init {
+            ButterKnife.bind(this, itemView!!)
         }
     }
 }

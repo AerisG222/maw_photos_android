@@ -1,137 +1,115 @@
-package us.mikeandwan.photos.ui.login;
+package us.mikeandwan.photos.ui.login
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
+import dagger.hilt.android.AndroidEntryPoint
+import us.mikeandwan.photos.ui.BaseActivity
+import io.reactivex.disposables.CompositeDisposable
+import butterknife.BindString
+import us.mikeandwan.photos.R
+import javax.inject.Inject
+import us.mikeandwan.photos.services.AuthStateManager
+import net.openid.appauth.AuthorizationServiceConfiguration
+import net.openid.appauth.AuthorizationService
+import butterknife.OnClick
+import android.os.Bundle
+import butterknife.ButterKnife
+import android.content.Intent
+import us.mikeandwan.photos.ui.mode.ModeSelectionActivity
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.ResponseTypeValues
+import android.app.PendingIntent
+import android.net.Uri
+import io.reactivex.Observable
+import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity
+import timber.log.Timber
 
-import net.openid.appauth.AuthState;
-import net.openid.appauth.AuthorizationRequest;
-import net.openid.appauth.AuthorizationService;
-import net.openid.appauth.AuthorizationServiceConfiguration;
-import net.openid.appauth.ResponseTypeValues;
+@AndroidEntryPoint
+class LoginActivity : BaseActivity() {
+    private val _disposables = CompositeDisposable()
 
-import javax.inject.Inject;
+    @JvmField
+    @BindString(R.string.auth_client_id)
+    var _authClientId: String? = null
 
-import butterknife.BindString;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
-import timber.log.Timber;
-import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.di.ActivityComponent;
-import us.mikeandwan.photos.di.DaggerActivityComponent;
-import us.mikeandwan.photos.services.AuthStateManager;
-import us.mikeandwan.photos.ui.BaseActivity;
-import us.mikeandwan.photos.ui.HasComponent;
-import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity;
-import us.mikeandwan.photos.ui.mode.ModeSelectionActivity;
+    @JvmField
+    @BindString(R.string.auth_scheme_redirect_uri)
+    var _authSchemeRedirect: String? = null
 
+    @Inject lateinit var _authStateManager: AuthStateManager
+    @Inject lateinit var _config: Observable<AuthorizationServiceConfiguration>
+    var _authService: AuthorizationService? = null
 
-public class LoginActivity extends BaseActivity implements HasComponent<ActivityComponent> {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-
-    @BindString(R.string.auth_client_id) String _authClientId;
-    @BindString(R.string.auth_scheme_redirect_uri) String _authSchemeRedirect;
-
-    @Inject AuthStateManager _authStateManager;
-    @Inject Observable<AuthorizationServiceConfiguration> _config;
-    AuthorizationService _authService;
-
-    @OnClick(R.id.loginButton) void onLoginButtonClick() {
-        retryLogin();
+    @OnClick(R.id.loginButton)
+    fun onLoginButtonClick() {
+        retryLogin()
     }
 
-    private Uri _authSchemeRedirectUri;
-    private ActivityComponent _activityComponent;
-
-
-    public ActivityComponent getComponent() {
-        return _activityComponent;
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
-
-        _authSchemeRedirectUri = Uri.parse(_authSchemeRedirect);
-
-        _activityComponent = DaggerActivityComponent.builder()
-            .applicationComponent(getApplicationComponent())
-            .activityModule(getActivityModule())
-            .build();
-
-        _activityComponent.inject(this);
+    private var _authSchemeRedirectUri: Uri? = null
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+        ButterKnife.bind(this)
+        _authSchemeRedirectUri = Uri.parse(_authSchemeRedirect)
 
         // https://github.com/openid/AppAuth-Android/issues/333
-        _authService = new AuthorizationService(this);
-
-        authorize();
+        _authService = AuthorizationService(this)
+        authorize()
     }
 
-
-    @Override public void onDestroy() {
-        _disposables.clear();
-        _authService.dispose();
-
-        super.onDestroy();
+    public override fun onDestroy() {
+        _disposables.clear()
+        _authService!!.dispose()
+        super.onDestroy()
     }
 
-
-    private void goToModeSelection() {
-        Intent intent = new Intent(this, ModeSelectionActivity.class);
-        startActivity(intent);
-
-        finish();
+    private fun goToModeSelection() {
+        val intent = Intent(this, ModeSelectionActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
-
-    public void authorize() {
-        if(isAuthorized()) {
+    fun authorize() {
+        if (isAuthorized) {
             // we go to mode selection here, because if a user has previously gained access,
             // if they are off/slow network, then they get stuck for a bit on the blank loading
             // screen which might not be needed - so take them straight in
-            goToModeSelection();
-            return;
+            goToModeSelection()
+            return
+        }
+        _disposables.add(_config!!.subscribe({ config: AuthorizationServiceConfiguration? ->
+            _authStateManager!!.replace(AuthState(config!!))
+            val authRequestBuilder = AuthorizationRequest.Builder(
+                config,
+                _authClientId!!,  // the client ID, typically pre-registered and static
+                ResponseTypeValues.CODE,  // the response_type value: we want a code
+                _authSchemeRedirectUri!!
+            ) // the redirect URI to which the auth response is sent
+            val authRequest = authRequestBuilder
+                .setScopes("openid offline_access profile email role maw_api")
+                .build()
+            _authService!!.performAuthorizationRequest(
+                authRequest,
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(this, LoginCallbackActivity::class.java),
+                    0
+                ),
+                PendingIntent.getActivity(this, 0, Intent(this, LoginActivity::class.java), 0)
+            )
+        }) { ex: Throwable ->
+            Timber.e("There was an error getting OIDC configuration: %s", ex.message)
+            handleApiException(ex)
+        })
+    }
+
+    private val isAuthorized: Boolean
+        private get() {
+            val authState = _authStateManager!!.current
+            return authState.isAuthorized
         }
 
-        _disposables.add(_config.subscribe((config) -> {
-            _authStateManager.replace(new AuthState(config));
-
-            AuthorizationRequest.Builder authRequestBuilder =
-                new AuthorizationRequest.Builder(
-                    config,
-                    _authClientId, // the client ID, typically pre-registered and static
-                    ResponseTypeValues.CODE, // the response_type value: we want a code
-                    _authSchemeRedirectUri); // the redirect URI to which the auth response is sent
-
-            AuthorizationRequest authRequest = authRequestBuilder
-                .setScopes("openid offline_access profile email role maw_api")
-                .build();
-
-            _authService.performAuthorizationRequest(
-                authRequest,
-                PendingIntent.getActivity(this, 0, new Intent(this, LoginCallbackActivity.class), 0),
-                PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0));
-        }, (ex) -> {
-            Timber.e("There was an error getting OIDC configuration: %s", ex.getMessage());
-            handleApiException(ex);
-        }));
-    }
-
-
-    private boolean isAuthorized() {
-        AuthState authState = _authStateManager.getCurrent();
-
-        return authState.isAuthorized();
-    }
-
-
-    private void retryLogin() {
-        recreate();
+    private fun retryLogin() {
+        recreate()
     }
 }

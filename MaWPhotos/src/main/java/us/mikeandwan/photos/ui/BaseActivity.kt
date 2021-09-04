@@ -1,104 +1,74 @@
-package us.mikeandwan.photos.ui;
+package us.mikeandwan.photos.ui
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.view.ViewCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.View;
-
-import net.openid.appauth.AuthorizationException;
-
-import java.net.ConnectException;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.subjects.PublishSubject;
-import timber.log.Timber;
-import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.di.ActivityModule;
-import us.mikeandwan.photos.di.ApplicationComponent;
-
+import android.R
+import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatActivity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
+import android.os.Bundle
+import android.view.View
+import androidx.appcompat.widget.Toolbar
+import io.reactivex.ObservableSource
+import androidx.core.view.ViewCompat
+import timber.log.Timber
+import net.openid.appauth.AuthorizationException
+import com.google.android.material.snackbar.Snackbar
+import io.reactivex.Observable
+import java.net.ConnectException
+import java.util.concurrent.TimeUnit
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-    private final PublishSubject<String> _errorSubject = PublishSubject.create();
-
-    public void onApiException(Throwable throwable) {
-        handleApiException(throwable);
+open class BaseActivity : AppCompatActivity() {
+    private val _disposables = CompositeDisposable()
+    private val _errorSubject = PublishSubject.create<String>()
+    open fun onApiException(throwable: Throwable?) {
+        handleApiException(throwable)
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        this.getApplicationComponent().inject(this);
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         _disposables.add(_errorSubject
-            .publish(publishedItems -> publishedItems
-                .take(1)
-                .concatWith(publishedItems
-                    .skip(1)
-                    .debounce(2, TimeUnit.SECONDS)
-                )
-            )
-            .subscribe(this::showError));
+            .publish { publishedItems: Observable<String> ->
+                publishedItems
+                    .take(1)
+                    .concatWith(
+                        publishedItems
+                            .skip(1)
+                            .debounce(2, TimeUnit.SECONDS)
+                    )
+            }
+            .subscribe { msg: String -> showError(msg) })
     }
 
-
-    @Override
-    protected void onDestroy() {
-        _disposables.clear();
-
-        super.onDestroy();
+    override fun onDestroy() {
+        _disposables.clear()
+        super.onDestroy()
     }
 
-
-    protected ApplicationComponent getApplicationComponent() {
-        return ((MawApplication)getApplication()).getApplicationComponent();
-    }
-
-
-    protected ActivityModule getActivityModule() {
-        return new ActivityModule(this);
-    }
-
-
-    protected void updateToolbar(Toolbar toolbar, String title) {
+    protected fun updateToolbar(toolbar: Toolbar?, title: String?) {
         if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            ViewCompat.setElevation(toolbar, 4);
-
-            if(title != null) {
-                toolbar.setTitle(title);
+            setSupportActionBar(toolbar)
+            ViewCompat.setElevation(toolbar, 4f)
+            if (title != null) {
+                toolbar.title = title
             }
         }
     }
 
-
-    protected void handleApiException(Throwable throwable) {
-        if(throwable == null) {
-            return;
+    protected fun handleApiException(throwable: Throwable?) {
+        if (throwable == null) {
+            return
         }
-
-        Timber.e("Error accessing api: %s", throwable.getMessage());
-
-        if(throwable instanceof ConnectException) {
-            _errorSubject.onNext("Unable to connect to service at this time.");
-        }
-        else if(throwable instanceof AuthorizationException) {
-            _errorSubject.onNext("Authorization failed.");
+        Timber.e("Error accessing api: %s", throwable.message)
+        if (throwable is ConnectException) {
+            _errorSubject.onNext("Unable to connect to service at this time.")
+        } else if (throwable is AuthorizationException) {
+            _errorSubject.onNext("Authorization failed.")
         }
     }
 
-
-    private void showError(String msg) {
-        View view = findViewById(android.R.id.content);
-
-        Snackbar.make(view, msg, Snackbar.LENGTH_SHORT).show();
+    private fun showError(msg: String) {
+        val view = findViewById<View>(R.id.content)
+        Snackbar.make(view, msg, Snackbar.LENGTH_SHORT).show()
     }
 }

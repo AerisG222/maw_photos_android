@@ -1,98 +1,81 @@
-package us.mikeandwan.photos.ui.settings;
+package us.mikeandwan.photos.ui.settings
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
+import android.content.Context
+import dagger.hilt.android.AndroidEntryPoint
+import android.preference.PreferenceActivity
+import javax.inject.Inject
+import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler
+import android.content.SharedPreferences
+import android.content.res.Configuration
+import us.mikeandwan.photos.ui.settings.SettingsActivity
+import android.os.Bundle
+import android.preference.Preference.OnPreferenceChangeListener
+import android.preference.Preference
+import android.preference.RingtonePreference
+import android.text.TextUtils
+import us.mikeandwan.photos.R
+import android.media.Ringtone
+import android.media.RingtoneManager
+import android.net.Uri
+import android.preference.PreferenceManager
 
-import javax.inject.Inject;
+//TODO: fixme
+@AndroidEntryPoint
+class SettingsActivity : PreferenceActivity() {
+    @Inject
+    var _updateScheduler: UpdateCategoriesJobScheduler? = null
 
-import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler;
-
-
-public class SettingsActivity extends PreferenceActivity {
-    @Inject SharedPreferences _sharedPrefs;
-
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
+    @JvmField
+    @Inject
+    var _sharedPrefs: SharedPreferences? = null
+    override fun onIsMultiPane(): Boolean {
+        return isXLargeTablet(this)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-            & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
+        //getFragmentManager().beginTransaction().replace(android.R.id.content, new PhotosPreferenceFragment()).commit();
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        ((MawApplication) getApplication()).getApplicationComponent().inject(this);
-
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new PhotosPreferenceFragment()).commit();
-    }
-
-
-    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
-        String stringValue = value.toString();
-
-        if (preference.getKey().equals("sync_frequency")) {
-            if (!stringValue.equals(preference.getSharedPreferences().getString("sync_frequency", "24"))) {
-                UpdateCategoriesJobScheduler updateScheduler = MawApplication.getInstance().getApplicationComponent().updateCategoriesJobScheduler();
-
-                long millis = Integer.parseInt(stringValue) * 60 * 60 * 1000;
-
-                updateScheduler.schedule(false, millis);
-            }
-        }
-
-        if (preference instanceof RingtonePreference) {
-            // For ringtone preferences, look up the correct display value
-            // using RingtoneManager.
-            if (TextUtils.isEmpty(stringValue)) {
-                // Empty values correspond to 'silent' (no ringtone).
-                preference.setSummary(R.string.pref_notifications_silent);
-            } else {
-                Ringtone ringtone = RingtoneManager.getRingtone(preference.getContext(), Uri.parse(stringValue));
-
-                if (ringtone == null) {
-                    preference.setSummary(null);
-                } else {
-                    String name = ringtone.getTitle(preference.getContext());
-                    preference.setSummary(name);
+    private val sBindPreferenceSummaryToValueListener =
+        OnPreferenceChangeListener { preference: Preference, value: Any ->
+            val stringValue = value.toString()
+            if (preference.key == "sync_frequency") {
+                if (stringValue != preference.sharedPreferences.getString("sync_frequency", "24")) {
+                    val millis = (stringValue.toInt() * 60 * 60 * 1000).toLong()
+                    _updateScheduler!!.schedule(false, millis)
                 }
             }
+            if (preference is RingtonePreference) {
+                // For ringtone preferences, look up the correct display value
+                // using RingtoneManager.
+                if (TextUtils.isEmpty(stringValue)) {
+                    // Empty values correspond to 'silent' (no ringtone).
+                    preference.setSummary(R.string.pref_notifications_silent)
+                } else {
+                    val ringtone =
+                        RingtoneManager.getRingtone(preference.getContext(), Uri.parse(stringValue))
+                    if (ringtone == null) {
+                        preference.setSummary(null)
+                    } else {
+                        val name = ringtone.getTitle(preference.getContext())
+                        preference.setSummary(name)
+                    }
+                }
+            }
+            true
         }
 
-        return true;
-    };
-
-
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+    private fun bindPreferenceSummaryToValue(preference: Preference) {
+        preference.onPreferenceChangeListener = sBindPreferenceSummaryToValueListener
+        sBindPreferenceSummaryToValueListener.onPreferenceChange(
+            preference,
             PreferenceManager
-                .getDefaultSharedPreferences(preference.getContext())
-                .getString(preference.getKey(), ""));
-    }
-
-
+                .getDefaultSharedPreferences(preference.context)
+                .getString(preference.key, "")
+        )
+    } /*
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class PhotosPreferenceFragment extends PreferenceFragment {
         @Override
@@ -102,6 +85,13 @@ public class SettingsActivity extends PreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference("slideshow_interval"));
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+        }
+    }*/
+
+    companion object {
+        private fun isXLargeTablet(context: Context): Boolean {
+            return (context.resources.configuration.screenLayout
+                    and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE
         }
     }
 }

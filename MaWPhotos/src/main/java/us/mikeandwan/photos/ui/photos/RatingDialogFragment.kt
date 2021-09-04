@@ -1,131 +1,122 @@
-package us.mikeandwan.photos.ui.photos;
+package us.mikeandwan.photos.ui.photos
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.RatingBar;
+import dagger.hilt.android.AndroidEntryPoint
+import us.mikeandwan.photos.ui.photos.BasePhotoDialogFragment
+import io.reactivex.disposables.CompositeDisposable
+import butterknife.Unbinder
+import butterknife.BindView
+import us.mikeandwan.photos.R
+import android.widget.RatingBar
+import javax.inject.Inject
+import us.mikeandwan.photos.services.DataServices
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import butterknife.ButterKnife
+import android.widget.RatingBar.OnRatingBarChangeListener
+import io.reactivex.Flowable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import android.view.WindowManager
+import us.mikeandwan.photos.models.Rating
 
-import javax.inject.Inject;
+@AndroidEntryPoint
+class RatingDialogFragment : BasePhotoDialogFragment() {
+    private val _disposables = CompositeDisposable()
+    private var _unbinder: Unbinder? = null
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.di.ActivityComponent;
-import us.mikeandwan.photos.models.Rating;
-import us.mikeandwan.photos.services.DataServices;
+    @JvmField
+    @BindView(R.id.yourRatingBar)
+    var _yourRatingBar: RatingBar? = null
 
+    @JvmField
+    @BindView(R.id.averageRatingBar)
+    var _averageRatingBar: RatingBar? = null
 
-public class RatingDialogFragment extends BasePhotoDialogFragment {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-    private Unbinder _unbinder;
+    @Inject lateinit var _dataServices: DataServices
 
-    @BindView(R.id.yourRatingBar) RatingBar _yourRatingBar;
-    @BindView(R.id.averageRatingBar) RatingBar _averageRatingBar;
-
-    @Inject DataServices _dataServices;
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_rating, container, false);
-        _unbinder = ButterKnife.bind(this, view);
-
-        _yourRatingBar.setOnRatingBarChangeListener((_ratingBar, rating, fromUser) -> {
-            if (fromUser) {
-                _disposables.add(Flowable.fromCallable(() -> {
-                            addWork();
-                            return _dataServices.setRating(getCurrentPhoto().getId(), Math.round(rating));
-                        })
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle
+    ): View? {
+        val view = inflater.inflate(R.layout.dialog_rating, container, false)
+        _unbinder = ButterKnife.bind(this, view)
+        _yourRatingBar!!.onRatingBarChangeListener =
+            OnRatingBarChangeListener { _ratingBar: RatingBar?, rating: Float, fromUser: Boolean ->
+                if (fromUser) {
+                    _disposables.add(Flowable.fromCallable {
+                        addWork()
+                        _dataServices!!.setRating(currentPhoto.id, Math.round(rating))
+                    }
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                x -> {
-                                    removeWork();
-                                    displayRating(x);
-                                },
-                                ex -> {
-                                    removeWork();
-                                    getPhotoActivity().onApiException(ex);
-                                }
-                        )
-                );
+                            { x: Rating? ->
+                                removeWork()
+                                displayRating(x)
+                            }
+                        ) { ex: Throwable? ->
+                            removeWork()
+                            photoActivity.onApiException(ex)
+                        }
+                    )
+                }
             }
-        });
-
-        getDialog().setTitle("Ratings");
-
-        return view;
+        dialog.setTitle("Ratings")
+        return view
     }
 
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        this.getComponent(ActivityComponent.class).inject(this);
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
     }
 
-
-    @Override
-    public void onResume() {
+    override fun onResume() {
         // http://stackoverflow.com/a/24213921
-        WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        getDialog().getWindow().setAttributes(params);
-
-        getRatings();
-
-        super.onResume();
+        val params = dialog.window!!.attributes
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT
+        dialog.window!!.attributes = params
+        ratings
+        super.onResume()
     }
 
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        _disposables.clear(); // do not send event after activity has been destroyed
-        _unbinder.unbind();
+    override fun onDestroy() {
+        super.onDestroy()
+        _disposables.clear() // do not send event after activity has been destroyed
+        _unbinder!!.unbind()
     }
 
-
-    private void getRatings() {
-        _yourRatingBar.setRating(0);
-        _averageRatingBar.setRating(0);
-
-        _disposables.add(Flowable.fromCallable(() -> {
-                    addWork();
-                    return _dataServices.getRating(getCurrentPhoto().getId());
-                })
+    private val ratings: Unit
+        private get() {
+            _yourRatingBar!!.rating = 0f
+            _averageRatingBar!!.rating = 0f
+            _disposables.add(Flowable.fromCallable {
+                addWork()
+                _dataServices!!.getRating(currentPhoto.id)
+            }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> {
-                            removeWork();
-                            displayRating(x);
-                        },
-                        ex -> {
-                            removeWork();
-                            getPhotoActivity().onApiException(ex);
-                        }
-                )
-        );
-    }
+                    { x: Rating? ->
+                        removeWork()
+                        displayRating(x)
+                    }
+                ) { ex: Throwable? ->
+                    removeWork()
+                    photoActivity.onApiException(ex)
+                }
+            )
+        }
 
-
-    private void displayRating(Rating rating) {
+    private fun displayRating(rating: Rating?) {
         if (rating == null) {
-            _yourRatingBar.setRating(0);
-            _averageRatingBar.setRating(0);
+            _yourRatingBar!!.rating = 0f
+            _averageRatingBar!!.rating = 0f
         } else {
-            _yourRatingBar.setRating(rating.getUserRating());
-            _averageRatingBar.setRating(rating.getAverageRating());
+            _yourRatingBar!!.rating = rating.userRating.toFloat()
+            _averageRatingBar!!.rating = rating.averageRating
         }
     }
 }

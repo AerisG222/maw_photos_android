@@ -1,84 +1,66 @@
-package us.mikeandwan.photos.ui.categories;
+package us.mikeandwan.photos.ui.categories
 
-import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import android.view.ViewGroup;
+import android.content.Context
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import us.mikeandwan.photos.ui.categories.ICategoryListActivity
+import us.mikeandwan.photos.services.DataServices
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
+import android.view.ViewGroup
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import us.mikeandwan.photos.models.Category
 
-import java.util.List;
+abstract class CategoryRecyclerAdapter<T : RecyclerView.ViewHolder?>(
+    activity: ICategoryListActivity,
+    dataServices: DataServices
+) : RecyclerView.Adapter<T>() {
+    private val _disposables = CompositeDisposable()
+    protected val _context: Context
+    @JvmField
+    protected val _dataServices: DataServices
+    private val _categorySubject = PublishSubject.create<Category>()
+    private var _categoryList: List<Category>? = null
+    var _activity: ICategoryListActivity
 
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
-import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.services.DataServices;
+    abstract override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): T
+    protected abstract fun displayCategory(category: Category?, imageFile: String?, viewHolder: T)
+    protected abstract fun downloadCategoryTeaser(category: Category?): String?
 
-
-public abstract class CategoryRecyclerAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-    protected final Context _context;
-    protected final DataServices _dataServices;
-    private final PublishSubject<Category> _categorySubject = PublishSubject.create();
-    private List<Category> _categoryList;
-    ICategoryListActivity _activity;
-
-
-    public CategoryRecyclerAdapter(ICategoryListActivity activity,
-                                   DataServices dataServices) {
-        _context = (Context) activity;
-        _activity = activity;
-        _dataServices = dataServices;
+    override fun onBindViewHolder(viewHolder: T, position: Int) {
+        val category = _categoryList!![position]
+        viewHolder!!.itemView.setOnClickListener { v: View? -> _categorySubject.onNext(category) }
+        _disposables.add(Flowable.fromCallable { downloadCategoryTeaser(category) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { x: String? -> displayCategory(category, x, viewHolder) }
+            ) { ex: Throwable? -> _activity.onApiException(ex) }
+        )
     }
 
-
-    @NonNull
-    @Override
-    public abstract T onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
-
-
-    protected abstract void displayCategory(Category category, String imageFile, T viewHolder);
-
-
-    protected abstract String downloadCategoryTeaser(Category category);
-
-
-    @Override
-    public void onBindViewHolder(@NonNull T viewHolder, int position) {
-        final Category category = _categoryList.get(position);
-
-        viewHolder.itemView.setOnClickListener(v -> _categorySubject.onNext(category));
-
-        _disposables.add(Flowable.fromCallable(() -> downloadCategoryTeaser(category))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        x -> displayCategory(category, x, viewHolder),
-                        ex -> _activity.onApiException(ex)
-                )
-        );
+    override fun getItemCount(): Int {
+        return _categoryList!!.size
     }
 
-
-    @Override
-    public int getItemCount() {
-        return _categoryList.size();
+    fun setCategoryList(categoryList: List<Category>?) {
+        _categoryList = categoryList
     }
 
-
-    void setCategoryList(List<Category> categoryList) {
-        _categoryList = categoryList;
+    fun onCategorySelected(): Observable<Category> {
+        return _categorySubject.hide()
     }
 
-
-    Observable<Category> onCategorySelected(){
-        return _categorySubject.hide();
+    fun dispose() {
+        _disposables.dispose()
     }
 
-
-    void dispose() {
-        _disposables.dispose();
+    init {
+        _context = activity as Context
+        _activity = activity
+        _dataServices = dataServices
     }
 }

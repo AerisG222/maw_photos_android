@@ -1,37 +1,26 @@
-package us.mikeandwan.photos.ui.photos;
+package us.mikeandwan.photos.ui.photos
 
-import android.app.DialogFragment;
-import android.content.Context;
+import android.app.DialogFragment
+import android.content.Context
+import us.mikeandwan.photos.models.Photo
+import us.mikeandwan.photos.ui.photos.IPhotoActivity
 
-import us.mikeandwan.photos.models.Photo;
-import us.mikeandwan.photos.ui.HasComponent;
-
-
-public class BasePhotoDialogFragment extends DialogFragment {
-    protected <C> C getComponent(Class<C> componentType) {
-        return componentType.cast(((HasComponent<C>)getActivity()).getComponent());
+open class BasePhotoDialogFragment : DialogFragment() {
+    override fun getContext(): Context {
+        return activity.baseContext
     }
 
+    protected val photoActivity: IPhotoActivity
+        protected get() = activity as IPhotoActivity
 
-    public Context getContext() {
-        return getActivity().getBaseContext();
+    fun addWork() {
+        photoActivity.addWork()
     }
 
-
-    protected IPhotoActivity getPhotoActivity() {
-        return (IPhotoActivity) getActivity();
+    fun removeWork() {
+        photoActivity.removeWork()
     }
 
-
-    void addWork() {
-        getPhotoActivity().addWork();
-    }
-
-
-    void removeWork() { getPhotoActivity().removeWork(); }
-
-
-    Photo getCurrentPhoto() {
-        return getPhotoActivity().getCurrentPhoto();
-    }
+    val currentPhoto: Photo
+        get() = photoActivity.currentPhoto
 }

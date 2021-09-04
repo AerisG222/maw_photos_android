@@ -1,215 +1,164 @@
-package us.mikeandwan.photos.ui.receiver;
+package us.mikeandwan.photos.ui.receiver
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.widget.TextView;
+import dagger.hilt.android.AndroidEntryPoint
+import us.mikeandwan.photos.ui.BaseActivity
+import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
+import us.mikeandwan.photos.services.DataServices
+import us.mikeandwan.photos.ui.receiver.ReceiverRecyclerAdapter
+import us.mikeandwan.photos.services.UploadJobScheduler
+import butterknife.BindDimen
+import us.mikeandwan.photos.R
+import butterknife.BindView
+import androidx.recyclerview.widget.RecyclerView
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import android.os.Bundle
+import butterknife.ButterKnife
+import android.content.Intent
+import android.net.Uri
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import android.util.DisplayMetrics
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.DefaultItemAnimator
+import io.reactivex.Flowable
+import com.google.android.material.snackbar.Snackbar
+import timber.log.Timber
+import java.io.File
+import java.io.FileNotFoundException
+import java.util.ArrayList
+import kotlin.Throws
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
+@AndroidEntryPoint
+class PhotoReceiverActivity : BaseActivity() {
+    private val _disposables = CompositeDisposable()
 
-import javax.inject.Inject;
+    @Inject lateinit var _dataServices: DataServices
+    @Inject lateinit var _receiverAdapter: ReceiverRecyclerAdapter
+    @Inject lateinit var _uploadScheduler: UploadJobScheduler
 
-import butterknife.BindDimen;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
-import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.di.ActivityComponent;
-import us.mikeandwan.photos.di.DaggerActivityComponent;
-import us.mikeandwan.photos.services.DataServices;
-import us.mikeandwan.photos.services.UploadJobScheduler;
-import us.mikeandwan.photos.ui.BaseActivity;
-import us.mikeandwan.photos.ui.HasComponent;
+    @JvmField
+    @BindDimen(R.dimen.category_grid_thumbnail_size) var _thumbSize = 0
 
+    @JvmField
+    @BindView(R.id.receiver_recycler_view) var _recyclerView: RecyclerView? = null
 
-public class PhotoReceiverActivity extends BaseActivity implements HasComponent<ActivityComponent> {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-    private ActivityComponent _activityComponent;
+    @JvmField
+    @BindView(R.id.receiver_wifi_text_view) var _wifiTextView: TextView? = null
 
-    @Inject DataServices _dataServices;
-    @Inject ReceiverRecyclerAdapter _receiverAdapter;
-    @Inject UploadJobScheduler _uploadScheduler;
+    @JvmField
+    @BindView(R.id.photoReceiverLayout) var _layout: ConstraintLayout? = null
 
-    @BindDimen(R.dimen.category_grid_thumbnail_size) int _thumbSize;
-    @BindView(R.id.receiver_recycler_view) RecyclerView _recyclerView;
-    @BindView(R.id.receiver_wifi_text_view) TextView _wifiTextView;
-    @BindView(R.id.photoReceiverLayout) ConstraintLayout _layout;
-    @BindView(R.id.toolbar) Toolbar _toolbar;
+    @JvmField
+    @BindView(R.id.toolbar) var _toolbar: Toolbar? = null
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_photo_receiver);
-
-        ButterKnife.bind(this);
-
-        _activityComponent = DaggerActivityComponent.builder()
-            .applicationComponent(getApplicationComponent())
-            .activityModule(getActivityModule())
-            .build();
-
-        _activityComponent.inject(this);
-
-        _recyclerView.setHasFixedSize(true);
-        _recyclerView.setAdapter(_receiverAdapter);
-        setLayoutManager();
-
-        Intent intent = getIntent();
-        String action = intent.getAction();
-
-        if(action != null)
-        {
-            switch(action) {
-                case Intent.ACTION_SEND:
-                    handleSendSingle(intent);
-                    break;
-                case Intent.ACTION_SEND_MULTIPLE:
-                    handleSendMultiple(intent);
-                    break;
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_photo_receiver)
+        ButterKnife.bind(this)
+        _recyclerView!!.setHasFixedSize(true)
+        _recyclerView!!.adapter = _receiverAdapter
+        setLayoutManager()
+        val intent = intent
+        val action = intent.action
+        if (action != null) {
+            when (action) {
+                Intent.ACTION_SEND -> handleSendSingle(intent)
+                Intent.ACTION_SEND_MULTIPLE -> handleSendMultiple(intent)
             }
         }
 
         // if we end up on this page, we either have new files to upload, or a user wants to check
         // so lets try to reschedule the job to kick it off
-        _uploadScheduler.schedule(true);
+        _uploadScheduler!!.schedule(true)
     }
 
-
-    @Override
-    public void onResume() {
-        updateToolbar(_toolbar, "Upload Queue");
-
+    public override fun onResume() {
+        updateToolbar(_toolbar, "Upload Queue")
         _disposables.add(_dataServices
             .getFileQueueObservable()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                this::updateListing
-            ));
-
-        super.onResume();
+            .subscribe { files: Array<File> -> updateListing(files) })
+        super.onResume()
     }
 
-
-    @Override
-    protected void onDestroy() {
-        _disposables.clear();
-
-        super.onDestroy();
+    override fun onDestroy() {
+        _disposables.clear()
+        super.onDestroy()
     }
 
-
-    public ActivityComponent getComponent() {
-        return _activityComponent;
-    }
-
-
-    private void setLayoutManager() {
+    private fun setLayoutManager() {
         // https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int cols = displayMetrics.widthPixels / _thumbSize;
-
-        GridLayoutManager glm = new GridLayoutManager(this, Math.max(1, cols));
-        _recyclerView.setLayoutManager(glm);
-        _recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        _receiverAdapter.setItemSize(displayMetrics.widthPixels / cols);
-
-        _recyclerView.getRecycledViewPool().clear();
+        val displayMetrics = resources.displayMetrics
+        val cols = displayMetrics.widthPixels / _thumbSize
+        val glm = GridLayoutManager(this, Math.max(1, cols))
+        _recyclerView!!.layoutManager = glm
+        _recyclerView!!.itemAnimator = DefaultItemAnimator()
+        _receiverAdapter!!.setItemSize(displayMetrics.widthPixels / cols)
+        _recyclerView!!.recycledViewPool.clear()
     }
 
-
-    private boolean isValidType(String type) {
-        return type != null && (type.startsWith("image/") || type.startsWith("video/"));
+    private fun isValidType(type: String?): Boolean {
+        return type != null && (type.startsWith("image/") || type.startsWith("video/"))
     }
 
-
-    void handleSendSingle(Intent intent) {
-        Uri mediaUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        ArrayList<Uri> list = new ArrayList<>();
-
-        list.add(mediaUri);
-
-        saveFiles(list);
+    fun handleSendSingle(intent: Intent) {
+        val mediaUri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+        val list = ArrayList<Uri?>()
+        list.add(mediaUri)
+        saveFiles(list)
     }
 
-
-    void handleSendMultiple(Intent intent) {
-        ArrayList<Uri> mediaUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-
-        saveFiles(mediaUris);
+    fun handleSendMultiple(intent: Intent) {
+        val mediaUris = intent.getParcelableArrayListExtra<Uri?>(Intent.EXTRA_STREAM)
+        saveFiles(mediaUris)
     }
 
-
-    void saveFiles(ArrayList<Uri> mediaUris) {
+    fun saveFiles(mediaUris: ArrayList<Uri?>?) {
         _disposables.add(
-            Flowable.fromCallable(() -> enqueueFiles(mediaUris))
+            Flowable.fromCallable { enqueueFiles(mediaUris) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    msg -> Snackbar.make(_layout, msg, Snackbar.LENGTH_LONG).show(),
-                    ex -> {
-                        Timber.e("error loading categories: %s", ex.getMessage());
-                        handleApiException(ex);
-                    }
-                ));
+                    { msg: String? -> Snackbar.make(_layout!!, msg!!, Snackbar.LENGTH_LONG).show() }
+                ) { ex: Throwable ->
+                    Timber.e("error loading categories: %s", ex.message)
+                    handleApiException(ex)
+                })
     }
 
-
-    private String enqueueFiles(ArrayList<Uri> mediaUris) throws FileNotFoundException {
-        int count = 0;
-        int unsupportedFiles = 0;
-
-        for(Uri uri : mediaUris) {
-            String type = getContentResolver().getType(uri);
-
-            if(!isValidType(type)) {
-                unsupportedFiles++;
-                continue;
+    @Throws(FileNotFoundException::class)
+    private fun enqueueFiles(mediaUris: ArrayList<Uri?>?): String {
+        var count = 0
+        var unsupportedFiles = 0
+        for (uri in mediaUris!!) {
+            val type = contentResolver.getType(uri!!)
+            if (!isValidType(type)) {
+                unsupportedFiles++
+                continue
             }
-
-            InputStream inputStream = getContentResolver().openInputStream(uri);
-
-            if(_dataServices.enequeFileToUpload(count + 1, inputStream, type))
-            {
-                count++;
+            val inputStream = contentResolver.openInputStream(uri)
+            if (_dataServices!!.enequeFileToUpload(count + 1, inputStream, type)) {
+                count++
             }
         }
-
-        String msg = "";
-
-        if(count > 0) {
-            msg += "Successfully enqueued " + count + " files for upload.";
+        var msg = ""
+        if (count > 0) {
+            msg += "Successfully enqueued $count files for upload."
         }
-
-        if(unsupportedFiles > 0) {
-            if(msg.length() > 0) {
-                msg += "  ";
+        if (unsupportedFiles > 0) {
+            if (msg.length > 0) {
+                msg += "  "
             }
-
-            msg += "Unable to enqueue " + unsupportedFiles + " files.";
+            msg += "Unable to enqueue $unsupportedFiles files."
         }
-
-        return msg;
+        return msg
     }
 
-
-    private void updateListing(File[] files) {
-        _receiverAdapter.setQueuedFiles(files);
+    private fun updateListing(files: Array<File>) {
+        _receiverAdapter!!.setQueuedFiles(files)
     }
 }

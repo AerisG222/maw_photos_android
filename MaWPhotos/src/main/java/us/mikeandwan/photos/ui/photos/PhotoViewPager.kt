@@ -1,73 +1,65 @@
-package us.mikeandwan.photos.ui.photos;
+package us.mikeandwan.photos.ui.photos
 
-import android.content.Context;
-import androidx.viewpager.widget.ViewPager;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import com.github.chrisbanes.photoview.PhotoView;
-
+import android.content.Context
+import android.util.AttributeSet
+import androidx.viewpager.widget.ViewPager
+import io.reactivex.subjects.PublishSubject
+import android.view.MotionEvent
+import com.github.chrisbanes.photoview.PhotoView
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import io.reactivex.Observable
+import java.lang.IllegalArgumentException
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
 // https://raw.githubusercontent.com/chrisbanes/PhotoView/master/sample/src/main/java/uk/co/senab/photoview/sample/HackyViewPager.java
-public class PhotoViewPager extends ViewPager {
-    private final PublishSubject<Integer> _photoSelectedSubject = PublishSubject.create();
-    private boolean _enabled = true;
-
-
-    public PhotoViewPager(Context context, AttributeSet attrs) {
-        super(context, attrs);
-
-        addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // do nothing
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                _photoSelectedSubject.onNext(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                // do nothing
-            }
-        });
-    }
-
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent arg0) {
-        try {
-            return _enabled && super.onInterceptTouchEvent(arg0);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return false;
+class PhotoViewPager(context: Context?, attrs: AttributeSet?) : ViewPager(
+    context!!, attrs
+) {
+    private val _photoSelectedSubject = PublishSubject.create<Int>()
+    private var _enabled = true
+    override fun onInterceptTouchEvent(arg0: MotionEvent): Boolean {
+        return try {
+            _enabled && super.onInterceptTouchEvent(arg0)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            false
         }
     }
 
-
-    public Observable<Integer> onPhotoSelected() {
-        return _photoSelectedSubject.hide();
+    fun onPhotoSelected(): Observable<Int> {
+        return _photoSelectedSubject.hide()
     }
 
-
-    public boolean isEnabled() {
-        return _enabled;
+    override fun isEnabled(): Boolean {
+        return _enabled
     }
 
-
-    public void setEnabled(boolean enabled) {
-        _enabled = enabled;
+    override fun setEnabled(enabled: Boolean) {
+        _enabled = enabled
     }
 
+    fun rotateImage(direction: Int) {
+        val pv: PhotoView = findViewWithTag(currentItem)
+        pv.rotation = pv.rotation + direction * 90
+    }
 
-    public void rotateImage(int direction) {
-        PhotoView pv = findViewWithTag(getCurrentItem());
+    init {
+        addOnPageChangeListener(object : OnPageChangeListener {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                // do nothing
+            }
 
-        pv.setRotation(pv.getRotation() + (direction * 90));
+            override fun onPageSelected(position: Int) {
+                _photoSelectedSubject.onNext(position)
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                // do nothing
+            }
+        })
     }
 }

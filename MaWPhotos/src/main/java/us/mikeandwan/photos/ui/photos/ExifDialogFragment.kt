@@ -1,197 +1,201 @@
-package us.mikeandwan.photos.ui.photos;
+package us.mikeandwan.photos.ui.photos
 
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.format
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatMillimeters
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatAltitude
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatLatitude
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatLongitude
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatFourDecimals
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatMeters
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatOneDecimal
+import dagger.hilt.android.AndroidEntryPoint
+import us.mikeandwan.photos.ui.photos.BasePhotoDialogFragment
+import io.reactivex.disposables.CompositeDisposable
+import butterknife.Unbinder
+import butterknife.BindDimen
+import us.mikeandwan.photos.R
+import butterknife.BindView
+import android.widget.TableLayout
+import javax.inject.Inject
+import us.mikeandwan.photos.services.DataServices
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import android.widget.TableRow
+import butterknife.ButterKnife
+import us.mikeandwan.photos.models.ExifData
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter
+import io.reactivex.Flowable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import android.widget.TextView
 
-import javax.inject.Inject;
+@AndroidEntryPoint
+class ExifDialogFragment : BasePhotoDialogFragment() {
+    private val _disposables = CompositeDisposable()
+    private var _unbinder: Unbinder? = null
 
-import butterknife.BindDimen;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.di.ActivityComponent;
-import us.mikeandwan.photos.models.ExifData;
-import us.mikeandwan.photos.services.DataServices;
+    @JvmField
+    @BindDimen(R.dimen._2dp)
+    var _2dp = 0
 
+    @JvmField
+    @BindDimen(R.dimen._4dp)
+    var _4dp = 0
 
-public class ExifDialogFragment extends BasePhotoDialogFragment {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-    private Unbinder _unbinder;
+    @JvmField
+    @BindDimen(R.dimen._8dp)
+    var _8dp = 0
 
-    @BindDimen(R.dimen._2dp) int _2dp;
-    @BindDimen(R.dimen._4dp) int _4dp;
-    @BindDimen(R.dimen._8dp) int _8dp;
+    @JvmField
+    @BindView(R.id.exifView)
+    var _exifView: TableLayout? = null
 
-    @BindView(R.id.exifView) TableLayout _exifView;
-
-    @Inject DataServices _dataServices;
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_exif, container, false);
-        _unbinder = ButterKnife.bind(this, view);
-
-        getDialog().setTitle("Exif Data");
-
-        return view;
+    @JvmField
+    @Inject
+    var _dataServices: DataServices? = null
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle
+    ): View? {
+        val view = inflater.inflate(R.layout.dialog_exif, container, false)
+        _unbinder = ButterKnife.bind(this, view)
+        dialog.setTitle("Exif Data")
+        return view
     }
 
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        this.getComponent(ActivityComponent.class).inject(this);
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
     }
 
-
-    @Override
-    public void onResume() {
-        getExifData();
-
-        super.onResume();
+    override fun onResume() {
+        exifData
+        super.onResume()
     }
 
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        _disposables.clear(); // do not send event after activity has been destroyed
-        _unbinder.unbind();
+    override fun onDestroy() {
+        super.onDestroy()
+        _disposables.clear() // do not send event after activity has been destroyed
+        _unbinder!!.unbind()
     }
 
-
-    private void displayExifData(ExifData exif) {
+    private fun displayExifData(exif: ExifData?) {
         if (exif != null) {
             // exif
-            addExifRow("Bits Per Sample", ExifDataFormatter.format(exif.getBitsPerSample()));
-            addExifRow("Compression", ExifDataFormatter.format(exif.getCompression()));
-            addExifRow("Contrast", ExifDataFormatter.format(exif.getContrast()));
-            addExifRow("Create Date", ExifDataFormatter.format(exif.getCreateDate()));
-            addExifRow("Digital Zoom Ratio", ExifDataFormatter.format(exif.getDigitalZoomRatio()));
-            addExifRow("Exposure Compensation", ExifDataFormatter.format(exif.getExposureCompensation()));
-            addExifRow("Exposure Mode", ExifDataFormatter.format(exif.getExposureMode()));
-            addExifRow("Exposure Program", ExifDataFormatter.format(exif.getExposureProgram()));
-            addExifRow("Exposure Time", ExifDataFormatter.format(exif.getExposureTime()));
-            addExifRow("F Number", ExifDataFormatter.format(exif.getfNumber()));
-            addExifRow("Flash", ExifDataFormatter.format(exif.getFlash()));
-            addExifRow("Focal Length", ExifDataFormatter.formatMillimeters(exif.getFocalLength()));
-            addExifRow("Focal Length In 35mm Format", ExifDataFormatter.formatMillimeters(exif.getFocalLengthIn35mmFormat()));
-            addExifRow("Gain Control", ExifDataFormatter.format(exif.getGainControl()));
-            addExifRow("Gps Altitude", ExifDataFormatter.formatAltitude(exif.getGpsAltitude()));
-            addExifRow("Gps Date Stamp", ExifDataFormatter.format(exif.getGpsDateStamp()));
-            addExifRow("Gps Direction", ExifDataFormatter.format(exif.getGpsDirection()));
-            addExifRow("Gps Latitude", ExifDataFormatter.formatLatitude(exif.getGpsLatitude()));
-            addExifRow("Gps Longitude", ExifDataFormatter.formatLongitude(exif.getGpsLongitude()));
-            addExifRow("Gps Measure Mode", ExifDataFormatter.format(exif.getGpsMeasureMode()));
-            addExifRow("Gps Satellites", ExifDataFormatter.format(exif.getGpsSatellites()));
-            addExifRow("Gps Status", ExifDataFormatter.format(exif.getGpsStatus()));
-            addExifRow("Gps Version Id", ExifDataFormatter.format(exif.getGpsVersionId()));
-            addExifRow("Iso", ExifDataFormatter.format(exif.getIso()));
-            addExifRow("Light Source", ExifDataFormatter.format(exif.getLightSource()));
-            addExifRow("Make", ExifDataFormatter.format(exif.getMake()));
-            addExifRow("Metering Mode", ExifDataFormatter.format(exif.getMeteringMode()));
-            addExifRow("Model", ExifDataFormatter.format(exif.getModel()));
-            addExifRow("Orientation", ExifDataFormatter.format(exif.getOrientation()));
-            addExifRow("Saturation", ExifDataFormatter.format(exif.getSaturation()));
-            addExifRow("Scene Capture Type", ExifDataFormatter.format(exif.getSceneCaptureType()));
-            addExifRow("Scene Type", ExifDataFormatter.format(exif.getSceneType()));
-            addExifRow("Sensing Method", ExifDataFormatter.format(exif.getSensingMethod()));
-            addExifRow("Sharpness", ExifDataFormatter.format(exif.getSharpness()));
+            addExifRow("Bits Per Sample", format(exif.bitsPerSample))
+            addExifRow("Compression", format(exif.compression))
+            addExifRow("Contrast", format(exif.contrast))
+            addExifRow("Create Date", format(exif.createDate))
+            addExifRow("Digital Zoom Ratio", format(exif.digitalZoomRatio))
+            addExifRow("Exposure Compensation", format(exif.exposureCompensation))
+            addExifRow("Exposure Mode", format(exif.exposureMode))
+            addExifRow("Exposure Program", format(exif.exposureProgram))
+            addExifRow("Exposure Time", format(exif.exposureTime))
+            addExifRow("F Number", format(exif.getfNumber()))
+            addExifRow("Flash", format(exif.flash))
+            addExifRow("Focal Length", formatMillimeters(exif.focalLength))
+            addExifRow(
+                "Focal Length In 35mm Format",
+                formatMillimeters(exif.focalLengthIn35mmFormat)
+            )
+            addExifRow("Gain Control", format(exif.gainControl))
+            addExifRow("Gps Altitude", formatAltitude(exif.gpsAltitude))
+            addExifRow("Gps Date Stamp", format(exif.gpsDateStamp))
+            addExifRow("Gps Direction", format(exif.gpsDirection))
+            addExifRow("Gps Latitude", formatLatitude(exif.gpsLatitude))
+            addExifRow("Gps Longitude", formatLongitude(exif.gpsLongitude))
+            addExifRow("Gps Measure Mode", format(exif.gpsMeasureMode))
+            addExifRow("Gps Satellites", format(exif.gpsSatellites))
+            addExifRow("Gps Status", format(exif.gpsStatus))
+            addExifRow("Gps Version Id", format(exif.gpsVersionId))
+            addExifRow("Iso", format(exif.iso))
+            addExifRow("Light Source", format(exif.lightSource))
+            addExifRow("Make", format(exif.make))
+            addExifRow("Metering Mode", format(exif.meteringMode))
+            addExifRow("Model", format(exif.model))
+            addExifRow("Orientation", format(exif.orientation))
+            addExifRow("Saturation", format(exif.saturation))
+            addExifRow("Scene Capture Type", format(exif.sceneCaptureType))
+            addExifRow("Scene Type", format(exif.sceneType))
+            addExifRow("Sensing Method", format(exif.sensingMethod))
+            addExifRow("Sharpness", format(exif.sharpness))
 
             // nikon
-            addExifRow("Auto Focus Area Mode", ExifDataFormatter.format(exif.getAutoFocusAreaMode()));
-            addExifRow("Auto Focus Point", ExifDataFormatter.format(exif.getAutoFocusPoint()));
-            addExifRow("Active D Lighting", ExifDataFormatter.format(exif.getActiveDLighting()));
-            addExifRow("Colorspace", ExifDataFormatter.format(exif.getColorspace()));
-            addExifRow("Exposure Difference", ExifDataFormatter.formatFourDecimals(exif.getExposureDifference()));
-            addExifRow("Flash Color Filter", ExifDataFormatter.format(exif.getFlashColorFilter()));
-            addExifRow("Flash Compensation", ExifDataFormatter.format(exif.getFlashCompensation()));
-            addExifRow("Flash Control Mode", ExifDataFormatter.format(exif.getFlashControlMode()));
-            addExifRow("Flash Exposure Compensation", ExifDataFormatter.format(exif.getFlashExposureCompensation()));
-            addExifRow("Flash Focal Length", ExifDataFormatter.formatMillimeters(exif.getFlashFocalLength()));
-            addExifRow("Flash Mode", ExifDataFormatter.format(exif.getFlashMode()));
-            addExifRow("Flash Setting", ExifDataFormatter.format(exif.getFlashSetting()));
-            addExifRow("Flash Type", ExifDataFormatter.format(exif.getFlashType()));
-            addExifRow("Focus Distance", ExifDataFormatter.formatMeters(exif.getFocusDistance()));
-            addExifRow("Focus Mode", ExifDataFormatter.format(exif.getFocusMode()));
-            addExifRow("Focus Position", ExifDataFormatter.format(exif.getFocusPosition()));
-            addExifRow("High Iso Noise Reduction", ExifDataFormatter.format(exif.getHighIsoNoiseReduction()));
-            addExifRow("Hue Adjustment", ExifDataFormatter.format(exif.getHueAdjustment()));
-            addExifRow("Noise Reduction", ExifDataFormatter.format(exif.getNoiseReduction()));
-            addExifRow("Picture Control Name", ExifDataFormatter.format(exif.getPictureControlName()));
-            addExifRow("Primary AF Point", ExifDataFormatter.format(exif.getPrimaryAFPoint()));
-            addExifRow("VR Mode", ExifDataFormatter.format(exif.getVRMode()));
-            addExifRow("Vibration Reduction", ExifDataFormatter.format(exif.getVibrationReduction()));
-            addExifRow("Vignette Control", ExifDataFormatter.format(exif.getVignetteControl()));
-            addExifRow("White Balance", ExifDataFormatter.format(exif.getWhiteBalance()));
+            addExifRow("Auto Focus Area Mode", format(exif.autoFocusAreaMode))
+            addExifRow("Auto Focus Point", format(exif.autoFocusPoint))
+            addExifRow("Active D Lighting", format(exif.activeDLighting))
+            addExifRow("Colorspace", format(exif.colorspace))
+            addExifRow("Exposure Difference", formatFourDecimals(exif.exposureDifference))
+            addExifRow("Flash Color Filter", format(exif.flashColorFilter))
+            addExifRow("Flash Compensation", format(exif.flashCompensation))
+            addExifRow("Flash Control Mode", format(exif.flashControlMode))
+            addExifRow("Flash Exposure Compensation", format(exif.flashExposureCompensation))
+            addExifRow("Flash Focal Length", formatMillimeters(exif.flashFocalLength))
+            addExifRow("Flash Mode", format(exif.flashMode))
+            addExifRow("Flash Setting", format(exif.flashSetting))
+            addExifRow("Flash Type", format(exif.flashType))
+            addExifRow("Focus Distance", formatMeters(exif.focusDistance))
+            addExifRow("Focus Mode", format(exif.focusMode))
+            addExifRow("Focus Position", format(exif.focusPosition))
+            addExifRow("High Iso Noise Reduction", format(exif.highIsoNoiseReduction))
+            addExifRow("Hue Adjustment", format(exif.hueAdjustment))
+            addExifRow("Noise Reduction", format(exif.noiseReduction))
+            addExifRow("Picture Control Name", format(exif.pictureControlName))
+            addExifRow("Primary AF Point", format(exif.primaryAFPoint))
+            addExifRow("VR Mode", format(exif.vrMode))
+            addExifRow("Vibration Reduction", format(exif.vibrationReduction))
+            addExifRow("Vignette Control", format(exif.vignetteControl))
+            addExifRow("White Balance", format(exif.whiteBalance))
 
             // composite
-            addExifRow("Aperture", ExifDataFormatter.format(exif.getAperture()));
-            addExifRow("Auto Focus", ExifDataFormatter.format(exif.getAutoFocus()));
-            addExifRow("Depth Of Field", ExifDataFormatter.format(exif.getDepthOfField()));
-            addExifRow("Field Of View", ExifDataFormatter.format(exif.getFieldOfView()));
-            addExifRow("Hyperfocal Distance", ExifDataFormatter.formatMeters(exif.getHyperfocalDistance()));
-            addExifRow("Lens Id", ExifDataFormatter.format(exif.getLensId()));
-            addExifRow("Light Value", ExifDataFormatter.formatFourDecimals(exif.getLightValue()));
-            addExifRow("Scale Factor 35 Efl", ExifDataFormatter.formatOneDecimal(exif.getScaleFactor35Efl()));
-            addExifRow("Shutter Speed", ExifDataFormatter.format(exif.getShutterSpeed()));
+            addExifRow("Aperture", format(exif.aperture))
+            addExifRow("Auto Focus", format(exif.autoFocus))
+            addExifRow("Depth Of Field", format(exif.depthOfField))
+            addExifRow("Field Of View", format(exif.fieldOfView))
+            addExifRow("Hyperfocal Distance", formatMeters(exif.hyperfocalDistance))
+            addExifRow("Lens Id", format(exif.lensId))
+            addExifRow("Light Value", formatFourDecimals(exif.lightValue))
+            addExifRow("Scale Factor 35 Efl", formatOneDecimal(exif.scaleFactor35Efl))
+            addExifRow("Shutter Speed", format(exif.shutterSpeed))
         }
     }
 
-
-    private void getExifData() {
-        _disposables.add(Flowable.fromCallable(() -> {
-                    addWork();
-                    return _dataServices.getExifData(getCurrentPhoto().getId());
-                })
+    private val exifData: Unit
+        private get() {
+            _disposables.add(Flowable.fromCallable {
+                addWork()
+                _dataServices!!.getExifData(currentPhoto.id)
+            }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        x -> {
-                            removeWork();
-                            displayExifData(x);
-                        },
-                        ex -> {
-                            removeWork();
-                            getPhotoActivity().onApiException(ex);
-                        }
-                )
-        );
-    }
-
-
-    private void addExifRow(String name, String value) {
-        Context ctx = getContext();
-        TableRow row = new TableRow(ctx);
-
-        _exifView.addView(row);
-
-        if (_exifView.getChildCount() % 2 == 1) {
-            row.setBackgroundColor(0xFF222222);
+                    { x: ExifData? ->
+                        removeWork()
+                        displayExifData(x)
+                    }
+                ) { ex: Throwable? ->
+                    removeWork()
+                    photoActivity.onApiException(ex)
+                }
+            )
         }
 
-        TextView nameView = new TextView(ctx);
-        nameView.setText(name);
-        nameView.setPadding(_4dp, _2dp, _4dp, _2dp);
-
-        TextView valueView = new TextView(ctx);
-        valueView.setText(value == null ? "--" : value);
-        valueView.setPadding(_8dp, _2dp, _4dp, _2dp);
-
-        row.addView(nameView);
-        row.addView(valueView);
+    private fun addExifRow(name: String, value: String?) {
+        val ctx = context
+        val row = TableRow(ctx)
+        _exifView!!.addView(row)
+        if (_exifView!!.childCount % 2 == 1) {
+            row.setBackgroundColor(-0xddddde)
+        }
+        val nameView = TextView(ctx)
+        nameView.text = name
+        nameView.setPadding(_4dp, _2dp, _4dp, _2dp)
+        val valueView = TextView(ctx)
+        valueView.text = value ?: "--"
+        valueView.setPadding(_8dp, _2dp, _4dp, _2dp)
+        row.addView(nameView)
+        row.addView(valueView)
     }
 }

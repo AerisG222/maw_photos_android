@@ -1,138 +1,108 @@
-package us.mikeandwan.photos.ui.photos;
+package us.mikeandwan.photos.ui.photos
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
-
-public class ExifDataFormatter {
-    public static String format(Date val) {
-        if (val == null) {
-            return "--";
+object ExifDataFormatter {
+    @JvmStatic
+    fun format(`val`: Date?): String {
+        if (`val` == null) {
+            return "--"
         }
-
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.US);
-
-        return sdf.format(val);
+        val sdf = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.US)
+        return sdf.format(`val`)
     }
 
-
-    public static String format(String val) {
-        if (val == null) {
-            return "--";
-        }
-
-        return val;
+    @JvmStatic
+    fun format(`val`: String?): String {
+        return `val` ?: "--"
     }
 
-
-    public static String format(Double val) {
-        if (val == null) {
-            return "--";
-        }
-
-        return val.toString();
+    @JvmStatic
+    fun format(`val`: Double?): String {
+        return `val`?.toString() ?: "--"
     }
 
-
-    public static String format(Short val) {
-        if (val == null) {
-            return "--";
-        }
-
-        return val.toString();
+    @JvmStatic
+    fun format(`val`: Short?): String {
+        return `val`?.toString() ?: "--"
     }
 
-
-    public static String format(Integer val) {
-        if (val == null) {
-            return "--";
-        }
-
-        return val.toString();
+    @JvmStatic
+    fun format(`val`: Int?): String {
+        return `val`?.toString() ?: "--"
     }
 
-
-    public static String formatOneDecimal(Double val) {
-        if (val == null) {
-            return "--";
+    @JvmStatic
+    fun formatOneDecimal(`val`: Double?): String {
+        if (`val` == null) {
+            return "--"
         }
-
-        DecimalFormat df = new DecimalFormat("0.0");
-
-        return df.format(val);
+        val df = DecimalFormat("0.0")
+        return df.format(`val`)
     }
 
-
-    public static String formatFourDecimals(Double val) {
-        if (val == null) {
-            return "--";
+    @JvmStatic
+    fun formatFourDecimals(`val`: Double?): String {
+        if (`val` == null) {
+            return "--"
         }
-
-        DecimalFormat df = new DecimalFormat("0.0000");
-
-        return df.format(val);
+        val df = DecimalFormat("0.0000")
+        return df.format(`val`)
     }
 
-
-    public static String formatMillimeters(Double val) {
-        if (val == null) {
-            return "--";
+    @JvmStatic
+    fun formatMillimeters(`val`: Double?): String {
+        if (`val` == null) {
+            return "--"
         }
-
-        DecimalFormat df = new DecimalFormat("0.0");
-
-        return df.format(val) + " mm";
+        val df = DecimalFormat("0.0")
+        return df.format(`val`) + " mm"
     }
 
-
-    public static String formatMeters(Double val) {
-        if (val == null) {
-            return "--";
+    @JvmStatic
+    fun formatMeters(`val`: Double?): String {
+        if (`val` == null) {
+            return "--"
         }
-
-        DecimalFormat df = new DecimalFormat("0.0");
-
-        return df.format(val) + " m";
+        val df = DecimalFormat("0.0")
+        return df.format(`val`) + " m"
     }
 
-
-    public static String formatLatitude(Double val) {
-        if (val == null) {
-            return "--";
+    @JvmStatic
+    fun formatLatitude(`val`: Double?): String {
+        if (`val` == null) {
+            return "--"
         }
-
-        if (val >= 0) {
-            return val + " (North)";
+        return if (`val` >= 0) {
+            "$`val` (North)"
         } else {
-            return val + " (South)";
+            "$`val` (South)"
         }
     }
 
-
-    public static String formatLongitude(Double val) {
-        if (val == null) {
-            return "--";
+    @JvmStatic
+    fun formatLongitude(`val`: Double?): String {
+        if (`val` == null) {
+            return "--"
         }
-
-        if (val >= 0) {
-            return val + " (East)";
+        return if (`val` >= 0) {
+            "$`val` (East)"
         } else {
-            return val + " (West)";
+            "$`val` (West)"
         }
     }
 
-
-    public static String formatAltitude(Double val) {
-        if (val == null) {
-            return "--";
+    @JvmStatic
+    fun formatAltitude(`val`: Double?): String {
+        if (`val` == null) {
+            return "--"
         }
-
-        if (val >= 0) {
-            return val + " m Above Sea Level";
+        return if (`val` >= 0) {
+            "$`val` m Above Sea Level"
         } else {
-            return val + " m Below Sea Level";
+            "$`val` m Below Sea Level"
         }
     }
 }

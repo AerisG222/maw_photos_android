@@ -1,10 +1,8 @@
-package us.mikeandwan.photos.ui.categories;
+package us.mikeandwan.photos.ui.categories
 
+import us.mikeandwan.photos.models.Category
 
-import us.mikeandwan.photos.models.Category;
-
-public interface ICategoryListActivity {
-    void selectCategory(Category category);
-
-    void onApiException(Throwable throwable);
+interface ICategoryListActivity {
+    fun selectCategory(category: Category?)
+    fun onApiException(throwable: Throwable?)
 }
