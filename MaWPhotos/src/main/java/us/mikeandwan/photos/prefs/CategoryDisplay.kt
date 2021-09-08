@@ -1,7 +1,5 @@
-package us.mikeandwan.photos.prefs;
+package us.mikeandwan.photos.prefs
 
-
-public enum CategoryDisplay {
-    ThumbnailGrid,
-    ThumbnailAndNameList
+enum class CategoryDisplay {
+    ThumbnailGrid, ThumbnailAndNameList
 }

@@ -1,24 +1,14 @@
-package us.mikeandwan.photos.prefs;
+package us.mikeandwan.photos.prefs
 
-import android.content.SharedPreferences;
+import android.content.SharedPreferences
+import us.mikeandwan.photos.prefs.CategoryDisplay
 
-
-public class CategoryDisplayPreference {
-    private final SharedPreferences _sharedPrefs;
-
-
-    public CategoryDisplayPreference(SharedPreferences sharedPrefs) {
-        _sharedPrefs = sharedPrefs;
-    }
-
-
-    public CategoryDisplay getCategoryDisplay() {
-        String val = _sharedPrefs.getString("category_view_mode", "list");
-
-        if(val == null || val.equalsIgnoreCase("list")) {
-            return CategoryDisplay.ThumbnailAndNameList;
+class CategoryDisplayPreference(private val _sharedPrefs: SharedPreferences) {
+    val categoryDisplay: CategoryDisplay
+        get() {
+            val `val` = _sharedPrefs.getString("category_view_mode", "list")
+            return if (`val` == null || `val`.equals("list", ignoreCase = true)) {
+                CategoryDisplay.ThumbnailAndNameList
+            } else CategoryDisplay.ThumbnailGrid
         }
-
-        return CategoryDisplay.ThumbnailGrid;
-    }
 }
