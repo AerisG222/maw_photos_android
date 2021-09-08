@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.prefs
 
 import android.content.SharedPreferences
-import us.mikeandwan.photos.prefs.CategoryDisplay
 
 class PhotoDisplayPreference(private val _sharedPrefs: SharedPreferences) {
     val doDisplayPhotoToolbar: Boolean

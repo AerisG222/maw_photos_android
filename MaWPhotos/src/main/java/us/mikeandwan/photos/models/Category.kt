@@ -1,11 +1,5 @@
 package us.mikeandwan.photos.models
 
-import us.mikeandwan.photos.models.MultimediaAsset
-import okhttp3.ResponseBody
-import us.mikeandwan.photos.models.FileLocation
-import com.fasterxml.jackson.annotation.JsonFormat
-import us.mikeandwan.photos.models.UploadedFile
-
 class Category {
     var id = 0
     var year = 0

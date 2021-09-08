@@ -1,11 +1,6 @@
 package us.mikeandwan.photos.models
 
-import us.mikeandwan.photos.models.MultimediaAsset
-import okhttp3.ResponseBody
-import us.mikeandwan.photos.models.FileLocation
-import com.fasterxml.jackson.annotation.JsonFormat
 import retrofit2.Response
-import us.mikeandwan.photos.models.UploadedFile
 import java.io.IOException
 import java.util.*
 

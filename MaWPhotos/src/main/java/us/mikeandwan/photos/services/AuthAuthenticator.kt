@@ -1,20 +1,14 @@
 package us.mikeandwan.photos.services
 
 import java9.util.concurrent.CompletableFuture
-import net.openid.appauth.AuthorizationService
-import us.mikeandwan.photos.services.AuthStateManager
-import kotlin.jvm.Synchronized
-import kotlin.Throws
-import okhttp3.Route
-import net.openid.appauth.AuthState
-import timber.log.Timber
-import net.openid.appauth.AuthState.AuthStateAction
 import net.openid.appauth.AuthorizationException
+import net.openid.appauth.AuthorizationService
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.Route
+import timber.log.Timber
 import java.io.IOException
-import java.lang.Exception
 
 class AuthAuthenticator(
     private val _authService: AuthorizationService,

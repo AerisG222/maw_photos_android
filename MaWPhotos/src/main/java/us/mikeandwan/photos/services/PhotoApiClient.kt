@@ -1,51 +1,15 @@
 package us.mikeandwan.photos.services
 
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Multipart
-import us.mikeandwan.photos.services.DatabaseAccessor
-import us.mikeandwan.photos.services.PhotoApiClient
-import us.mikeandwan.photos.services.PhotoStorage
-import io.reactivex.subjects.BehaviorSubject
-import kotlin.Throws
-import timber.log.Timber
-import us.mikeandwan.photos.services.PhotoListType
-import android.text.TextUtils
-import javax.inject.Inject
 import android.webkit.MimeTypeMap
-import android.os.Environment
-import com.commonsware.cwac.provider.StreamProvider
-import retrofit2.Retrofit
-import us.mikeandwan.photos.services.PhotoApi
-import org.apache.commons.io.FilenameUtils
-import android.content.SharedPreferences
-import net.openid.appauth.AuthState
-import androidx.annotation.AnyThread
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.TokenResponse
-import net.openid.appauth.RegistrationResponse
-import us.mikeandwan.photos.services.AuthStateManager
-import org.json.JSONException
-import android.app.Application
-import android.app.job.JobScheduler
-import android.app.job.JobInfo
-import us.mikeandwan.photos.services.MawSQLiteOpenHelper
-import android.database.sqlite.SQLiteDatabase
-import android.content.ContentValues
-import us.mikeandwan.photos.services.BaseJobScheduler
-import us.mikeandwan.photos.MawApplication
-import android.content.ComponentName
-import us.mikeandwan.photos.services.UploadJobService
-import android.database.sqlite.SQLiteOpenHelper
 import okhttp3.*
+import org.apache.commons.io.FilenameUtils
+import retrofit2.Retrofit
+import timber.log.Timber
 import us.mikeandwan.photos.models.*
-import us.mikeandwan.photos.services.UpdateCategoriesJobService
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.net.URL
+import javax.inject.Inject
 
 class PhotoApiClient @Inject constructor(
     private val _httpClient: OkHttpClient,
