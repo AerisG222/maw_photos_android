@@ -1,38 +1,20 @@
-package us.mikeandwan.photos.models;
+package us.mikeandwan.photos.models
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import us.mikeandwan.photos.models.MultimediaAsset
+import okhttp3.ResponseBody
+import us.mikeandwan.photos.models.FileLocation
+import com.fasterxml.jackson.annotation.JsonFormat
+import us.mikeandwan.photos.models.UploadedFile
+import java.util.*
 
-import java.util.Date;
+class UploadedFile {
+    var location: FileLocation? = null
 
-
-public class UploadedFile {
-    private FileLocation _location;
-    private Date _creationTime;
-    private long _sizeInBytes;
-
-
-    public FileLocation getLocation() {
-        return _location;
-    }
-
-    public void setLocation(FileLocation fileLocation) {
-        _location = fileLocation;
-    }
-
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS", timezone="EST")
-    public Date getCreationTime() {
-        return _creationTime;
-    }
-
-    public void setCreationTime(Date creationTime) {
-        _creationTime = creationTime;
-    }
-
-    public long getSizeInBytes() {
-        return _sizeInBytes;
-    }
-
-    public void setSizeInBytes(long sizeInBytes) {
-        _sizeInBytes = sizeInBytes;
-    }
+    @get:JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS",
+        timezone = "EST"
+    )
+    var creationTime: Date? = null
+    var sizeInBytes: Long = 0
 }

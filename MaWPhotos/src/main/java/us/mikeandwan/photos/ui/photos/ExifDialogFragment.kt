@@ -80,7 +80,7 @@ class ExifDialogFragment : BasePhotoDialogFragment() {
             addExifRow("Exposure Mode", format(exif.exposureMode))
             addExifRow("Exposure Program", format(exif.exposureProgram))
             addExifRow("Exposure Time", format(exif.exposureTime))
-            addExifRow("F Number", format(exif.getfNumber()))
+            addExifRow("F Number", format(exif.fNumber))
             addExifRow("Flash", format(exif.flash))
             addExifRow("Focal Length", formatMillimeters(exif.focalLength))
             addExifRow(

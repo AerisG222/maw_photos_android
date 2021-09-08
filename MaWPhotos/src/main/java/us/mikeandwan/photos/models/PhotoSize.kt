@@ -1,9 +1,5 @@
-package us.mikeandwan.photos.models;
+package us.mikeandwan.photos.models
 
-
-public enum PhotoSize {
-    Xs,
-    Sm,
-    Md,
-    Lg
+enum class PhotoSize {
+    Xs, Sm, Md, Lg
 }

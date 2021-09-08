@@ -1,47 +1,44 @@
-package us.mikeandwan.photos.models;
+package us.mikeandwan.photos.models
 
-import java.io.IOException;
-import java.util.Locale;
+import us.mikeandwan.photos.models.MultimediaAsset
+import okhttp3.ResponseBody
+import us.mikeandwan.photos.models.FileLocation
+import com.fasterxml.jackson.annotation.JsonFormat
+import retrofit2.Response
+import us.mikeandwan.photos.models.UploadedFile
+import java.io.IOException
+import java.util.*
 
-import okhttp3.ResponseBody;
-import retrofit2.Response;
+class ApiResult<T>(response: Response<T>?) {
+    var result: T? = null
+    lateinit var error: String
+    var isSuccess = false
 
-
-public class ApiResult<T> {
-    private T _result;
-    private String _error;
-    private boolean _success;
-
-    public T getResult() { return _result; }
-    public String getError() { return _error; }
-    public boolean isSuccess() { return _success; }
-
-
-    public ApiResult(Response<T> response) {
-        if(response == null) {
-            _success = false;
-            _error = "Response was null.  Unable to extract result from API call.";
-        }
-        else {
-            if(response.isSuccessful()) {
-                _success = true;
-                _result = response.body();
+    init {
+        if (response == null) {
+            isSuccess = false
+            error = "Response was null.  Unable to extract result from API call."
+        } else {
+            if (response.isSuccessful) {
+                isSuccess = true
+                result = response.body()
             } else {
-                _success = false;
-
-                ResponseBody body = response.errorBody();
-                String message = response.message();
-
-                if(body != null) {
-                    try {
-                        message = body.string();
-                    }
-                    catch(IOException ioe) {
-                        message = response.message();
+                isSuccess = false
+                val body = response.errorBody()
+                var message = response.message()
+                if (body != null) {
+                    message = try {
+                        body.string()
+                    } catch (ioe: IOException) {
+                        response.message()
                     }
                 }
-
-                _error = String.format(Locale.ENGLISH, "api error response: %d | %s", response.code(), message);
+                error = String.format(
+                    Locale.ENGLISH,
+                    "api error response: %d | %s",
+                    response.code(),
+                    message
+                )
             }
         }
     }

@@ -1,15 +1,13 @@
-package us.mikeandwan.photos.models;
+package us.mikeandwan.photos.models
 
-import java.util.ArrayList;
-import java.util.List;
+import us.mikeandwan.photos.models.MultimediaAsset
+import okhttp3.ResponseBody
+import us.mikeandwan.photos.models.FileLocation
+import com.fasterxml.jackson.annotation.JsonFormat
+import us.mikeandwan.photos.models.UploadedFile
+import java.util.ArrayList
 
-public class ApiCollection<T> {
-    private long _count;
-    private List<T> _items = new ArrayList<>();
-
-    public long getCount() { return _count; }
-    public void setCount(long count) { _count = count; }
-
-    public List<T> getItems() { return _items; }
-    public void setItems(List<T> items) { _items = items; }
+class ApiCollection<T> {
+    var count: Long = 0
+    var items: List<T> = ArrayList()
 }

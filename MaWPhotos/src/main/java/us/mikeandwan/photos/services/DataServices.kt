@@ -201,7 +201,7 @@ class DataServices(
                 val err = result.error
 
                 // TODO: service to return error code
-                if (err.contains("already exists")) {
+                if (err != null && err.contains("already exists")) {
                     _photoStorage.deleteFileToUpload(file)
                     updateQueuedFileSubject()
                 } else {

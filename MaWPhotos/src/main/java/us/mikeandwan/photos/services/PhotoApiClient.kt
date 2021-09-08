@@ -184,7 +184,7 @@ class PhotoApiClient @Inject constructor(
     }
 
     @Throws(IOException::class)
-    fun addComment(photoId: Int, comment: String?) {
+    fun addComment(photoId: Int, comment: String) {
         val cp = CommentPhoto()
         cp.comment = comment
         cp.photoId = photoId
