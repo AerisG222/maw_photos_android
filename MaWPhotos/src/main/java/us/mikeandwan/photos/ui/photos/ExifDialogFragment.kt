@@ -1,29 +1,29 @@
 package us.mikeandwan.photos.ui.photos
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TableRow
+import android.widget.TextView
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import us.mikeandwan.photos.R
+import us.mikeandwan.photos.databinding.DialogExifBinding
+import us.mikeandwan.photos.models.ExifData
+import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.ui.photos.ExifDataFormatter.format
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatMillimeters
 import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatAltitude
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatFourDecimals
 import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatLatitude
 import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatLongitude
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatFourDecimals
 import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatMeters
+import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatMillimeters
 import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatOneDecimal
-import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.disposables.CompositeDisposable
-import us.mikeandwan.photos.R
 import javax.inject.Inject
-import us.mikeandwan.photos.services.DataServices
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.os.Bundle
-import android.view.View
-import android.widget.TableRow
-import us.mikeandwan.photos.models.ExifData
-import io.reactivex.Flowable
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
-import android.widget.TextView
-import us.mikeandwan.photos.databinding.DialogExifBinding
 
 @AndroidEntryPoint
 class ExifDialogFragment : BasePhotoDialogFragment() {

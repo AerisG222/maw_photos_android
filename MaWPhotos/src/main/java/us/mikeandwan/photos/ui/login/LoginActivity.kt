@@ -1,25 +1,21 @@
 package us.mikeandwan.photos.ui.login
 
-import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.ui.BaseActivity
-import io.reactivex.disposables.CompositeDisposable
-import us.mikeandwan.photos.R
-import javax.inject.Inject
-import us.mikeandwan.photos.services.AuthStateManager
-import net.openid.appauth.AuthorizationServiceConfiguration
-import net.openid.appauth.AuthorizationService
-import android.os.Bundle
-import android.content.Intent
-import us.mikeandwan.photos.ui.mode.ModeSelectionActivity
-import net.openid.appauth.AuthState
-import net.openid.appauth.AuthorizationRequest
-import net.openid.appauth.ResponseTypeValues
 import android.app.PendingIntent
+import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
-import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity
+import io.reactivex.disposables.CompositeDisposable
+import net.openid.appauth.*
 import timber.log.Timber
+import us.mikeandwan.photos.R
+import us.mikeandwan.photos.services.AuthStateManager
+import us.mikeandwan.photos.ui.BaseActivity
+import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity
+import us.mikeandwan.photos.ui.mode.ModeSelectionActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity() {

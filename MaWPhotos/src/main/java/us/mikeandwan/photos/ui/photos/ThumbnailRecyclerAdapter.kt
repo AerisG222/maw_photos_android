@@ -2,20 +2,20 @@ package us.mikeandwan.photos.ui.photos
 
 import android.content.Context
 import android.view.View
-import us.mikeandwan.photos.services.DataServices
-import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
 import android.view.ViewGroup
 import android.widget.ImageView
-import io.reactivex.Flowable
-import us.mikeandwan.photos.models.PhotoSize
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.models.Photo
+import us.mikeandwan.photos.models.PhotoSize
+import us.mikeandwan.photos.services.DataServices
 
 class ThumbnailRecyclerAdapter(activity: IPhotoActivity, dataServices: DataServices) :
     RecyclerView.Adapter<ThumbnailRecyclerAdapter.ViewHolder>() {

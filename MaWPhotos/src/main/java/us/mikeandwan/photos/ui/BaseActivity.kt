@@ -2,18 +2,17 @@ package us.mikeandwan.photos.ui
 
 import android.R
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import io.reactivex.ObservableSource
 import androidx.core.view.ViewCompat
-import timber.log.Timber
-import net.openid.appauth.AuthorizationException
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
+import net.openid.appauth.AuthorizationException
+import timber.log.Timber
 import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 

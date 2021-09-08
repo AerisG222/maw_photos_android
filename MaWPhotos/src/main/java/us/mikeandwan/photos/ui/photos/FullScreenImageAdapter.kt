@@ -2,18 +2,17 @@ package us.mikeandwan.photos.ui.photos
 
 import android.content.Context
 import android.view.View
-import us.mikeandwan.photos.ui.photos.IPhotoActivity
-import us.mikeandwan.photos.services.DataServices
-import androidx.viewpager.widget.PagerAdapter
-import io.reactivex.disposables.CompositeDisposable
 import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 import com.github.chrisbanes.photoview.PhotoView
-import io.reactivex.Flowable
-import us.mikeandwan.photos.models.PhotoSize
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
 import com.squareup.picasso.Picasso
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import us.mikeandwan.photos.models.Photo
+import us.mikeandwan.photos.models.PhotoSize
+import us.mikeandwan.photos.services.DataServices
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
 class FullScreenImageAdapter(activity: IPhotoActivity, dataServices: DataServices) :

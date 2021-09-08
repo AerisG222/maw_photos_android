@@ -1,21 +1,21 @@
 package us.mikeandwan.photos.ui.initialLoad
 
-import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.ui.BaseActivity
-import io.reactivex.disposables.CompositeDisposable
-import javax.inject.Inject
-import us.mikeandwan.photos.services.DataServices
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Flowable
-import us.mikeandwan.photos.models.ApiCollection
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import android.content.Intent
 import us.mikeandwan.photos.databinding.ActivityInitialLoadBinding
+import us.mikeandwan.photos.models.ApiCollection
 import us.mikeandwan.photos.models.Category
+import us.mikeandwan.photos.services.DataServices
+import us.mikeandwan.photos.ui.BaseActivity
 import us.mikeandwan.photos.ui.mode.ModeSelectionActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class InitialLoadActivity : BaseActivity() {

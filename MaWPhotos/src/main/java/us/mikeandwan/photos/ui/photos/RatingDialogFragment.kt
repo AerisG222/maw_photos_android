@@ -1,24 +1,20 @@
 package us.mikeandwan.photos.ui.photos
 
-import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.ui.photos.BasePhotoDialogFragment
-import io.reactivex.disposables.CompositeDisposable
-import us.mikeandwan.photos.R
-import android.widget.RatingBar
-import javax.inject.Inject
-import us.mikeandwan.photos.services.DataServices
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.RatingBar
 import android.widget.RatingBar.OnRatingBarChangeListener
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Flowable
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
-import android.view.WindowManager
-import us.mikeandwan.photos.databinding.DialogExifBinding
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import us.mikeandwan.photos.databinding.DialogRatingBinding
 import us.mikeandwan.photos.models.Rating
+import us.mikeandwan.photos.services.DataServices
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RatingDialogFragment : BasePhotoDialogFragment() {

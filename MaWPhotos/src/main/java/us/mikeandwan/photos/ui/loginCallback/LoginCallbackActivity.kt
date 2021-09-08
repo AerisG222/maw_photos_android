@@ -1,28 +1,22 @@
 package us.mikeandwan.photos.ui.loginCallback
 
-import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.ui.BaseActivity
-import javax.inject.Inject
-import us.mikeandwan.photos.services.AuthStateManager
-import net.openid.appauth.AuthorizationServiceConfiguration
-import net.openid.appauth.AuthorizationService
-import us.mikeandwan.photos.R
-import android.os.Bundle
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.AuthorizationException
-import timber.log.Timber
-import androidx.annotation.MainThread
-import net.openid.appauth.AuthorizationService.TokenResponseCallback
-import net.openid.appauth.TokenResponse
-import net.openid.appauth.TokenRequest
-import net.openid.appauth.ClientAuthentication
-import net.openid.appauth.ClientAuthentication.UnsupportedAuthenticationMethod
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
+import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
+import net.openid.appauth.*
+import net.openid.appauth.AuthorizationService.TokenResponseCallback
+import net.openid.appauth.ClientAuthentication.UnsupportedAuthenticationMethod
+import timber.log.Timber
+import us.mikeandwan.photos.R
+import us.mikeandwan.photos.services.AuthStateManager
+import us.mikeandwan.photos.ui.BaseActivity
 import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity
 import us.mikeandwan.photos.ui.login.LoginActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginCallbackActivity : BaseActivity() {

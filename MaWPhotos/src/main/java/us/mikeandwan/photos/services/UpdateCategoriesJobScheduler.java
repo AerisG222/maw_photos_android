@@ -1,13 +1,13 @@
 package us.mikeandwan.photos.services;
 
+import static android.app.job.JobInfo.NETWORK_TYPE_ANY;
+
 import android.app.Application;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 
 import us.mikeandwan.photos.MawApplication;
-
-import static android.app.job.JobInfo.NETWORK_TYPE_ANY;
 
 
 public class UpdateCategoriesJobScheduler extends BaseJobScheduler {

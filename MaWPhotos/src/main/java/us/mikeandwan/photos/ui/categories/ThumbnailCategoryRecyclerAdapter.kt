@@ -1,15 +1,13 @@
 package us.mikeandwan.photos.ui.categories
 
 import android.view.View
-import us.mikeandwan.photos.ui.categories.ICategoryListActivity
-import us.mikeandwan.photos.services.DataServices
-import us.mikeandwan.photos.ui.categories.CategoryRecyclerAdapter
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import us.mikeandwan.photos.R
-import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.models.Category
+import us.mikeandwan.photos.services.DataServices
 
 class ThumbnailCategoryRecyclerAdapter(
     activity: ICategoryListActivity?,

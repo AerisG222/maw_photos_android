@@ -1,16 +1,14 @@
 package us.mikeandwan.photos.di
 
 import android.app.Activity
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import us.mikeandwan.photos.services.DataServices
-import us.mikeandwan.photos.ui.categories.ListCategoryRecyclerAdapter
 import us.mikeandwan.photos.ui.categories.ICategoryListActivity
+import us.mikeandwan.photos.ui.categories.ListCategoryRecyclerAdapter
 import us.mikeandwan.photos.ui.categories.ThumbnailCategoryRecyclerAdapter
 import us.mikeandwan.photos.ui.photos.FullScreenImageAdapter
 import us.mikeandwan.photos.ui.photos.IPhotoActivity

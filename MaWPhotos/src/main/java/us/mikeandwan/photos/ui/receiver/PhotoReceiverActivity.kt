@@ -1,27 +1,26 @@
 package us.mikeandwan.photos.ui.receiver
 
-import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.ui.BaseActivity
-import io.reactivex.disposables.CompositeDisposable
-import javax.inject.Inject
-import us.mikeandwan.photos.services.DataServices
-import us.mikeandwan.photos.services.UploadJobScheduler
-import us.mikeandwan.photos.R
-import android.os.Bundle
 import android.content.Intent
 import android.net.Uri
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
-import androidx.recyclerview.widget.GridLayoutManager
+import android.os.Bundle
 import androidx.recyclerview.widget.DefaultItemAnimator
-import io.reactivex.Flowable
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityPhotoReceiverBinding
+import us.mikeandwan.photos.services.DataServices
+import us.mikeandwan.photos.services.UploadJobScheduler
+import us.mikeandwan.photos.ui.BaseActivity
 import java.io.File
 import java.io.FileNotFoundException
-import java.util.ArrayList
-import kotlin.Throws
+import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PhotoReceiverActivity : BaseActivity() {

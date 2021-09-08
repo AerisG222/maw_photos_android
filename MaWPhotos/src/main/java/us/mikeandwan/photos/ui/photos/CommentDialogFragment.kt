@@ -1,28 +1,30 @@
 package us.mikeandwan.photos.ui.photos
 
 import android.content.Context
-import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.ui.photos.BasePhotoDialogFragment
-import io.reactivex.disposables.CompositeDisposable
-import us.mikeandwan.photos.R
-import javax.inject.Inject
-import us.mikeandwan.photos.services.DataServices
-import android.text.TextUtils
-import us.mikeandwan.photos.models.CommentPhoto
-import io.reactivex.Flowable
-import us.mikeandwan.photos.models.ApiCollection
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
-import android.os.Bundle
 import android.graphics.Typeface
-import android.view.*
-import android.widget.*
-import us.mikeandwan.photos.databinding.ActivityModeSelectionBinding
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TableRow
+import android.widget.TextView
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.DialogCommentBinding
+import us.mikeandwan.photos.models.ApiCollection
 import us.mikeandwan.photos.models.Comment
+import us.mikeandwan.photos.models.CommentPhoto
+import us.mikeandwan.photos.services.DataServices
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CommentDialogFragment : BasePhotoDialogFragment() {

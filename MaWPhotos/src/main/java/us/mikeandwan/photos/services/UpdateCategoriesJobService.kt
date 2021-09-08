@@ -1,24 +1,23 @@
 package us.mikeandwan.photos.services
 
-import dagger.hilt.android.AndroidEntryPoint
-import android.app.job.JobService
-import io.reactivex.disposables.CompositeDisposable
-import us.mikeandwan.photos.MawApplication
-import javax.inject.Inject
-import us.mikeandwan.photos.prefs.NotificationPreference
 import android.app.NotificationManager
-import android.app.job.JobParameters
-import timber.log.Timber
-import io.reactivex.Flowable
-import io.reactivex.schedulers.Schedulers
-import android.content.Intent
-import us.mikeandwan.photos.ui.login.LoginActivity
 import android.app.PendingIntent
+import android.app.job.JobParameters
+import android.app.job.JobService
+import android.content.Intent
 import android.net.Uri
-import androidx.core.app.NotificationCompat
-import us.mikeandwan.photos.R
 import android.text.TextUtils
-import java.lang.Exception
+import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Flowable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
+import us.mikeandwan.photos.MawApplication
+import us.mikeandwan.photos.R
+import us.mikeandwan.photos.prefs.NotificationPreference
+import us.mikeandwan.photos.ui.login.LoginActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class UpdateCategoriesJobService : JobService() {

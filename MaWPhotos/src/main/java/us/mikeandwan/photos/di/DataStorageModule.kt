@@ -1,12 +1,12 @@
 package us.mikeandwan.photos.di
 
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import android.app.Application
 import dagger.Module
 import dagger.Provides
-import us.mikeandwan.photos.services.MawSQLiteOpenHelper
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.services.DatabaseAccessor
+import us.mikeandwan.photos.services.MawSQLiteOpenHelper
 import us.mikeandwan.photos.services.PhotoStorage
 import javax.inject.Singleton
 

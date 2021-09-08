@@ -1,30 +1,24 @@
 package us.mikeandwan.photos.di
 
 import android.app.Application
-import javax.inject.Singleton
-import android.content.SharedPreferences
-import android.preference.PreferenceManager
-import android.app.job.JobScheduler
-import android.app.NotificationManager
-import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler
-import us.mikeandwan.photos.services.UploadJobScheduler
-import us.mikeandwan.photos.services.DatabaseAccessor
-import us.mikeandwan.photos.services.PhotoApiClient
-import us.mikeandwan.photos.services.PhotoStorage
-import us.mikeandwan.photos.services.DataServices
-import android.os.Build
-import us.mikeandwan.photos.R
-import android.media.AudioAttributes
 import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.job.JobScheduler
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
-import us.mikeandwan.photos.MawApplication
+import android.media.AudioAttributes
 import android.media.RingtoneManager
+import android.os.Build
+import android.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import us.mikeandwan.photos.MawApplication
+import us.mikeandwan.photos.R
+import us.mikeandwan.photos.services.*
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

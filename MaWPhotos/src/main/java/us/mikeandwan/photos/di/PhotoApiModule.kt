@@ -1,13 +1,13 @@
 package us.mikeandwan.photos.di
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.DeserializationFeature
-import dagger.Module
-import dagger.Provides
 import retrofit2.converter.jackson.JacksonConverterFactory
 import us.mikeandwan.photos.Constants
 import us.mikeandwan.photos.services.PhotoApiClient

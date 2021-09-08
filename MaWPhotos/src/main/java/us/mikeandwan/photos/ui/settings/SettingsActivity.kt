@@ -1,23 +1,17 @@
 package us.mikeandwan.photos.ui.settings
 
 import android.content.Context
-import dagger.hilt.android.AndroidEntryPoint
-import android.preference.PreferenceActivity
-import javax.inject.Inject
-import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler
-import android.content.SharedPreferences
 import android.content.res.Configuration
-import us.mikeandwan.photos.ui.settings.SettingsActivity
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
-import android.preference.Preference.OnPreferenceChangeListener
 import android.preference.Preference
+import android.preference.Preference.OnPreferenceChangeListener
+import android.preference.PreferenceActivity
+import android.preference.PreferenceManager
 import android.preference.RingtonePreference
 import android.text.TextUtils
 import us.mikeandwan.photos.R
-import android.media.Ringtone
-import android.media.RingtoneManager
-import android.net.Uri
-import android.preference.PreferenceManager
 
 //TODO: fixme
 //@AndroidEntryPoint

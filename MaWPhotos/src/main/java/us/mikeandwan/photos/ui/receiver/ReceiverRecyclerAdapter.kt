@@ -1,20 +1,19 @@
 package us.mikeandwan.photos.ui.receiver
 
 import android.app.Activity
-import androidx.recyclerview.widget.RecyclerView
-import android.webkit.MimeTypeMap
-import android.view.ViewGroup
-import android.view.LayoutInflater
-import us.mikeandwan.photos.R
-import org.apache.commons.io.FilenameUtils
-import androidx.constraintlayout.widget.ConstraintLayout
-import android.widget.VideoView
-import com.squareup.picasso.Picasso
-import android.media.MediaPlayer.OnPreparedListener
 import android.media.MediaPlayer
 import android.net.Uri
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.ImageView
+import android.widget.VideoView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
+import org.apache.commons.io.FilenameUtils
+import us.mikeandwan.photos.R
 import java.io.File
 
 class ReceiverRecyclerAdapter(private val _activity: Activity) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

@@ -2,8 +2,8 @@ package us.mikeandwan.photos.ui.photos
 
 import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.Recycler
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Recycler
 
 // this was needed to properly scroll immediately on resume (like during an orientation change)
 class ThumbnailLinearLayoutManager(

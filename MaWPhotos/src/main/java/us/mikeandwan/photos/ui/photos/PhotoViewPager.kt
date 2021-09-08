@@ -2,13 +2,11 @@ package us.mikeandwan.photos.ui.photos
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.viewpager.widget.ViewPager
-import io.reactivex.subjects.PublishSubject
 import android.view.MotionEvent
+import androidx.viewpager.widget.ViewPager
 import com.github.chrisbanes.photoview.PhotoView
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import io.reactivex.Observable
-import java.lang.IllegalArgumentException
+import io.reactivex.subjects.PublishSubject
 
 // http://stackoverflow.com/questions/11306037/how-to-implement-zoom-pan-and-drag-on-viewpager-in-android
 // https://raw.githubusercontent.com/chrisbanes/PhotoView/master/sample/src/main/java/uk/co/senab/photoview/sample/HackyViewPager.java

@@ -17,6 +17,7 @@ package us.mikeandwan.photos.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

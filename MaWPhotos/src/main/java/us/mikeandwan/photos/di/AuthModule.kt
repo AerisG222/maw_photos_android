@@ -1,26 +1,25 @@
 package us.mikeandwan.photos.di
 
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import android.app.Application
 import android.net.Uri
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import io.reactivex.Observable
-import us.mikeandwan.photos.services.AuthStateManager
+import io.reactivex.ObservableEmitter
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
+import net.openid.appauth.AuthorizationServiceConfiguration
+import timber.log.Timber
+import us.mikeandwan.photos.Constants
 import us.mikeandwan.photos.services.AuthAuthenticator
 import us.mikeandwan.photos.services.AuthInterceptor
-import net.openid.appauth.AuthorizationServiceConfiguration
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.ObservableEmitter
-import net.openid.appauth.AuthorizationServiceConfiguration.RetrieveConfigurationCallback
-import net.openid.appauth.AuthorizationException
-import timber.log.Timber
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
-import us.mikeandwan.photos.Constants
+import us.mikeandwan.photos.services.AuthStateManager
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

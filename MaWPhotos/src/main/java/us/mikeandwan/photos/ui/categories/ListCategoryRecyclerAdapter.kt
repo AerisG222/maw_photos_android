@@ -1,16 +1,13 @@
 package us.mikeandwan.photos.ui.categories
 
-import us.mikeandwan.photos.services.DataServices
-import android.view.ViewGroup
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.ImageView
-import us.mikeandwan.photos.R
-import com.squareup.picasso.Picasso
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import android.widget.TextView
+import com.squareup.picasso.Picasso
+import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.CategoryListItemBinding
 import us.mikeandwan.photos.models.Category
+import us.mikeandwan.photos.services.DataServices
 
 class ListCategoryRecyclerAdapter(
     activity: ICategoryListActivity?,

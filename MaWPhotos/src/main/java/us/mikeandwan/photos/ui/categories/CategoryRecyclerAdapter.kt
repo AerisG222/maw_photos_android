@@ -2,17 +2,16 @@ package us.mikeandwan.photos.ui.categories
 
 import android.content.Context
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
-import us.mikeandwan.photos.ui.categories.ICategoryListActivity
-import us.mikeandwan.photos.services.DataServices
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import us.mikeandwan.photos.models.Category
+import us.mikeandwan.photos.services.DataServices
 
 abstract class CategoryRecyclerAdapter<T : RecyclerView.ViewHolder?>(
     activity: ICategoryListActivity,

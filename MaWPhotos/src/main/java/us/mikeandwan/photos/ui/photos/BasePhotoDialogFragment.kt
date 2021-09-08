@@ -1,7 +1,7 @@
 package us.mikeandwan.photos.ui.photos
 
-import androidx.fragment.app.DialogFragment
 import android.content.Context
+import androidx.fragment.app.DialogFragment
 import us.mikeandwan.photos.models.Photo
 
 open class BasePhotoDialogFragment : DialogFragment() {
