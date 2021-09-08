@@ -26,16 +26,19 @@ import us.mikeandwan.photos.Constants
 @InstallIn(SingletonComponent::class)
 class AuthModule {
     @Provides
+    @Singleton
     fun provideAuthStateManager(application: Application?): AuthStateManager {
         return AuthStateManager.getInstance(application!!)
     }
 
     @Provides
+    @Singleton
     fun provideAuthorizationService(application: Application?): AuthorizationService {
         return AuthorizationService(application!!)
     }
 
     @Provides
+    @Singleton
     fun provideAuthAuthenticator(
         authService: AuthorizationService?,
         authStateManager: AuthStateManager?
@@ -44,6 +47,7 @@ class AuthModule {
     }
 
     @Provides
+    @Singleton
     fun provideAuthInterceptor(authStateManager: AuthStateManager?): AuthInterceptor {
         return AuthInterceptor(authStateManager)
     }
@@ -51,6 +55,7 @@ class AuthModule {
     // http://frogermcs.github.io/async-injection-in-dagger-2-with-rxjava/
     // https://proandroiddev.com/dagger-2-part-three-new-possibilities-3daff12f7ebf
     @Provides
+    @Singleton
     fun provideAuthorizationServiceConfigurationObservable(): Observable<AuthorizationServiceConfiguration?> {
         // we pull in the builder above for dev - so that it can initialize the ssl bits to allow self signed certs
         return Observable.create(

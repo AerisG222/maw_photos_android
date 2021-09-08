@@ -30,21 +30,19 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 class ApplicationModule {
     @Provides
-    fun provideApplication(): Application {
-        return MawApplication.instance;
-    }
-
-    @Provides
+    @Singleton
     fun provideSharedPreferences(app: Application): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(app)
     }
 
     @Provides
+    @Singleton
     fun provideJobScheduler(app: Application): JobScheduler {
         return app.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
     }
 
     @Provides
+    @Singleton
     fun provideNotificationManager(app: Application): NotificationManager {
         val notificationManager =
             app.getSystemService(Application.NOTIFICATION_SERVICE) as NotificationManager
@@ -54,6 +52,7 @@ class ApplicationModule {
     }
 
     @Provides
+    @Singleton
     fun provideUpdateCategoriesJobScheduler(
         app: Application,
         jobScheduler: JobScheduler?
@@ -62,6 +61,7 @@ class ApplicationModule {
     }
 
     @Provides
+    @Singleton
     fun provideUploadScheduler(
         app: Application,
         jobScheduler: JobScheduler?
@@ -70,6 +70,7 @@ class ApplicationModule {
     }
 
     @Provides
+    @Singleton
     fun provideDataServices(
         databaseAccessor: DatabaseAccessor?,
         photoApiClient: PhotoApiClient?,

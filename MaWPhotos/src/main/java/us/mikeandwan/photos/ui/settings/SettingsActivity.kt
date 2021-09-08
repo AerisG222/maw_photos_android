@@ -20,14 +20,11 @@ import android.net.Uri
 import android.preference.PreferenceManager
 
 //TODO: fixme
-@AndroidEntryPoint
+//@AndroidEntryPoint
 class SettingsActivity : PreferenceActivity() {
-    @Inject
-    var _updateScheduler: UpdateCategoriesJobScheduler? = null
+    //@Inject
+    //lateinit var _updateScheduler: UpdateCategoriesJobScheduler
 
-    @JvmField
-    @Inject
-    var _sharedPrefs: SharedPreferences? = null
     override fun onIsMultiPane(): Boolean {
         return isXLargeTablet(this)
     }
@@ -44,7 +41,7 @@ class SettingsActivity : PreferenceActivity() {
             if (preference.key == "sync_frequency") {
                 if (stringValue != preference.sharedPreferences.getString("sync_frequency", "24")) {
                     val millis = (stringValue.toInt() * 60 * 60 * 1000).toLong()
-                    _updateScheduler!!.schedule(false, millis)
+                    //_updateScheduler!!.schedule(false, millis)
                 }
             }
             if (preference is RingtonePreference) {

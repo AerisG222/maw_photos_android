@@ -2,31 +2,16 @@ package us.mikeandwan.photos.ui.photos
 
 import dagger.hilt.android.AndroidEntryPoint
 import us.mikeandwan.photos.ui.BaseActivity
-import us.mikeandwan.photos.ui.photos.IPhotoActivity
 import io.reactivex.disposables.CompositeDisposable
 import us.mikeandwan.photos.services.PhotoListType
-import butterknife.BindView
 import us.mikeandwan.photos.R
-import androidx.constraintlayout.widget.ConstraintLayout
-import android.widget.ProgressBar
-import android.widget.ImageButton
-import us.mikeandwan.photos.ui.photos.PhotoViewPager
-import androidx.recyclerview.widget.RecyclerView
-import butterknife.OnClick
 import javax.inject.Inject
 import us.mikeandwan.photos.prefs.PhotoDisplayPreference
 import us.mikeandwan.photos.services.DataServices
-import us.mikeandwan.photos.ui.photos.FullScreenImageAdapter
-import us.mikeandwan.photos.ui.photos.ThumbnailRecyclerAdapter
 import android.os.Bundle
-import us.mikeandwan.photos.ui.photos.PhotoListActivity
-import butterknife.ButterKnife
 import android.content.Intent
 import us.mikeandwan.photos.ui.settings.SettingsActivity
 import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity
-import us.mikeandwan.photos.ui.photos.RatingDialogFragment
-import us.mikeandwan.photos.ui.photos.ExifDialogFragment
-import us.mikeandwan.photos.ui.photos.CommentDialogFragment
 import timber.log.Timber
 import io.reactivex.Flowable
 import us.mikeandwan.photos.models.ApiCollection
@@ -34,16 +19,13 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
 import androidx.core.view.MenuItemCompat
 import us.mikeandwan.photos.models.PhotoSize
-import us.mikeandwan.photos.ui.photos.PhotoListActivity.SlideshowRunnable
-import us.mikeandwan.photos.ui.photos.ThumbnailLinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.View.OnTouchListener
 import androidx.constraintlayout.widget.ConstraintSet
 import android.animation.ObjectAnimator
-import android.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.view.*
 import androidx.appcompat.widget.ShareActionProvider
-import androidx.appcompat.widget.Toolbar
+import us.mikeandwan.photos.databinding.ActivityPhotoListBinding
 import us.mikeandwan.photos.models.Photo
 import java.util.ArrayList
 import java.util.HashSet
@@ -62,83 +44,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     private var _categoryId = 0
     private var _menuShare: MenuItem? = null
 
-    @JvmField
-    @BindView(R.id.container)
-    var _container: ConstraintLayout? = null
-
-    @JvmField
-    @BindView(R.id.progressBar)
-    var _progressBar: ProgressBar? = null
-
-    @JvmField
-    @BindView(R.id.toolbar)
-    var _toolbar: Toolbar? = null
-
-    @JvmField
-    @BindView(R.id.photoToolbar)
-    var _photoToolbar: ConstraintLayout? = null
-
-    @JvmField
-    @BindView(R.id.commentButton)
-    var _commentButton: ImageButton? = null
-
-    @JvmField
-    @BindView(R.id.exifButton)
-    var _exifButton: ImageButton? = null
-
-    @JvmField
-    @BindView(R.id.rotateLeftButton)
-    var _rotateLeftButton: ImageButton? = null
-
-    @JvmField
-    @BindView(R.id.rotateRightButton)
-    var _rotateRightButton: ImageButton? = null
-
-    @JvmField
-    @BindView(R.id.ratingButton)
-    var _ratingButton: ImageButton? = null
-
-    @JvmField
-    @BindView(R.id.slideshowButton)
-    var _slideshowButton: ImageButton? = null
-
-    @JvmField
-    @BindView(R.id.photoPager)
-    var _photoPager: PhotoViewPager? = null
-
-    @JvmField
-    @BindView(R.id.thumbnailPhotoRecycler)
-    var _thumbnailRecyclerView: RecyclerView? = null
-
-    @OnClick(R.id.exifButton)
-    fun onExifButtonClick() {
-        showExif()
-    }
-
-    @OnClick(R.id.ratingButton)
-    fun onRatingButtonClick() {
-        showRating()
-    }
-
-    @OnClick(R.id.commentButton)
-    fun onCommentButtonClick() {
-        showComments()
-    }
-
-    @OnClick(R.id.rotateLeftButton)
-    fun onRotateLeftButtonClick() {
-        rotatePhoto(-1)
-    }
-
-    @OnClick(R.id.rotateRightButton)
-    fun onRotateRightButtonClick() {
-        rotatePhoto(1)
-    }
-
-    @OnClick(R.id.slideshowButton)
-    fun onSlideshowButtonClick() {
-        toggleSlideshow()
-    }
+    private lateinit var binding: ActivityPhotoListBinding
 
     @Inject lateinit var _photoPrefs: PhotoDisplayPreference
     @Inject lateinit var _dataServices: DataServices
@@ -153,9 +59,12 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityPhotoListBinding.inflate(layoutInflater)
+
         _type = PhotoListType.valueOf(intent.getStringExtra("TYPE")!!)
         _name = intent.getStringExtra("NAME")
         _categoryId = intent.getIntExtra("CATEGORY_ID", -1)
+
         if (savedInstanceState != null) {
             _index = savedInstanceState.getInt(STATE_INDEX)
             _isRandomView = savedInstanceState.getBoolean(STATE_IS_RANDOM_VIEW)
@@ -163,8 +72,8 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
             _playingSlideshow = savedInstanceState.getBoolean(STATE_PLAYING_SLIDESHOW)
             _photoList = savedInstanceState.getSerializable(STATE_PHOTO_LIST) as ArrayList<Photo>?
         }
-        setContentView(R.layout.activity_photo_list)
-        ButterKnife.bind(this)
+
+        setContentView(binding.root)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -195,9 +104,9 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         _photoPagerAdapter!!.refreshPhotoList()
         _thumbnailRecyclerAdapter!!.refreshPhotoList()
         layoutActivity()
-        _photoPager!!.adapter = _photoPagerAdapter
+        binding.photoPager.adapter = _photoPagerAdapter
         _disposables.add(
-            _photoPager!!.onPhotoSelected().subscribe { index: Int -> gotoPhoto(index) })
+            binding.photoPager.onPhotoSelected().subscribe { index: Int -> gotoPhoto(index) })
 
         // if we are coming back from an orientation change, we might already have a valid list
         // populated.  if so, use the original list.
@@ -247,23 +156,31 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         updateProgress()
     }
 
-    fun showRating() {
+    fun showRating(view: View) {
         showDialog(RatingDialogFragment())
     }
 
-    fun showExif() {
+    fun showExif(view: View) {
         showDialog(ExifDialogFragment())
     }
 
-    fun showComments() {
+    fun showComments(view: View) {
         showDialog(CommentDialogFragment())
     }
 
-    fun rotatePhoto(direction: Int) {
-        _photoPager!!.rotateImage(direction)
+    fun rotatePhotoLeft(view: View) {
+        rotatePhoto(-1)
     }
 
-    fun toggleSlideshow() {
+    fun rotatePhotoRight(view: View) {
+        rotatePhoto(1)
+    }
+
+    fun rotatePhoto(direction: Int) {
+        binding.photoPager.rotateImage(direction)
+    }
+
+    fun toggleSlideshow(view: View) {
         _playingSlideshow = if (_slideshowExecutor != null) {
             stopSlideshow()
             false
@@ -278,9 +195,9 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
             val count = _taskCount.get()
             Timber.d("task count: %d", count)
             if (count > 0) {
-                _progressBar!!.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.VISIBLE
             } else {
-                _progressBar!!.visibility = View.INVISIBLE
+                binding.progressBar.visibility = View.INVISIBLE
             }
         }
     }
@@ -394,8 +311,8 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     }
 
     private fun displayMainImage(photo: Photo) {
-        _photoPager!!.currentItem = _index
-        _thumbnailRecyclerView!!.scrollToPosition(_index)
+        binding.photoPager.currentItem = _index
+        binding.thumbnailPhotoRecycler.scrollToPosition(_index)
         val sap = MenuItemCompat.getActionProvider(_menuShare) as ShareActionProvider
         sap?.setShareIntent(createShareIntent(photo))
         prefetchMainImage(_index)
@@ -434,11 +351,14 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
 
     private fun showDialog(fragment: DialogFragment) {
         ensureSlideshowStopped()
-        val ft = fragmentManager.beginTransaction()
-        val prev = fragmentManager.findFragmentByTag("dialog")
+
+        val ft = supportFragmentManager.beginTransaction()
+        val prev = supportFragmentManager.findFragmentByTag("dialog")
+
         if (prev != null) {
             ft.remove(prev)
         }
+
         ft.addToBackStack(null)
         fragment.show(ft, "dialog")
     }
@@ -447,23 +367,26 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         if (_slideshowExecutor == null) {
             val intervalSeconds = _photoPrefs!!.slideshowIntervalInSeconds
             _slideshowExecutor = ScheduledThreadPoolExecutor(1)
+
             _slideshowExecutor!!.scheduleWithFixedDelay(
                 { incrementSlideshow() },
                 intervalSeconds.toLong(),
                 intervalSeconds.toLong(),
                 TimeUnit.SECONDS
             )
-            _slideshowButton!!.setImageResource(R.drawable.ic_stop_white_24dp)
+
+            binding.slideshowButton.setImageResource(R.drawable.ic_stop_white_24dp)
         }
     }
 
     private fun incrementSlideshow() {
         val nextIndex = _index + 1
+
         if (nextIndex < _photoList!!.size) {
             val slideshowRunnable = SlideshowRunnable(nextIndex)
             runOnUiThread(slideshowRunnable)
         } else {
-            runOnUiThread { toggleSlideshow() }
+            runOnUiThread { toggleSlideshow(binding.root) }
         }
     }
 
@@ -471,39 +394,43 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         if (_slideshowExecutor != null) {
             _slideshowExecutor!!.shutdownNow()
             _slideshowExecutor = null
-            _slideshowButton!!.setImageResource(R.drawable.ic_play_arrow_white_24dp)
+            binding.slideshowButton.setImageResource(R.drawable.ic_play_arrow_white_24dp)
         }
     }
 
     private fun ensureSlideshowStopped() {
         if (_slideshowExecutor != null) {
-            toggleSlideshow()
+            toggleSlideshow(binding.root)
         }
     }
 
     private fun layoutActivity() {
-        displayView(_toolbar, _photoPrefs!!.doDisplayTopToolbar)
-        displayView(_photoToolbar, _photoPrefs!!.doDisplayPhotoToolbar)
-        displayView(_thumbnailRecyclerView, _photoPrefs!!.doDisplayThumbnails)
+        displayView(binding.toolbar, _photoPrefs!!.doDisplayTopToolbar)
+        displayView(binding.photoToolbar, _photoPrefs!!.doDisplayPhotoToolbar)
+        displayView(binding.thumbnailPhotoRecycler, _photoPrefs!!.doDisplayThumbnails)
+
         if (_photoPrefs!!.doDisplayTopToolbar) {
-            updateToolbar(_toolbar, _name.toString())
+            updateToolbar(binding.toolbar, _name.toString())
         }
+
         if (_photoPrefs!!.doDisplayThumbnails) {
             val llm =
                 ThumbnailLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false, _index)
-            _thumbnailRecyclerView!!.setHasFixedSize(true)
-            _thumbnailRecyclerView!!.layoutManager = llm
-            _thumbnailRecyclerView!!.adapter = _thumbnailRecyclerAdapter
+            binding.thumbnailPhotoRecycler.setHasFixedSize(true)
+            binding.thumbnailPhotoRecycler.layoutManager = llm
+            binding.thumbnailPhotoRecycler.adapter = _thumbnailRecyclerAdapter
             _disposables.add(
                 _thumbnailRecyclerAdapter!!.onThumbnailSelected()
                     .subscribe { index: Int -> gotoPhoto(index) })
+
             if (_photoPrefs!!.doFadeControls) {
-                _thumbnailRecyclerView!!.setOnTouchListener { view: View?, event: MotionEvent? ->
-                    fade(_thumbnailRecyclerView)
+                binding.thumbnailPhotoRecycler.setOnTouchListener { view: View?, event: MotionEvent? ->
+                    fade(binding.thumbnailPhotoRecycler)
                     false
                 }
             }
         }
+
         if (!_photoPrefs!!.doFadeControls) {
             val set = ConstraintSet()
             set.constrainHeight(R.id.photoPager, 0)
@@ -519,7 +446,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
 
             // if we do not updateOpacity the controls, then we must reconfigure the photo layout to
             // be within the controls that are displayed
-            if (_toolbar!!.isShown) {
+            if (binding.toolbar.isShown) {
                 set.connect(
                     R.id.photoPager,
                     ConstraintSet.TOP,
@@ -536,7 +463,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
                     0
                 )
             }
-            if (_photoToolbar!!.isShown) {
+            if (binding.photoToolbar.isShown) {
                 set.connect(
                     R.id.photoPager,
                     ConstraintSet.BOTTOM,
@@ -544,7 +471,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
                     ConstraintSet.TOP,
                     0
                 )
-            } else if (_thumbnailRecyclerView!!.isShown) {
+            } else if (binding.thumbnailPhotoRecycler.isShown) {
                 set.connect(
                     R.id.photoPager,
                     ConstraintSet.BOTTOM,
@@ -561,8 +488,9 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
                     0
                 )
             }
-            set.applyTo(_container)
+            set.applyTo(binding.container)
         }
+
         updateOpacity()
     }
 
@@ -573,13 +501,13 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
 
     private fun updateOpacity() {
         if (_photoPrefs!!.doFadeControls) {
-            fade(_toolbar)
-            fade(_photoToolbar)
-            fade(_thumbnailRecyclerView)
+            fade(binding.toolbar)
+            fade(binding.photoToolbar)
+            fade(binding.thumbnailPhotoRecycler)
         } else {
-            appear(_toolbar)
-            appear(_photoToolbar)
-            appear(_thumbnailRecyclerView)
+            appear(binding.toolbar)
+            appear(binding.photoToolbar)
+            appear(binding.thumbnailPhotoRecycler)
         }
     }
 
@@ -597,6 +525,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     private fun createShareIntent(photo: Photo?): Intent? {
         if (photo != null) {
             val contentUri = _dataServices!!.getSharingContentUri(photo.imageMd.url)
+
             if (contentUri != null) {
                 val shareIntent = Intent(Intent.ACTION_SEND)
                 shareIntent.setDataAndType(contentUri, "image/*")
@@ -605,11 +534,13 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
                 return shareIntent
             }
         }
+
         return null
     }
 
     private inner class SlideshowRunnable internal constructor(private val _nextIndex: Int) :
         Runnable {
+
         override fun run() {
             gotoPhoto(_nextIndex)
         }

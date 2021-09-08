@@ -1,141 +1,114 @@
-package us.mikeandwan.photos.services;
+package us.mikeandwan.photos.services
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.job.JobParameters;
-import android.app.job.JobService;
-import android.content.Intent;
-import android.net.Uri;
-import androidx.core.app.NotificationCompat;
-import android.text.TextUtils;
+import dagger.hilt.android.AndroidEntryPoint
+import android.app.job.JobService
+import io.reactivex.disposables.CompositeDisposable
+import us.mikeandwan.photos.MawApplication
+import javax.inject.Inject
+import us.mikeandwan.photos.prefs.NotificationPreference
+import android.app.NotificationManager
+import android.app.job.JobParameters
+import timber.log.Timber
+import io.reactivex.Flowable
+import io.reactivex.schedulers.Schedulers
+import android.content.Intent
+import us.mikeandwan.photos.ui.login.LoginActivity
+import android.app.PendingIntent
+import android.net.Uri
+import androidx.core.app.NotificationCompat
+import us.mikeandwan.photos.R
+import android.text.TextUtils
+import java.lang.Exception
 
-import java.util.List;
+@AndroidEntryPoint
+class UpdateCategoriesJobService : JobService() {
+    private val _disposables = CompositeDisposable()
+    private val _app: MawApplication? = null
 
-import javax.inject.Inject;
+    @Inject lateinit var _dataServices: DataServices
+    @Inject lateinit var _notificationPref: NotificationPreference
+    @Inject lateinit var _notificationManager: NotificationManager
 
-import io.reactivex.Flowable;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
-import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.prefs.NotificationPreference;
-import us.mikeandwan.photos.ui.login.LoginActivity;
-
-
-public class UpdateCategoriesJobService extends JobService {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-    private MawApplication _app;
-
-    @Inject DataServices _dataServices;
-    @Inject NotificationPreference _notificationPref;
-    @Inject NotificationManager _notificationManager;
-
-
-    @Override
-    public boolean onStartJob(final JobParameters params) {
-        Timber.d("Update Categories Job started");
-
-        _app = (MawApplication) getApplication();
-        _app.getApplicationComponent().inject(this);
-
+    override fun onStartJob(params: JobParameters): Boolean {
+        Timber.d("Update Categories Job started")
         _disposables.add(Flowable
-            .fromCallable(this::updateCategories)
+            .fromCallable { updateCategories() }
             .subscribeOn(Schedulers.io())
             .subscribe(
-                    x -> {
-                        Timber.i("completed updating categories");
-                        jobFinished(params, false);
-                    },
-                    ex -> {
-                        Timber.e("error updating categories: %s", ex.getMessage());
-                        jobFinished(params, false);
-                    }
-            )
-        );
-
-        return true;
+                { x: Boolean? ->
+                    Timber.i("completed updating categories")
+                    jobFinished(params, false)
+                }
+            ) { ex: Throwable ->
+                Timber.e("error updating categories: %s", ex.message)
+                jobFinished(params, false)
+            }
+        )
+        return true
     }
 
-
-    @Override
-    public boolean onStopJob(final JobParameters params) {
-        Timber.d("Update Categories Job was cancelled before completing.");
-
-        _disposables.clear();
-
-        return false;
+    override fun onStopJob(params: JobParameters): Boolean {
+        Timber.d("Update Categories Job was cancelled before completing.")
+        _disposables.clear()
+        return false
     }
 
-
-    private boolean updateCategories() {
-        int totalCount;
-
+    private fun updateCategories(): Boolean {
+        var totalCount: Int
         try {
-            Timber.d("about to get recent categories");
-
-            List<Category> categories = _dataServices.getRecentCategories().getItems();
-
-            totalCount = _app.getNotificationCount() + categories.size();
-
-            Timber.i("received recent categories; count: %d", totalCount);
-
-            _app.setNotificationCount(totalCount);
-        } catch (Exception ex) {
-            Timber.e("Error trying to obtain recent categories: %s", ex.getMessage());
-            totalCount = -1;
+            Timber.d("about to get recent categories")
+            val categories = _dataServices!!.recentCategories.items
+            totalCount = _app!!.notificationCount + categories.size
+            Timber.i("received recent categories; count: %d", totalCount)
+            _app.notificationCount = totalCount
+        } catch (ex: Exception) {
+            Timber.e("Error trying to obtain recent categories: %s", ex.message)
+            totalCount = -1
         }
 
         // force a notification about bad credentials
-        if (totalCount < 0 || (totalCount > 0 && _notificationPref.getDoNotify())) {
-            addNotification(totalCount, _notificationPref.getNotificationRingtone(), _notificationPref.getDoVibrate());
+        if (totalCount < 0 || totalCount > 0 && _notificationPref!!.doNotify) {
+            addNotification(
+                totalCount,
+                _notificationPref!!.notificationRingtone,
+                _notificationPref!!.doVibrate
+            )
         }
-
-        return true;
+        return true
     }
 
-
-    private void addNotification(int count, String ringtone, Boolean vibrate) {
-        Intent i = new Intent(Intent.ACTION_MAIN);
-        i.setClass(this, LoginActivity.class);
-
-        String title;
-        String contentText;
-
+    private fun addNotification(count: Int, ringtone: String, vibrate: Boolean) {
+        val i = Intent(Intent.ACTION_MAIN)
+        i.setClass(this, LoginActivity::class.java)
+        val title: String
+        val contentText: String
         if (count == -1) {
-            title = "Authentication Error";
-            contentText = "Please update your credentials";
+            title = "Authentication Error"
+            contentText = "Please update your credentials"
         } else {
-            title = "New Photos Available";
-            String pluralize = count == 1 ? "category" : "categories";
-            contentText = count + " new " + pluralize;
+            title = "New Photos Available"
+            val pluralize = if (count == 1) "category" else "categories"
+            contentText = "$count new $pluralize"
         }
-
-        PendingIntent detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
+        val detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT)
+        val builder =
+            NotificationCompat.Builder(this, MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
                 .setSmallIcon(R.drawable.ic_status_notification)
                 .setContentTitle(title)
                 .setContentText(contentText)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(detailsIntent)
                 .setAutoCancel(true)
-                .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE);
-
+                .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
         if (!TextUtils.isEmpty(ringtone)) {
-            builder.setSound(Uri.parse(ringtone));
+            builder.setSound(Uri.parse(ringtone))
         }
-
         if (vibrate) {
-            builder.setVibrate(new long[]{300, 300});
+            builder.setVibrate(longArrayOf(300, 300))
         }
-
-        Notification notification = builder.build();
-
-        if(_notificationManager != null) {
-            _notificationManager.notify(0, notification);
+        val notification = builder.build()
+        if (_notificationManager != null) {
+            _notificationManager!!.notify(0, notification)
         }
     }
 }

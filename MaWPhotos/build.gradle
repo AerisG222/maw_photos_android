@@ -59,7 +59,6 @@ android {
     buildTypes {
         debug {
             debuggable true
-            javaCompileOptions.annotationProcessorOptions.argument('butterknife.debuggable', 'true')
 
             //shrinkResources true
             //minifyEnabled true
@@ -78,7 +77,6 @@ android {
             //minifyEnabled true
 
             debuggable false
-            javaCompileOptions.annotationProcessorOptions.argument('butterknife.debuggable', 'false')
             //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-butterknife.pro', 'proguard-retrofit.pro', 'proguard-maw.pro'
             signingConfig signingConfigs.maw
         }

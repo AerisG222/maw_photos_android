@@ -1,121 +1,103 @@
-package us.mikeandwan.photos.services;
+package us.mikeandwan.photos.services
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.job.JobParameters;
-import android.app.job.JobService;
-import android.content.Intent;
-import android.net.Uri;
-import androidx.core.app.NotificationCompat;
-import android.text.TextUtils;
+import dagger.hilt.android.AndroidEntryPoint
+import android.app.job.JobService
+import io.reactivex.disposables.CompositeDisposable
+import us.mikeandwan.photos.MawApplication
+import javax.inject.Inject
+import us.mikeandwan.photos.services.DataServices
+import us.mikeandwan.photos.prefs.NotificationPreference
+import android.app.NotificationManager
+import android.app.job.JobParameters
+import timber.log.Timber
+import io.reactivex.schedulers.Schedulers
+import android.content.Intent
+import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity
+import android.app.PendingIntent
+import android.net.Uri
+import androidx.core.app.NotificationCompat
+import us.mikeandwan.photos.R
+import android.text.TextUtils
+import java.io.File
+import java.util.*
+import java.util.concurrent.TimeUnit
 
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+@AndroidEntryPoint
+class UploadJobService : JobService() {
+    private val _disposables = CompositeDisposable()
+    private val _app: MawApplication? = null
+    private var _uploadCount = 0
 
-import javax.inject.Inject;
+    @Inject lateinit var _dataServices: DataServices
+    @Inject lateinit var _notificationPref: NotificationPreference
+    @Inject lateinit var _notificationManager: NotificationManager
 
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
-import us.mikeandwan.photos.MawApplication;
-import us.mikeandwan.photos.R;
-import us.mikeandwan.photos.prefs.NotificationPreference;
-import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity;
-
-
-public class UploadJobService extends JobService {
-    private final CompositeDisposable _disposables = new CompositeDisposable();
-    private MawApplication _app;
-    private int _uploadCount = 0;
-
-    @Inject DataServices _dataServices;
-    @Inject NotificationPreference _notificationPref;
-    @Inject NotificationManager _notificationManager;
-
-
-    @Override
-    public boolean onStartJob(JobParameters params) {
-        Timber.d("Starting upload files job");
-
-        _app = (MawApplication) getApplication();
-        _app.getApplicationComponent().inject(this);
-
+    override fun onStartJob(params: JobParameters): Boolean {
+        Timber.d("Starting upload files job")
         _disposables.add(_dataServices
             .getFileQueueObservable()
-            .filter(Objects::nonNull)
+            .filter { obj: Array<File?>? -> Objects.nonNull(obj) }
             .debounce(100, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .subscribe(
-                files -> {
-                    if(files.length == 0) {
-                        alertIfNeeded();
-                        jobFinished(params, true);
+                { files: Array<File?> ->
+                    if (files.size == 0) {
+                        alertIfNeeded()
+                        jobFinished(params, true)
                     } else {
-                        _dataServices.uploadQueuedFile(files[0]);
-                        _uploadCount++;
+                        _dataServices!!.uploadQueuedFile(files[0])
+                        _uploadCount++
                     }
-                },
-                ex -> {
-                    Timber.e("error uploading files: %s", ex.getMessage());
-                    alertIfNeeded();
-                    jobFinished(params, true);
                 }
+            ) { ex: Throwable ->
+                Timber.e("error uploading files: %s", ex.message)
+                alertIfNeeded()
+                jobFinished(params, true)
+            }
+        )
+        return true
+    }
+
+    override fun onStopJob(params: JobParameters): Boolean {
+        Timber.d("Stopping upload files job")
+        alertIfNeeded()
+        _disposables.clear()
+        return true
+    }
+
+    private fun alertIfNeeded() {
+        if (_uploadCount > 0) {
+            addNotification(
+                _uploadCount,
+                _notificationPref!!.notificationRingtone,
+                _notificationPref!!.doVibrate
             )
-        );
-
-        return true;
-    }
-
-
-    @Override
-    public boolean onStopJob(JobParameters params) {
-        Timber.d("Stopping upload files job");
-
-        alertIfNeeded();
-
-        _disposables.clear();
-
-        return true;
-    }
-
-
-    private void alertIfNeeded() {
-        if(_uploadCount > 0) {
-            addNotification(_uploadCount, _notificationPref.getNotificationRingtone(), _notificationPref.getDoVibrate());
         }
-
-        _uploadCount = 0;
+        _uploadCount = 0
     }
 
-
-    private void addNotification(int uploadCount, String ringtone, Boolean vibrate) {
-        Intent i = new Intent(Intent.ACTION_MAIN);
-        i.setClass(this, PhotoReceiverActivity.class);
-
-        PendingIntent detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
-            .setSmallIcon(R.drawable.ic_status_notification)
-            .setContentTitle("Media Uploaded!")
-            .setContentText(uploadCount + " file(s) uploaded.  Go to mikeandwan.us to manage your files.")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(detailsIntent)
-            .setAutoCancel(true)
-            .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE);
-
+    private fun addNotification(uploadCount: Int, ringtone: String, vibrate: Boolean) {
+        val i = Intent(Intent.ACTION_MAIN)
+        i.setClass(this, PhotoReceiverActivity::class.java)
+        val detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT)
+        val builder =
+            NotificationCompat.Builder(this, MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
+                .setSmallIcon(R.drawable.ic_status_notification)
+                .setContentTitle("Media Uploaded!")
+                .setContentText("$uploadCount file(s) uploaded.  Go to mikeandwan.us to manage your files.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(detailsIntent)
+                .setAutoCancel(true)
+                .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
         if (!TextUtils.isEmpty(ringtone)) {
-            builder.setSound(Uri.parse(ringtone));
+            builder.setSound(Uri.parse(ringtone))
         }
-
         if (vibrate) {
-            builder.setVibrate(new long[]{300, 300});
+            builder.setVibrate(longArrayOf(300, 300))
         }
-
-        Notification notification = builder.build();
-
-        if(_notificationManager != null) {
-            _notificationManager.notify(0, notification);
+        val notification = builder.build()
+        if (_notificationManager != null) {
+            _notificationManager!!.notify(0, notification)
         }
     }
 }

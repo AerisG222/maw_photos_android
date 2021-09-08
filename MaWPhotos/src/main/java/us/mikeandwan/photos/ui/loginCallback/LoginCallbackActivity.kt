@@ -6,10 +6,8 @@ import javax.inject.Inject
 import us.mikeandwan.photos.services.AuthStateManager
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.AuthorizationService
-import butterknife.OnClick
 import us.mikeandwan.photos.R
 import android.os.Bundle
-import butterknife.ButterKnife
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationException
 import timber.log.Timber
@@ -20,6 +18,7 @@ import net.openid.appauth.TokenRequest
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientAuthentication.UnsupportedAuthenticationMethod
 import android.content.Intent
+import android.view.View
 import androidx.annotation.WorkerThread
 import io.reactivex.Observable
 import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity
@@ -31,16 +30,10 @@ class LoginCallbackActivity : BaseActivity() {
     @Inject lateinit var _config: Observable<AuthorizationServiceConfiguration>
     @Inject lateinit var _authService: AuthorizationService
 
-    @OnClick(R.id.retryLoginButton)
-    fun onLoginButtonClick() {
-        retryLogin()
-    }
-
     // https://github.com/openid/AppAuth-Android/blob/master/app/java/net/openid/appauthdemo/TokenActivity.java
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_callback)
-        ButterKnife.bind(this)
     }
 
     public override fun onStart() {
@@ -120,7 +113,7 @@ class LoginCallbackActivity : BaseActivity() {
         finish()
     }
 
-    private fun retryLogin() {
+    private fun retryLogin(view: View) {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()

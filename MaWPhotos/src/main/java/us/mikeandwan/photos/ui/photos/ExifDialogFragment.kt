@@ -9,13 +9,8 @@ import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatFourDecimals
 import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatMeters
 import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatOneDecimal
 import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.ui.photos.BasePhotoDialogFragment
 import io.reactivex.disposables.CompositeDisposable
-import butterknife.Unbinder
-import butterknife.BindDimen
 import us.mikeandwan.photos.R
-import butterknife.BindView
-import android.widget.TableLayout
 import javax.inject.Inject
 import us.mikeandwan.photos.services.DataServices
 import android.view.LayoutInflater
@@ -23,47 +18,40 @@ import android.view.ViewGroup
 import android.os.Bundle
 import android.view.View
 import android.widget.TableRow
-import butterknife.ButterKnife
 import us.mikeandwan.photos.models.ExifData
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
 import android.widget.TextView
+import us.mikeandwan.photos.databinding.DialogExifBinding
 
 @AndroidEntryPoint
 class ExifDialogFragment : BasePhotoDialogFragment() {
     private val _disposables = CompositeDisposable()
-    private var _unbinder: Unbinder? = null
-
-    @JvmField
-    @BindDimen(R.dimen._2dp)
-    var _2dp = 0
-
-    @JvmField
-    @BindDimen(R.dimen._4dp)
-    var _4dp = 0
-
-    @JvmField
-    @BindDimen(R.dimen._8dp)
-    var _8dp = 0
-
-    @JvmField
-    @BindView(R.id.exifView)
-    var _exifView: TableLayout? = null
+    private var _binding: DialogExifBinding? = null
+    private val binding get() = _binding!!
+    private var _2dp = 0
+    private var _4dp = 0
+    private var _8dp = 0
 
     @JvmField
     @Inject
     var _dataServices: DataServices? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle
+        savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.dialog_exif, container, false)
-        _unbinder = ButterKnife.bind(this, view)
-        dialog.setTitle("Exif Data")
-        return view
+        _binding = DialogExifBinding.inflate(inflater, container, false)
+
+        _2dp = resources.getDimension(R.dimen._2dp).toInt()
+        _4dp = resources.getDimension(R.dimen._4dp).toInt()
+        _8dp = resources.getDimension(R.dimen._8dp).toInt()
+
+        requireDialog().setTitle("Exif Data")
+
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -78,7 +66,6 @@ class ExifDialogFragment : BasePhotoDialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         _disposables.clear() // do not send event after activity has been destroyed
-        _unbinder!!.unbind()
     }
 
     private fun displayExifData(exif: ExifData?) {
@@ -185,10 +172,12 @@ class ExifDialogFragment : BasePhotoDialogFragment() {
     private fun addExifRow(name: String, value: String?) {
         val ctx = context
         val row = TableRow(ctx)
-        _exifView!!.addView(row)
-        if (_exifView!!.childCount % 2 == 1) {
+        binding.exifView.addView(row)
+
+        if (binding.exifView.childCount % 2 == 1) {
             row.setBackgroundColor(-0xddddde)
         }
+
         val nameView = TextView(ctx)
         nameView.text = name
         nameView.setPadding(_4dp, _2dp, _4dp, _2dp)

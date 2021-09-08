@@ -5,7 +5,6 @@ import us.mikeandwan.photos.ui.BaseActivity
 import io.reactivex.disposables.CompositeDisposable
 import android.widget.SimpleExpandableListAdapter
 import us.mikeandwan.photos.MawApplication
-import butterknife.BindView
 import us.mikeandwan.photos.R
 import android.widget.ExpandableListView
 import javax.inject.Inject
@@ -14,10 +13,6 @@ import us.mikeandwan.photos.services.AuthStateManager
 import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler
 import android.content.SharedPreferences
 import android.os.Bundle
-import butterknife.ButterKnife
-import android.widget.ExpandableListView.OnChildClickListener
-import us.mikeandwan.photos.ui.mode.ModeSelectionActivity
-import android.view.MenuInflater
 import android.content.Intent
 import us.mikeandwan.photos.ui.settings.SettingsActivity
 import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity
@@ -37,7 +32,7 @@ import us.mikeandwan.photos.models.ApiCollection
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import androidx.appcompat.widget.Toolbar
+import us.mikeandwan.photos.databinding.ActivityModeSelectionBinding
 import us.mikeandwan.photos.models.Category
 import java.util.ArrayList
 import java.util.HashMap
@@ -53,13 +48,7 @@ class ModeSelectionActivity : BaseActivity() {
     private var _refreshMenuItem: MenuItem? = null
     private var _app: MawApplication? = null
 
-    @JvmField
-    @BindView(R.id.toolbar)
-    var _toolbar: Toolbar? = null
-
-    @JvmField
-    @BindView(R.id.modeExpandableListView)
-    var _modeExpandableListView: ExpandableListView? = null
+    private lateinit var binding: ActivityModeSelectionBinding
 
     @Inject lateinit var _dataServices: DataServices
     @Inject lateinit  var _authStateManager: AuthStateManager
@@ -68,11 +57,12 @@ class ModeSelectionActivity : BaseActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mode_selection)
-        ButterKnife.bind(this)
+        binding = ActivityModeSelectionBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         _app = application as MawApplication
-        updateToolbar(_toolbar, null)
-        _modeExpandableListView!!.setOnChildClickListener { parent: ExpandableListView, v: View, groupPosition: Int, childPosition: Int, id: Long ->
+        updateToolbar(binding.toolbar, null)
+        binding.modeExpandableListView.setOnChildClickListener { parent: ExpandableListView, v: View, groupPosition: Int, childPosition: Int, id: Long ->
             onItemClicked(
                 parent,
                 v,
@@ -164,7 +154,7 @@ class ModeSelectionActivity : BaseActivity() {
     }
 
     private fun onWipeComplete(b: Boolean) {
-        Snackbar.make(_toolbar!!, "Wipe complete.", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.toolbar, "Wipe complete.", Snackbar.LENGTH_SHORT).show()
     }
 
     private fun onItemClicked(
@@ -208,7 +198,7 @@ class ModeSelectionActivity : BaseActivity() {
         stopSyncAnimation()
         val count = categories.count
         if (count == 0L) {
-            Snackbar.make(_modeExpandableListView!!, "No updates available.", Snackbar.LENGTH_SHORT)
+            Snackbar.make(binding.modeExpandableListView, "No updates available.", Snackbar.LENGTH_SHORT)
                 .show()
             return
         }
@@ -235,7 +225,7 @@ class ModeSelectionActivity : BaseActivity() {
             year = "years"
         }
         Snackbar.make(
-            _modeExpandableListView!!,
+            binding.modeExpandableListView,
             count.toString() + " new " + cat + " found. " + newYears.size + " new " + year + " added.",
             Snackbar.LENGTH_SHORT
         ).show()
@@ -269,7 +259,7 @@ class ModeSelectionActivity : BaseActivity() {
         _groupData.add(createGroup("Random"))
         _childData.add(children)
         children.add(createChild("Surprise Me!", PhotoListType.Random))
-        _modeExpandableListView!!.setAdapter(_adapter)
+        binding.modeExpandableListView.setAdapter(_adapter)
     }
 
     private fun createGroup(name: String): Map<String, String?> {
@@ -286,7 +276,7 @@ class ModeSelectionActivity : BaseActivity() {
     }
 
     private fun startSyncAnimation() {
-        val iv = layoutInflater.inflate(R.layout.refresh_indicator, _toolbar, false) as ImageView
+        val iv = layoutInflater.inflate(R.layout.refresh_indicator, binding.toolbar, false) as ImageView
         val rotation = AnimationUtils.loadAnimation(this, R.anim.refresh_rotate)
         rotation.repeatCount = Animation.INFINITE
         iv.startAnimation(rotation)

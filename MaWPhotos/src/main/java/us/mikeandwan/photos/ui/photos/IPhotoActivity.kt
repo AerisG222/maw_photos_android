@@ -7,5 +7,5 @@ interface IPhotoActivity {
     fun removeWork()
     fun onApiException(throwable: Throwable?)
     val currentPhoto: Photo?
-    val photoList: List<Photo?>?
+    val photoList: List<Photo>?
 }

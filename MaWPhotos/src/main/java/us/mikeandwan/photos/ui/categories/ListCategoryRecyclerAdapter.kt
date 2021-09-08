@@ -9,6 +9,7 @@ import us.mikeandwan.photos.R
 import com.squareup.picasso.Picasso
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.TextView
+import us.mikeandwan.photos.databinding.CategoryListItemBinding
 import us.mikeandwan.photos.models.Category
 
 class ListCategoryRecyclerAdapter(
@@ -18,9 +19,9 @@ class ListCategoryRecyclerAdapter(
     activity!!, dataServices!!
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val categoryView =
-            LayoutInflater.from(parent.context).inflate(R.layout.category_list_item, parent, false)
-        return ViewHolder(categoryView)
+        val binding = CategoryListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
+        return ViewHolder(binding)
     }
 
     override fun downloadCategoryTeaser(category: Category?): String? {
@@ -41,17 +42,8 @@ class ListCategoryRecyclerAdapter(
             .into(viewHolder._thumbnailImageView)
     }
 
-    class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
-        @JvmField
-        @BindView(R.id.thumbnailImageView)
-        var _thumbnailImageView: ImageView? = null
-
-        @JvmField
-        @BindView(R.id.categoryNameTextView)
-        var _nameTextView: TextView? = null
-
-        init {
-            ButterKnife.bind(this, itemView!!)
-        }
+    class ViewHolder(private val binding: CategoryListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        var _thumbnailImageView = binding.thumbnailImageView
+        var _nameTextView = binding.categoryNameTextView
     }
 }

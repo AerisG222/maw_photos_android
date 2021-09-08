@@ -11,11 +11,13 @@ import dagger.Provides
 import retrofit2.converter.jackson.JacksonConverterFactory
 import us.mikeandwan.photos.Constants
 import us.mikeandwan.photos.services.PhotoApiClient
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class PhotoApiModule {
     @Provides
+    @Singleton
     fun provideRetrofit(httpClient: OkHttpClient?): Retrofit {
         val mapper = ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -27,6 +29,7 @@ class PhotoApiModule {
     }
 
     @Provides
+    @Singleton
     fun providePhotoApiClient(
         httpClient: OkHttpClient?,
         retrofit: Retrofit?

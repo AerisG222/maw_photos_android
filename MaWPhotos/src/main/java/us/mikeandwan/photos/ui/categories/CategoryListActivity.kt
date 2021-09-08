@@ -44,7 +44,7 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
 
     private lateinit var binding: ActivityCategoryListBinding
 
-    @BindDimen(R.dimen.category_grid_thumbnail_size) var _thumbSize = 0
+    var _thumbSize: Int = 0
 
     @Inject lateinit var _dataServices: DataServices
     @Inject lateinit var _categoryPrefs: CategoryDisplayPreference
@@ -55,6 +55,8 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        _thumbSize = resources.getDimension(R.dimen.category_grid_thumbnail_size).toInt()
 
         _year = intent.getIntExtra("YEAR", 0)
     }

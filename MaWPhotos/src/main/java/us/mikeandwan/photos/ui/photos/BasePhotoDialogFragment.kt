@@ -1,13 +1,12 @@
 package us.mikeandwan.photos.ui.photos
 
-import android.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.content.Context
 import us.mikeandwan.photos.models.Photo
-import us.mikeandwan.photos.ui.photos.IPhotoActivity
 
 open class BasePhotoDialogFragment : DialogFragment() {
     override fun getContext(): Context {
-        return activity.baseContext
+        return requireActivity().baseContext
     }
 
     protected val photoActivity: IPhotoActivity
@@ -22,5 +21,5 @@ open class BasePhotoDialogFragment : DialogFragment() {
     }
 
     val currentPhoto: Photo
-        get() = photoActivity.currentPhoto
+        get() = photoActivity.currentPhoto!!
 }

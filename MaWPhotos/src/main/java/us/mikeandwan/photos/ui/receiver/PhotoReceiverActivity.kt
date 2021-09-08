@@ -5,27 +5,19 @@ import us.mikeandwan.photos.ui.BaseActivity
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 import us.mikeandwan.photos.services.DataServices
-import us.mikeandwan.photos.ui.receiver.ReceiverRecyclerAdapter
 import us.mikeandwan.photos.services.UploadJobScheduler
-import butterknife.BindDimen
 import us.mikeandwan.photos.R
-import butterknife.BindView
-import androidx.recyclerview.widget.RecyclerView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import android.os.Bundle
-import butterknife.ButterKnife
 import android.content.Intent
 import android.net.Uri
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
-import android.util.DisplayMetrics
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.DefaultItemAnimator
 import io.reactivex.Flowable
 import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
+import us.mikeandwan.photos.databinding.ActivityPhotoReceiverBinding
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.ArrayList
@@ -34,35 +26,28 @@ import kotlin.Throws
 @AndroidEntryPoint
 class PhotoReceiverActivity : BaseActivity() {
     private val _disposables = CompositeDisposable()
+    private var _thumbSize = 0
 
     @Inject lateinit var _dataServices: DataServices
     @Inject lateinit var _receiverAdapter: ReceiverRecyclerAdapter
     @Inject lateinit var _uploadScheduler: UploadJobScheduler
 
-    @JvmField
-    @BindDimen(R.dimen.category_grid_thumbnail_size) var _thumbSize = 0
-
-    @JvmField
-    @BindView(R.id.receiver_recycler_view) var _recyclerView: RecyclerView? = null
-
-    @JvmField
-    @BindView(R.id.receiver_wifi_text_view) var _wifiTextView: TextView? = null
-
-    @JvmField
-    @BindView(R.id.photoReceiverLayout) var _layout: ConstraintLayout? = null
-
-    @JvmField
-    @BindView(R.id.toolbar) var _toolbar: Toolbar? = null
+    private lateinit var binding: ActivityPhotoReceiverBinding
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_photo_receiver)
-        ButterKnife.bind(this)
-        _recyclerView!!.setHasFixedSize(true)
-        _recyclerView!!.adapter = _receiverAdapter
+        binding = ActivityPhotoReceiverBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        _thumbSize = resources.getDimension(R.dimen.category_grid_thumbnail_size).toInt()
+        binding.receiverRecyclerView.setHasFixedSize(true)
+        binding.receiverRecyclerView.adapter = _receiverAdapter
+
         setLayoutManager()
+
         val intent = intent
         val action = intent.action
+
         if (action != null) {
             when (action) {
                 Intent.ACTION_SEND -> handleSendSingle(intent)
@@ -76,7 +61,7 @@ class PhotoReceiverActivity : BaseActivity() {
     }
 
     public override fun onResume() {
-        updateToolbar(_toolbar, "Upload Queue")
+        updateToolbar(binding.toolbar, "Upload Queue")
         _disposables.add(_dataServices
             .getFileQueueObservable()
             .subscribeOn(Schedulers.io())
@@ -95,10 +80,10 @@ class PhotoReceiverActivity : BaseActivity() {
         val displayMetrics = resources.displayMetrics
         val cols = displayMetrics.widthPixels / _thumbSize
         val glm = GridLayoutManager(this, Math.max(1, cols))
-        _recyclerView!!.layoutManager = glm
-        _recyclerView!!.itemAnimator = DefaultItemAnimator()
+        binding.receiverRecyclerView.layoutManager = glm
+        binding.receiverRecyclerView.itemAnimator = DefaultItemAnimator()
         _receiverAdapter!!.setItemSize(displayMetrics.widthPixels / cols)
-        _recyclerView!!.recycledViewPool.clear()
+        binding.receiverRecyclerView.recycledViewPool.clear()
     }
 
     private fun isValidType(type: String?): Boolean {
@@ -123,7 +108,7 @@ class PhotoReceiverActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { msg: String? -> Snackbar.make(_layout!!, msg!!, Snackbar.LENGTH_LONG).show() }
+                    { msg: String? -> Snackbar.make(binding.photoReceiverLayout, msg!!, Snackbar.LENGTH_LONG).show() }
                 ) { ex: Throwable ->
                     Timber.e("error loading categories: %s", ex.message)
                     handleApiException(ex)
