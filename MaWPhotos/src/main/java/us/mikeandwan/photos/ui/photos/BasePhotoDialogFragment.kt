@@ -10,7 +10,7 @@ open class BasePhotoDialogFragment : DialogFragment() {
     }
 
     protected val photoActivity: IPhotoActivity
-        protected get() = activity as IPhotoActivity
+        get() = activity as IPhotoActivity
 
     fun addWork() {
         photoActivity.addWork()

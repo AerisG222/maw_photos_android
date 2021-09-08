@@ -37,7 +37,7 @@ class RatingDialogFragment : BasePhotoDialogFragment() {
                 if (fromUser) {
                     _disposables.add(Flowable.fromCallable {
                         addWork()
-                        _dataServices!!.setRating(currentPhoto.id, Math.round(rating))
+                        _dataServices.setRating(currentPhoto.id, Math.round(rating))
                     }
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -75,12 +75,12 @@ class RatingDialogFragment : BasePhotoDialogFragment() {
     }
 
     private val ratings: Unit
-        private get() {
+        get() {
             binding.yourRatingBar.rating = 0f
             binding.averageRatingBar.rating = 0f
             _disposables.add(Flowable.fromCallable {
                 addWork()
-                _dataServices!!.getRating(currentPhoto.id)
+                _dataServices.getRating(currentPhoto.id)
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

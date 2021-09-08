@@ -110,9 +110,10 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
     }
 
     private val rootPath: File?
-        private get() = _context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        get() = _context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
     private val uploadDir: File
-        private get() {
+        get() {
             val uploadDir = File(rootPath, "__upload")
             if (!uploadDir.exists()) {
                 uploadDir.mkdir()
@@ -145,7 +146,7 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
     }
 
     private val tempRootPath: File
-        private get() {
+        get() {
             val dir = File(rootPath.toString() + "/" + "temp")
             if (!dir.exists()) {
                 dir.mkdir()

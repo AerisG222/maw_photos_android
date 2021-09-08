@@ -220,6 +220,6 @@ class DataServices(
     init {
         val queuedFiles = _photoStorage.queuedFilesForUpload
         _fileQueueSubject = BehaviorSubject.create()
-        _fileQueueSubject.onNext(queuedFiles!!)
+        _fileQueueSubject.onNext(queuedFiles)
     }
 }

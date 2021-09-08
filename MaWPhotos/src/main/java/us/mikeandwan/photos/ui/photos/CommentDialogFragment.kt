@@ -101,7 +101,7 @@ class CommentDialogFragment : BasePhotoDialogFragment() {
     }
 
     private val comments: Unit
-        private get() {
+        get() {
             _disposables.add(Flowable.fromCallable {
                 addWork()
                 _dataServices.getComments(currentPhoto.id)

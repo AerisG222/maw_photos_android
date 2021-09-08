@@ -153,6 +153,6 @@ class DatabaseAccessor @Inject constructor(private val _dbHelper: MawSQLiteOpenH
 
     // no real difference between read/write dbs, so just use writable as we will need to write eventually
     private val database: SQLiteDatabase
-        private get() =// no real difference between read/write dbs, so just use writable as we will need to write eventually
+        get() =// no real difference between read/write dbs, so just use writable as we will need to write eventually
             _dbHelper.writableDatabase
 }

@@ -96,15 +96,15 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
 
     override fun onDestroy() {
         _disposables.clear()
-        _thumbnailRecyclerAdapter!!.dispose()
-        _photoPagerAdapter!!.dispose()
+        _thumbnailRecyclerAdapter.dispose()
+        _photoPagerAdapter.dispose()
         super.onDestroy()
     }
 
     public override fun onResume() {
         super.onResume()
-        _photoPagerAdapter!!.refreshPhotoList()
-        _thumbnailRecyclerAdapter!!.refreshPhotoList()
+        _photoPagerAdapter.refreshPhotoList()
+        _thumbnailRecyclerAdapter.refreshPhotoList()
         layoutActivity()
         binding.photoPager.adapter = _photoPagerAdapter
         _disposables.add(
@@ -292,7 +292,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     }
 
     private fun onGatherPhotoListComplete() {
-        _photoPagerAdapter!!.notifyDataSetChanged()
+        _photoPagerAdapter.notifyDataSetChanged()
         _thumbnailRecyclerAdapter.notifyDataSetChanged()
         gotoPhoto(_index)
     }
@@ -316,7 +316,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         binding.photoPager.currentItem = _index
         binding.thumbnailPhotoRecycler.scrollToPosition(_index)
         val sap = MenuItemCompat.getActionProvider(_menuShare) as ShareActionProvider
-        sap?.setShareIntent(createShareIntent(photo))
+        sap.setShareIntent(createShareIntent(photo))
         prefetchMainImage(_index)
     }
 
@@ -367,7 +367,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
 
     private fun startSlideshow() {
         if (_slideshowExecutor == null) {
-            val intervalSeconds = _photoPrefs!!.slideshowIntervalInSeconds
+            val intervalSeconds = _photoPrefs.slideshowIntervalInSeconds
             _slideshowExecutor = ScheduledThreadPoolExecutor(1)
 
             _slideshowExecutor!!.scheduleWithFixedDelay(
@@ -527,14 +527,13 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     private fun createShareIntent(photo: Photo?): Intent? {
         if (photo != null) {
             val contentUri = _dataServices.getSharingContentUri(photo.imageMd.url)
+            val shareIntent = Intent(Intent.ACTION_SEND)
 
-            if (contentUri != null) {
-                val shareIntent = Intent(Intent.ACTION_SEND)
-                shareIntent.setDataAndType(contentUri, "image/*")
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
-                return shareIntent
-            }
+            shareIntent.setDataAndType(contentUri, "image/*")
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
+
+            return shareIntent
         }
 
         return null

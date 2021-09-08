@@ -34,7 +34,7 @@ class LoginActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        _authClientId = resources.getString(R.string.auth_client_id) as String
+        _authClientId = resources.getString(R.string.auth_client_id)
         _authSchemeRedirect = resources.getString(R.string.auth_scheme_redirect_uri)
         _authSchemeRedirectUri = Uri.parse(_authSchemeRedirect)
 
@@ -63,11 +63,11 @@ class LoginActivity : BaseActivity() {
             goToModeSelection()
             return
         }
-        _disposables.add(_config!!.subscribe({ config: AuthorizationServiceConfiguration? ->
-            _authStateManager!!.replace(AuthState(config!!))
+        _disposables.add(_config.subscribe({ config: AuthorizationServiceConfiguration? ->
+            _authStateManager.replace(AuthState(config!!))
             val authRequestBuilder = AuthorizationRequest.Builder(
                 config,
-                _authClientId!!,  // the client ID, typically pre-registered and static
+                _authClientId,  // the client ID, typically pre-registered and static
                 ResponseTypeValues.CODE,  // the response_type value: we want a code
                 _authSchemeRedirectUri!!
             ) // the redirect URI to which the auth response is sent
@@ -91,8 +91,8 @@ class LoginActivity : BaseActivity() {
     }
 
     private val isAuthorized: Boolean
-        private get() {
-            val authState = _authStateManager!!.current
+        get() {
+            val authState = _authStateManager.current
             return authState.isAuthorized
         }
 

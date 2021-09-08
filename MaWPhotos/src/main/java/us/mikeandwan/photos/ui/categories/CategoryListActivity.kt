@@ -71,7 +71,7 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
     public override fun onResume() {
         updateToolbar(binding.toolbar, _year.toString())
         binding.categoryRecyclerView.setHasFixedSize(true)
-        if (_categoryPrefs!!.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
+        if (_categoryPrefs.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
             // http://stackoverflow.com/questions/25396747/how-to-get-fragment-width
             _listener = OnGlobalLayoutListener {
                 binding.categoryRecyclerView.post {
@@ -148,9 +148,9 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
             }
             binding.categoryRecyclerView.adapter = _gridAdapter
         } else {
-            _listAdapter!!.setCategoryList(categories)
+            _listAdapter.setCategoryList(categories)
             _disposables.add(
-                _listAdapter!!.onCategorySelected()
+                _listAdapter.onCategorySelected()
                     .subscribe { category: Category -> selectCategory(category) })
             val llm = LinearLayoutManager(this)
             llm.orientation = RecyclerView.VERTICAL

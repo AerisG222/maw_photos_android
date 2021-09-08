@@ -6,15 +6,15 @@ class Category {
     lateinit var name: String
     lateinit var teaserImage: MultimediaAsset
 
-    override fun equals(`object`: Any?): Boolean {
-        if (`object` == null) {
+    override fun equals(other: Any?): Boolean {
+        if (other == null) {
             return false
         }
-        if (this === `object`) {
+        if (this === other) {
             return true
         }
-        return if (`object` is Category) {
-            id == `object`.id
+        return if (other is Category) {
+            id == other.id
         } else {
             false
         }

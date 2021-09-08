@@ -32,13 +32,13 @@ class LoginCallbackActivity : BaseActivity() {
 
     public override fun onStart() {
         super.onStart()
-        if (_authStateManager!!.current.isAuthorized) {
+        if (_authStateManager.current.isAuthorized) {
             goToInitialLoad()
         }
         val response = AuthorizationResponse.fromIntent(intent)
         val ex = AuthorizationException.fromIntent(intent)
         if (response != null || ex != null) {
-            _authStateManager!!.updateAfterAuthorization(response, ex)
+            _authStateManager.updateAfterAuthorization(response, ex)
         }
         if (response != null && response.authorizationCode != null) {
             exchangeAuthorizationCode(response)
@@ -67,7 +67,7 @@ class LoginCallbackActivity : BaseActivity() {
         val clientAuthentication: ClientAuthentication
         clientAuthentication = try {
             Timber.d("Attempting token request")
-            _authStateManager!!.current.clientAuthentication
+            _authStateManager.current.clientAuthentication
         } catch (ex: UnsupportedAuthenticationMethod) {
             Timber.d(
                 "Token request cannot be made, client authentication for the token endpoint could not be constructed (%s)",
@@ -75,7 +75,7 @@ class LoginCallbackActivity : BaseActivity() {
             )
             return
         }
-        _authService!!.performTokenRequest(
+        _authService.performTokenRequest(
             request,
             clientAuthentication,
             callback
@@ -87,16 +87,16 @@ class LoginCallbackActivity : BaseActivity() {
         tokenResponse: TokenResponse?,
         authException: AuthorizationException?
     ) {
-        _authStateManager!!.updateAfterTokenResponse(tokenResponse, authException)
-        if (!_authStateManager!!.current.isAuthorized) {
+        _authStateManager.updateAfterTokenResponse(tokenResponse, authException)
+        if (!_authStateManager.current.isAuthorized) {
             val message =
                 "Authorization Code exchange failed" + if (authException != null) authException.error else ""
             Timber.e("NOT AUTHORIZED: %s", message)
         } else {
             Timber.d("AUTHORIZED")
-            Timber.d("auth token: %s", _authStateManager!!.current.accessToken)
-            Timber.d("refresh token: %s", _authStateManager!!.current.refreshToken)
-            Timber.d("id token: %s", _authStateManager!!.current.idToken)
+            Timber.d("auth token: %s", _authStateManager.current.accessToken)
+            Timber.d("refresh token: %s", _authStateManager.current.refreshToken)
+            Timber.d("id token: %s", _authStateManager.current.idToken)
             goToInitialLoad()
         }
     }

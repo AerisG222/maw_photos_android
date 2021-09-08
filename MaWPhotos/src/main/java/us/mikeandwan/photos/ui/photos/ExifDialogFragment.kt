@@ -150,7 +150,7 @@ class ExifDialogFragment : BasePhotoDialogFragment() {
     }
 
     private val exifData: Unit
-        private get() {
+        get() {
             _disposables.add(Flowable.fromCallable {
                 addWork()
                 _dataServices!!.getExifData(currentPhoto.id)

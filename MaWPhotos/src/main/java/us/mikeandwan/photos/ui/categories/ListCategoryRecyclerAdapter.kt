@@ -27,13 +27,13 @@ class ListCategoryRecyclerAdapter(
 
     override fun displayCategory(
         category: Category?,
-        path: String?,
+        imageFile: String?,
         viewHolder: ViewHolder?
     ) {
-        viewHolder!!._nameTextView!!.text = category!!.name
+        viewHolder!!._nameTextView.text = category!!.name
         Picasso
             .get()
-            .load(path)
+            .load(imageFile)
             .resizeDimen(R.dimen.category_list_thumbnail_size, R.dimen.category_list_thumbnail_size)
             .centerCrop()
             .into(viewHolder._thumbnailImageView)

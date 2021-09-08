@@ -28,12 +28,12 @@ class ThumbnailCategoryRecyclerAdapter(
 
     protected override fun displayCategory(
         category: Category?,
-        path: String?,
+        imageFile: String?,
         viewHolder: ViewHolder?
     ) {
         Picasso
             .get()
-            .load(path)
+            .load(imageFile)
             .resizeDimen(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)
             .centerCrop()
             .into(viewHolder!!._thumbnailImageView)

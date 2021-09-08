@@ -117,6 +117,6 @@ class UpdateCategoriesJobService : JobService() {
 
         val notification = builder.build()
 
-        _notificationManager!!.notify(0, notification)
+        _notificationManager.notify(0, notification)
     }
 }

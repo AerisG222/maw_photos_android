@@ -81,7 +81,7 @@ class ModeSelectionActivity : BaseActivity() {
             arrayOf(KEY_NAME),
             intArrayOf(android.R.id.text1)
         )
-        _updateScheduler!!.schedule(false, FOUR_HOURS_IN_MILLIS)
+        _updateScheduler.schedule(false, FOUR_HOURS_IN_MILLIS)
         initModeList()
         resetNotifications()
     }
@@ -123,7 +123,7 @@ class ModeSelectionActivity : BaseActivity() {
     fun onWipeCache(menuItem: MenuItem?) {
         _disposables.add(
             Flowable.fromCallable {
-                _dataServices!!.wipeCache()
+                _dataServices.wipeCache()
                 true
             }
                 .subscribeOn(Schedulers.io())
@@ -181,7 +181,7 @@ class ModeSelectionActivity : BaseActivity() {
     private fun forceSync() {
         startSyncAnimation()
         _disposables.add(
-            Flowable.fromCallable { _dataServices!!.recentCategories }
+            Flowable.fromCallable { _dataServices.recentCategories }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

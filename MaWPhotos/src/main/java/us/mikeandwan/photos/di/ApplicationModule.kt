@@ -97,7 +97,7 @@ class ApplicationModule {
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
                 audioAttributes
             )
-            notificationManager?.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
@@ -125,7 +125,7 @@ class ApplicationModule {
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
                 audioAttributes
             )
-            notificationManager?.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
