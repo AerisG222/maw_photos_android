@@ -84,14 +84,20 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
             }
             binding.container.viewTreeObserver.addOnGlobalLayoutListener(_listener)
         }
-        setCategories(_dataServices!!.getCategoriesForYear(_year))
+
+        val categories = _dataServices.getCategoriesForYear(_year)
+
+        if(categories != null) {
+            setCategories(categories.toMutableList())
+        }
+
         super.onResume()
     }
 
     override fun onDestroy() {
         _disposables.clear() // do not send event after activity has been destroyed
-        _gridAdapter!!.dispose()
-        _listAdapter!!.dispose()
+        _gridAdapter.dispose()
+        _listAdapter.dispose()
         super.onDestroy()
     }
 
@@ -117,7 +123,7 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
         val intent = Intent(this, PhotoListActivity::class.java)
         intent.putExtra("NAME", category!!.name)
         intent.putExtra("TYPE", PhotoListType.ByCategory.toString())
-        intent.putExtra("CATEGORY_ID", category!!.id)
+        intent.putExtra("CATEGORY_ID", category.id)
         startActivity(intent)
     }
 
@@ -130,10 +136,11 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
 
     private fun setCategories(categories: MutableList<Category>) {
         _categories = categories
-        if (_categoryPrefs!!.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
-            _gridAdapter!!.setCategoryList(categories)
+
+        if (_categoryPrefs.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
+            _gridAdapter.setCategoryList(categories)
             _disposables.add(
-                _gridAdapter!!.onCategorySelected()
+                _gridAdapter.onCategorySelected()
                     .subscribe { category: Category -> selectCategory(category) })
             if (_decoration != null) {
                 binding.categoryRecyclerView.removeItemDecoration(_decoration!!)
@@ -160,7 +167,7 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
     private fun forceSync() {
         startSyncAnimation()
         _disposables.add(
-            Flowable.fromCallable { _dataServices!!.recentCategories }
+            Flowable.fromCallable { _dataServices.recentCategories }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result: ApiCollection<Category> -> onSyncComplete(result) }) { ex: Throwable ->
@@ -177,10 +184,10 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
     }
 
     private fun notifyCategoriesUpdated() {
-        if (_categoryPrefs!!.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
-            _gridAdapter!!.notifyDataSetChanged()
+        if (_categoryPrefs.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
+            _gridAdapter.notifyDataSetChanged()
         } else {
-            _listAdapter!!.notifyDataSetChanged()
+            _listAdapter.notifyDataSetChanged()
         }
     }
 

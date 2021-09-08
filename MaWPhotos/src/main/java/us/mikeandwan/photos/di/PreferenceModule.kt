@@ -16,25 +16,25 @@ import javax.inject.Singleton
 class PreferenceModule {
     @Provides
     @Singleton
-    fun provideCategoryDisplayPreference(sharedPrefs: SharedPreferences?): CategoryDisplayPreference {
+    fun provideCategoryDisplayPreference(sharedPrefs: SharedPreferences): CategoryDisplayPreference {
         return CategoryDisplayPreference(sharedPrefs)
     }
 
     @Provides
     @Singleton
-    fun provideNotificationPreference(sharedPrefs: SharedPreferences?): NotificationPreference {
+    fun provideNotificationPreference(sharedPrefs: SharedPreferences): NotificationPreference {
         return NotificationPreference(sharedPrefs)
     }
 
     @Provides
     @Singleton
-    fun providePhotoDisplayPreference(sharedPrefs: SharedPreferences?): PhotoDisplayPreference {
+    fun providePhotoDisplayPreference(sharedPrefs: SharedPreferences): PhotoDisplayPreference {
         return PhotoDisplayPreference(sharedPrefs)
     }
 
     @Provides
     @Singleton
-    fun provideSyncPreference(sharedPrefs: SharedPreferences?): SyncPreference {
+    fun provideSyncPreference(sharedPrefs: SharedPreferences): SyncPreference {
         return SyncPreference(sharedPrefs)
     }
 }

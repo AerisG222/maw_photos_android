@@ -1,281 +1,267 @@
-package us.mikeandwan.photos.services;
+package us.mikeandwan.photos.services
 
-import android.net.Uri;
-import android.text.TextUtils;
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Multipart
+import okhttp3.MultipartBody
+import us.mikeandwan.photos.services.DatabaseAccessor
+import us.mikeandwan.photos.services.PhotoApiClient
+import us.mikeandwan.photos.services.PhotoStorage
+import io.reactivex.subjects.BehaviorSubject
+import kotlin.Throws
+import timber.log.Timber
+import us.mikeandwan.photos.services.PhotoListType
+import android.text.TextUtils
+import okhttp3.ResponseBody
+import javax.inject.Inject
+import android.webkit.MimeTypeMap
+import android.os.Environment
+import com.commonsware.cwac.provider.StreamProvider
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import us.mikeandwan.photos.services.PhotoApi
+import org.apache.commons.io.FilenameUtils
+import okhttp3.RequestBody
+import android.content.SharedPreferences
+import net.openid.appauth.AuthState
+import androidx.annotation.AnyThread
+import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.TokenResponse
+import net.openid.appauth.RegistrationResponse
+import us.mikeandwan.photos.services.AuthStateManager
+import org.json.JSONException
+import android.app.Application
+import android.app.job.JobScheduler
+import android.app.job.JobInfo
+import us.mikeandwan.photos.services.MawSQLiteOpenHelper
+import android.database.sqlite.SQLiteDatabase
+import android.content.ContentValues
+import us.mikeandwan.photos.services.BaseJobScheduler
+import us.mikeandwan.photos.MawApplication
+import android.content.ComponentName
+import us.mikeandwan.photos.services.UploadJobService
+import android.database.sqlite.SQLiteOpenHelper
+import android.net.Uri
+import io.reactivex.Observable
+import us.mikeandwan.photos.models.*
+import us.mikeandwan.photos.services.UpdateCategoriesJobService
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.lang.Exception
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
+class DataServices(
+    private val _databaseAccessor: DatabaseAccessor,
+    private val _photoApiClient: PhotoApiClient,
+    private val _photoStorage: PhotoStorage
+) {
+    private val _fileQueueSubject: BehaviorSubject<Array<File>>
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-import timber.log.Timber;
-import us.mikeandwan.photos.models.ApiCollection;
-import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.models.Comment;
-import us.mikeandwan.photos.models.CommentPhoto;
-import us.mikeandwan.photos.models.ExifData;
-import us.mikeandwan.photos.models.FileOperationResult;
-import us.mikeandwan.photos.models.Photo;
-import us.mikeandwan.photos.models.PhotoSize;
-import us.mikeandwan.photos.models.Rating;
+    @Throws(IOException::class)
+    fun addComment(cp: CommentPhoto): ApiCollection<Comment>? {
+        Timber.d("started to add comment for photo: %s", cp.photoId)
+        _photoApiClient.addComment(cp.photoId, cp.comment)
 
-
-public class DataServices {
-    private final DatabaseAccessor _databaseAccessor;
-    private final PhotoApiClient _photoApiClient;
-    private final PhotoStorage _photoStorage;
-    private final BehaviorSubject<File[]> _fileQueueSubject;
-
-
-    public DataServices(DatabaseAccessor databaseAccessor,
-                        PhotoApiClient photoApiClient,
-                        PhotoStorage photoStorage) {
-        _databaseAccessor = databaseAccessor;
-        _photoApiClient = photoApiClient;
-        _photoStorage = photoStorage;
-
-        File[] queuedFiles = _photoStorage.getQueuedFilesForUpload();
-
-        _fileQueueSubject = BehaviorSubject.create();
-        _fileQueueSubject.onNext(queuedFiles);
+        return _photoApiClient.getComments(cp.photoId)
     }
 
+    fun downloadCategoryTeaser(category: Category): String {
+        Timber.d("started to download teaser for category: %s", category.id)
 
-    public ApiCollection<Comment> addComment(CommentPhoto cp) throws IOException {
-        Timber.d("started to add comment for photo: %s", cp.getPhotoId());
-
-        _photoApiClient.addComment(cp.getPhotoId(), cp.getComment());
-
-        return _photoApiClient.getComments(cp.getPhotoId());
+        return downloadPhoto(category.teaserImage.url)
     }
 
+    fun downloadMdCategoryTeaser(category: Category): String {
+        Timber.d("started to download md teaser for category: %s", category.id)
 
-    public String downloadCategoryTeaser(Category category) {
-        Timber.d("started to download teaser for category: %s", category.getId());
-
-        return downloadPhoto(category.getTeaserImage().getUrl());
+        return downloadPhoto(category.teaserImage.url.replace("/xs", "/md/"))
     }
 
+    fun downloadPhoto(photo: Photo, size: PhotoSize?): String {
+        Timber.d("started to download photo: %s", photo.id)
+        var path: String? = null
 
-    public String downloadMdCategoryTeaser(Category category) {
-        Timber.d("started to download md teaser for category: %s", category.getId());
-
-        return downloadPhoto(category.getTeaserImage().getUrl().replace("/xs", "/md/"));
-    }
-
-
-    public String downloadPhoto(Photo photo, PhotoSize size) {
-        Timber.d("started to download photo: %s", photo.getId());
-
-        String path = null;
-
-        switch (size) {
-            case Sm:
-                path = photo.getImageSm().getUrl();
-                break;
-            case Md:
-                path = photo.getImageMd().getUrl();
-                break;
-            case Xs:
-                path = photo.getImageXs().getUrl();
-                break;
-            case Lg:
-                path = photo.getImageLg().getUrl();
-                break;
+        when (size) {
+            PhotoSize.Sm -> path = photo.imageSm.url
+            PhotoSize.Md -> path = photo.imageMd.url
+            PhotoSize.Xs -> path = photo.imageXs.url
+            PhotoSize.Lg -> path = photo.imageLg.url
         }
 
-        return downloadPhoto(path);
+        return downloadPhoto(path)
     }
 
+    fun getCategoriesForYear(year: Int): List<Category>? {
+        Timber.d("started to get categories for year: %s", year)
 
-    public List<Category> getCategoriesForYear(int year) {
-        Timber.d("started to get categories for year: %s", year);
-
-        return _databaseAccessor.getCategoriesForYear(year);
+        return _databaseAccessor.getCategoriesForYear(year)
     }
 
+    @Throws(IOException::class)
+    fun getComments(photoId: Int): ApiCollection<Comment>? {
+        Timber.d("started to get comments for photo: %s", photoId)
 
-    public ApiCollection<Comment> getComments(int photoId) throws IOException {
-        Timber.d("started to get comments for photo: %s", photoId);
-
-        return _photoApiClient.getComments(photoId);
+        return _photoApiClient.getComments(photoId)
     }
 
+    @Throws(Exception::class)
+    fun getExifData(photoId: Int): ExifData? {
+        Timber.d("started to get exif data for photo: %s", photoId)
 
-    public ExifData getExifData(int photoId) throws Exception {
-        Timber.d("started to get exif data for photo: %s", photoId);
-
-        return _photoApiClient.getExifData(photoId);
+        return _photoApiClient.getExifData(photoId)
     }
 
+    @Throws(Exception::class)
+    fun getPhotoList(type: PhotoListType, categoryId: Int): ApiCollection<Photo>? {
+        Timber.d("started to get photo list")
 
-    public ApiCollection<Photo> getPhotoList(PhotoListType type, int categoryId) throws Exception {
-        Timber.d("started to get photo list");
-
-        return _photoApiClient.getPhotos(type, categoryId);
+        return _photoApiClient.getPhotos(type, categoryId)
     }
 
+    val photoYears: List<Int>?
+        get() = _databaseAccessor.photoYears
 
-    public List<Integer> getPhotoYears() {
-        return _databaseAccessor.getPhotoYears();
+    @get:Throws(IOException::class)
+    val randomPhoto: Photo?
+        get() {
+            Timber.d("started to get random photo")
+            return _photoApiClient.randomPhoto
+        }
+
+    @Throws(IOException::class)
+    fun getRandomPhotos(count: Int): ApiCollection<Photo>? {
+        Timber.d("started to get random photos")
+
+        return _photoApiClient.getRandomPhotos(count)
     }
 
+    @Throws(IOException::class)
+    fun getRating(photoId: Int): Rating? {
+        Timber.d("started to get rating for photo: %s", photoId)
 
-    public Photo getRandomPhoto() throws IOException {
-        Timber.d("started to get random photo");
-
-        return _photoApiClient.getRandomPhoto();
+        return _photoApiClient.getRatings(photoId)
     }
 
+    @get:Throws(IOException::class)
+    val recentCategories: ApiCollection<Category>
+        get() {
+            Timber.d("started to get recent categories")
+            val categories = _photoApiClient.getRecentCategories(_databaseAccessor.latestCategoryId)
+            _databaseAccessor.addCategories(categories!!.items)
 
-    public ApiCollection<Photo> getRandomPhotos(int count) throws IOException {
-        Timber.d("started to get random photos");
+            return categories
+        }
 
-        return _photoApiClient.getRandomPhotos(count);
+    fun getSharingContentUri(remotePath: String): Uri {
+        return _photoStorage.getSharingContentUri(remotePath)
     }
 
-
-    public Rating getRating(int photoId) throws IOException {
-        Timber.d("started to get rating for photo: %s", photoId);
-
-        return _photoApiClient.getRatings(photoId);
-    }
-
-
-    public ApiCollection<Category> getRecentCategories() throws IOException {
-        Timber.d("started to get recent categories");
-
-        ApiCollection<Category> categories = _photoApiClient.getRecentCategories(_databaseAccessor.getLatestCategoryId());
-
-        _databaseAccessor.addCategories(categories.getItems());
-
-        return categories;
-    }
-
-
-    public Uri getSharingContentUri(String remotePath) {
-        return _photoStorage.getSharingContentUri(remotePath);
-    }
-
-
-    public Rating setRating(int photoId, int rating) throws IOException {
-        Timber.d("started to set user rating for photo: %s", photoId);
-
-        Float averageRating = _photoApiClient.setRating(photoId, rating);
-
-        Rating rate = new Rating();
+    @Throws(IOException::class)
+    fun setRating(photoId: Int, rating: Int): Rating {
+        Timber.d("started to set user rating for photo: %s", photoId)
+        val averageRating = _photoApiClient.setRating(photoId, rating)
+        val rate = Rating()
 
         if (averageRating != null) {
-            rate.setAverageRating(averageRating);
-            rate.setUserRating((short) Math.round(rating));
+            rate.averageRating = averageRating
+            rate.userRating = Math.round(rating.toFloat()).toShort()
         } else {
-            rate.setAverageRating((float) 0);
-            rate.setUserRating((short) 0);
+            rate.averageRating = 0.toFloat()
+            rate.userRating = 0.toShort()
         }
 
-        return rate;
+        return rate
     }
 
+    val fileQueueObservable: Observable<Array<File>?>
+        get() = _fileQueueSubject
 
-    public Observable<File[]> getFileQueueObservable()
-    {
-        return _fileQueueSubject;
-    }
-
-
-    public boolean enequeFileToUpload(int id, InputStream inputStream, String mimeType) {
-        boolean result = _photoStorage.enqueueFileToUpload(id, inputStream, mimeType);
-
-        if(result) {
-            updateQueuedFileSubject();
+    fun enequeFileToUpload(id: Int, inputStream: InputStream, mimeType: String): Boolean {
+        val result = _photoStorage.enqueueFileToUpload(id, inputStream, mimeType)
+        if (result) {
+            updateQueuedFileSubject()
         }
-
-        return result;
+        return result
     }
 
-
-    private void updateQueuedFileSubject() {
-        _fileQueueSubject.onNext(_photoStorage.getQueuedFilesForUpload());
+    private fun updateQueuedFileSubject() {
+        _fileQueueSubject.onNext(_photoStorage.queuedFilesForUpload)
     }
 
-
-    public void uploadQueuedFile(File file) throws Exception {
+    @Throws(Exception::class)
+    fun uploadQueuedFile(file: File) {
         try {
-            FileOperationResult result = _photoApiClient.uploadFile(file);
-
-            if(result.getWasSuccessful()) {
-                _photoStorage.deleteFileToUpload(file);
-                updateQueuedFileSubject();
-            }
-            else {
-                String err = result.getError();
+            val result = _photoApiClient.uploadFile(file)
+            if (result!!.wasSuccessful) {
+                _photoStorage.deleteFileToUpload(file)
+                updateQueuedFileSubject()
+            } else {
+                val err = result.error
 
                 // TODO: service to return error code
-                if(err.contains("already exists")) {
-                    _photoStorage.deleteFileToUpload(file);
-                    updateQueuedFileSubject();
+                if (err.contains("already exists")) {
+                    _photoStorage.deleteFileToUpload(file)
+                    updateQueuedFileSubject()
                 } else {
-                    Timber.e("error reported when uploading file: %s", err);
-
-                    throw new Exception("Error uploading file " + file.getName());
+                    Timber.e("error reported when uploading file: %s", err)
+                    throw Exception("Error uploading file " + file.name)
                 }
             }
-        } catch (Exception ex) {
-            Timber.e("error uploading file: %s", ex.getMessage());
-
-            throw new Exception("Error uploading file " + file.getName());
+        } catch (ex: Exception) {
+            Timber.e("error uploading file: %s", ex.message)
+            throw Exception("Error uploading file " + file.name)
         }
     }
 
+    fun wipeTempFiles() {
+        _photoStorage.wipeTempFiles()
+    }
 
-    public void wipeTempFiles() { _photoStorage.wipeTempFiles(); }
+    fun wipeCache() {
+        _photoStorage.wipeCache()
+    }
 
-
-    public void wipeCache() { _photoStorage.wipeCache(); }
-
-
-    private String downloadPhoto(String path) {
-        if(path == null || TextUtils.isEmpty(path)) {
-            return _photoStorage.getPlaceholderThumbnail();
+    private fun downloadPhoto(path: String?): String {
+        if (path == null || TextUtils.isEmpty(path)) {
+            return _photoStorage.placeholderThumbnail
         }
 
-        String cachePath = "file://" + _photoStorage.getCachePath(path);
+        val cachePath = "file://" + _photoStorage.getCachePath(path)
 
         if (_photoStorage.doesExist(path)) {
-            return cachePath;
-        }
-        else {
+            return cachePath
+        } else {
             try {
-                Response response = _photoApiClient.downloadPhoto(path);
+                val response = _photoApiClient.downloadPhoto(path)
 
-                if(response != null) {
-                    if(response.isSuccessful()) {
-                        _photoStorage.put(path, response.body());
-
-                        ResponseBody body = response.body();
-
-                        if(body != null) {
-                            body.close();
-                        }
-
-                        response.close();
-
-                        return cachePath;
-                    }
-                    else {
-                        Timber.e("error downloading file [%s]: status code: %s", path, response.code());
+                if (response != null) {
+                    if (response.isSuccessful) {
+                        _photoStorage.put(path, response.body())
+                        val body = response.body()
+                        body?.close()
+                        response.close()
+                        return cachePath
+                    } else {
+                        Timber.e(
+                            "error downloading file [%s]: status code: %s",
+                            path,
+                            response.code()
+                        )
                     }
                 }
-            }
-            catch(Exception ex) {
-                Timber.e("error downloading file [%s]: %s", path, ex.getMessage());
+            } catch (ex: Exception) {
+                Timber.e("error downloading file [%s]: %s", path, ex.message)
             }
         }
 
-        return _photoStorage.getPlaceholderThumbnail();
+        return _photoStorage.placeholderThumbnail
+    }
+
+    init {
+        val queuedFiles = _photoStorage.queuedFilesForUpload
+        _fileQueueSubject = BehaviorSubject.create()
+        _fileQueueSubject.onNext(queuedFiles!!)
     }
 }

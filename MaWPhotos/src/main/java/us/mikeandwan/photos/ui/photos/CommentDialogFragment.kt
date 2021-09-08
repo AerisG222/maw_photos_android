@@ -74,21 +74,23 @@ class CommentDialogFragment : BasePhotoDialogFragment() {
 
     fun onAddCommentClick() {
         val comment = binding.commentEditText.text.toString()
+
         if (!TextUtils.isEmpty(comment)) {
             val cp = CommentPhoto()
             cp.photoId = currentPhoto.id
             cp.comment = comment
+
             _disposables.add(Flowable.fromCallable {
                 addWork()
-                _dataServices!!.addComment(cp)
+                _dataServices.addComment(cp)
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { x: ApiCollection<Comment> ->
+                    { x: ApiCollection<Comment>? ->
                         removeWork()
                         binding.commentEditText.setText("")
-                        displayComments(x.items)
+                        displayComments(x!!.items)
                     }
                 ) { ex: Throwable? ->
                     removeWork()
@@ -102,14 +104,14 @@ class CommentDialogFragment : BasePhotoDialogFragment() {
         private get() {
             _disposables.add(Flowable.fromCallable {
                 addWork()
-                _dataServices!!.getComments(currentPhoto.id)
+                _dataServices.getComments(currentPhoto.id)
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { x: ApiCollection<Comment> ->
+                    { x: ApiCollection<Comment>? ->
                         removeWork()
-                        displayComments(x.items)
+                        displayComments(x!!.items)
                     }
                 ) { ex: Throwable? ->
                     removeWork()

@@ -1,240 +1,241 @@
-package us.mikeandwan.photos.services;
+package us.mikeandwan.photos.services
 
-import android.webkit.MimeTypeMap;
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Multipart
+import us.mikeandwan.photos.services.DatabaseAccessor
+import us.mikeandwan.photos.services.PhotoApiClient
+import us.mikeandwan.photos.services.PhotoStorage
+import io.reactivex.subjects.BehaviorSubject
+import kotlin.Throws
+import timber.log.Timber
+import us.mikeandwan.photos.services.PhotoListType
+import android.text.TextUtils
+import javax.inject.Inject
+import android.webkit.MimeTypeMap
+import android.os.Environment
+import com.commonsware.cwac.provider.StreamProvider
+import retrofit2.Retrofit
+import us.mikeandwan.photos.services.PhotoApi
+import org.apache.commons.io.FilenameUtils
+import android.content.SharedPreferences
+import net.openid.appauth.AuthState
+import androidx.annotation.AnyThread
+import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.TokenResponse
+import net.openid.appauth.RegistrationResponse
+import us.mikeandwan.photos.services.AuthStateManager
+import org.json.JSONException
+import android.app.Application
+import android.app.job.JobScheduler
+import android.app.job.JobInfo
+import us.mikeandwan.photos.services.MawSQLiteOpenHelper
+import android.database.sqlite.SQLiteDatabase
+import android.content.ContentValues
+import us.mikeandwan.photos.services.BaseJobScheduler
+import us.mikeandwan.photos.MawApplication
+import android.content.ComponentName
+import us.mikeandwan.photos.services.UploadJobService
+import android.database.sqlite.SQLiteOpenHelper
+import okhttp3.*
+import us.mikeandwan.photos.models.*
+import us.mikeandwan.photos.services.UpdateCategoriesJobService
+import java.io.File
+import java.io.IOException
+import java.lang.Exception
+import java.net.URL
 
-import org.apache.commons.io.FilenameUtils;
+class PhotoApiClient @Inject constructor(
+    private val _httpClient: OkHttpClient,
+    retrofit: Retrofit
+) {
+    private val _photoApi: PhotoApi
+    private val _map = MimeTypeMap.getSingleton()
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+    @Throws(IOException::class)
+    fun getRecentCategories(sinceId: Int): ApiCollection<Category>? {
+        Timber.d("getRecentCategories starting")
+        val response = _photoApi.getRecentCategories(sinceId).execute()
+        val result = ApiResult(response)
 
-import javax.inject.Inject;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import timber.log.Timber;
-import us.mikeandwan.photos.models.ApiCollection;
-import us.mikeandwan.photos.models.ApiResult;
-import us.mikeandwan.photos.models.Category;
-import us.mikeandwan.photos.models.Comment;
-import us.mikeandwan.photos.models.CommentPhoto;
-import us.mikeandwan.photos.models.ExifData;
-import us.mikeandwan.photos.models.FileOperationResult;
-import us.mikeandwan.photos.models.Photo;
-import us.mikeandwan.photos.models.RatePhoto;
-import us.mikeandwan.photos.models.Rating;
-
-
-public class PhotoApiClient {
-    private final PhotoApi _photoApi;
-    private final OkHttpClient _httpClient;
-    private final MimeTypeMap _map = MimeTypeMap.getSingleton();
-
-
-    @Inject
-    public PhotoApiClient(OkHttpClient httpClient,
-                          Retrofit retrofit) {
-        _httpClient = httpClient;
-        _photoApi = retrofit.create(PhotoApi.class);
-    }
-
-
-    ApiCollection<Category> getRecentCategories(int sinceId) throws IOException {
-        Timber.d("getRecentCategories starting");
-
-        Response<ApiCollection<Category>> response = _photoApi.getRecentCategories(sinceId).execute();
-        ApiResult<ApiCollection<Category>> result = new ApiResult<>(response);
-
-        if(!result.isSuccess()) {
-            Timber.w("getRecentCategories failed: %s", result.getError());
-            return null;
+        if (!result.isSuccess) {
+            Timber.w("getRecentCategories failed: %s", result.error)
+            return null
         }
 
-        Timber.d("getRecentCategories succeeded: %d categories found", result.getResult().getCount());
+        Timber.d("getRecentCategories succeeded: %d categories found", result.result!!.count)
 
-        return result.getResult();
+        return result.result
     }
 
+    @Throws(Exception::class)
+    fun getPhotos(type: PhotoListType?, categoryId: Int): ApiCollection<Photo>? {
+        Timber.d("getPhotos starting")
+        val response = _photoApi.getPhotosByCategory(categoryId).execute()
+        val result = ApiResult(response)
 
-    ApiCollection<Photo> getPhotos(PhotoListType type, int categoryId) throws Exception {
-        Timber.d("getPhotos starting");
-
-        Response<ApiCollection<Photo>> response = _photoApi.getPhotosByCategory(categoryId).execute();
-        ApiResult<ApiCollection<Photo>> result = new ApiResult<>(response);
-
-        if(!result.isSuccess()) {
-            Timber.w("getPhotos failed: %s", result.getError());
-            return null;
+        if (!result.isSuccess) {
+            Timber.w("getPhotos failed: %s", result.error)
+            return null
         }
 
-        Timber.d("getRecentCategories succeeded: %d categories found", result.getResult().getCount());
+        Timber.d("getRecentCategories succeeded: %d categories found", result.result!!.count)
 
-        return result.getResult();
+        return result.result
     }
 
+    @get:Throws(IOException::class)
+    val randomPhoto: Photo?
+        get() {
+            Timber.d("getRandomPhoto starting")
+            val response = _photoApi.randomPhoto.execute()
+            val result = ApiResult(response)
 
-    Photo getRandomPhoto() throws IOException {
-        Timber.d("getRandomPhoto starting");
+            if (!result.isSuccess) {
+                Timber.w("getRandomPhoto failed: %s", result.error)
+                return null
+            }
 
-        Response<Photo> response = _photoApi.getRandomPhoto().execute();
-        ApiResult<Photo> result = new ApiResult<>(response);
+            Timber.d("getRandomPhoto succeeded")
 
-        if(!result.isSuccess()) {
-            Timber.w("getRandomPhoto failed: %s", result.getError());
-            return null;
+            return result.result
         }
 
-        Timber.d("getRandomPhoto succeeded");
+    @Throws(IOException::class)
+    fun getRandomPhotos(count: Int): ApiCollection<Photo>? {
+        Timber.d("getRandomPhotos starting")
+        val response = _photoApi.getRandomPhotos(count).execute()
+        val result = ApiResult(response)
 
-        return result.getResult();
-    }
-
-
-    ApiCollection<Photo> getRandomPhotos(int count) throws IOException {
-        Timber.d("getRandomPhotos starting");
-
-        Response<ApiCollection<Photo>> response = _photoApi.getRandomPhotos(count).execute();
-        ApiResult<ApiCollection<Photo>> result = new ApiResult<>(response);
-
-        if(!result.isSuccess()) {
-            Timber.w("getRandomPhotos failed: %s", result.getError());
-            return null;
+        if (!result.isSuccess) {
+            Timber.w("getRandomPhotos failed: %s", result.error)
+            return null
         }
 
-        Timber.d("getRandomPhotos succeeded");
+        Timber.d("getRandomPhotos succeeded")
 
-        return result.getResult();
+        return result.result
     }
 
-    ExifData getExifData(int photoId) throws IOException {
-        Timber.d("getExifData starting");
+    @Throws(IOException::class)
+    fun getExifData(photoId: Int): ExifData? {
+        Timber.d("getExifData starting")
+        val response = _photoApi.getExifData(photoId).execute()
+        val result = ApiResult(response)
+        if (!result.isSuccess) {
+            Timber.w("getExifData failed: %s", result.error)
+            return null
+        }
+        Timber.d("getExifData succeeded")
+        return result.result
+    }
 
-        Response<ExifData> response = _photoApi.getExifData(photoId).execute();
-        ApiResult<ExifData> result = new ApiResult<>(response);
+    @Throws(IOException::class)
+    fun getComments(photoId: Int): ApiCollection<Comment>? {
+        Timber.d("getComments starting")
+        val response = _photoApi.getComments(photoId).execute()
+        val result = ApiResult(response)
 
-        if(!result.isSuccess()) {
-            Timber.w("getExifData failed: %s", result.getError());
-            return null;
+        if (!result.isSuccess) {
+            Timber.w("getComments failed: %s", result.error)
+            return null
         }
 
-        Timber.d("getExifData succeeded");
+        Timber.d("getComments succeeded, %d comments found.", result.result!!.count)
 
-        return result.getResult();
+        return result.result
     }
 
+    @Throws(IOException::class)
+    fun getRatings(photoId: Int): Rating? {
+        Timber.d("getRatings starting")
+        val response = _photoApi.getRatings(photoId).execute()
+        val result = ApiResult(response)
 
-    ApiCollection<Comment> getComments(int photoId) throws IOException {
-        Timber.d("getComments starting");
-
-        Response<ApiCollection<Comment>> response = _photoApi.getComments(photoId).execute();
-        ApiResult<ApiCollection<Comment>> result = new ApiResult<>(response);
-
-        if(!result.isSuccess()) {
-            Timber.w("getComments failed: %s", result.getError());
-            return null;
+        if (!result.isSuccess) {
+            Timber.w("getRatings failed: %s", result.error)
+            return null
         }
 
-        Timber.d("getComments succeeded, %d comments found.", result.getResult().getCount());
+        Timber.d("getRatings succeeded")
 
-        return result.getResult();
+        return result.result
     }
 
+    @Throws(IOException::class)
+    fun setRating(photoId: Int, rating: Int): Float? {
+        val rp = RatePhoto()
+        rp.photoId = photoId
+        rp.rating = rating
+        Timber.d("setRating starting")
+        val response = _photoApi.ratePhoto(photoId, rp).execute()
+        val result = ApiResult(response)
 
-    Rating getRatings(int photoId) throws IOException {
-        Timber.d("getRatings starting");
-
-        Response<Rating> response = _photoApi.getRatings(photoId).execute();
-        ApiResult<Rating> result = new ApiResult<>(response);
-
-        if(!result.isSuccess()) {
-            Timber.w("getRatings failed: %s", result.getError());
-            return null;
+        if (!result.isSuccess) {
+            Timber.w("setRating failed: %s", result.error)
+            return null
         }
 
-        Timber.d("getRatings succeeded");
+        Timber.d("setRating succeeded")
 
-        return result.getResult();
+        return result.result!!.averageRating
     }
 
+    @Throws(IOException::class)
+    fun addComment(photoId: Int, comment: String?) {
+        val cp = CommentPhoto()
+        cp.comment = comment
+        cp.photoId = photoId
+        Timber.d("addComment starting")
+        val response = _photoApi.addCommentForPhoto(photoId, cp).execute()
+        val result = ApiResult(response)
 
-    Float setRating(int photoId, int rating) throws IOException {
-        RatePhoto rp = new RatePhoto();
-        rp.setPhotoId(photoId);
-        rp.setRating(rating);
-
-        Timber.d("setRating starting");
-
-        Response<Rating> response = _photoApi.ratePhoto(photoId, rp).execute();
-        ApiResult<Rating> result = new ApiResult<>(response);
-
-        if(!result.isSuccess()) {
-            Timber.w("setRating failed: %s", result.getError());
-            return null;
+        if (!result.isSuccess) {
+            Timber.w("addComment failed: %s", result.error)
         }
 
-        Timber.d("setRating succeeded");
-
-        return result.getResult().getAverageRating();
+        Timber.d("addComment succeeded")
     }
 
-
-    void addComment(int photoId, String comment) throws IOException {
-        CommentPhoto cp = new CommentPhoto();
-        cp.setComment(comment);
-        cp.setPhotoId(photoId);
-
-        Timber.d("addComment starting");
-
-        Response<ApiCollection<Comment>> response = _photoApi.addCommentForPhoto(photoId, cp).execute();
-        ApiResult<ApiCollection<Comment>> result = new ApiResult<>(response);
-
-        if(!result.isSuccess()) {
-            Timber.w("addComment failed: %s", result.getError());
-        }
-
-        Timber.d("addComment succeeded");
-    }
-
-
-    okhttp3.Response downloadPhoto(String photoUrl) {
+    fun downloadPhoto(photoUrl: String): Response? {
         try {
-            URL url = new URL(photoUrl);
-            Request request = new Request.Builder().url(url).build();
-
-            return _httpClient.newCall(request).execute();
-        } catch (IOException ex) {
-            Timber.w("Error when getting photo blob: %s", ex.getMessage());
+            val url = URL(photoUrl)
+            val request = Request.Builder().url(url).build()
+            return _httpClient.newCall(request).execute()
+        } catch (ex: IOException) {
+            Timber.w("Error when getting photo blob: %s", ex.message)
         }
 
-        return null;
+        return null
     }
-
 
     // https://futurestud.io/tutorials/retrofit-2-how-to-upload-files-to-server
-    FileOperationResult uploadFile(File file) throws IOException {
+    @Throws(IOException::class)
+    fun uploadFile(file: File): FileOperationResult? {
         try {
-            MediaType type = MediaType.parse(_map.getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName())));
-            RequestBody requestFile = RequestBody.create(type, file);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+            val type =
+                MediaType.parse(_map.getMimeTypeFromExtension(FilenameUtils.getExtension(file.name)))
+            val requestFile = RequestBody.create(type, file)
+            val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
+            val response = _photoApi.uploadFile(body).execute()
 
-            Response<FileOperationResult> response = _photoApi.uploadFile(body).execute();
-
-            if(response.isSuccessful()) {
-                Timber.w("upload succeeded for file: %s", file.getName());
-                return response.body();
+            if (response.isSuccessful) {
+                Timber.w("upload succeeded for file: %s", file.name)
+                return response.body()
             } else {
-                Timber.w("unable to upload file: %s", file.getName());
+                Timber.w("unable to upload file: %s", file.name)
             }
-        } catch (IOException ex) {
-            Timber.w("Error uploading file: %s: %s", file.getName(), ex.getMessage());
-            throw ex;
+        } catch (ex: IOException) {
+            Timber.w("Error uploading file: %s: %s", file.name, ex.message)
+            throw ex
         }
 
-        return null;
+        return null
+    }
+
+    init {
+        _photoApi = retrofit.create(PhotoApi::class.java)
     }
 }

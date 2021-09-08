@@ -49,7 +49,7 @@ class ApplicationModule {
     @Singleton
     fun provideUpdateCategoriesJobScheduler(
         app: Application,
-        jobScheduler: JobScheduler?
+        jobScheduler: JobScheduler
     ): UpdateCategoriesJobScheduler {
         return UpdateCategoriesJobScheduler(app, jobScheduler)
     }
@@ -58,7 +58,7 @@ class ApplicationModule {
     @Singleton
     fun provideUploadScheduler(
         app: Application,
-        jobScheduler: JobScheduler?
+        jobScheduler: JobScheduler
     ): UploadJobScheduler {
         return UploadJobScheduler(app, jobScheduler)
     }
@@ -66,16 +66,16 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun provideDataServices(
-        databaseAccessor: DatabaseAccessor?,
-        photoApiClient: PhotoApiClient?,
-        photoStorage: PhotoStorage?
+        databaseAccessor: DatabaseAccessor,
+        photoApiClient: PhotoApiClient,
+        photoStorage: PhotoStorage
     ): DataServices {
         return DataServices(databaseAccessor, photoApiClient, photoStorage)
     }
 
     private fun addNewCategoriesNotificationChannel(
         app: Application,
-        notificationManager: NotificationManager?
+        notificationManager: NotificationManager
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = app.getString(R.string.channel_name_new_categories)
@@ -103,7 +103,7 @@ class ApplicationModule {
 
     private fun addUploadNotificationChannel(
         app: Application,
-        notificationManager: NotificationManager?
+        notificationManager: NotificationManager
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = app.getString(R.string.channel_name_upload)

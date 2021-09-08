@@ -15,19 +15,19 @@ import javax.inject.Singleton
 class DataStorageModule {
     @Provides
     @Singleton
-    fun provideMawSQLiteOpenHelper(application: Application?): MawSQLiteOpenHelper {
+    fun provideMawSQLiteOpenHelper(application: Application): MawSQLiteOpenHelper {
         return MawSQLiteOpenHelper(application)
     }
 
     @Provides
     @Singleton
-    fun provideDatabaseAccessor(sqliteHelper: MawSQLiteOpenHelper?): DatabaseAccessor {
+    fun provideDatabaseAccessor(sqliteHelper: MawSQLiteOpenHelper): DatabaseAccessor {
         return DatabaseAccessor(sqliteHelper)
     }
 
     @Provides
     @Singleton
-    fun providePhotoStorage(application: Application?): PhotoStorage {
+    fun providePhotoStorage(application: Application): PhotoStorage {
         return PhotoStorage(application)
     }
 }

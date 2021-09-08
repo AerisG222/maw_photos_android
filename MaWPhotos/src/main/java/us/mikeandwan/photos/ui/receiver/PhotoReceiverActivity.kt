@@ -56,16 +56,18 @@ class PhotoReceiverActivity : BaseActivity() {
 
         // if we end up on this page, we either have new files to upload, or a user wants to check
         // so lets try to reschedule the job to kick it off
-        _uploadScheduler!!.schedule(true)
+        _uploadScheduler.schedule(true)
     }
 
     public override fun onResume() {
         updateToolbar(binding.toolbar, "Upload Queue")
+
         _disposables.add(_dataServices
-            .getFileQueueObservable()
+            .fileQueueObservable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { files: Array<File> -> updateListing(files) })
+            .subscribe { files: Array<File>? -> updateListing(files!!) })
+
         super.onResume()
     }
 
@@ -81,7 +83,7 @@ class PhotoReceiverActivity : BaseActivity() {
         val glm = GridLayoutManager(this, Math.max(1, cols))
         binding.receiverRecyclerView.layoutManager = glm
         binding.receiverRecyclerView.itemAnimator = DefaultItemAnimator()
-        _receiverAdapter!!.setItemSize(displayMetrics.widthPixels / cols)
+        _receiverAdapter.setItemSize(displayMetrics.widthPixels / cols)
         binding.receiverRecyclerView.recycledViewPool.clear()
     }
 
@@ -125,7 +127,7 @@ class PhotoReceiverActivity : BaseActivity() {
                 continue
             }
             val inputStream = contentResolver.openInputStream(uri)
-            if (_dataServices!!.enequeFileToUpload(count + 1, inputStream, type)) {
+            if (_dataServices.enequeFileToUpload(count + 1, inputStream!!, type!!)) {
                 count++
             }
         }
@@ -143,6 +145,6 @@ class PhotoReceiverActivity : BaseActivity() {
     }
 
     private fun updateListing(files: Array<File>) {
-        _receiverAdapter!!.setQueuedFiles(files)
+        _receiverAdapter.setQueuedFiles(files)
     }
 }

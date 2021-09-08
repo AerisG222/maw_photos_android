@@ -207,14 +207,14 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     private fun initPhotoList() {
         _disposables.add(Flowable.fromCallable {
             addWork()
-            _dataServices!!.getPhotoList(_type, _categoryId)
+            _dataServices.getPhotoList(_type!!, _categoryId)
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { x: ApiCollection<Photo> ->
+                { x: ApiCollection<Photo>? ->
                     removeWork()
-                    onGetPhotoList(x.items)
+                    onGetPhotoList(x!!.items)
                 }
             ) { ex: Throwable? ->
                 removeWork()
@@ -233,14 +233,14 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         _randomPhotoIds = HashSet()
         _disposables.add(Flowable.fromCallable {
             addWork()
-            _dataServices!!.getRandomPhotos(RANDOM_INITIAL_COUNT)
+            _dataServices.getRandomPhotos(RANDOM_INITIAL_COUNT)
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { x: ApiCollection<Photo> ->
+                { x: ApiCollection<Photo>? ->
                     removeWork()
-                    for (p in x.items) {
+                    for (p in x!!.items) {
                         onGetRandom(p)
                     }
                 }
@@ -254,14 +254,14 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     private fun fetchRandom() {
         _disposables.add(Flowable.fromCallable {
             addWork()
-            _dataServices!!.randomPhoto
+            _dataServices.randomPhoto
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { x: Photo ->
+                { x: Photo? ->
                     removeWork()
-                    onGetRandom(x)
+                    onGetRandom(x!!)
                 }
             ) { ex: Throwable? ->
                 removeWork()
@@ -283,8 +283,8 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     }
 
     private fun onRandomPhotoFetched() {
-        _photoPagerAdapter!!.notifyDataSetChanged()
-        _thumbnailRecyclerAdapter!!.notifyDataSetChanged()
+        _photoPagerAdapter.notifyDataSetChanged()
+        _thumbnailRecyclerAdapter.notifyDataSetChanged()
         if (!_displayedRandomImage) {
             _displayedRandomImage = true
             gotoPhoto(0)
@@ -293,7 +293,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
 
     private fun onGatherPhotoListComplete() {
         _photoPagerAdapter!!.notifyDataSetChanged()
-        _thumbnailRecyclerAdapter!!.notifyDataSetChanged()
+        _thumbnailRecyclerAdapter.notifyDataSetChanged()
         gotoPhoto(_index)
     }
 
@@ -338,7 +338,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     private fun prefetchImage(photo: Photo, size: PhotoSize) {
         _disposables.add(Flowable.fromCallable {
             addWork()
-            _dataServices!!.downloadPhoto(photo, size)
+            _dataServices.downloadPhoto(photo, size)
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -407,25 +407,25 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     }
 
     private fun layoutActivity() {
-        displayView(binding.toolbar, _photoPrefs!!.doDisplayTopToolbar)
-        displayView(binding.photoToolbar, _photoPrefs!!.doDisplayPhotoToolbar)
-        displayView(binding.thumbnailPhotoRecycler, _photoPrefs!!.doDisplayThumbnails)
+        displayView(binding.toolbar, _photoPrefs.doDisplayTopToolbar)
+        displayView(binding.photoToolbar, _photoPrefs.doDisplayPhotoToolbar)
+        displayView(binding.thumbnailPhotoRecycler, _photoPrefs.doDisplayThumbnails)
 
-        if (_photoPrefs!!.doDisplayTopToolbar) {
+        if (_photoPrefs.doDisplayTopToolbar) {
             updateToolbar(binding.toolbar, _name.toString())
         }
 
-        if (_photoPrefs!!.doDisplayThumbnails) {
+        if (_photoPrefs.doDisplayThumbnails) {
             val llm =
                 ThumbnailLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false, _index)
             binding.thumbnailPhotoRecycler.setHasFixedSize(true)
             binding.thumbnailPhotoRecycler.layoutManager = llm
             binding.thumbnailPhotoRecycler.adapter = _thumbnailRecyclerAdapter
             _disposables.add(
-                _thumbnailRecyclerAdapter!!.onThumbnailSelected()
+                _thumbnailRecyclerAdapter.onThumbnailSelected()
                     .subscribe { index: Int -> gotoPhoto(index) })
 
-            if (_photoPrefs!!.doFadeControls) {
+            if (_photoPrefs.doFadeControls) {
                 binding.thumbnailPhotoRecycler.setOnTouchListener { view: View?, event: MotionEvent? ->
                     fade(binding.thumbnailPhotoRecycler)
                     false
@@ -433,7 +433,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
             }
         }
 
-        if (!_photoPrefs!!.doFadeControls) {
+        if (!_photoPrefs.doFadeControls) {
             val set = ConstraintSet()
             set.constrainHeight(R.id.photoPager, 0)
             set.constrainWidth(R.id.photoPager, 0)
@@ -502,7 +502,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     }
 
     private fun updateOpacity() {
-        if (_photoPrefs!!.doFadeControls) {
+        if (_photoPrefs.doFadeControls) {
             fade(binding.toolbar)
             fade(binding.photoToolbar)
             fade(binding.thumbnailPhotoRecycler)
@@ -526,7 +526,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
 
     private fun createShareIntent(photo: Photo?): Intent? {
         if (photo != null) {
-            val contentUri = _dataServices!!.getSharingContentUri(photo.imageMd.url)
+            val contentUri = _dataServices.getSharingContentUri(photo.imageMd.url)
 
             if (contentUri != null) {
                 val shareIntent = Intent(Intent.ACTION_SEND)

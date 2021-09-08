@@ -38,7 +38,7 @@ class ThumbnailRecyclerAdapter(activity: IPhotoActivity, dataServices: DataServi
         viewHolder.itemView.setOnClickListener { v: View? -> _thumbnailSubject.onNext(position) }
         _disposables.add(Flowable.fromCallable {
             _activity.addWork()
-            _dataServices.downloadPhoto(photo, PhotoSize.Xs)
+            _dataServices.downloadPhoto(photo!!, PhotoSize.Xs)
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

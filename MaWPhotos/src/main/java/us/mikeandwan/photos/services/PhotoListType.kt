@@ -1,7 +1,5 @@
-package us.mikeandwan.photos.services;
+package us.mikeandwan.photos.services
 
-
-public enum PhotoListType {
-    ByCategory,
-    Random
+enum class PhotoListType {
+    ByCategory, Random
 }

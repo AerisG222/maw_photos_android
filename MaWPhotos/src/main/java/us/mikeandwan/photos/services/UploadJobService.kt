@@ -34,17 +34,17 @@ class UploadJobService : JobService() {
     override fun onStartJob(params: JobParameters): Boolean {
         Timber.d("Starting upload files job")
         _disposables.add(_dataServices
-            .getFileQueueObservable()
-            .filter { obj: Array<File?>? -> Objects.nonNull(obj) }
+            .fileQueueObservable
+            .filter { obj: Array<File>? -> Objects.nonNull(obj) }
             .debounce(100, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .subscribe(
-                { files: Array<File?> ->
-                    if (files.size == 0) {
+                { files: Array<File>? ->
+                    if (files!!.size == 0) {
                         alertIfNeeded()
                         jobFinished(params, true)
                     } else {
-                        _dataServices!!.uploadQueuedFile(files[0])
+                        _dataServices.uploadQueuedFile(files[0])
                         _uploadCount++
                     }
                 }
@@ -54,6 +54,7 @@ class UploadJobService : JobService() {
                 jobFinished(params, true)
             }
         )
+
         return true
     }
 
@@ -68,10 +69,11 @@ class UploadJobService : JobService() {
         if (_uploadCount > 0) {
             addNotification(
                 _uploadCount,
-                _notificationPref!!.notificationRingtone,
-                _notificationPref!!.doVibrate
+                _notificationPref.notificationRingtone,
+                _notificationPref.doVibrate
             )
         }
+
         _uploadCount = 0
     }
 
@@ -88,15 +90,17 @@ class UploadJobService : JobService() {
                 .setContentIntent(detailsIntent)
                 .setAutoCancel(true)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
+
         if (!TextUtils.isEmpty(ringtone)) {
             builder.setSound(Uri.parse(ringtone))
         }
+
         if (vibrate) {
             builder.setVibrate(longArrayOf(300, 300))
         }
+
         val notification = builder.build()
-        if (_notificationManager != null) {
-            _notificationManager!!.notify(0, notification)
-        }
+
+        _notificationManager.notify(0, notification)
     }
 }

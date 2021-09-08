@@ -235,7 +235,8 @@ class ModeSelectionActivity : BaseActivity() {
     }
 
     private fun prepareYearChildren() {
-        val years = _dataServices!!.photoYears
+        val years = _dataServices.photoYears ?: return
+
         if (_yearList == null || years.size != _yearList!!.size) {
             _yearList = years
             _yearChildren.clear()

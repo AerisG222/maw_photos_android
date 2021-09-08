@@ -18,7 +18,7 @@ import javax.inject.Singleton
 class PhotoApiModule {
     @Provides
     @Singleton
-    fun provideRetrofit(httpClient: OkHttpClient?): Retrofit {
+    fun provideRetrofit(httpClient: OkHttpClient): Retrofit {
         val mapper = ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         return Retrofit.Builder()
@@ -31,8 +31,8 @@ class PhotoApiModule {
     @Provides
     @Singleton
     fun providePhotoApiClient(
-        httpClient: OkHttpClient?,
-        retrofit: Retrofit?
+        httpClient: OkHttpClient,
+        retrofit: Retrofit
     ): PhotoApiClient {
         return PhotoApiClient(httpClient, retrofit)
     }

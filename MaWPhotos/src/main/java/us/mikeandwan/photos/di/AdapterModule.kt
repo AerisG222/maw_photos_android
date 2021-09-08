@@ -22,18 +22,18 @@ internal class AdapterModule {
     @ActivityScoped
     fun provideListCategoryRecyclerAdapter(
         activity: Activity,
-        dataServices: DataServices?
+        dataServices: DataServices
     ): ListCategoryRecyclerAdapter {
-        return ListCategoryRecyclerAdapter(activity as ICategoryListActivity?, dataServices)
+        return ListCategoryRecyclerAdapter(activity as ICategoryListActivity, dataServices)
     }
 
     @Provides
     @ActivityScoped
     fun provideThumbnailCategoryRecyclerAdapter(
         activity: Activity,
-        dataServices: DataServices?
+        dataServices: DataServices
     ): ThumbnailCategoryRecyclerAdapter {
-        return ThumbnailCategoryRecyclerAdapter(activity as ICategoryListActivity?, dataServices)
+        return ThumbnailCategoryRecyclerAdapter(activity as ICategoryListActivity, dataServices)
     }
 
     @Provides

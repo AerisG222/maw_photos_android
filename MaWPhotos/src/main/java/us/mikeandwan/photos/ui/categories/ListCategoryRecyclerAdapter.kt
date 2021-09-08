@@ -22,7 +22,7 @@ class ListCategoryRecyclerAdapter(
     }
 
     override fun downloadCategoryTeaser(category: Category?): String? {
-        return _dataServices.downloadCategoryTeaser(category)
+        return _dataServices.downloadCategoryTeaser(category!!)
     }
 
     override fun displayCategory(

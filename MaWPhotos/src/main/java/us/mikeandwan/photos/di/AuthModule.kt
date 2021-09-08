@@ -26,28 +26,28 @@ import javax.inject.Singleton
 class AuthModule {
     @Provides
     @Singleton
-    fun provideAuthStateManager(application: Application?): AuthStateManager {
-        return AuthStateManager.getInstance(application!!)
+    fun provideAuthStateManager(application: Application): AuthStateManager {
+        return AuthStateManager.getInstance(application)
     }
 
     @Provides
     @Singleton
-    fun provideAuthorizationService(application: Application?): AuthorizationService {
-        return AuthorizationService(application!!)
+    fun provideAuthorizationService(application: Application): AuthorizationService {
+        return AuthorizationService(application)
     }
 
     @Provides
     @Singleton
     fun provideAuthAuthenticator(
-        authService: AuthorizationService?,
-        authStateManager: AuthStateManager?
+        authService: AuthorizationService,
+        authStateManager: AuthStateManager
     ): AuthAuthenticator {
         return AuthAuthenticator(authService, authStateManager)
     }
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(authStateManager: AuthStateManager?): AuthInterceptor {
+    fun provideAuthInterceptor(authStateManager: AuthStateManager): AuthInterceptor {
         return AuthInterceptor(authStateManager)
     }
 

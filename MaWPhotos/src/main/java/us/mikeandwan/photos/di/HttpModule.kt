@@ -15,8 +15,8 @@ class HttpModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        authenticator: AuthAuthenticator?,
-        authInterceptor: AuthInterceptor?
+        authenticator: AuthAuthenticator,
+        authInterceptor: AuthInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .authenticator(authenticator)

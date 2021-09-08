@@ -30,6 +30,7 @@ class UpdateCategoriesJobService : JobService() {
 
     override fun onStartJob(params: JobParameters): Boolean {
         Timber.d("Update Categories Job started")
+
         _disposables.add(Flowable
             .fromCallable { updateCategories() }
             .subscribeOn(Schedulers.io())
@@ -43,20 +44,23 @@ class UpdateCategoriesJobService : JobService() {
                 jobFinished(params, false)
             }
         )
+
         return true
     }
 
     override fun onStopJob(params: JobParameters): Boolean {
         Timber.d("Update Categories Job was cancelled before completing.")
         _disposables.clear()
+
         return false
     }
 
     private fun updateCategories(): Boolean {
         var totalCount: Int
+
         try {
             Timber.d("about to get recent categories")
-            val categories = _dataServices!!.recentCategories.items
+            val categories = _dataServices.recentCategories.items
             totalCount = _app!!.notificationCount + categories.size
             Timber.i("received recent categories; count: %d", totalCount)
             _app.notificationCount = totalCount
@@ -66,13 +70,14 @@ class UpdateCategoriesJobService : JobService() {
         }
 
         // force a notification about bad credentials
-        if (totalCount < 0 || totalCount > 0 && _notificationPref!!.doNotify) {
+        if (totalCount < 0 || totalCount > 0 && _notificationPref.doNotify) {
             addNotification(
                 totalCount,
-                _notificationPref!!.notificationRingtone,
-                _notificationPref!!.doVibrate
+                _notificationPref.notificationRingtone,
+                _notificationPref.doVibrate
             )
         }
+
         return true
     }
 
@@ -81,6 +86,7 @@ class UpdateCategoriesJobService : JobService() {
         i.setClass(this, LoginActivity::class.java)
         val title: String
         val contentText: String
+
         if (count == -1) {
             title = "Authentication Error"
             contentText = "Please update your credentials"
@@ -89,6 +95,7 @@ class UpdateCategoriesJobService : JobService() {
             val pluralize = if (count == 1) "category" else "categories"
             contentText = "$count new $pluralize"
         }
+
         val detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT)
         val builder =
             NotificationCompat.Builder(this, MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
@@ -99,15 +106,17 @@ class UpdateCategoriesJobService : JobService() {
                 .setContentIntent(detailsIntent)
                 .setAutoCancel(true)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
+
         if (!TextUtils.isEmpty(ringtone)) {
             builder.setSound(Uri.parse(ringtone))
         }
+
         if (vibrate) {
             builder.setVibrate(longArrayOf(300, 300))
         }
+
         val notification = builder.build()
-        if (_notificationManager != null) {
-            _notificationManager!!.notify(0, notification)
-        }
+
+        _notificationManager!!.notify(0, notification)
     }
 }

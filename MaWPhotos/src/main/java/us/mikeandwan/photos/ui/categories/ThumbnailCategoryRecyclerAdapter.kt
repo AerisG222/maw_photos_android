@@ -23,7 +23,7 @@ class ThumbnailCategoryRecyclerAdapter(
     }
 
     override fun downloadCategoryTeaser(category: Category?): String? {
-        return _dataServices.downloadMdCategoryTeaser(category)
+        return _dataServices.downloadMdCategoryTeaser(category!!)
     }
 
     protected override fun displayCategory(
