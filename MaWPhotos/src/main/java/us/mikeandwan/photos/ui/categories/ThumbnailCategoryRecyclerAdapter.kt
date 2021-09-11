@@ -26,7 +26,7 @@ class ThumbnailCategoryRecyclerAdapter(
         return _dataServices.downloadMdCategoryTeaser(category!!)
     }
 
-    protected override fun displayCategory(
+    override fun displayCategory(
         category: Category?,
         imageFile: String?,
         viewHolder: ViewHolder?

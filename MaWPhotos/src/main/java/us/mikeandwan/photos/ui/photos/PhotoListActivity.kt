@@ -539,7 +539,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         return null
     }
 
-    private inner class SlideshowRunnable internal constructor(private val _nextIndex: Int) :
+    private inner class SlideshowRunnable(private val _nextIndex: Int) :
         Runnable {
 
         override fun run() {

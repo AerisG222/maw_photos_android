@@ -16,7 +16,7 @@ class MawApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        instance = this;
+        instance = this
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())

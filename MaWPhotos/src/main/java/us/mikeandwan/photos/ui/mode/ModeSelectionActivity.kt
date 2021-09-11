@@ -287,7 +287,7 @@ class ModeSelectionActivity : BaseActivity() {
         val v = _refreshMenuItem!!.actionView
         if (v != null) {
             v.clearAnimation()
-            _refreshMenuItem!!.setActionView(null)
+            _refreshMenuItem!!.actionView = null
         }
     }
 

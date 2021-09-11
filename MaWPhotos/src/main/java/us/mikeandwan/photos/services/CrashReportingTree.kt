@@ -5,7 +5,7 @@ import timber.log.Timber.Tree
 
 // https://github.com/JakeWharton/timber/blob/master/timber-sample/src/main/java/com/example/timber/ExampleApp.java
 class CrashReportingTree : Tree() {
-    protected override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority == Log.VERBOSE || priority == Log.DEBUG) {
             return
         }
