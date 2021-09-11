@@ -54,10 +54,6 @@ class ExifDialogFragment : BasePhotoDialogFragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onResume() {
         exifData
         super.onResume()
@@ -181,9 +177,11 @@ class ExifDialogFragment : BasePhotoDialogFragment() {
         val nameView = TextView(ctx)
         nameView.text = name
         nameView.setPadding(_4dp, _2dp, _4dp, _2dp)
+
         val valueView = TextView(ctx)
         valueView.text = value ?: "--"
         valueView.setPadding(_8dp, _2dp, _4dp, _2dp)
+
         row.addView(nameView)
         row.addView(valueView)
     }
