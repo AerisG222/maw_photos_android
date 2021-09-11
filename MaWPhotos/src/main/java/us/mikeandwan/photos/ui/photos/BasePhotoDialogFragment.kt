@@ -6,7 +6,7 @@ import us.mikeandwan.photos.models.Photo
 
 open class BasePhotoDialogFragment : DialogFragment() {
     override fun getContext(): Context {
-        return requireActivity().baseContext
+        return requireActivity()
     }
 
     protected val photoActivity: IPhotoActivity
