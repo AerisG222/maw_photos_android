@@ -59,6 +59,12 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     private var _playingSlideshow = false
     private var _photoList: ArrayList<Photo>? = ArrayList()
 
+    override val currentPhoto: Photo
+        get() = _photoList!![_index]
+
+    override val photoList: List<Photo>?
+        get() = _photoList
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPhotoListBinding.inflate(layoutInflater)
@@ -142,11 +148,6 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         val intent = Intent(this, PhotoReceiverActivity::class.java)
         startActivity(intent)
     }
-
-    override val currentPhoto: Photo
-        get() = _photoList!![_index]
-    override val photoList: List<Photo>?
-        get() = _photoList
 
     override fun addWork() {
         _taskCount.incrementAndGet()
