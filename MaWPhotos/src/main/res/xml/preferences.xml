@@ -1,65 +1,56 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="@string/pref_notifications_header">
+        <SwitchPreferenceCompat
+            app:key="notifications_new_message"
+            app:title="@string/pref_notifications_new_message_title"
+            app:defaultValue="true" />
 
-    <PreferenceCategory android:title="@string/pref_notifications_header">
-        <CheckBoxPreference
-            android:key="notifications_new_message"
-            android:title="@string/pref_notifications_new_message_title"
-            android:defaultValue="true" />
-
-        <RingtonePreference
-            android:dependency="notifications_new_message"
-            android:key="notifications_new_message_ringtone"
-            android:title="@string/pref_notifications_ringtone"
-            android:ringtoneType="notification"
-            android:defaultValue="content://settings/system/notification_sound" />
-
-        <CheckBoxPreference
-            android:dependency="notifications_new_message"
-            android:key="notifications_new_message_vibrate"
-            android:title="@string/pref_notifications_vibrate"
-            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            app:dependency="notifications_new_message"
+            app:key="notifications_new_message_vibrate"
+            app:title="@string/pref_notifications_vibrate"
+            app:defaultValue="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_category_display_header">
+    <PreferenceCategory app:title="@string/pref_category_display_header">
         <ListPreference
-            android:key="category_view_mode"
-            android:title="@string/pref_category_display_header"
-            android:summary="%s"
-            android:entries="@array/pref_category_display_names"
-            android:entryValues="@array/pref_category_display_values"
-            android:defaultValue="@string/pref_category_display_default_value" />
+            app:key="category_view_mode"
+            app:title="@string/pref_category_display_header"
+            app:summary="%s"
+            app:entries="@array/pref_category_display_names"
+            app:entryValues="@array/pref_category_display_values"
+            app:defaultValue="@string/pref_category_display_default_value" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_photo_display_header">
-        <CheckBoxPreference
-            android:key="display_top_toolbar"
-            android:title="@string/pref_photo_display_show_top_toolbar"
-            android:defaultValue="true" />
+    <PreferenceCategory app:title="@string/pref_photo_display_header">
+        <SwitchPreferenceCompat
+            app:key="display_top_toolbar"
+            app:title="@string/pref_photo_display_show_top_toolbar"
+            app:defaultValue="true" />
 
-        <CheckBoxPreference
-            android:key="display_toolbar"
-            android:title="@string/pref_photo_display_show_toolbar"
-            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            app:key="display_toolbar"
+            app:title="@string/pref_photo_display_show_toolbar"
+            app:defaultValue="true" />
 
-        <CheckBoxPreference
-            android:key="display_thumbnails"
-            android:title="@string/pref_photo_display_show_thumbnails"
-            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            app:key="display_thumbnails"
+            app:title="@string/pref_photo_display_show_thumbnails"
+            app:defaultValue="true" />
 
-        <CheckBoxPreference
-            android:key="fade_controls"
-            android:title="@string/pref_photo_display_fade_controls"
-            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            app:key="fade_controls"
+            app:title="@string/pref_photo_display_fade_controls"
+            app:defaultValue="true" />
 
         <ListPreference
-            android:key="slideshow_interval"
-            android:title="@string/pref_photo_display_slideshow_interval"
-            android:summary="%s"
-            android:entries="@array/pref_photo_display_slideshow_intervals"
-            android:entryValues="@array/pref_photo_display_slideshow_interval_values"
-            android:defaultValue="@string/pref_photo_display_slideshow_interval_default_value"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null" />
+            app:key="slideshow_interval"
+            app:title="@string/pref_photo_display_slideshow_interval"
+            app:summary="%s"
+            app:entries="@array/pref_photo_display_slideshow_intervals"
+            app:entryValues="@array/pref_photo_display_slideshow_interval_values"
+            app:defaultValue="@string/pref_photo_display_slideshow_interval_default_value"
+            app:negativeButtonText="@null"
+            app:positiveButtonText="@null" />
     </PreferenceCategory>
-
 </PreferenceScreen>

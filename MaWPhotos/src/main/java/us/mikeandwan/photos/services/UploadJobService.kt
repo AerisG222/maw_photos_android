@@ -69,7 +69,6 @@ class UploadJobService : JobService() {
         if (_uploadCount > 0) {
             addNotification(
                 _uploadCount,
-                _notificationPref.notificationRingtone,
                 _notificationPref.doVibrate
             )
         }
@@ -77,7 +76,7 @@ class UploadJobService : JobService() {
         _uploadCount = 0
     }
 
-    private fun addNotification(uploadCount: Int, ringtone: String, vibrate: Boolean) {
+    private fun addNotification(uploadCount: Int, vibrate: Boolean) {
         val i = Intent(Intent.ACTION_MAIN)
         i.setClass(this, PhotoReceiverActivity::class.java)
         val detailsIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -90,10 +89,6 @@ class UploadJobService : JobService() {
                 .setContentIntent(detailsIntent)
                 .setAutoCancel(true)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
-
-        if (!TextUtils.isEmpty(ringtone)) {
-            builder.setSound(Uri.parse(ringtone))
-        }
 
         if (vibrate) {
             builder.setVibrate(longArrayOf(300, 300))

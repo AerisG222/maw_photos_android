@@ -19,8 +19,8 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:exported="true"
             android:name=".ui.receiver.PhotoReceiverActivity"
+            android:exported="true"
             android:label="@string/app_name"
             android:noHistory="true"
             android:screenOrientation="fullSensor">
@@ -36,8 +36,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:exported="true"
             android:name=".ui.login.LoginActivity"
+            android:exported="true"
             android:label="@string/app_name"
             android:noHistory="true"
             android:screenOrientation="fullSensor">
@@ -71,7 +71,7 @@
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/pref_activity_settings_title"
-            android:screenOrientation="fullSensor"/>
+            android:screenOrientation="fullSensor" />
 
         <service
             android:name=".services.UpdateCategoriesJobService"
@@ -91,7 +91,6 @@
                 android:name="com.commonsware.cwac.provider.STREAM_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
-
     </application>
 
 </manifest>

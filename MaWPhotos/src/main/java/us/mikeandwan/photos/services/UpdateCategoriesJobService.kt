@@ -73,7 +73,6 @@ class UpdateCategoriesJobService : JobService() {
         if (totalCount < 0 || totalCount > 0 && _notificationPref.doNotify) {
             addNotification(
                 totalCount,
-                _notificationPref.notificationRingtone,
                 _notificationPref.doVibrate
             )
         }
@@ -81,7 +80,7 @@ class UpdateCategoriesJobService : JobService() {
         return true
     }
 
-    private fun addNotification(count: Int, ringtone: String, vibrate: Boolean) {
+    private fun addNotification(count: Int, vibrate: Boolean) {
         val i = Intent(Intent.ACTION_MAIN)
         i.setClass(this, LoginActivity::class.java)
         val title: String
@@ -106,10 +105,6 @@ class UpdateCategoriesJobService : JobService() {
                 .setContentIntent(detailsIntent)
                 .setAutoCancel(true)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
-
-        if (!TextUtils.isEmpty(ringtone)) {
-            builder.setSound(Uri.parse(ringtone))
-        }
 
         if (vibrate) {
             builder.setVibrate(longArrayOf(300, 300))
