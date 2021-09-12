@@ -12,8 +12,8 @@ internal interface PhotoApi {
     @GET("photos/{photoId}/exif")
     fun getExifData(@Path("photoId") photoId: Int): Call<ExifData>
 
-    @get:GET("photos/random")
-    val randomPhoto: Call<Photo>
+    @GET("photos/random")
+    fun getRandomPhoto(): Call<Photo>
 
     @GET("photos/random/{count}")
     fun getRandomPhotos(@Path("count") count: Int): Call<ApiCollection<Photo>>

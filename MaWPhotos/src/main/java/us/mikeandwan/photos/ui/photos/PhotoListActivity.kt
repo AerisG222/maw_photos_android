@@ -254,7 +254,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
     private fun fetchRandom() {
         _disposables.add(Flowable.fromCallable {
             addWork()
-            _dataServices.randomPhoto
+            _dataServices.getRandomPhoto()
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

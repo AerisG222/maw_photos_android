@@ -81,12 +81,12 @@ class DataServices(
     val photoYears: List<Int>?
         get() = _databaseAccessor.photoYears
 
-    @get:Throws(IOException::class)
-    val randomPhoto: Photo?
-        get() {
-            Timber.d("started to get random photo")
-            return _photoApiClient.randomPhoto
-        }
+    @Throws(IOException::class)
+    fun getRandomPhoto(): Photo? {
+        Timber.d("started to get random photo")
+
+        return _photoApiClient.getRandomPhoto()
+    }
 
     @Throws(IOException::class)
     fun getRandomPhotos(count: Int): ApiCollection<Photo>? {

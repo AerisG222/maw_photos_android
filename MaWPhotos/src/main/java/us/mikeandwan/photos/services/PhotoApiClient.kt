@@ -50,22 +50,21 @@ class PhotoApiClient @Inject constructor(
         return result.result
     }
 
-    @get:Throws(IOException::class)
-    val randomPhoto: Photo?
-        get() {
-            Timber.d("getRandomPhoto starting")
-            val response = _photoApi.randomPhoto.execute()
-            val result = ApiResult(response)
+    @Throws(IOException::class)
+    fun getRandomPhoto(): Photo? {
+        Timber.d("getRandomPhoto starting")
+        val response = _photoApi.getRandomPhoto().execute()
+        val result = ApiResult(response)
 
-            if (!result.isSuccess) {
-                Timber.w("getRandomPhoto failed: %s", result.error)
-                return null
-            }
-
-            Timber.d("getRandomPhoto succeeded")
-
-            return result.result
+        if (!result.isSuccess) {
+            Timber.w("getRandomPhoto failed: %s", result.error)
+            return null
         }
+
+        Timber.d("getRandomPhoto succeeded")
+
+        return result.result
+    }
 
     @Throws(IOException::class)
     fun getRandomPhotos(count: Int): ApiCollection<Photo>? {
