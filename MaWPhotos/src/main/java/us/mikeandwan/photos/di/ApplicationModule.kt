@@ -9,8 +9,7 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
-import android.os.Build
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -77,55 +76,43 @@ class ApplicationModule {
         app: Application,
         notificationManager: NotificationManager
     ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = app.getString(R.string.channel_name_new_categories)
-            val description = app.getString(R.string.channel_description_new_categories)
-            val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .build()
-            val channel = NotificationChannel(
-                MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES,
-                name,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            channel.description = description
-            channel.enableLights(true)
-            channel.enableVibration(true)
-            channel.vibrationPattern = longArrayOf(300, 300)
-            channel.lightColor = Color.argb(255, 75, 0, 130)
-            channel.setSound(
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
-                audioAttributes
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
+        val name = app.getString(R.string.channel_name_new_categories)
+        val description = app.getString(R.string.channel_description_new_categories)
+
+        createChannel(notificationManager, name, description, MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
     }
 
     private fun addUploadNotificationChannel(
         app: Application,
         notificationManager: NotificationManager
     ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = app.getString(R.string.channel_name_upload)
-            val description = app.getString(R.string.channel_description_upload)
-            val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .build()
-            val channel = NotificationChannel(
-                MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES,
-                name,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            channel.description = description
-            channel.enableLights(true)
-            channel.enableVibration(true)
-            channel.vibrationPattern = longArrayOf(300, 300)
-            channel.lightColor = Color.argb(255, 75, 0, 130)
-            channel.setSound(
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
-                audioAttributes
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
+        val name = app.getString(R.string.channel_name_upload)
+        val description = app.getString(R.string.channel_description_upload)
+
+        createChannel(notificationManager, name, description, MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
+    }
+
+    private fun createChannel(notificationManager: NotificationManager, name: String, description: String, channelId: String) {
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+            .build()
+
+        val channel = NotificationChannel(
+            channelId,
+            name,
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+
+        channel.description = description
+        channel.enableLights(true)
+        channel.enableVibration(true)
+        channel.vibrationPattern = longArrayOf(300, 300)
+        channel.lightColor = Color.argb(255, 75, 0, 130)
+        channel.setSound(
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+            audioAttributes
+        )
+
+        notificationManager.createNotificationChannel(channel)
     }
 }
