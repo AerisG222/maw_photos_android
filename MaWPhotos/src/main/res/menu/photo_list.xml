@@ -15,7 +15,7 @@
           mawphotos:showAsAction="never" />
 
     <item android:id="@+id/action_view_upload_queue"
-        android:title="View Upload Queue"
+        android:title="@string/action_view_upload_queue"
         android:orderInCategory="100"
         android:onClick="onViewUploadQueueClick"
         mawphotos:showAsAction="never" />
