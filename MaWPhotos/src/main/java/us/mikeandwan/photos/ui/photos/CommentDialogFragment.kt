@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TableRow
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -45,8 +46,8 @@ class CommentDialogFragment : BasePhotoDialogFragment() {
     ): View? {
         _binding = DialogCommentBinding.inflate(inflater, container, false)
 
-        _colorPrimary = resources.getColor(R.color.primary)
-        _colorPrimaryDark = resources.getColor(R.color.primary_dark)
+        _colorPrimary = ContextCompat.getColor(context, R.color.primary)
+        _colorPrimaryDark = ContextCompat.getColor(context, R.color.primary_dark)
         requireDialog().setTitle("Comments")
         binding.commentEditText.requestFocus()
 
