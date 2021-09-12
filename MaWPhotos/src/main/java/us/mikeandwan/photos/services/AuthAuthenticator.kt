@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.services
 
-import java9.util.concurrent.CompletableFuture
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
 import okhttp3.Authenticator
@@ -9,6 +8,7 @@ import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
 import java.io.IOException
+import java.util.concurrent.CompletableFuture
 
 class AuthAuthenticator(
     private val _authService: AuthorizationService,
@@ -19,7 +19,9 @@ class AuthAuthenticator(
     override fun authenticate(route: Route?, response: Response): Request? {
         val future = CompletableFuture<Request?>()
         val authState = _authStateManager.current
+
         Timber.d("Starting Authenticator.authenticate")
+
         authState.performActionWithFreshTokens(_authService) { accessToken: String?, idToken: String?, ex: AuthorizationException? ->
             if (ex != null) {
                 Timber.e("Failed to authorize = %s", ex.message)
@@ -35,6 +37,7 @@ class AuthAuthenticator(
                 future.complete(request)
             }
         }
+
         return try {
             future.get()
         } catch (ex: Exception) {

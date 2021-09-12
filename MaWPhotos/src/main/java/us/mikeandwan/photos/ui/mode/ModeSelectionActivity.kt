@@ -18,6 +18,7 @@ import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import net.openid.appauth.AuthState
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityModeSelectionBinding
@@ -138,8 +139,7 @@ class ModeSelectionActivity : BaseActivity() {
     }
 
     fun onReauthenticate(menuItem: MenuItem?) {
-        // TODO: check the line below
-        //_authStateManager!!.replace(null)
+        _authStateManager.replace(AuthState())
 
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)

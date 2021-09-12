@@ -119,9 +119,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.preference:preference-ktx:1.1.1'
 
-    // completable future
-    implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.3'
-
     // appauth
     implementation 'net.openid:appauth:0.10.0'
 

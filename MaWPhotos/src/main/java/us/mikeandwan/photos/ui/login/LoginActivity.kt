@@ -28,8 +28,8 @@ class LoginActivity : BaseActivity() {
     @Inject lateinit var _config: Observable<AuthorizationServiceConfiguration>
 
     var _authService: AuthorizationService? = null
-
     private var _authSchemeRedirectUri: Uri? = null
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -40,6 +40,7 @@ class LoginActivity : BaseActivity() {
 
         // https://github.com/openid/AppAuth-Android/issues/333
         _authService = AuthorizationService(this)
+
         authorize()
     }
 
@@ -63,6 +64,7 @@ class LoginActivity : BaseActivity() {
             goToModeSelection()
             return
         }
+
         _disposables.add(_config.subscribe({ config: AuthorizationServiceConfiguration? ->
             _authStateManager.replace(AuthState(config!!))
             val authRequestBuilder = AuthorizationRequest.Builder(
@@ -96,7 +98,7 @@ class LoginActivity : BaseActivity() {
             return authState.isAuthorized
         }
 
-    private fun retryLogin(view: View) {
+    fun retryLogin(view: View) {
         recreate()
     }
 }
