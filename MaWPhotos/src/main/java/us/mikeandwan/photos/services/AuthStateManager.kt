@@ -30,9 +30,9 @@ import java.util.concurrent.locks.ReentrantLock
  * mutation.
  */
 class AuthStateManager private constructor(context: Context) {
-    private val mPrefs: SharedPreferences
-    private val mPrefsLock: ReentrantLock
-    private val mCurrentAuthState: AtomicReference<AuthState>
+    private val mPrefs: SharedPreferences = context.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE)
+    private val mPrefsLock: ReentrantLock = ReentrantLock()
+    private val mCurrentAuthState: AtomicReference<AuthState> = AtomicReference()
 
     @get:AnyThread
     val current: AuthState
@@ -40,7 +40,9 @@ class AuthStateManager private constructor(context: Context) {
             if (mCurrentAuthState.get() != null) {
                 return mCurrentAuthState.get()
             }
+
             val state = readState()
+
             return if (mCurrentAuthState.compareAndSet(null, state)) {
                 state
             } else {
@@ -126,6 +128,7 @@ class AuthStateManager private constructor(context: Context) {
         private const val TAG = "AuthStateManager"
         private const val STORE_NAME = "AuthState"
         private const val KEY_STATE = "state"
+
         @AnyThread
         fun getInstance(context: Context): AuthStateManager {
             var manager = INSTANCE_REF.get().get()
@@ -135,11 +138,5 @@ class AuthStateManager private constructor(context: Context) {
             }
             return manager
         }
-    }
-
-    init {
-        mPrefs = context.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE)
-        mPrefsLock = ReentrantLock()
-        mCurrentAuthState = AtomicReference()
     }
 }
