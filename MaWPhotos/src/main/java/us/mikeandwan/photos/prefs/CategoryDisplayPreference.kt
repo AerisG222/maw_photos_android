@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 class CategoryDisplayPreference(private val _sharedPrefs: SharedPreferences) {
     val categoryDisplay: CategoryDisplay
         get() {
-            val `val` = _sharedPrefs.getString("category_view_mode", "list")
-            return if (`val` == null || `val`.equals("list", ignoreCase = true)) {
+            val value = _sharedPrefs.getString("category_view_mode", "list")
+            return if (value == null || value.equals("list", ignoreCase = true)) {
                 CategoryDisplay.ThumbnailAndNameList
             } else CategoryDisplay.ThumbnailGrid
         }

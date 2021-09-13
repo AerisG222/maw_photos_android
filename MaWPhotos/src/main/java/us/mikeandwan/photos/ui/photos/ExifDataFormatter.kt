@@ -6,103 +6,103 @@ import java.util.*
 
 object ExifDataFormatter {
     @JvmStatic
-    fun format(`val`: Date?): String {
-        if (`val` == null) {
+    fun format(value: Date?): String {
+        if (value == null) {
             return "--"
         }
         val sdf = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.US)
-        return sdf.format(`val`)
+        return sdf.format(value)
     }
 
     @JvmStatic
-    fun format(`val`: String?): String {
-        return `val` ?: "--"
+    fun format(value: String?): String {
+        return value ?: "--"
     }
 
     @JvmStatic
-    fun format(`val`: Double?): String {
-        return `val`?.toString() ?: "--"
+    fun format(value: Double?): String {
+        return value?.toString() ?: "--"
     }
 
     @JvmStatic
-    fun format(`val`: Short?): String {
-        return `val`?.toString() ?: "--"
+    fun format(value: Short?): String {
+        return value?.toString() ?: "--"
     }
 
     @JvmStatic
-    fun format(`val`: Int?): String {
-        return `val`?.toString() ?: "--"
+    fun format(value: Int?): String {
+        return value?.toString() ?: "--"
     }
 
     @JvmStatic
-    fun formatOneDecimal(`val`: Double?): String {
-        if (`val` == null) {
+    fun formatOneDecimal(value: Double?): String {
+        if (value == null) {
             return "--"
         }
         val df = DecimalFormat("0.0")
-        return df.format(`val`)
+        return df.format(value)
     }
 
     @JvmStatic
-    fun formatFourDecimals(`val`: Double?): String {
-        if (`val` == null) {
+    fun formatFourDecimals(value: Double?): String {
+        if (value == null) {
             return "--"
         }
         val df = DecimalFormat("0.0000")
-        return df.format(`val`)
+        return df.format(value)
     }
 
     @JvmStatic
-    fun formatMillimeters(`val`: Double?): String {
-        if (`val` == null) {
+    fun formatMillimeters(value: Double?): String {
+        if (value == null) {
             return "--"
         }
         val df = DecimalFormat("0.0")
-        return df.format(`val`) + " mm"
+        return df.format(value) + " mm"
     }
 
     @JvmStatic
-    fun formatMeters(`val`: Double?): String {
-        if (`val` == null) {
+    fun formatMeters(value: Double?): String {
+        if (value == null) {
             return "--"
         }
         val df = DecimalFormat("0.0")
-        return df.format(`val`) + " m"
+        return df.format(value) + " m"
     }
 
     @JvmStatic
-    fun formatLatitude(`val`: Double?): String {
-        if (`val` == null) {
+    fun formatLatitude(value: Double?): String {
+        if (value == null) {
             return "--"
         }
-        return if (`val` >= 0) {
-            "$`val` (North)"
+        return if (value >= 0) {
+            "$value (North)"
         } else {
-            "$`val` (South)"
-        }
-    }
-
-    @JvmStatic
-    fun formatLongitude(`val`: Double?): String {
-        if (`val` == null) {
-            return "--"
-        }
-        return if (`val` >= 0) {
-            "$`val` (East)"
-        } else {
-            "$`val` (West)"
+            "$value (South)"
         }
     }
 
     @JvmStatic
-    fun formatAltitude(`val`: Double?): String {
-        if (`val` == null) {
+    fun formatLongitude(value: Double?): String {
+        if (value == null) {
             return "--"
         }
-        return if (`val` >= 0) {
-            "$`val` m Above Sea Level"
+        return if (value >= 0) {
+            "$value (East)"
         } else {
-            "$`val` m Below Sea Level"
+            "$value (West)"
+        }
+    }
+
+    @JvmStatic
+    fun formatAltitude(value: Double?): String {
+        if (value == null) {
+            return "--"
+        }
+        return if (value >= 0) {
+            "$value m Above Sea Level"
+        } else {
+            "$value m Below Sea Level"
         }
     }
 }
