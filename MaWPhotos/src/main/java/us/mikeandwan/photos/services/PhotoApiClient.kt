@@ -178,8 +178,7 @@ class PhotoApiClient @Inject constructor(
     @Throws(IOException::class)
     fun uploadFile(file: File): FileOperationResult? {
         try {
-            val type =
-                MediaType.parse(_map.getMimeTypeFromExtension(FilenameUtils.getExtension(file.name)))
+            val type = getMediaTypeForFile(file)
             val requestFile = RequestBody.create(type, file)
             val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
             val response = _photoApi.uploadFile(body).execute()
@@ -196,5 +195,21 @@ class PhotoApiClient @Inject constructor(
         }
 
         return null
+    }
+
+    fun getMediaTypeForFile(file:File): MediaType {
+        val mimeType = _map.getMimeTypeFromExtension(FilenameUtils.getExtension(file.name))
+        var type: MediaType? = null
+
+        if(mimeType != null) {
+            type = MediaType.parse(mimeType)
+        }
+
+        if(type == null)
+        {
+            type = MediaType.get("binary/octet-stream")
+        }
+
+        return type!!
     }
 }
