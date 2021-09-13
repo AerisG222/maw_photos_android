@@ -15,7 +15,7 @@ class PhotoApiClient @Inject constructor(
     private val _httpClient: OkHttpClient,
     retrofit: Retrofit
 ) {
-    private val _photoApi: PhotoApi
+    private val _photoApi: PhotoApi = retrofit.create(PhotoApi::class.java)
     private val _map = MimeTypeMap.getSingleton()
 
     @Throws(IOException::class)
@@ -196,9 +196,5 @@ class PhotoApiClient @Inject constructor(
         }
 
         return null
-    }
-
-    init {
-        _photoApi = retrofit.create(PhotoApi::class.java)
     }
 }
