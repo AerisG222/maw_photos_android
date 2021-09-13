@@ -51,7 +51,7 @@ class DataServices(
         return downloadPhoto(path)
     }
 
-    fun getCategoriesForYear(year: Int): List<Category>? {
+    fun getCategoriesForYear(year: Int): List<Category> {
         Timber.d("started to get categories for year: %s", year)
 
         return _databaseAccessor.getCategoriesForYear(year)
@@ -78,7 +78,7 @@ class DataServices(
         return _photoApiClient.getPhotos(type, categoryId)
     }
 
-    val photoYears: List<Int>?
+    val photoYears: List<Int>
         get() = _databaseAccessor.photoYears
 
     @Throws(IOException::class)
@@ -138,9 +138,11 @@ class DataServices(
 
     fun enequeFileToUpload(id: Int, inputStream: InputStream, mimeType: String): Boolean {
         val result = _photoStorage.enqueueFileToUpload(id, inputStream, mimeType)
+
         if (result) {
             updateQueuedFileSubject()
         }
+
         return result
     }
 
@@ -152,6 +154,7 @@ class DataServices(
     fun uploadQueuedFile(file: File) {
         try {
             val result = _photoApiClient.uploadFile(file)
+
             if (result!!.wasSuccessful) {
                 _photoStorage.deleteFileToUpload(file)
                 updateQueuedFileSubject()
@@ -196,10 +199,13 @@ class DataServices(
 
                 if (response != null) {
                     if (response.isSuccessful) {
-                        _photoStorage.put(path, response.body())
-                        val body = response.body()
-                        body?.close()
+                        if(response.body() != null) {
+                            _photoStorage.put(path, response.body()!!)
+                        }
+
+                        response.body()?.close()
                         response.close()
+
                         return cachePath
                     } else {
                         Timber.e(

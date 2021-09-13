@@ -17,9 +17,10 @@ import java.util.*
 import javax.inject.Inject
 
 class PhotoStorage @Inject constructor(private val _context: Context) {
-    fun put(remotePath: String, body: ResponseBody?) {
+    fun put(remotePath: String, body: ResponseBody) {
         val dir = File(rootPath, remotePath.substring(0, remotePath.lastIndexOf('/')))
         val file = getCachePath(remotePath)
+
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
                 Timber.e("Error creating photo directory hierarchy: %s", dir.name)
@@ -35,9 +36,10 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
         // write to the same temp file.  As such, with the final rename, a valid complete file should
         // be put in place
         val tempFile = File(tempRootPath, UUID.randomUUID().toString() + ".tmp")
+
         try {
             FileOutputStream(tempFile).use { outputStream ->
-                outputStream.write(body!!.bytes())
+                outputStream.write(body.bytes())
                 outputStream.flush()
                 outputStream.close()
                 tempFile.renameTo(file)
@@ -55,31 +57,33 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
         }
     }
 
-    fun doesExist(remotePath: String?): Boolean {
+    fun doesExist(remotePath: String): Boolean {
         val file = getCachePath(remotePath)
+
         return file.exists()
     }
 
     val placeholderThumbnail: String
         get() = "file:///android_asset/placeholder.png"
 
-    fun getCachePath(remotePath: String?): File {
+    fun getCachePath(remotePath: String): File {
         return File(rootPath, remotePath)
     }
 
     val queuedFilesForUpload: Array<File>
         get() {
-            val uploadDir = uploadDir
-            return uploadDir.listFiles()
+            return uploadDir.listFiles() ?: emptyArray<File>()
         }
 
     fun enqueueFileToUpload(id: Int, inputStream: InputStream, mimeType: String): Boolean {
         val map = MimeTypeMap.getSingleton()
         val extension = map.getExtensionFromMimeType(mimeType)
         val file = getNewUploadFilePath(id, mimeType.substring(0, mimeType.indexOf('/')), extension)
+
         try {
             FileOutputStream(file).use { outputStream ->
                 val buf = ByteArray(4096)
+
                 while (true) {
                     val bytesRead = inputStream.read(buf)
                     if (bytesRead == -1) {
@@ -87,6 +91,7 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
                     }
                     outputStream.write(buf, 0, bytesRead)
                 }
+
                 outputStream.flush()
             }
         } catch (e: IOException) {
@@ -100,8 +105,9 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
         file.delete()
     }
 
-    fun getSharingContentUri(remotePath: String?): Uri {
+    fun getSharingContentUri(remotePath: String): Uri {
         val file = File(Environment.DIRECTORY_PICTURES, remotePath)
+
         return PROVIDER
             .buildUpon()
             .appendPath(StreamProvider.getUriPrefix(AUTHORITY))
@@ -115,9 +121,11 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
     private val uploadDir: File
         get() {
             val uploadDir = File(rootPath, "__upload")
+
             if (!uploadDir.exists()) {
                 uploadDir.mkdir()
             }
+
             return uploadDir
         }
 
@@ -126,6 +134,7 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
         val now = Date()
         val filename =
             String.format(Locale.ENGLISH, "%s_%s_%d", filePrefix, _dateFormat.format(now), id)
+
         return File(uploadDir, "$filename.$extension")
     }
 
@@ -148,15 +157,17 @@ class PhotoStorage @Inject constructor(private val _context: Context) {
     private val tempRootPath: File
         get() {
             val dir = File(rootPath.toString() + "/" + "temp")
+
             if (!dir.exists()) {
                 dir.mkdir()
             }
+
             return dir
         }
 
     companion object {
         private const val AUTHORITY = "us.mikeandwan.streamprovider"
-        private val PROVIDER = Uri.parse("content://" + AUTHORITY)
+        private val PROVIDER = Uri.parse("content://$AUTHORITY")
         private val _dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH)
     }
 }
