@@ -25,20 +25,21 @@ class AuthAuthenticator(
         runBlocking {
             launch {
                 authState.performActionWithFreshTokens(_authService) { accessToken: String?, idToken: String?, ex: AuthorizationException? ->
-                    if (ex != null) {
-                        Timber.e("Failed to authorize = %s", ex.message)
-
-                        request = null
-                    } else if (accessToken == null) {
-                        Timber.e("Failed to authorize, received null access token")
-
-                        request = null // Give up, we've already failed to authenticate.
-                    } else {
-                        Timber.i("authenticate: obtained access token")
-
-                        request = response.request().newBuilder()
-                            .header("Authorization", String.format("Bearer %s", accessToken))
-                            .build()
+                    when {
+                        ex != null -> {
+                            Timber.e("Failed to authorize = %s", ex.message)
+                            request = null
+                        }
+                        accessToken == null -> {
+                            Timber.e("Failed to authorize, received null access token")
+                            request = null // Give up, we've already failed to authenticate.
+                        }
+                        else -> {
+                            Timber.i("authenticate: obtained access token")
+                            request = response.request().newBuilder()
+                                .header("Authorization", String.format("Bearer %s", accessToken))
+                                .build()
+                        }
                     }
                 }
             }
