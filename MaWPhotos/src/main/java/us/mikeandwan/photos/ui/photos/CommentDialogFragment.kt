@@ -46,8 +46,8 @@ class CommentDialogFragment : BasePhotoDialogFragment() {
     ): View? {
         _binding = DialogCommentBinding.inflate(inflater, container, false)
 
-        _colorPrimary = ContextCompat.getColor(context, R.color.primary)
-        _colorPrimaryDark = ContextCompat.getColor(context, R.color.primary_dark)
+        _colorPrimary = ContextCompat.getColor(context, R.color.black_800)
+        _colorPrimaryDark = ContextCompat.getColor(context, R.color.black_900)
         requireDialog().setTitle("Comments")
         binding.commentEditText.requestFocus()
 

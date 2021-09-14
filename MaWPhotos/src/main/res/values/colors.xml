@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#424242</color>
-    <color name="primary_dark">#212121</color>
-    <color name="accent">#00bcd4</color>
+    <color name="black_800">#121212</color>
+    <color name="black_900">#000000</color>
+
+    <color name="pink_500">#e91e63</color>
+    <color name="pink_700">#c2185b</color>
+
+    <color name="purple_200">#bb86fc</color> <!--Color primary (dark)-->
+    <color name="purple_500">#6200ee</color> <!--Color primary (light)-->
+
+    <color name="red_200">#cf6679</color> <!--Color error (dark)-->
+    <color name="red_600">#b00020</color> <!--Color error (light)-->
+
+    <color name="white_50">#ffffff</color>
 </resources>
