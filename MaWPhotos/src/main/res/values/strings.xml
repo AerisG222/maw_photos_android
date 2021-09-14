@@ -28,7 +28,7 @@
     <string name="act_login_bg_description">Bittersweet Berries</string>
 
     <!-- login activity callback -->
-    <string name="act_login_callback_logging_in">Logging in...</string>
+    <string name="act_login_callback_logging_in">Logging in…</string>
     <string name="act_login_callback_retry_login">Retry Login</string>
 
     <!-- photo receiver activity -->
