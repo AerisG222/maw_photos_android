@@ -27,6 +27,17 @@
     <!-- login activity -->
     <string name="act_login_bg_description">Bittersweet Berries</string>
 
+    <!-- login activity callback -->
+    <string name="act_login_callback_logging_in">Logging in...</string>
+    <string name="act_login_callback_retry_login">Retry Login</string>
+
+    <!-- photo receiver activity -->
+    <string name="act_photo_receiver_share_background">Share Background</string>
+    <string name="act_photo_receiver_description">Files will be uploaded in the background when connected to WiFi</string>
+
+    <string name="photo_caption">[photo]</string>
+    <string name="video_caption">[video]</string>
+
     <!-- add comment dialog -->
     <string name="frg_comment_add_comment">Add Comment</string>
 
