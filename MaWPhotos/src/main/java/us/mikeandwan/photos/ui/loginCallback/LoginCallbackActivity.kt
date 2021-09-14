@@ -21,7 +21,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LoginCallbackActivity : BaseActivity() {
     @Inject lateinit var _authStateManager: AuthStateManager
-    @Inject lateinit var _config: Observable<AuthorizationServiceConfiguration>
     @Inject lateinit var _authService: AuthorizationService
 
     // https://github.com/openid/AppAuth-Android/blob/master/app/java/net/openid/appauthdemo/TokenActivity.java
@@ -32,26 +31,35 @@ class LoginCallbackActivity : BaseActivity() {
 
     public override fun onStart() {
         super.onStart()
+
         if (_authStateManager.current.isAuthorized) {
             goToInitialLoad()
         }
+
         val response = AuthorizationResponse.fromIntent(intent)
         val ex = AuthorizationException.fromIntent(intent)
+
         if (response != null || ex != null) {
             _authStateManager.updateAfterAuthorization(response, ex)
         }
-        if (response != null && response.authorizationCode != null) {
-            exchangeAuthorizationCode(response)
-        } else if (ex != null) {
-            Timber.e("Authorization failed: %s", ex.message)
-        } else {
-            Timber.e("No authorization state retained - reauthorization required")
+
+        when {
+            response?.authorizationCode != null -> {
+                exchangeAuthorizationCode(response)
+            }
+            ex != null -> {
+                Timber.e("Authorization failed: %s", ex.message)
+            }
+            else -> {
+                Timber.e("No authorization state retained - reauthorization required")
+            }
         }
     }
 
     @MainThread
     private fun exchangeAuthorizationCode(authorizationResponse: AuthorizationResponse) {
         Timber.d("Exchanging authorization code")
+
         performTokenRequest(
             authorizationResponse.createTokenExchangeRequest()
         ) { tokenResponse: TokenResponse?, authException: AuthorizationException? ->
@@ -64,8 +72,7 @@ class LoginCallbackActivity : BaseActivity() {
 
     @MainThread
     private fun performTokenRequest(request: TokenRequest, callback: TokenResponseCallback) {
-        val clientAuthentication: ClientAuthentication
-        clientAuthentication = try {
+        val clientAuthentication: ClientAuthentication = try {
             Timber.d("Attempting token request")
             _authStateManager.current.clientAuthentication
         } catch (ex: UnsupportedAuthenticationMethod) {
@@ -73,8 +80,10 @@ class LoginCallbackActivity : BaseActivity() {
                 "Token request cannot be made, client authentication for the token endpoint could not be constructed (%s)",
                 ex.message
             )
+
             return
         }
+
         _authService.performTokenRequest(
             request,
             clientAuthentication,
@@ -88,6 +97,7 @@ class LoginCallbackActivity : BaseActivity() {
         authException: AuthorizationException?
     ) {
         _authStateManager.updateAfterTokenResponse(tokenResponse, authException)
+
         if (!_authStateManager.current.isAuthorized) {
             val message =
                 "Authorization Code exchange failed" + if (authException != null) authException.error else ""
@@ -103,12 +113,14 @@ class LoginCallbackActivity : BaseActivity() {
 
     private fun goToInitialLoad() {
         val intent = Intent(this, InitialLoadActivity::class.java)
+
         startActivity(intent)
         finish()
     }
 
     fun retryLogin(view: View) {
         val intent = Intent(this, LoginActivity::class.java)
+
         startActivity(intent)
         finish()
     }
