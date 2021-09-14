@@ -9,7 +9,9 @@ class CrashReportingTree : Tree() {
         if (priority == Log.VERBOSE || priority == Log.DEBUG) {
             return
         }
+
         Log.println(priority, tag, message)
+
         if (t != null) {
             Log.w(tag, t)
         }

@@ -1,6 +1,6 @@
 package us.mikeandwan.photos.ui
 
-import android.R
+import android.R.id.content
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
@@ -67,7 +67,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     private fun showError(msg: String) {
-        val view = findViewById<View>(R.id.content)
+        val view = findViewById<View>(content)
         Snackbar.make(view, msg, Snackbar.LENGTH_SHORT).show()
     }
 }
