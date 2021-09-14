@@ -127,7 +127,7 @@ class PhotoReceiverActivity : BaseActivity() {
                 continue
             }
             val inputStream = contentResolver.openInputStream(uri)
-            if (_dataServices.enequeFileToUpload(count + 1, inputStream!!, type!!)) {
+            if (_dataServices.enqueueFileToUpload(count + 1, inputStream!!, type!!)) {
                 count++
             }
         }

@@ -136,7 +136,7 @@ class DataServices(
     val fileQueueObservable: Observable<Array<File>?>
         get() = _fileQueueSubject
 
-    fun enequeFileToUpload(id: Int, inputStream: InputStream, mimeType: String): Boolean {
+    fun enqueueFileToUpload(id: Int, inputStream: InputStream, mimeType: String): Boolean {
         val result = _photoStorage.enqueueFileToUpload(id, inputStream, mimeType)
 
         if (result) {
