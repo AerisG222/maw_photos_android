@@ -12,6 +12,7 @@ import net.openid.appauth.*
 import timber.log.Timber
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.services.AuthStateManager
+import us.mikeandwan.photos.services.PendingIntentFlagHelper
 import us.mikeandwan.photos.ui.BaseActivity
 import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity
 import us.mikeandwan.photos.ui.mode.ModeSelectionActivity
@@ -67,12 +68,15 @@ class LoginActivity : BaseActivity() {
 
         _disposables.add(_config.subscribe({ config: AuthorizationServiceConfiguration? ->
             _authStateManager.replace(AuthState(config!!))
+
             val authRequestBuilder = AuthorizationRequest.Builder(
                 config,
                 _authClientId,  // the client ID, typically pre-registered and static
                 ResponseTypeValues.CODE,  // the response_type value: we want a code
                 _authSchemeRedirectUri!!
-            ) // the redirect URI to which the auth response is sent
+            )
+
+            // the redirect URI to which the auth response is sent
             val authRequest = authRequestBuilder
                 .setScopes("openid offline_access profile email role maw_api")
                 .build()
@@ -82,9 +86,14 @@ class LoginActivity : BaseActivity() {
                     this,
                     0,
                     Intent(this, LoginCallbackActivity::class.java),
-                    0
+                    PendingIntentFlagHelper.getMutableFlag(0)
                 ),
-                PendingIntent.getActivity(this, 0, Intent(this, LoginActivity::class.java), 0)
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(this, LoginActivity::class.java),
+                    PendingIntentFlagHelper.getMutableFlag(0)
+                )
             )
         }) { ex: Throwable ->
             Timber.e("There was an error getting OIDC configuration: %s", ex.message)
