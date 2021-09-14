@@ -57,8 +57,8 @@ class AuthModule {
     @Singleton
     fun provideAuthorizationServiceConfigurationObservable(): Observable<AuthorizationServiceConfiguration?> {
         // we pull in the builder above for dev - so that it can initialize the ssl bits to allow self signed certs
-        return Observable.create(
-            ObservableOnSubscribe { emitter: ObservableEmitter<AuthorizationServiceConfiguration?> ->
+        return Observable.create {
+            emitter: ObservableEmitter<AuthorizationServiceConfiguration?> ->
                 AuthorizationServiceConfiguration.fetchFromIssuer(
                     Uri.parse(Constants.AUTH_BASE_URL)
                 ) { serviceConfiguration: AuthorizationServiceConfiguration?, ex: AuthorizationException? ->
@@ -72,7 +72,6 @@ class AuthModule {
                     emitter.onComplete()
                 }
             }
-        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

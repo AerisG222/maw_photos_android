@@ -43,7 +43,7 @@ class CommentDialogFragment : BasePhotoDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = DialogCommentBinding.inflate(inflater, container, false)
 
         _colorPrimary = ContextCompat.getColor(context, R.color.black_800)
@@ -51,9 +51,9 @@ class CommentDialogFragment : BasePhotoDialogFragment() {
         requireDialog().setTitle("Comments")
         binding.commentEditText.requestFocus()
 
-        binding.addCommentButton.setOnClickListener(View.OnClickListener {
+        binding.addCommentButton.setOnClickListener {
             onAddCommentClick()
-        })
+        }
 
         return binding.root
     }
