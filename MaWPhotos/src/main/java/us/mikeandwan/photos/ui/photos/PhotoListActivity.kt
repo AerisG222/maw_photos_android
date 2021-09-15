@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.photos
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -407,6 +408,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun layoutActivity() {
         displayView(binding.toolbar, _photoPrefs.doDisplayTopToolbar)
         displayView(binding.photoToolbar, _photoPrefs.doDisplayPhotoToolbar)

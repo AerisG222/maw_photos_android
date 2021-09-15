@@ -23,7 +23,8 @@
         tools:ignore="LabelFor"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:autofillHints=".AUTOFILL_HINT_NOT_APPLICABLE" />
 
     <Button
         android:id="@+id/addCommentButton"
