@@ -61,24 +61,17 @@ android {
     buildTypes {
         debug {
             debuggable true
-
-            //shrinkResources true
-            //minifyEnabled true
-
-            //proguardFiles getDefaultProguardFile(
-            //        'proguard-android-optimize.txt'),
-            //        'proguard-androidx.pro',
-            //        'proguard-appauth.pro',
-            //        'proguard-okhttp.pro',
-            //        'proguard-retrofit.pro',
-            //        'proguard-maw.pro'
         }
         release {
-            //shrinkResources true
-            //minifyEnabled true
-
             debuggable false
-            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-retrofit.pro', 'proguard-maw.pro'
+
+            shrinkResources true
+            minifyEnabled true
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-jackson.pro',
+                    'proguard-maw.pro'
+
             signingConfig signingConfigs.maw
         }
     }
