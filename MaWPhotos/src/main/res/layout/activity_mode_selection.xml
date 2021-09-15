@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".us.mikeandwan.photos.activities.ModeSelectionActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
