@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
@@ -16,6 +17,7 @@ import timber.log.Timber
 import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 
+@AndroidEntryPoint
 @SuppressLint("Registered")
 open class BaseActivity : AppCompatActivity() {
     private val _disposables = CompositeDisposable()
