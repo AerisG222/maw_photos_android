@@ -39,6 +39,7 @@
     <string name="video_caption">[video]</string>
 
     <!-- add comment dialog -->
+    <string name="frg_comment_comment">Comment</string>
     <string name="frg_comment_add_comment">Add Comment</string>
 
     <!-- rating dialog -->
