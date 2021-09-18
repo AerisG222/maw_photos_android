@@ -24,8 +24,6 @@ class MawApplication : Application() {
             Timber.plant(CrashReportingTree())
         }
 
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
         dataServices.wipeTempFiles()
     }
 
