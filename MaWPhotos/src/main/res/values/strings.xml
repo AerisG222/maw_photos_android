@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MaW Photos</string>
+    <string name="title_years">Years</string>
+    <string name="title_random">Random</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_sync">Sync</string>
     <string name="action_share">Share</string>
@@ -54,5 +57,9 @@
     <string name="frg_toolbar_rotate_right">Rotate Right</string>
     <string name="frg_toolbar_toggle_slideshow">Toggle Slideshow</string>
     <string name="title_activity_initial_load">InitialLoadActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 
 </resources>
