@@ -8,7 +8,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
-import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.openid.appauth.AuthorizationException
@@ -18,12 +17,19 @@ import timber.log.Timber
 import us.mikeandwan.photos.Constants
 import us.mikeandwan.photos.services.AuthAuthenticator
 import us.mikeandwan.photos.services.AuthInterceptor
+import us.mikeandwan.photos.services.AuthService
 import us.mikeandwan.photos.services.AuthStateManager
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class AuthModule {
+    @Provides
+    @Singleton
+    fun provideAuthService(application: Application, authorizationService: AuthorizationService, authStateManager: AuthStateManager): AuthService {
+        return AuthService(application, authorizationService, authStateManager)
+    }
+
     @Provides
     @Singleton
     fun provideAuthStateManager(application: Application): AuthStateManager {

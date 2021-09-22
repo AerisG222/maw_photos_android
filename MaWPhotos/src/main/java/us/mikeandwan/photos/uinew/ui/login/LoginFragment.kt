@@ -5,15 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import us.mikeandwan.photos.R
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
     companion object {
         fun newInstance() = LoginFragment()
     }
 
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,7 +27,16 @@ class LoginFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        // TODO: Use the ViewModel
+
+        if(viewModel.authService.isAuthorized) {
+            goToNextScreen()
+        } else {
+            viewModel.initiateAuthentication()
+        }
+    }
+
+    fun goToNextScreen() {
+        val action = LoginFragmentDirections.actionLoginFragmentToNavigationYears()
+        findNavController().navigate(action)
     }
 }
