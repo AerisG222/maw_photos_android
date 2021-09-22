@@ -30,13 +30,13 @@ class MainActivity : AppCompatActivity() {
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.navigation_years,
-                R.id.navigation_random
-            )
-        )
+        //val appBarConfiguration = AppBarConfiguration(setOf(
+        //        R.id.navigation_years,
+        //        R.id.navigation_random
+        //    )
+        //)
 
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        //setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
     }
 }
