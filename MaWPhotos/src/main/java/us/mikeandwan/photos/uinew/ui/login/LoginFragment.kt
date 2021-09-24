@@ -67,7 +67,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun goToNextScreen() {
-        val action = LoginFragmentDirections.actionLoginFragmentToNavigationYears()
+        val action = LoginFragmentDirections.actionNavigationLoginToNavigationCategories()
         findNavController().navigate(action)
     }
 

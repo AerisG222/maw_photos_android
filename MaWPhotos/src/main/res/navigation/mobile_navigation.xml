@@ -11,18 +11,11 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_login_fragment_to_navigation_years"
-            app:destination="@id/navigation_years" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/navigation_years"
-        android:name="us.mikeandwan.photos.uinew.ui.years.YearsFragment"
-        android:label="@string/title_years"
-        tools:layout="@layout/fragment_years">
-        <action
-            android:id="@+id/action_navigation_years_to_categoriesFragment"
+            android:id="@+id/action_navigation_login_to_navigation_categories"
             app:destination="@id/navigation_categories" />
+        <action
+            android:id="@+id/action_navigation_login_to_navigation_random"
+            app:destination="@id/navigation_random" />
     </fragment>
 
     <fragment
