@@ -67,8 +67,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun goToNextScreen() {
-        val action = LoginFragmentDirections.actionNavigationLoginToNavigationCategories()
-        findNavController().navigate(action)
+        // val action = LoginFragmentDirections.actionNavigationLoginToNavigationCategories()
+        // findNavController().navigate(action)
     }
 
     // ideally this would be in the view model / auth service, but we need access to the activity

@@ -3,20 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_login">
-
-    <fragment
-        android:id="@+id/navigation_login"
-        android:name="us.mikeandwan.photos.uinew.ui.login.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
-        <action
-            android:id="@+id/action_navigation_login_to_navigation_categories"
-            app:destination="@id/navigation_categories" />
-        <action
-            android:id="@+id/action_navigation_login_to_navigation_random"
-            app:destination="@id/navigation_random" />
-    </fragment>
+    app:startDestination="@id/navigation_categories">
 
     <fragment
         android:id="@+id/navigation_categories"
