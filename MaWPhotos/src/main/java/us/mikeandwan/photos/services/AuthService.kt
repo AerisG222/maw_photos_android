@@ -2,6 +2,8 @@ package us.mikeandwan.photos.services
 
 import android.app.Application
 import android.net.Uri
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
@@ -25,10 +27,12 @@ class AuthService(
     val authConfig: AuthorizationServiceConfiguration?
         get() { return _authConfig }
 
-    val isAuthorized: Boolean
-        get() {
-            return authStateManager.current.isAuthorized
-        }
+    private val _isAuthorized = MutableStateFlow(authStateManager.current.isAuthorized)
+    val isAuthorized: StateFlow<Boolean> = _isAuthorized
+
+    fun updateAuthorizationState(isAuthorized: Boolean) {
+        _isAuthorized.value = isAuthorized
+    }
 
     suspend fun clearAuthState() {
         _authConfig = loadConfig()

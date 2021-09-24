@@ -12,6 +12,7 @@ import net.openid.appauth.AuthorizationService.TokenResponseCallback
 import net.openid.appauth.ClientAuthentication.UnsupportedAuthenticationMethod
 import timber.log.Timber
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.services.AuthService
 import us.mikeandwan.photos.services.AuthStateManager
 import us.mikeandwan.photos.ui.BaseActivity
 import us.mikeandwan.photos.ui.initialLoad.InitialLoadActivity
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class LoginCallbackActivity : BaseActivity() {
     @Inject lateinit var _authStateManager: AuthStateManager
     @Inject lateinit var _authService: AuthorizationService
+    @Inject lateinit var _authSvc: AuthService
 
     // https://github.com/openid/AppAuth-Android/blob/master/app/java/net/openid/appauthdemo/TokenActivity.java
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,6 +99,8 @@ class LoginCallbackActivity : BaseActivity() {
         authException: AuthorizationException?
     ) {
         _authStateManager.updateAfterTokenResponse(tokenResponse, authException)
+
+        _authSvc.updateAuthorizationState(_authStateManager.current.isAuthorized)
 
         if (!_authStateManager.current.isAuthorized) {
             val message =

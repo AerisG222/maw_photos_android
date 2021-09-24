@@ -59,7 +59,7 @@ class LoginFragment : Fragment() {
             }
         }
 
-        if (viewModel.authService.isAuthorized) {
+        if (viewModel.authService.isAuthorized.value) {
             goToNextScreen()
         } else {
             initiateAuthentication()
