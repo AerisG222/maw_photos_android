@@ -2,112 +2,105 @@ package us.mikeandwan.photos.ui.login
 
 import android.app.PendingIntent
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.view.View
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import net.openid.appauth.*
-import timber.log.Timber
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.services.AuthStateManager
+import us.mikeandwan.photos.databinding.ActivityLoginBinding
 import us.mikeandwan.photos.services.PendingIntentFlagHelper
-import us.mikeandwan.photos.ui.BaseActivity
 import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity
-import us.mikeandwan.photos.ui.mode.ModeSelectionActivity
-import javax.inject.Inject
+import us.mikeandwan.photos.uinew.ui.MainActivity
 
 @AndroidEntryPoint
-class LoginActivity : BaseActivity() {
-    private val _disposables = CompositeDisposable()
-
-    lateinit var _authClientId: String
-    lateinit var _authSchemeRedirect: String
-
-    @Inject lateinit var _authStateManager: AuthStateManager
-    @Inject lateinit var _config: Observable<AuthorizationServiceConfiguration>
-
-    var _authService: AuthorizationService? = null
-    private var _authSchemeRedirectUri: Uri? = null
+class LoginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityLoginBinding
+    private lateinit var authService: AuthorizationService
+    private val viewModel by viewModels<LoginViewModel>()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
 
-        _authClientId = resources.getString(R.string.auth_client_id)
-        _authSchemeRedirect = resources.getString(R.string.auth_scheme_redirect_uri)
-        _authSchemeRedirectUri = Uri.parse(_authSchemeRedirect)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
 
-        // https://github.com/openid/AppAuth-Android/issues/333
-        _authService = AuthorizationService(this)
+        authService = AuthorizationService(this)
 
-        authorize()
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.doAuth.collect { doAuth ->
+                    if (doAuth) {
+                        initiateAuthentication()
+                        viewModel.initiateAuthenticationHandled()
+                    }
+                }
+            }
+        }
+
+        if (viewModel.authService.isAuthorized.value) {
+            goToNextScreen()
+        } else {
+            initiateAuthentication()
+        }
     }
 
-    public override fun onDestroy() {
-        _disposables.clear()
-        _authService!!.dispose()
-        super.onDestroy()
+    override fun isDestroyed(): Boolean {
+        authService.dispose()
+        return super.isDestroyed()
     }
 
-    private fun goToModeSelection() {
-        val intent = Intent(this, ModeSelectionActivity::class.java)
+    private fun goToNextScreen() {
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    fun authorize() {
-        if (isAuthorized) {
-            // we go to mode selection here, because if a user has previously gained access,
-            // if they are off/slow network, then they get stuck for a bit on the blank loading
-            // screen which might not be needed - so take them straight in
-            goToModeSelection()
-            return
-        }
+    // ideally this would be in the view model / auth service, but we need access to the activity
+    // context to bring up the browser to do the authentication, so need to execute this here.
+    // we also need to use a new AuthorizationService that does not come from di so it is bound
+    // to the activity. see: https://github.com/openid/AppAuth-Android/issues/333
+    private fun initiateAuthentication() {
+        val activity = this
 
-        _disposables.add(_config.subscribe({ config: AuthorizationServiceConfiguration? ->
-            _authStateManager.replace(AuthState(config!!))
+        lifecycleScope.launch {
+            viewModel.authService.clearAuthState()
 
-            val authRequestBuilder = AuthorizationRequest.Builder(
-                config,
-                _authClientId,  // the client ID, typically pre-registered and static
-                ResponseTypeValues.CODE,  // the response_type value: we want a code
-                _authSchemeRedirectUri!!
-            )
+            val request = buildAuthorizationRequest()
 
-            // the redirect URI to which the auth response is sent
-            val authRequest = authRequestBuilder
-                .setScopes("openid offline_access profile email role maw_api")
-                .build()
-            _authService!!.performAuthorizationRequest(
-                authRequest,
+            authService.performAuthorizationRequest(
+                request,
                 PendingIntent.getActivity(
-                    this,
+                    activity,
                     0,
-                    Intent(this, LoginCallbackActivity::class.java),
+                    Intent(activity, LoginCallbackActivity::class.java),
                     PendingIntentFlagHelper.getMutableFlag(0)
                 ),
                 PendingIntent.getActivity(
-                    this,
+                    activity,
                     0,
-                    Intent(this, LoginActivity::class.java),
+                    Intent(activity, LoginActivity::class.java),
                     PendingIntentFlagHelper.getMutableFlag(0)
                 )
             )
-        }) { ex: Throwable ->
-            Timber.e("There was an error getting OIDC configuration: %s", ex.message)
-            handleApiException(ex)
-        })
+        }
     }
 
-    private val isAuthorized: Boolean
-        get() {
-            val authState = _authStateManager.current
-            return authState.isAuthorized
-        }
-
-    fun retryLogin(view: View) {
-        recreate()
+    private fun buildAuthorizationRequest(): AuthorizationRequest {
+        return AuthorizationRequest.Builder(
+                viewModel.authService.authConfig!!,
+                viewModel.authService.authClientId,
+                ResponseTypeValues.CODE,
+                viewModel.authService.authSchemeRedirectUri
+            )
+            .setScope("openid offline_access profile email role maw_api")
+            .build()
     }
 }

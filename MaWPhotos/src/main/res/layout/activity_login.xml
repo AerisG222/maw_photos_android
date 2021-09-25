@@ -1,62 +1,71 @@
-<!--suppress ALL -->
-<androidx.constraintlayout.widget.ConstraintLayout
+<?xml version="1.0" encoding="utf-8"?>
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    tools:context=".LoginActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="0dp"
-        android:layout_height="160dp"
-        android:adjustViewBounds="true"
-        android:clickable="false"
-        android:contentDescription="@string/act_login_bg_description"
-        android:cropToPadding="false"
-        android:scaleType="centerCrop"
-        android:src="@drawable/banner"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginStart="0dp" />
+    <data>
+        <variable
+            name="viewModel"
+            type="us.mikeandwan.photos.ui.login.LoginViewModel" />
+    </data>
 
-    <TextView
-        android:id="@+id/loginTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:text="mikeandwan.us\nPhotos"
-        android:gravity="center"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/imageView"
-        app:layout_constraintBottom_toTopOf="@id/loginInstructions"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:fontFamily="@font/tangerine"
-        android:textSize="72dp" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        tools:context=".LoginActivity">
 
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:layout_marginBottom="24dp"
-        android:onClick="retryLogin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="160dp"
+            android:adjustViewBounds="true"
+            android:clickable="false"
+            android:contentDescription="@string/act_login_bg_description"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/banner"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="0dp" />
 
-    <TextView
-        android:id="@+id/loginInstructions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You must have an account at mikeandwan.us to login.\nIf you were not able to login, please try again below."
-        android:layout_marginBottom="24dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/loginButton" />
+        <TextView
+            android:id="@+id/loginTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="@string/fragment_login_title"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/imageView"
+            app:layout_constraintBottom_toTopOf="@id/loginInstructions"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:fontFamily="@font/tangerine"
+            android:textSize="72sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_login_login_button_text"
+            android:layout_marginBottom="24dp"
+            android:onClick="@{ () -> viewModel.initiateAuthentication() }"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/loginInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_login_instructions"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/loginButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

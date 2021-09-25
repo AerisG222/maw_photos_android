@@ -24,7 +24,6 @@
             android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -46,6 +45,7 @@
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"
@@ -55,24 +55,28 @@
             <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             -->
         </activity>
+
         <activity android:name=".ui.loginCallback.LoginCallbackActivity" />
+
         <activity
             android:name=".ui.initialLoad.InitialLoadActivity"
             android:label="@string/title_activity_initial_load" />
+
         <activity
             android:name=".ui.mode.ModeSelectionActivity"
             android:label="@string/title_activity_mode_selection"
             android:screenOrientation="fullSensor" />
+
         <activity
             android:name=".ui.photos.PhotoListActivity"
             android:label="@string/title_activity_photo_list"
             android:launchMode="singleTask"
             android:screenOrientation="fullSensor" />
+
         <activity
             android:name=".ui.categories.CategoryListActivity"
             android:label="@string/title_activity_category_list"
@@ -81,6 +85,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.mode.ModeSelectionActivity" />
         </activity>
+
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/pref_activity_settings_title"
