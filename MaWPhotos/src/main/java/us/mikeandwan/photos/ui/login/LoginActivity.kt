@@ -16,7 +16,6 @@ import net.openid.appauth.*
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityLoginBinding
 import us.mikeandwan.photos.services.PendingIntentFlagHelper
-import us.mikeandwan.photos.ui.loginCallback.LoginCallbackActivity
 import us.mikeandwan.photos.uinew.ui.MainActivity
 
 @AndroidEntryPoint
@@ -28,6 +27,10 @@ class LoginActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (viewModel.authService.isAuthorized.value) {
+            goToNextScreen()
+        }
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -35,6 +38,9 @@ class LoginActivity : AppCompatActivity() {
         authService = AuthorizationService(this)
 
         lifecycleScope.launch {
+            // try to handle the login result in case we are returning from the auth site
+            viewModel.completeAuthorization(intent)
+
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.doAuth.collect { doAuth ->
                     if (doAuth) {
@@ -42,12 +48,16 @@ class LoginActivity : AppCompatActivity() {
                         viewModel.initiateAuthenticationHandled()
                     }
                 }
+
+                viewModel.isAuthorized.collect { isAuthorized ->
+                    if(isAuthorized) {
+                        goToNextScreen()
+                    }
+                }
             }
         }
 
-        if (viewModel.authService.isAuthorized.value) {
-            goToNextScreen()
-        } else {
+        if (!viewModel.authService.isAuthorized.value) {
             initiateAuthentication()
         }
     }
@@ -75,12 +85,13 @@ class LoginActivity : AppCompatActivity() {
 
             val request = buildAuthorizationRequest()
 
+            //Intent(activity, LoginCallbackActivity::class.java),
             authService.performAuthorizationRequest(
                 request,
                 PendingIntent.getActivity(
                     activity,
                     0,
-                    Intent(activity, LoginCallbackActivity::class.java),
+                    Intent(activity, LoginActivity::class.java),
                     PendingIntentFlagHelper.getMutableFlag(0)
                 ),
                 PendingIntent.getActivity(

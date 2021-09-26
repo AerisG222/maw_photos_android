@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.login
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +12,10 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(val authService: AuthService): ViewModel() {
     private var _doAuth = MutableStateFlow(false)
     val doAuth: StateFlow<Boolean> = _doAuth
+    val isAuthorized: StateFlow<Boolean>
+        get() {
+            return authService.isAuthorized
+        }
 
     fun initiateAuthentication() {
         _doAuth.value = true
@@ -18,5 +23,9 @@ class LoginViewModel @Inject constructor(val authService: AuthService): ViewMode
 
     fun initiateAuthenticationHandled() {
         _doAuth.value = false
+    }
+
+    suspend fun completeAuthorization(intent: Intent) {
+        authService.completeAuthorization(intent)
     }
 }
