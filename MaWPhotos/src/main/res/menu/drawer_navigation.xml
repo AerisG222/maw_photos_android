@@ -3,12 +3,12 @@
 
     <item
         android:id="@+id/navigation_categories"
-        android:icon="@drawable/ic_camera_icon"
+        android:icon="@drawable/ic_home"
         android:title="@string/title_categories" />
 
     <item
         android:id="@+id/navigation_random"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/ic_shuffle"
         android:title="@string/title_random" />
 
 </menu>

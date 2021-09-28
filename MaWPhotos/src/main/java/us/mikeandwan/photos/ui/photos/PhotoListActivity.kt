@@ -379,7 +379,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
                 TimeUnit.SECONDS
             )
 
-            binding.slideshowButton.setImageResource(R.drawable.ic_stop_white_24dp)
+            binding.slideshowButton.setImageResource(R.drawable.ic_stop)
         }
     }
 
@@ -398,7 +398,7 @@ class PhotoListActivity : BaseActivity(), IPhotoActivity {
         if (_slideshowExecutor != null) {
             _slideshowExecutor!!.shutdownNow()
             _slideshowExecutor = null
-            binding.slideshowButton.setImageResource(R.drawable.ic_play_arrow_white_24dp)
+            binding.slideshowButton.setImageResource(R.drawable.ic_play_arrow)
         }
     }
 

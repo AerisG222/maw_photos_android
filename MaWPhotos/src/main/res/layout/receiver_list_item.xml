@@ -18,7 +18,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_camera_icon" />
+        app:srcCompat="@drawable/ic_camera" />
 
     <ImageView
         android:id="@+id/videoIcon"
@@ -31,7 +31,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_video_icon" />
+        app:srcCompat="@drawable/ic_video" />
 
     <ImageView
         android:id="@+id/receiverListImageView"

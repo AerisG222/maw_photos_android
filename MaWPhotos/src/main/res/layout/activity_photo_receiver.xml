@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="@+id/receiver_recycler_view"
         app:layout_constraintStart_toStartOf="@+id/receiver_recycler_view"
         app:layout_constraintTop_toTopOf="@+id/receiver_recycler_view"
-        app:srcCompat="@drawable/ic_share_gray_24dp" />
+        app:srcCompat="@drawable/ic_share" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/receiver_recycler_view"
