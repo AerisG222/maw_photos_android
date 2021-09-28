@@ -11,4 +11,8 @@
         android:icon="@drawable/ic_shuffle"
         android:title="@string/title_random" />
 
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/title_settings"/>
 </menu>

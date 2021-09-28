@@ -27,4 +27,8 @@
         android:label="@string/title_random"
         tools:layout="@layout/fragment_random" />
 
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="us.mikeandwan.photos.uinew.ui.settings.SettingsFragment"
+        android:label="@string/title_settings" />
 </navigation>
