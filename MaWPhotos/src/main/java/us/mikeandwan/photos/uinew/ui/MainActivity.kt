@@ -8,8 +8,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,31 +25,41 @@ import us.mikeandwan.photos.ui.login.LoginActivity
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var navController: NavController
     private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ActivityMainBinding.inflate(layoutInflater)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
+        setContentView(binding.root)
+
         initStateObservers()
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
-        val navController = navHostFragment.navController
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
+        navController = navHostFragment.navController
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        //val appBarConfiguration = AppBarConfiguration(setOf(
-        //        R.id.navigation_years,
-        //        R.id.navigation_random
-        //    )
-        //)
+        appBarConfiguration = AppBarConfiguration.Builder(
+                R.id.navigation_categories,
+                R.id.navigation_random
+            )
+            .setOpenableLayout(binding.drawerLayout)
+            .build()
 
-        //setupActionBarWithNavController(navController, appBarConfiguration)
-        binding.navView.setupWithNavController(navController)
+        setSupportActionBar(binding.topToolbar)
+
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
+        binding.bottomNavView.setupWithNavController(navController)
+        binding.drawerNavView.setupWithNavController(navController)
+    }
+
+    override fun onSupportNavigateUp(): Boolean { //Setup appBarConfiguration for back arrow
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
     }
 
     private fun initStateObservers() {

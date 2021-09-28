@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/navigation_categories"
         android:name="us.mikeandwan.photos.uinew.ui.categories.CategoriesFragment"
-        android:label="fragment_categories"
+        android:label="@string/title_categories"
         tools:layout="@layout/fragment_categories" >
         <action
             android:id="@+id/action_navigation_categories_to_navigation_photos"
