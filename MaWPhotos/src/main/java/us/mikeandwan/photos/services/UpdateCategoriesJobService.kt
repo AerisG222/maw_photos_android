@@ -15,6 +15,7 @@ import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.prefs.NotificationPreference
 import us.mikeandwan.photos.ui.login.LoginActivity
+import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import javax.inject.Inject
 
 @AndroidEntryPoint

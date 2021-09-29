@@ -1,10 +1,9 @@
 package us.mikeandwan.photos
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
-import us.mikeandwan.photos.services.CrashReportingTree
+import us.mikeandwan.photos.utils.CrashReportingTree
 import us.mikeandwan.photos.services.DataServices
 import javax.inject.Inject
 

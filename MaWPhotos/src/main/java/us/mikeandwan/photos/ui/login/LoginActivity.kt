@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import net.openid.appauth.*
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityLoginBinding
-import us.mikeandwan.photos.services.PendingIntentFlagHelper
+import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import us.mikeandwan.photos.uinew.ui.MainActivity
 
 @AndroidEntryPoint

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.services
+package us.mikeandwan.photos.utils
 
 import android.app.PendingIntent
 import android.os.Build
