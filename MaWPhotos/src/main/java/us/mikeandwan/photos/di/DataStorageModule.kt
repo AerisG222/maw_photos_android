@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.database.MawDatabase
+import us.mikeandwan.photos.database.PhotoCategoryDao
 import us.mikeandwan.photos.database.migrations.MIGRATION_4_5
 import us.mikeandwan.photos.services.DatabaseAccessor
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper
@@ -28,6 +29,12 @@ class DataStorageModule {
                 MIGRATION_4_5
             )
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun providePhotoCategoryDao(mawDatabase: MawDatabase): PhotoCategoryDao {
+        return mawDatabase.photoCategoryDao()
     }
 
     @Provides
