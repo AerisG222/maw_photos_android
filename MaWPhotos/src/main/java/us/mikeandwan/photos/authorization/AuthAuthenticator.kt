@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.services
+package us.mikeandwan.photos.authorization
 
 import kotlinx.coroutines.*
 import net.openid.appauth.AuthorizationException

@@ -5,8 +5,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import us.mikeandwan.photos.services.AuthAuthenticator
-import us.mikeandwan.photos.services.AuthInterceptor
+import us.mikeandwan.photos.authorization.AuthAuthenticator
+import us.mikeandwan.photos.authorization.AuthInterceptor
 import javax.inject.Singleton
 
 @Module

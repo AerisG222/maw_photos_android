@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.services
+package us.mikeandwan.photos.authorization
 
 import okhttp3.Interceptor
 import okhttp3.Response

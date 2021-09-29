@@ -15,10 +15,10 @@ import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
 import timber.log.Timber
 import us.mikeandwan.photos.Constants
-import us.mikeandwan.photos.services.AuthAuthenticator
-import us.mikeandwan.photos.services.AuthInterceptor
-import us.mikeandwan.photos.services.AuthService
-import us.mikeandwan.photos.services.AuthStateManager
+import us.mikeandwan.photos.authorization.AuthAuthenticator
+import us.mikeandwan.photos.authorization.AuthInterceptor
+import us.mikeandwan.photos.authorization.AuthService
+import us.mikeandwan.photos.authorization.AuthStateManager
 import javax.inject.Singleton
 
 @Module

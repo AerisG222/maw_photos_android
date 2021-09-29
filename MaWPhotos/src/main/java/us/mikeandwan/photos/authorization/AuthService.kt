@@ -1,10 +1,8 @@
-package us.mikeandwan.photos.services
+package us.mikeandwan.photos.authorization
 
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import androidx.annotation.MainThread
-import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import net.openid.appauth.*

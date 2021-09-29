@@ -24,7 +24,7 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityModeSelectionBinding
 import us.mikeandwan.photos.models.ApiCollection
 import us.mikeandwan.photos.models.Category
-import us.mikeandwan.photos.services.AuthStateManager
+import us.mikeandwan.photos.authorization.AuthStateManager
 import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.services.PhotoListType
 import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.services
+package us.mikeandwan.photos.authorization
 
 import android.content.Context
 import android.content.SharedPreferences
