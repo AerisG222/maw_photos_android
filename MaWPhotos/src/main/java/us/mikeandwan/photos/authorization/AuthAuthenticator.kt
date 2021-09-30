@@ -9,6 +9,8 @@ import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
 import java.io.IOException
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class AuthAuthenticator(
     private val _authService: AuthorizationService,
@@ -23,22 +25,28 @@ class AuthAuthenticator(
         Timber.d("Starting Authenticator.authenticate")
 
         runBlocking {
-            launch {
-                authState.performActionWithFreshTokens(_authService) { accessToken: String?, idToken: String?, ex: AuthorizationException? ->
+            suspendCoroutine<Unit> { continuation ->
+                authState.performActionWithFreshTokens(_authService) {
+                        accessToken: String?,
+                        idToken: String?,
+                        ex: AuthorizationException? ->
                     when {
                         ex != null -> {
                             Timber.e("Failed to authorize = %s", ex.message)
                             request = null
+                            continuation.resume(Unit)
                         }
                         accessToken == null -> {
                             Timber.e("Failed to authorize, received null access token")
                             request = null // Give up, we've already failed to authenticate.
+                            continuation.resume(Unit)
                         }
                         else -> {
                             Timber.i("authenticate: obtained access token")
                             request = response.request().newBuilder()
                                 .header("Authorization", String.format("Bearer %s", accessToken))
                                 .build()
+                            continuation.resume(Unit)
                         }
                     }
                 }

@@ -15,5 +15,5 @@ data class PhotoCategory(
     val name: String,
     @ColumnInfo(name = "teaser_height") val teaserHeight: Int,
     @ColumnInfo(name = "teaser_width") val teaserWidth: Int,
-    @ColumnInfo(name = "teaser_url") val teaserUrl: Int
+    @ColumnInfo(name = "teaser_url") val teaserUrl: String
 )
