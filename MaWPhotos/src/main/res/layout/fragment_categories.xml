@@ -15,10 +15,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/category_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="CATEGORIES!" />
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:listData="@{ viewModel.categories }"
+            tools:listitem="@layout/category_list_item_view_holder" />
 
     </FrameLayout>
 </layout>

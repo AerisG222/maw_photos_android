@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
 
 @AndroidEntryPoint
@@ -20,20 +19,18 @@ class CategoriesFragment : Fragment() {
     private val viewModel by viewModels<CategoriesViewModel>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_categories, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding = FragmentCategoriesBinding.inflate(layoutInflater)
+        binding = FragmentCategoriesBinding.inflate(inflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        // TODO: Use the ViewModel
-    }
+        binding.categoryRecyclerView.adapter = CategoryListRecyclerAdapter(CategoryListRecyclerAdapter.PhotoCategoryClickListener {
+            viewModel.onCategorySelected(it)
+        })
 
+        return binding.root
+    }
 }

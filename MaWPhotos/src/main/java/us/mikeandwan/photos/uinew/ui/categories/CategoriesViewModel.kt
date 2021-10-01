@@ -3,10 +3,9 @@ package us.mikeandwan.photos.uinew.ui.categories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import us.mikeandwan.photos.domain.PhotoCategory
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import javax.inject.Inject
@@ -19,12 +18,16 @@ class CategoriesViewModel @Inject constructor (
     val categories: StateFlow<List<PhotoCategory>> = _categories
 
     init {
-        viewModelScope.launch {
-            photoCategoryRepository
-                .getCategories()
-                .collect {
-                    _categories.value = it
-                }
-        }
+        photoCategoryRepository
+            .getCategories()
+            .onEach { result ->
+                _categories.value = result
+            }
+            .flowOn(Dispatchers.IO)
+            .launchIn(viewModelScope)
+    }
+
+    fun onCategorySelected(photoCategory: PhotoCategory) {
+        Timber.i("Category selected ${photoCategory.name}")
     }
 }

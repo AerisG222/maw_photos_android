@@ -9,19 +9,19 @@ class PhotoCategoryRepository @Inject constructor(
     private val api: PhotoApiClient,
     private val dao: PhotoCategoryDao
 ) {
-    suspend fun getCategories(): Flow<List<PhotoCategory>> {
-        val categoryFlow = dao
+    fun getCategories() = flow {
+        val data = dao
             .getByYear(2021)
             .map { dbList ->
                 dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
             }
 
-        categoryFlow
-            .filter { it.isEmpty() }
-            .map { loadCategories() }
-            .collect()
+        if(data.first().isEmpty()) {
+            emit(emptyList())
+            loadCategories()
+        }
 
-        return categoryFlow
+        emitAll(data)
     }
 
     private suspend fun loadCategories() {

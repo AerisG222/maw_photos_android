@@ -135,6 +135,9 @@ dependencies {
     // stream provider
     implementation 'com.commonsware.cwac:provider:0.5.3'
 
+    // glide
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+
     // picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
