@@ -22,8 +22,8 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityCategoryListBinding
 import us.mikeandwan.photos.models.ApiCollection
 import us.mikeandwan.photos.models.Category
-import us.mikeandwan.photos.prefs.CategoryDisplay
-import us.mikeandwan.photos.prefs.CategoryDisplayPreference
+import us.mikeandwan.photos.preferences.CategoryDisplay
+import us.mikeandwan.photos.preferences.CategoryDisplayPreference
 import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.services.PhotoListType
 import us.mikeandwan.photos.ui.BaseActivity

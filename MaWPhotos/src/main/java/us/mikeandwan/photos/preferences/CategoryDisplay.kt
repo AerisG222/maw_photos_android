@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.prefs
+package us.mikeandwan.photos.preferences
 
 enum class CategoryDisplay {
     Grid,

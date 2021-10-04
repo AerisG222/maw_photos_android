@@ -12,7 +12,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.prefs.NotificationPreference
+import us.mikeandwan.photos.preferences.NotificationPreference
 import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity
 import java.io.File
 import java.util.*

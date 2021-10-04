@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.prefs
+package us.mikeandwan.photos.preferences
 
 import android.content.SharedPreferences
 

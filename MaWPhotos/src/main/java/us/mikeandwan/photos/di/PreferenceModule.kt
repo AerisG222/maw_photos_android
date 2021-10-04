@@ -5,10 +5,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import us.mikeandwan.photos.prefs.CategoryDisplayPreference
-import us.mikeandwan.photos.prefs.NotificationPreference
-import us.mikeandwan.photos.prefs.PhotoDisplayPreference
-import us.mikeandwan.photos.prefs.SyncPreference
+import us.mikeandwan.photos.preferences.CategoryDisplayPreference
+import us.mikeandwan.photos.preferences.NotificationPreference
+import us.mikeandwan.photos.preferences.PhotoDisplayPreference
+import us.mikeandwan.photos.preferences.SyncPreference
 import javax.inject.Singleton
 
 @Module

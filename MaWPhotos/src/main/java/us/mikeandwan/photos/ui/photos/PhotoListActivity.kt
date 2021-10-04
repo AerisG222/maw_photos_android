@@ -24,7 +24,7 @@ import us.mikeandwan.photos.databinding.ActivityPhotoListBinding
 import us.mikeandwan.photos.models.ApiCollection
 import us.mikeandwan.photos.models.Photo
 import us.mikeandwan.photos.models.PhotoSize
-import us.mikeandwan.photos.prefs.PhotoDisplayPreference
+import us.mikeandwan.photos.preferences.PhotoDisplayPreference
 import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.services.PhotoListType
 import us.mikeandwan.photos.ui.BaseActivity
