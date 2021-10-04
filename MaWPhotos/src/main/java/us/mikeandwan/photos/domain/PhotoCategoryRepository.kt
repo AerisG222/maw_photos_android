@@ -26,23 +26,6 @@ class PhotoCategoryRepository @Inject constructor(
             dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
         }
 
-    /*
-    fun getCategories() = flow {
-        val data = dao
-            .getByYear(2021)
-            .map { dbList ->
-                dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
-            }
-
-        if(data.first().isEmpty()) {
-            emit(emptyList())
-            loadCategories()
-        }
-
-        emitAll(data)
-    }
-    */
-
     private suspend fun loadCategories() {
         val categories = api.getRecentCategories(-1)
 
