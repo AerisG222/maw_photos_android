@@ -71,7 +71,7 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
     public override fun onResume() {
         updateToolbar(binding.toolbar, _year.toString())
         binding.categoryRecyclerView.setHasFixedSize(true)
-        if (_categoryPrefs.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
+        if (_categoryPrefs.categoryDisplay == CategoryDisplay.Grid) {
             // http://stackoverflow.com/questions/25396747/how-to-get-fragment-width
             _listener = OnGlobalLayoutListener {
                 binding.categoryRecyclerView.post {
@@ -137,7 +137,7 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
     private fun setCategories(categories: MutableList<Category>) {
         _categories = categories
 
-        if (_categoryPrefs.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
+        if (_categoryPrefs.categoryDisplay == CategoryDisplay.Grid) {
             _gridAdapter.setCategoryList(categories)
             _disposables.add(
                 _gridAdapter.onCategorySelected()
@@ -184,7 +184,7 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
     }
 
     private fun notifyCategoriesUpdated() {
-        if (_categoryPrefs.categoryDisplay == CategoryDisplay.ThumbnailGrid) {
+        if (_categoryPrefs.categoryDisplay == CategoryDisplay.Grid) {
             _gridAdapter.notifyDataSetChanged()
         } else {
             _listAdapter.notifyDataSetChanged()

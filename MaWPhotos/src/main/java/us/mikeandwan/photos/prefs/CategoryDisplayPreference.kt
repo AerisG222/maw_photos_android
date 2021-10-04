@@ -7,7 +7,7 @@ class CategoryDisplayPreference(private val _sharedPrefs: SharedPreferences) {
         get() {
             val value = _sharedPrefs.getString("category_view_mode", "list")
             return if (value == null || value.equals("list", ignoreCase = true)) {
-                CategoryDisplay.ThumbnailAndNameList
-            } else CategoryDisplay.ThumbnailGrid
+                CategoryDisplay.List
+            } else CategoryDisplay.Grid
         }
 }
