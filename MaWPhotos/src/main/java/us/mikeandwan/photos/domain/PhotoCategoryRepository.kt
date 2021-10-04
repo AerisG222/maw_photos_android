@@ -21,7 +21,7 @@ class PhotoCategoryRepository @Inject constructor(
     }
 
     fun getCategories() = dao
-        .getByYear(2021)
+        .getCategoriesForActiveYear()
         .map { dbList ->
             dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
         }

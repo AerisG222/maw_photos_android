@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
+        ActiveId::class,
         PhotoCategory::class
     ],
     version = 5

@@ -7,13 +7,33 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface PhotoCategoryDao {
+abstract class PhotoCategoryDao {
     @Query("SELECT DISTINCT year FROM photo_category ORDER BY year DESC")
-    fun getYears(): Flow<List<Int>>
+    abstract fun getYears(): Flow<List<Int>>
 
-    @Query("SELECT * FROM photo_category WHERE year = :year ORDER BY id DESC")
-    fun getByYear(year: Int): Flow<List<PhotoCategory>>
+    @Query("""
+        SELECT pc.*
+          FROM photo_category pc
+         INNER JOIN active_id ai
+                 ON ai.type = :type
+                AND ai.id = pc.year
+         ORDER BY id DESC
+    """
+    )
+    protected abstract fun getCategoriesForActiveYear(type: ActiveIdType): Flow<List<PhotoCategory>>
+
+    @Query("""
+        SELECT pc.*
+          FROM photo_category pc
+         INNER JOIN active_id ai
+                 ON ai.type = :type
+                AND ai.id = pc.id
+    """)
+    abstract fun getActiveCategory(type: ActiveIdType): Flow<PhotoCategory>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(vararg categories: PhotoCategory)
+    abstract suspend fun upsert(vararg categories: PhotoCategory)
+
+    fun getCategoriesForActiveYear(): Flow<List<PhotoCategory>> = getCategoriesForActiveYear(ActiveIdType.PhotoCategoryYear)
+    fun getActiveCategory(): Flow<PhotoCategory> = getActiveCategory(ActiveIdType.PhotoCategory)
 }
