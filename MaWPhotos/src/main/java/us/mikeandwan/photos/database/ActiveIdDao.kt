@@ -12,8 +12,17 @@ abstract class ActiveIdDao {
     fun getActivePhotoCategoryId(): Flow<Int> = getActiveId(ActiveIdType.PhotoCategory)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun setActivePhotoCategoryYear(year: Int)
+    protected abstract suspend fun setActiveId(activeId: ActiveId)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun setActivePhotoCategory(id: Int)
+    suspend fun setActivePhotoCategoryYear(year: Int) {
+        val id = ActiveId(ActiveIdType.PhotoCategoryYear, year)
+
+        setActiveId(id)
+    }
+
+    suspend fun setActivePhotoCategory(categoryId: Int) {
+        val id = ActiveId(ActiveIdType.PhotoCategory, categoryId)
+
+        setActiveId(id)
+    }
 }

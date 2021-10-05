@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import us.mikeandwan.photos.database.ActiveIdDao
 import us.mikeandwan.photos.database.MawDatabase
 import us.mikeandwan.photos.database.PhotoCategoryDao
 import us.mikeandwan.photos.database.migrations.MIGRATION_4_5
@@ -35,6 +36,12 @@ class DataStorageModule {
     @Singleton
     fun providePhotoCategoryDao(mawDatabase: MawDatabase): PhotoCategoryDao {
         return mawDatabase.photoCategoryDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideActiveIdDao(mawDatabase: MawDatabase): ActiveIdDao {
+        return mawDatabase.activeIdDao()
     }
 
     @Provides

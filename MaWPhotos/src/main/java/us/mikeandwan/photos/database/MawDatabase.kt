@@ -12,4 +12,5 @@ import androidx.room.RoomDatabase
 )
 abstract class MawDatabase : RoomDatabase() {
     abstract fun photoCategoryDao(): PhotoCategoryDao
+    abstract fun activeIdDao(): ActiveIdDao
 }
