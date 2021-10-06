@@ -23,7 +23,6 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:layout_marginTop="0dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:listData="@{ viewModel.categories }"
             tools:listitem="@layout/category_list_item_view_holder" />
 

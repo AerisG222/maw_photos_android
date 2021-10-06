@@ -6,10 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import us.mikeandwan.photos.database.ActiveIdDao
-import us.mikeandwan.photos.database.MawDatabase
-import us.mikeandwan.photos.database.MawDatabaseCreateCallback
-import us.mikeandwan.photos.database.PhotoCategoryDao
+import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.services.DatabaseAccessor
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper
 import us.mikeandwan.photos.services.PhotoStorage
@@ -29,6 +26,12 @@ class DataStorageModule {
             .fallbackToDestructiveMigration()
             .addCallback(MawDatabaseCreateCallback())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoryPreferenceDao(mawDatabase: MawDatabase): CategoryPreferenceDao {
+        return mawDatabase.categoryPreferenceDao()
     }
 
     @Provides
