@@ -8,8 +8,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.database.ActiveIdDao
 import us.mikeandwan.photos.database.MawDatabase
+import us.mikeandwan.photos.database.MawDatabaseCreateCallback
 import us.mikeandwan.photos.database.PhotoCategoryDao
-import us.mikeandwan.photos.database.migrations.MIGRATION_4_5
 import us.mikeandwan.photos.services.DatabaseAccessor
 import us.mikeandwan.photos.services.MawSQLiteOpenHelper
 import us.mikeandwan.photos.services.PhotoStorage
@@ -26,9 +26,8 @@ class DataStorageModule {
                 MawDatabase::class.java,
                 "maw"
             )
-            .addMigrations(
-                MIGRATION_4_5
-            )
+            .fallbackToDestructiveMigration()
+            .addCallback(MawDatabaseCreateCallback())
             .build()
     }
 
