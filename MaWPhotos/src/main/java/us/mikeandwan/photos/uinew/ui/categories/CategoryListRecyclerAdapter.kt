@@ -8,13 +8,26 @@ import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.databinding.CategoryListItemViewHolderBinding
 import us.mikeandwan.photos.domain.PhotoCategory
 
-class CategoryListRecyclerAdapter(val clickListener: PhotoCategoryClickListener)
+class CategoryListRecyclerAdapter(private val clickListener: ClickListener)
     : ListAdapter<PhotoCategory, CategoryListRecyclerAdapter.CategoryListViewHolder>(DiffCallback) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListViewHolder {
+        val binding = CategoryListItemViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
+        return CategoryListViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: CategoryListViewHolder, position: Int) {
+        val category = getItem(position)
+
+        holder.bind(category, clickListener)
+    }
 
     class CategoryListViewHolder(private var binding: CategoryListItemViewHolderBinding)
         : RecyclerView.ViewHolder(binding.root) {
-        fun bind(photoCategory: PhotoCategory) {
+        fun bind(photoCategory: PhotoCategory, clickListener: ClickListener) {
             binding.category = photoCategory
+            binding.root.setOnClickListener { clickListener.onClick(photoCategory) }
             binding.executePendingBindings()
         }
     }
@@ -29,23 +42,7 @@ class CategoryListRecyclerAdapter(val clickListener: PhotoCategoryClickListener)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListViewHolder {
-        val binding = CategoryListItemViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
-        return CategoryListViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: CategoryListViewHolder, position: Int) {
-        val category = getItem(position)
-
-        holder.itemView.setOnClickListener {
-            clickListener.onClick(category)
-        }
-
-        holder.bind(category)
-    }
-
-    class PhotoCategoryClickListener(val clickListener: (category: PhotoCategory) -> Unit) {
+    class ClickListener(val clickListener: (category: PhotoCategory) -> Unit) {
         fun onClick(category: PhotoCategory) = clickListener(category)
     }
 }
