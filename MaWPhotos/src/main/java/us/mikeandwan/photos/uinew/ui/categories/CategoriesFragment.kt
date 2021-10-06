@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
@@ -18,6 +19,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
 import us.mikeandwan.photos.domain.CategoryDisplayType
 import us.mikeandwan.photos.domain.PhotoCategory
@@ -30,6 +32,7 @@ class CategoriesFragment : Fragment() {
 
     private lateinit var binding: FragmentCategoriesBinding
     private val viewModel by viewModels<CategoriesViewModel>()
+    private val args: CategoriesFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,6 +48,8 @@ class CategoriesFragment : Fragment() {
             flexDirection = FlexDirection.ROW
             alignItems = AlignItems.STRETCH
         }
+
+        Timber.i("active year: ${args.year}")
 
         initStateObservers()
 
