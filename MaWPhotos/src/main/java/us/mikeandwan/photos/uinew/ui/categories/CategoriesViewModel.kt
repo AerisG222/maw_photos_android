@@ -5,17 +5,16 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import us.mikeandwan.photos.domain.CategoryDisplayType
-import us.mikeandwan.photos.domain.CategoryPreferenceRepository
-import us.mikeandwan.photos.domain.PhotoCategory
-import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.*
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
-    private val categoryPreferenceRepository: CategoryPreferenceRepository
+    private val categoryPreferenceRepository: CategoryPreferenceRepository,
+    private val activeIdRepository: ActiveIdRepository
 ): ViewModel() {
     private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
     val categories: StateFlow<List<PhotoCategory>> = _categories
@@ -42,6 +41,8 @@ class CategoriesViewModel @Inject constructor (
     }
 
     fun onCategorySelected(photoCategory: PhotoCategory) {
-        Timber.i("Category selected ${photoCategory.name}")
+        viewModelScope.launch {
+            activeIdRepository.setActivePhotoCategory(photoCategory.id)
+        }
     }
 }
