@@ -45,3 +45,9 @@ fun us.mikeandwan.photos.database.PhotoPreference.toDomainPhotoPreference(): Pho
         this.slideshowIntervalSeconds
     )
 }
+
+fun us.mikeandwan.photos.database.SyncPreference.toDomainSyncPreference(): SyncPreference {
+    return SyncPreference(
+        this.syncFrequencyHours
+    )
+}

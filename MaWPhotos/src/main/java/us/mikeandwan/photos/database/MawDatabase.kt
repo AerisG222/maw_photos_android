@@ -9,7 +9,8 @@ import androidx.room.RoomDatabase
         CategoryPreference::class,
         NotificationPreference::class,
         PhotoCategory::class,
-        PhotoPreference::class
+        PhotoPreference::class,
+        SyncPreference::class
     ],
     version = 5
 )
@@ -19,4 +20,5 @@ abstract class MawDatabase : RoomDatabase() {
     abstract fun notificationPreferenceDao(): NotificationPreferenceDao
     abstract fun photoCategoryDao(): PhotoCategoryDao
     abstract fun photoPreferenceDao(): PhotoPreferenceDao
+    abstract fun syncPreferenceDao(): SyncPreferenceDao
 }
