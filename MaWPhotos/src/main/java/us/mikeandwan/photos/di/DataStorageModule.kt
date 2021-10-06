@@ -42,6 +42,12 @@ class DataStorageModule {
 
     @Provides
     @Singleton
+    fun providePhotoPreferenceDao(mawDatabase: MawDatabase): PhotoPreferenceDao {
+        return mawDatabase.photoPreferenceDao()
+    }
+
+    @Provides
+    @Singleton
     fun providePhotoCategoryDao(mawDatabase: MawDatabase): PhotoCategoryDao {
         return mawDatabase.photoCategoryDao()
     }

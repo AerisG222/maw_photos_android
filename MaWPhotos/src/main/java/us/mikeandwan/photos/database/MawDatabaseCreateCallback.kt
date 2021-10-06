@@ -10,5 +10,6 @@ class MawDatabaseCreateCallback : Callback() {
 
         db.execSQL("INSERT INTO category_preference (id, display_type) VALUES (1, '${CategoryDisplayType.Grid}')")
         db.execSQL("INSERT INTO notification_preference (id, do_notify, do_vibrate) VALUES (1, 1, 1)")
+        db.execSQL("INSERT INTO photo_preference (id, display_toolbar, display_thumbnails, display_top_toolbar, fade_controls, slideshow_interval_seconds) VALUES (1, 1, 1, 1, 1, 3)")
     }
 }

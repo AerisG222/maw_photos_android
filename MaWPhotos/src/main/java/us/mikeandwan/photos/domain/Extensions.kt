@@ -34,3 +34,14 @@ fun us.mikeandwan.photos.database.NotificationPreference.toDomainNotificationPre
         this.doVibrate
     )
 }
+
+
+fun us.mikeandwan.photos.database.PhotoPreference.toDomainPhotoPreference(): PhotoPreference {
+    return PhotoPreference(
+        this.displayToolbar,
+        this.displayThumbnails,
+        this.displayTopToolbar,
+        this.doFadeControls,
+        this.slideshowIntervalSeconds
+    )
+}
