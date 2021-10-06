@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
     entities = [
         ActiveId::class,
         CategoryPreference::class,
+        NotificationPreference::class,
         PhotoCategory::class
     ],
     version = 5
@@ -14,5 +15,6 @@ import androidx.room.RoomDatabase
 abstract class MawDatabase : RoomDatabase() {
     abstract fun activeIdDao(): ActiveIdDao
     abstract fun categoryPreferenceDao(): CategoryPreferenceDao
+    abstract fun notificationPreferenceDao(): NotificationPreferenceDao
     abstract fun photoCategoryDao(): PhotoCategoryDao
 }

@@ -21,3 +21,10 @@ fun us.mikeandwan.photos.api.Category.toDatabasePhotoCategory(): us.mikeandwan.p
         this.teaserImage.url
     )
 }
+
+fun us.mikeandwan.photos.database.NotificationPreference.toDomainNotificationPreference(): NotificationPreference {
+    return NotificationPreference(
+        this.doNotify,
+        this.doVibrate
+    )
+}

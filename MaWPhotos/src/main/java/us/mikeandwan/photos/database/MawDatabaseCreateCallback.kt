@@ -9,5 +9,6 @@ class MawDatabaseCreateCallback : Callback() {
         super.onCreate(db)
 
         db.execSQL("INSERT INTO category_preference (id, display_type) VALUES (1, '${CategoryDisplayType.Grid}')")
+        db.execSQL("INSERT INTO notification_preference (id, do_notify, do_vibrate) VALUES (1, 1, 1)")
     }
 }
