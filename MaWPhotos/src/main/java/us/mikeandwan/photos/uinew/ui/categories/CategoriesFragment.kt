@@ -29,7 +29,7 @@ class CategoriesFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        binding.categoryRecyclerView.adapter = CategoryListRecyclerAdapter(CategoryListRecyclerAdapter.ClickListener {
+        binding.categoryRecyclerView.adapter = CategoryListRecyclerAdapter(CategoryRecyclerAdapter.ClickListener {
             viewModel.onCategorySelected(it)
             navigateToCategory(it)
         })
