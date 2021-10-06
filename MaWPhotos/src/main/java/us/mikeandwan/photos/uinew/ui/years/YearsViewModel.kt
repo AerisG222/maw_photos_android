@@ -5,13 +5,16 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class YearsViewModel @Inject constructor (
-    private val photoCategoryRepository: PhotoCategoryRepository
+    private val photoCategoryRepository: PhotoCategoryRepository,
+    private val activeIdRepository: ActiveIdRepository
 ): ViewModel() {
     private val _years = MutableStateFlow<List<Int>>(emptyList())
     val years: StateFlow<List<Int>> = _years
@@ -27,6 +30,8 @@ class YearsViewModel @Inject constructor (
     }
 
     fun onYearSelected(year: Int) {
-        Timber.i("Year selected $year")
+        viewModelScope.launch {
+            activeIdRepository.setActivePhotoCategoryYear(year)
+        }
     }
 }

@@ -7,15 +7,18 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.databinding.YearListItemViewHolderBinding
 
-class YearListRecyclerAdapter(val clickListener: ClickListener)
+class YearListRecyclerAdapter(private val clickListener: ClickListener)
     : ListAdapter<Int, YearListRecyclerAdapter.ViewHolder>(DiffCallback) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = YearListItemViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-    class ViewHolder(private var binding: YearListItemViewHolderBinding)
-        : RecyclerView.ViewHolder(binding.root) {
-        fun bind(year: Int) {
-            binding.year = year
-            binding.executePendingBindings()
-        }
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val year = getItem(position)
+
+        holder.bind(year, clickListener)
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<Int>() {
@@ -28,20 +31,13 @@ class YearListRecyclerAdapter(val clickListener: ClickListener)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = YearListItemViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
-        return ViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val year = getItem(position)
-
-        holder.itemView.setOnClickListener {
-            clickListener.onClick(year)
+    class ViewHolder(private var binding: YearListItemViewHolderBinding)
+        : RecyclerView.ViewHolder(binding.root) {
+        fun bind(year: Int, clickListener: ClickListener) {
+            binding.year = year
+            binding.yearButton.setOnClickListener { clickListener.onClick(year) }
+            binding.executePendingBindings()
         }
-
-        holder.bind(year)
     }
 
     class ClickListener(val clickListener: (year: Int) -> Unit) {
