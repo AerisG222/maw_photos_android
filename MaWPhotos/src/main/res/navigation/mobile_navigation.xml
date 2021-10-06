@@ -32,7 +32,11 @@
         android:id="@+id/navigation_photos"
         android:name="us.mikeandwan.photos.uinew.ui.photos.PhotosFragment"
         android:label="fragment_photos"
-        tools:layout="@layout/fragment_photos" />
+        tools:layout="@layout/fragment_photos" >
+        <argument
+            android:name="categoryId"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_random"

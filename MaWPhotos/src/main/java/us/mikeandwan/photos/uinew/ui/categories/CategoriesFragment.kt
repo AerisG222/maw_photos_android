@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
+import us.mikeandwan.photos.domain.PhotoCategory
 
 @AndroidEntryPoint
 class CategoriesFragment : Fragment() {
@@ -29,8 +31,15 @@ class CategoriesFragment : Fragment() {
 
         binding.categoryRecyclerView.adapter = CategoryListRecyclerAdapter(CategoryListRecyclerAdapter.PhotoCategoryClickListener {
             viewModel.onCategorySelected(it)
+            navigateToCategory(it)
         })
 
         return binding.root
+    }
+
+    private fun navigateToCategory(category: PhotoCategory) {
+        val action = CategoriesFragmentDirections.actionNavigationCategoriesToNavigationPhotos(category.id)
+
+        findNavController().navigate(action)
     }
 }
