@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
 import us.mikeandwan.photos.databinding.FragmentYearsBinding
 
 @AndroidEntryPoint
@@ -30,8 +30,15 @@ class YearsFragment : Fragment() {
 
         binding.yearRecyclerView.adapter = YearListRecyclerAdapter(YearListRecyclerAdapter.ClickListener {
             viewModel.onYearSelected(it)
+            navigateToCategories(it)
         })
 
         return binding.root
+    }
+
+    private fun navigateToCategories(year: Int) {
+        val dest = YearsFragmentDirections.actionNavigationYearsToNavigationCategories(year)
+
+        findNavController().navigate(dest)
     }
 }

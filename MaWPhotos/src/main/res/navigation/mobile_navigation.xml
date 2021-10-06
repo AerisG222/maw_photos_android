@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_navigation_categories_to_navigation_photos"
             app:destination="@id/navigation_photos" />
+        <argument
+            android:name="year"
+            app:argType="integer" />
     </fragment>
 
     <fragment
