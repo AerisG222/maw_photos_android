@@ -22,6 +22,12 @@ fun us.mikeandwan.photos.api.Category.toDatabasePhotoCategory(): us.mikeandwan.p
     )
 }
 
+fun us.mikeandwan.photos.database.CategoryPreference.toDomainCategoryPreference(): CategoryPreference {
+    return CategoryPreference(
+        this.displayType
+    )
+}
+
 fun us.mikeandwan.photos.database.NotificationPreference.toDomainNotificationPreference(): NotificationPreference {
     return NotificationPreference(
         this.doNotify,
