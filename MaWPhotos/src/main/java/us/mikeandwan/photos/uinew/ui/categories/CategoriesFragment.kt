@@ -34,6 +34,13 @@ class CategoriesFragment : Fragment() {
             navigateToCategory(it)
         })
 
+        /*
+        binding.categoryRecyclerView.adapter = CategoryGridRecyclerAdapter(CategoryRecyclerAdapter.ClickListener {
+            viewModel.onCategorySelected(it)
+            navigateToCategory(it)
+        })
+        */
+
         return binding.root
     }
 
