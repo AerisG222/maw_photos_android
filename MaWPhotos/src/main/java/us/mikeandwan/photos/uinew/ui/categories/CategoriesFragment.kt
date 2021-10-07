@@ -98,19 +98,36 @@ class CategoriesFragment : Fragment() {
 
     private fun showGrid() {
         if(updateGridAdapterRequired()) {
-            updateAdapter(CategoryGridRecyclerAdapter(getThumbnailSize(), onCategoryClicked))
+            updateAdapter(CategoryGridRecyclerAdapter(getThumbnailSize(), onCategoryClicked), null)
         }
     }
 
     private fun showList() {
         if(updateListAdapterRequired()) {
-            updateAdapter(CategoryListRecyclerAdapter(onCategoryClicked))
+            val decoration = FlexboxItemDecoration(binding.categoryRecyclerView.context)
+
+            decoration.setOrientation(FlexboxItemDecoration.HORIZONTAL)
+
+            updateAdapter(CategoryListRecyclerAdapter(onCategoryClicked), decoration)
         }
     }
 
-    private fun <T : RecyclerView.ViewHolder?> updateAdapter(adapter: RecyclerView.Adapter<T>) {
+    private fun <T : RecyclerView.ViewHolder?> updateAdapter(adapter: RecyclerView.Adapter<T>, decoration: FlexboxItemDecoration?) {
         binding.categoryRecyclerView.adapter = adapter
+
+        clearRecyclerDecorations()
+
+        decoration?.let {
+            binding.categoryRecyclerView.addItemDecoration(decoration)
+        }
+
         binding.invalidateAll()
+    }
+
+    private fun clearRecyclerDecorations() {
+        for(i in binding.categoryRecyclerView.itemDecorationCount - 1 downTo 0) {
+            binding.categoryRecyclerView.removeItemDecorationAt(i)
+        }
     }
 
     private fun getThumbnailSize(): Int {
