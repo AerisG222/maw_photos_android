@@ -28,14 +28,11 @@ fun bindCategoryRecyclerView(recyclerView: RecyclerView, data: List<PhotoCategor
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {
     imgUrl?.let {
-        Glide.with(imgView.context)
+        GlideApp.with(imgView.context)
             .load(imgUrl)
-            .apply(
-                RequestOptions()
-                    .centerCrop()
-                    .placeholder(R.drawable.loading_animation)
-                    .error(R.drawable.ic_broken_image)
-            )
+            .centerCrop()
+            .placeholder(R.drawable.loading_animation)
+            .error(R.drawable.ic_broken_image)
             .into(imgView)
     }
 }

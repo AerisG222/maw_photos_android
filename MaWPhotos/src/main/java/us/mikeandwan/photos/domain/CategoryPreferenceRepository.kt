@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.domain
 
 import kotlinx.coroutines.flow.map
-import us.mikeandwan.photos.domain.CategoryPreference
 import us.mikeandwan.photos.database.CategoryPreferenceDao
 import javax.inject.Inject
 
