@@ -32,7 +32,7 @@ class CategoriesFragment : Fragment() {
 
     private var _thumbSize = 0
     private var _listener: ViewTreeObserver.OnGlobalLayoutListener? = null
-    private val _width = MutableStateFlow<Int>(800)
+    private val _width = MutableStateFlow<Int>(0)
     private lateinit var binding: FragmentCategoriesBinding
     private val viewModel by viewModels<CategoriesViewModel>()
     private val args: CategoriesFragmentArgs by navArgs()
@@ -66,14 +66,14 @@ class CategoriesFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                _width.collect {
-                    if(binding.viewModel!!.displayType.value == CategoryDisplayType.Grid) {
-                        resizeGrid()
-                    }
-                }
+                _width.collect { showGrid() }
+            }
+        }
 
-                binding.viewModel!!.displayType.collect { type ->
-                    when(type) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.displayType.collect { type ->
+                    when (type) {
                         CategoryDisplayType.Grid -> showGrid()
                         CategoryDisplayType.List -> showList()
                     }
@@ -96,24 +96,16 @@ class CategoriesFragment : Fragment() {
         binding.container.viewTreeObserver.addOnGlobalLayoutListener(_listener)
     }
 
-    private fun resizeGrid() {
-        updateAdapter(CategoryGridRecyclerAdapter(getThumbnailSize(), onCategoryClicked))
-    }
-
     private fun showGrid() {
-        if(isGridAdapterActive()) {
-            return
+        if(updateGridAdapterRequired()) {
+            updateAdapter(CategoryGridRecyclerAdapter(getThumbnailSize(), onCategoryClicked))
         }
-
-        updateAdapter(CategoryGridRecyclerAdapter(getThumbnailSize(), onCategoryClicked))
     }
 
     private fun showList() {
-        if(isListAdapterActive()) {
-            return
+        if(updateListAdapterRequired()) {
+            updateAdapter(CategoryListRecyclerAdapter(onCategoryClicked))
         }
-
-        updateAdapter(CategoryListRecyclerAdapter(onCategoryClicked))
     }
 
     private fun <T : RecyclerView.ViewHolder?> updateAdapter(adapter: RecyclerView.Adapter<T>) {
@@ -131,11 +123,11 @@ class CategoriesFragment : Fragment() {
         return remainingSpaceForImages / cols
     }
 
-    private fun isGridAdapterActive() =
-        binding.categoryRecyclerView.adapter is CategoryGridRecyclerAdapter
+    private fun updateGridAdapterRequired() =
+        binding.categoryRecyclerView.adapter !is CategoryGridRecyclerAdapter || _width.value != 0
 
-    private fun isListAdapterActive() =
-        binding.categoryRecyclerView.adapter is CategoryListRecyclerAdapter
+    private fun updateListAdapterRequired() =
+        binding.categoryRecyclerView.adapter !is CategoryListRecyclerAdapter
 
     private fun navigateToCategory(category: PhotoCategory) {
         val action = CategoriesFragmentDirections.actionNavigationCategoriesToNavigationPhotos(category.id)

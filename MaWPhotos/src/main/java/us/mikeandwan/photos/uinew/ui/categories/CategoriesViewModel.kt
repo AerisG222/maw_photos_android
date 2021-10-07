@@ -3,10 +3,8 @@ package us.mikeandwan.photos.uinew.ui.categories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import us.mikeandwan.photos.domain.*
 import javax.inject.Inject
 
@@ -17,27 +15,27 @@ class CategoriesViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository
 ): ViewModel() {
     private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
-    val categories: StateFlow<List<PhotoCategory>> = _categories
+    val categories = _categories.asStateFlow()
 
-    private val _displayType = MutableStateFlow<CategoryDisplayType>(CategoryDisplayType.Grid)
-    val displayType: StateFlow<CategoryDisplayType> = _displayType
+    private val _displayType = MutableStateFlow(CategoryDisplayType.Grid)
+    val displayType = _displayType.asStateFlow()
 
     init {
-        categoryPreferenceRepository
-            .getCategoryDisplayType()
-            .onEach { type ->
-                _displayType.value = type
-            }
-            .flowOn(Dispatchers.IO)
-            .launchIn(viewModelScope)
+        viewModelScope.launch {
+            categoryPreferenceRepository
+                .getCategoryDisplayType()
+                .collect { type ->
+                    _displayType.value = type
+                }
+        }
 
-        photoCategoryRepository
-            .getCategories()
-            .onEach { result ->
-                _categories.value = result
-            }
-            .flowOn(Dispatchers.IO)
-            .launchIn(viewModelScope)
+        viewModelScope.launch {
+            photoCategoryRepository
+                .getCategories()
+                .collect { result ->
+                    _categories.value = result
+                }
+        }
     }
 
     fun onCategorySelected(photoCategory: PhotoCategory) {
