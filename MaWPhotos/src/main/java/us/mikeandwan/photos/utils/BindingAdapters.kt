@@ -25,6 +25,13 @@ fun bindCategoryRecyclerView(recyclerView: RecyclerView, data: List<PhotoCategor
     }
 }
 
+@BindingAdapter("categoryGridImageUrl")
+fun bindCategoryGridImage(imgView: ImageView, imgUrl: String?) {
+    imgUrl?.let{
+        bindImage(imgView, imgUrl.replace("/xs/", "/md/"))
+    }
+}
+
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {
     imgUrl?.let {
