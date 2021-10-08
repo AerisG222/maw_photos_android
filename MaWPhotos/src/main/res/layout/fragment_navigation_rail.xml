@@ -26,8 +26,7 @@
             app:labelVisibilityMode="unlabeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/drawer_nav_utility"
-            app:se="-1" />
+            app:menu="@menu/drawer_nav_utility" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

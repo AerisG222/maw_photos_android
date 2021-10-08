@@ -23,6 +23,7 @@ class NavigationRailFragment : Fragment() {
     ): View? {
         binding = FragmentNavigationRailBinding.inflate(inflater)
         binding.lifecycleOwner = this
+        binding.utilityNavigationRail.menu.getItem(0).isCheckable = false
 
         return binding.root
     }
