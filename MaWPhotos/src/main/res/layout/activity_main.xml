@@ -69,35 +69,17 @@
             android:layout_gravity="start"
             android:background="?attr/colorPrimarySurface">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/nav_rail"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentNavRail"
+                android:name="us.mikeandwan.photos.uinew.ui.navigationRail.NavigationRailFragment"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.navigationrail.NavigationRailView
-                    android:id="@+id/primary_navigation_rail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:labelVisibilityMode="unlabeled"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:menu="@menu/drawer_nav_primary" />
-
-                <com.google.android.material.navigationrail.NavigationRailView
-                    android:id="@+id/utility_navigation_rail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:labelVisibilityMode="unlabeled"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:menu="@menu/drawer_nav_utility" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="match_parent" />
 
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fragmentContainerView"
+                android:id="@+id/fragmentSubnav"
                 android:name="us.mikeandwan.photos.uinew.ui.years.YearsFragment"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1" />
 
         </LinearLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".uinew.ui.navigationRail.NavigationRailFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/nav_rail"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.navigationrail.NavigationRailView
+            android:id="@+id/primary_navigation_rail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:labelVisibilityMode="unlabeled"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/drawer_nav_primary" />
+
+        <com.google.android.material.navigationrail.NavigationRailView
+            android:id="@+id/utility_navigation_rail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:labelVisibilityMode="unlabeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/drawer_nav_utility"
+            app:se="-1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
