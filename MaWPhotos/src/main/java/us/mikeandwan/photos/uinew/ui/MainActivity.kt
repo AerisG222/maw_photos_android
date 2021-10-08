@@ -2,6 +2,7 @@ package us.mikeandwan.photos.uinew.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -77,6 +78,17 @@ class MainActivity : AppCompatActivity() {
                 viewModel.isAuthenticated.collect {
                     if (!it) {
                         goToLoginScreen()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.shouldCloseDrawer.collect{ doClose ->
+                    if(doClose) {
+                        binding.drawerLayout.closeDrawer(Gravity.START)
+                        viewModel.drawerClosed()
                     }
                 }
             }
