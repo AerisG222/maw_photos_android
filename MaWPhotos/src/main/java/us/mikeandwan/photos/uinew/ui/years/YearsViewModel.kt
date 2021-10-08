@@ -16,13 +16,24 @@ class YearsViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository
 ): ViewModel() {
     private val _years = MutableStateFlow<List<Int>>(emptyList())
-    val years: StateFlow<List<Int>> = _years
+    val years = _years.asStateFlow()
+
+    private val _activeYear = MutableStateFlow<Int>(0)
+    val activeYear = _activeYear.asStateFlow()
 
     init {
         photoCategoryRepository
             .getYears()
-            .onEach { result ->
-                _years.value = result
+            .onEach { yearList ->
+                _years.value = yearList
+            }
+            .flowOn(Dispatchers.IO)
+            .launchIn(viewModelScope)
+
+        activeIdRepository
+            .getActivePhotoCategoryYear()
+            .onEach { year ->
+                _activeYear.value = year
             }
             .flowOn(Dispatchers.IO)
             .launchIn(viewModelScope)
