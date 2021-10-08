@@ -7,13 +7,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
+import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class YearsViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
-    private val activeIdRepository: ActiveIdRepository
+    private val activeIdRepository: ActiveIdRepository,
+    private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
     private val _years = MutableStateFlow<List<Int>>(emptyList())
     val years = _years.asStateFlow()
@@ -42,6 +44,7 @@ class YearsViewModel @Inject constructor (
     fun onYearSelected(year: Int) {
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategoryYear(year)
+            navigationStateRepository.requestClose()
         }
     }
 }
