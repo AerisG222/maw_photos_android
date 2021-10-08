@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import us.mikeandwan.photos.databinding.FragmentNavigationRailBinding
 
@@ -25,6 +26,15 @@ class NavigationRailFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.utilityNavigationRail.menu.getItem(0).isCheckable = false
 
+        binding.primaryNavigationRail.setOnItemSelectedListener { onMenuSelected(it.itemId) }
+        binding.utilityNavigationRail.setOnItemSelectedListener { onMenuSelected(it.itemId) }
+
         return binding.root
+    }
+
+    private fun onMenuSelected(itemId: Int): Boolean {
+        findNavController().navigate(itemId)
+
+        return true
     }
 }
