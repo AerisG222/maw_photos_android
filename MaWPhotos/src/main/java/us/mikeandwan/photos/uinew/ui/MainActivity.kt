@@ -57,12 +57,6 @@ class MainActivity : AppCompatActivity() {
                 binding.drawerLayout.openDrawer(binding.navLayout, true)
             }
         }
-
-        //setSupportActionBar(binding.topToolbar)
-
-        //setupActionBarWithNavController(navController, appBarConfiguration)
-
-        //binding.drawerNavView.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean { //Setup appBarConfiguration for back arrow
