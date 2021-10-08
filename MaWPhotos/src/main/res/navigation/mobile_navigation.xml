@@ -6,6 +6,12 @@
     app:startDestination="@id/navigation_categories">
 
     <fragment
+        android:id="@+id/navigation_about"
+        android:name="us.mikeandwan.photos.uinew.ui.about.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about" />
+
+    <fragment
         android:id="@+id/navigation_categories"
         android:name="us.mikeandwan.photos.uinew.ui.categories.CategoriesFragment"
         android:label="@string/title_categories"
@@ -47,5 +53,9 @@
     <action
         android:id="@+id/action_navigate_to_settings"
         app:destination="@id/navigation_settings" />
+
+    <action
+        android:id="@+id/action_navigate_to_about"
+        app:destination="@id/navigation_about" />
 
 </navigation>
