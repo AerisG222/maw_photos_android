@@ -12,7 +12,8 @@ import javax.inject.Inject
 class CategoriesViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val categoryPreferenceRepository: CategoryPreferenceRepository,
-    private val activeIdRepository: ActiveIdRepository
+    private val activeIdRepository: ActiveIdRepository,
+    private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
     private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
     val categories = _categories.asStateFlow()
@@ -35,6 +36,12 @@ class CategoriesViewModel @Inject constructor (
                 .collect { result ->
                     _categories.value = result
                 }
+        }
+
+        viewModelScope.launch {
+            activeIdRepository.getActivePhotoCategoryYear().collect { year ->
+                navigationStateRepository.setToolbarTitle(year.toString())
+            }
         }
     }
 

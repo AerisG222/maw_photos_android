@@ -18,6 +18,7 @@ class MainViewModel @Inject constructor(
         }
 
     val shouldCloseDrawer = navigationStateRepository.closeSignal
+    val toolbarTitle = navigationStateRepository.toolbarTitle
 
     fun drawerClosed() {
         navigationStateRepository.closeCompleted()
