@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -50,11 +51,17 @@ class MainActivity : AppCompatActivity() {
             .setOpenableLayout(binding.drawerLayout)
             .build()
 
-        setSupportActionBar(binding.topToolbar)
+        binding.appIconImage.setOnClickListener {
+            if(!binding.drawerLayout.isDrawerOpen(binding.navLayout)) {
+                binding.drawerLayout.openDrawer(binding.navLayout, true)
+            }
+        }
 
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        //setSupportActionBar(binding.topToolbar)
 
-        binding.drawerNavView.setupWithNavController(navController)
+        //setupActionBarWithNavController(navController, appBarConfiguration)
+
+        //binding.drawerNavView.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean { //Setup appBarConfiguration for back arrow

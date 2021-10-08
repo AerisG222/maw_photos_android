@@ -19,6 +19,7 @@
         android:fitsSystemWindows="true">
 
         <LinearLayout
+            android:id="@+id/body_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -28,10 +29,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <androidx.appcompat.widget.Toolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/top_toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize" />
+                    android:layout_height="?attr/actionBarSize">
+
+                    <ImageView
+                        android:id="@+id/app_icon_image"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="app icon"
+                        app:srcCompat="@drawable/ic_launch" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="hello"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+                </com.google.android.material.appbar.MaterialToolbar>
 
             </com.google.android.material.appbar.AppBarLayout>
 
@@ -46,14 +62,44 @@
 
         </LinearLayout>
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/drawer_nav_view"
-            style="@style/Widget.Design.NavigationView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/nav_layout"
+            android:layout_width="280dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            app:headerLayout="@layout/nav_header"
-            app:menu="@menu/drawer_navigation"/>
+            android:background="?attr/colorPrimarySurface">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/nav_rail"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.navigationrail.NavigationRailView
+                    android:id="@+id/primary_navigation_rail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:labelVisibilityMode="unlabeled"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:menu="@menu/drawer_nav_primary" />
+
+                <com.google.android.material.navigationrail.NavigationRailView
+                    android:id="@+id/utility_navigation_rail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:labelVisibilityMode="unlabeled"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:menu="@menu/drawer_nav_utility" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerView"
+                android:name="us.mikeandwan.photos.uinew.ui.years.YearsFragment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

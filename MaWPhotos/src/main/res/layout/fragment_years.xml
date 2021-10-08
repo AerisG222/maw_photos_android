@@ -11,23 +11,30 @@
             type="us.mikeandwan.photos.uinew.ui.years.YearsViewModel" />
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center_horizontal"
+            android:text="Choose Year" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/year_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="0dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="3"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:yearListData="@{ viewModel.years }"
             tools:itemCount="36"
             tools:listitem="@layout/year_list_item_view_holder" />
 
-    </FrameLayout>
+    </LinearLayout>
 </layout>

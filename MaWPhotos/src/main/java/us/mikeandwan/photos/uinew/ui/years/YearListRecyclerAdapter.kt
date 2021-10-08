@@ -35,7 +35,7 @@ class YearListRecyclerAdapter(private val clickListener: ClickListener)
         : RecyclerView.ViewHolder(binding.root) {
         fun bind(year: Int, clickListener: ClickListener) {
             binding.year = year
-            binding.yearButton.setOnClickListener { clickListener.onClick(year) }
+            binding.yearTextView.setOnClickListener { clickListener.onClick(year) }
             binding.executePendingBindings()
         }
     }

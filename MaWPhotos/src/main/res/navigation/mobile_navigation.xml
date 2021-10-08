@@ -3,17 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/navigation_years">
-
-    <fragment
-        android:id="@+id/navigation_years"
-        android:name="us.mikeandwan.photos.uinew.ui.years.YearsFragment"
-        android:label="@string/title_years"
-        tools:layout="@layout/fragment_years" >
-        <action
-            android:id="@+id/action_navigation_years_to_navigation_categories"
-            app:destination="@id/navigation_categories" />
-    </fragment>
+    app:startDestination="@id/navigation_categories">
 
     <fragment
         android:id="@+id/navigation_categories"
@@ -23,9 +13,6 @@
         <action
             android:id="@+id/action_navigation_categories_to_navigation_photos"
             app:destination="@id/navigation_photos" />
-        <argument
-            android:name="year"
-            app:argType="integer" />
     </fragment>
 
     <fragment
@@ -48,5 +35,8 @@
         android:id="@+id/navigation_settings"
         android:name="us.mikeandwan.photos.uinew.ui.settings.SettingsFragment"
         android:label="@string/title_settings" />
+    <action
+        android:id="@+id/action_navigate_to_categories_for_year"
+        app:destination="@id/navigation_categories" />
 
 </navigation>

@@ -11,14 +11,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
 import us.mikeandwan.photos.domain.CategoryDisplayType
@@ -35,7 +33,6 @@ class CategoriesFragment : Fragment() {
     private val _width = MutableStateFlow<Int>(0)
     private lateinit var binding: FragmentCategoriesBinding
     private val viewModel by viewModels<CategoriesViewModel>()
-    private val args: CategoriesFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,8 +44,6 @@ class CategoriesFragment : Fragment() {
         binding.viewModel = viewModel
 
         _thumbSize = resources.getDimension(R.dimen.category_grid_thumbnail_size).toInt()
-
-        Timber.i("active year: ${args.year}")
 
         initStateObservers()
         listenForWidth()
