@@ -55,10 +55,6 @@
         </activity>
 
         <activity
-            android:name=".ui.initialLoad.InitialLoadActivity"
-            android:label="@string/title_activity_initial_load" />
-
-        <activity
             android:name=".ui.mode.ModeSelectionActivity"
             android:label="@string/title_activity_mode_selection"
             android:screenOrientation="fullSensor" />
