@@ -17,10 +17,10 @@ class MainViewModel @Inject constructor(
             return authService.isAuthorized
         }
 
-    val shouldCloseDrawer = navigationStateRepository.closeSignal
+    val shouldCloseDrawer = navigationStateRepository.closeNavDrawerSignal
     val toolbarTitle = navigationStateRepository.toolbarTitle
 
     fun drawerClosed() {
-        navigationStateRepository.closeCompleted()
+        navigationStateRepository.closeNavDrawerCompleted()
     }
 }

@@ -4,18 +4,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class NavigationStateRepository {
-    private val _closeSignal = MutableStateFlow(false)
-    val closeSignal = _closeSignal.asStateFlow()
+    private val _closeNavDrawerSignal = MutableStateFlow(false)
+    val closeNavDrawerSignal = _closeNavDrawerSignal.asStateFlow()
 
     private val _toolbarTitle = MutableStateFlow("")
     val toolbarTitle = _toolbarTitle.asStateFlow()
 
-    fun requestClose() {
-        _closeSignal.value = true
+    fun requestNavDrawerClose() {
+        _closeNavDrawerSignal.value = true
     }
 
-    fun closeCompleted() {
-        _closeSignal.value = false
+    fun closeNavDrawerCompleted() {
+        _closeNavDrawerSignal.value = false
     }
 
     fun setToolbarTitle(title: String) {

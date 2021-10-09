@@ -8,16 +8,9 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
-                  <entry key="aboutFragment">
+                  <entry key="action_navigate_to_about">
                     <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="186" />
-                            <option name="y" value="427" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
+                      <LayoutPositions />
                     </value>
                   </entry>
                   <entry key="action_navigate_to_categories">
@@ -33,6 +26,18 @@
                   <entry key="action_navigate_to_settings">
                     <value>
                       <LayoutPositions />
+                    </value>
+                  </entry>
+                  <entry key="navigation_about">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
                     </value>
                   </entry>
                   <entry key="navigation_categories">

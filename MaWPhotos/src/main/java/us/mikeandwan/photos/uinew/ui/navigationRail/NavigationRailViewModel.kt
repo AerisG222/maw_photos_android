@@ -10,6 +10,6 @@ class NavigationRailViewModel @Inject constructor(
     private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
     fun requestClose() {
-        navigationStateRepository.requestClose()
+        navigationStateRepository.requestNavDrawerClose()
     }
 }
