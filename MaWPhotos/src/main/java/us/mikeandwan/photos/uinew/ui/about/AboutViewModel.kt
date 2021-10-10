@@ -141,8 +141,4 @@ class AboutViewModel @Inject constructor(
 1.0:
 First release!  Please let me know if you run into any problems - thanks!
     """.trimIndent()
-
-    init {
-        navigationStateRepository.setToolbarTitle("About")
-    }
 }

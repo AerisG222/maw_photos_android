@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Gravity
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -52,6 +53,14 @@ class MainActivity : AppCompatActivity() {
                 binding.drawerLayout.openDrawer(binding.navLayout, true)
             }
         }
+
+        binding.appIconBack.setOnClickListener {
+            navController.navigateUp()
+        }
+
+        navController.addOnDestinationChangedListener { controller, destination, bundle ->
+            viewModel.destinationChanged(destination.id)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean { //Setup appBarConfiguration for back arrow
@@ -78,6 +87,18 @@ class MainActivity : AppCompatActivity() {
                     if(doClose) {
                         binding.drawerLayout.closeDrawer(Gravity.START)
                         viewModel.drawerClosed()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.enableDrawer.collect { enableDrawer ->
+                    if(enableDrawer) {
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                    } else {
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                     }
                 }
             }

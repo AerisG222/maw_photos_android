@@ -37,12 +37,6 @@ class CategoriesViewModel @Inject constructor (
                     _categories.value = result
                 }
         }
-
-        viewModelScope.launch {
-            activeIdRepository.getActivePhotoCategoryYear().collect { year ->
-                navigationStateRepository.setToolbarTitle(year.toString())
-            }
-        }
     }
 
     fun onCategorySelected(photoCategory: PhotoCategory) {

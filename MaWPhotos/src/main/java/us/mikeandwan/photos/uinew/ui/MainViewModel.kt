@@ -1,8 +1,11 @@
 package us.mikeandwan.photos.uinew.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import us.mikeandwan.photos.R
 import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import javax.inject.Inject
@@ -17,10 +20,17 @@ class MainViewModel @Inject constructor(
             return authService.isAuthorized
         }
 
+    val enableDrawer = navigationStateRepository.enableDrawer
     val shouldCloseDrawer = navigationStateRepository.closeNavDrawerSignal
     val toolbarTitle = navigationStateRepository.toolbarTitle
 
     fun drawerClosed() {
         navigationStateRepository.closeNavDrawerCompleted()
+    }
+
+    fun destinationChanged(destinationId: Int) {
+        viewModelScope.launch {
+            navigationStateRepository.onDestinationChanged(destinationId)
+        }
     }
 }

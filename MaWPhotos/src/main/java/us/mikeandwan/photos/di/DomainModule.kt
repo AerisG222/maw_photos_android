@@ -5,7 +5,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.database.ActiveIdDao
 import us.mikeandwan.photos.database.PhotoCategoryDao
+import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import javax.inject.Singleton
@@ -15,8 +17,14 @@ import javax.inject.Singleton
 class DomainModule {
     @Provides
     @Singleton
-    fun provideNavigationStateRepository(): NavigationStateRepository {
-        return NavigationStateRepository()
+    fun provideActiveIdRepository(activeIdDao: ActiveIdDao): ActiveIdRepository {
+        return ActiveIdRepository(activeIdDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNavigationStateRepository(activeIdRepository: ActiveIdRepository, photoCategoryRepository: PhotoCategoryRepository): NavigationStateRepository {
+        return NavigationStateRepository(activeIdRepository, photoCategoryRepository)
     }
 
     @Provides

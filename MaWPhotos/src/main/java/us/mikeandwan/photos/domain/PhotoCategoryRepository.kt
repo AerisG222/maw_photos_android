@@ -26,6 +26,10 @@ class PhotoCategoryRepository @Inject constructor(
             dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
         }
 
+    fun getCategory() = dao
+        .getActiveCategory()
+        .map { cat -> cat.toDomainPhotoCategory() }
+
     private suspend fun loadCategories() {
         val categories = api.getRecentCategories(-1)
 

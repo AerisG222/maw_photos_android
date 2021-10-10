@@ -39,8 +39,16 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="app icon"
+                        android:visibility="@{ viewModel.enableDrawer ? View.VISIBLE : View.GONE }"
                         app:srcCompat="@drawable/ic_launch" />
+
+                    <ImageView
+                        android:id="@+id/app_icon_back"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginEnd="16dp"
+                        android:visibility="@{ viewModel.enableDrawer ? View.GONE : View.VISIBLE }"
+                        app:srcCompat="@drawable/ic_arrow_back" />
 
                     <TextView
                         android:layout_width="wrap_content"

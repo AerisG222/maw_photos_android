@@ -14,13 +14,12 @@ import javax.inject.Inject
 @HiltViewModel
 class YearsViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
-    private val activeIdRepository: ActiveIdRepository,
-    private val navigationStateRepository: NavigationStateRepository
+    private val activeIdRepository: ActiveIdRepository
 ): ViewModel() {
     private val _years = MutableStateFlow<List<Int>>(emptyList())
     val years = _years.asStateFlow()
 
-    private val _activeYear = MutableStateFlow<Int>(0)
+    private val _activeYear = MutableStateFlow(0)
     val activeYear = _activeYear.asStateFlow()
 
     init {
@@ -44,7 +43,6 @@ class YearsViewModel @Inject constructor (
     fun onYearSelected(year: Int) {
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategoryYear(year)
-            navigationStateRepository.requestNavDrawerClose()
         }
     }
 }
