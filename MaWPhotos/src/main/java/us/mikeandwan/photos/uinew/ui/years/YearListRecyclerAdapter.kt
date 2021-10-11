@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.YearListItemViewHolderBinding
 
-class YearListRecyclerAdapter(private val activeYear: StateFlow<Int>, private val clickListener: ClickListener)
+class YearListRecyclerAdapter(private val activeYear: StateFlow<Int?>, private val clickListener: ClickListener)
     : ListAdapter<Int, YearListRecyclerAdapter.ViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = YearListItemViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -36,14 +36,14 @@ class YearListRecyclerAdapter(private val activeYear: StateFlow<Int>, private va
 
     class ViewHolder(private var binding: YearListItemViewHolderBinding)
         : RecyclerView.ViewHolder(binding.root) {
-        fun bind(year: Int, activeYear: StateFlow<Int>, clickListener: ClickListener) {
+        fun bind(year: Int, activeYear: StateFlow<Int?>, clickListener: ClickListener) {
             binding.year = year
             binding.color = getColor(year, activeYear)
             binding.yearTextView.setOnClickListener { clickListener.onClick(year) }
             binding.executePendingBindings()
         }
 
-        private fun getColor(year: Int, activeYear: StateFlow<Int>): Int {
+        private fun getColor(year: Int, activeYear: StateFlow<Int?>): Int {
             return if(year == activeYear.value) {
                 ContextCompat.getColor(itemView.context, R.color.pink_700)
             } else {

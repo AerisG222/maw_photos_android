@@ -9,8 +9,8 @@ import javax.inject.Inject
 class ActiveIdRepository @Inject constructor(
     private val dao: ActiveIdDao
 ) {
-    fun getActivePhotoCategoryYear(): Flow<Int> = dao.getActiveId(ActiveIdType.PhotoCategoryYear)
-    fun getActivePhotoCategoryId(): Flow<Int> = dao.getActiveId(ActiveIdType.PhotoCategory)
+    fun getActivePhotoCategoryYear(): Flow<Int?> = dao.getActiveId(ActiveIdType.PhotoCategoryYear)
+    fun getActivePhotoCategoryId(): Flow<Int?> = dao.getActiveId(ActiveIdType.PhotoCategory)
 
     suspend fun setActivePhotoCategoryYear(year: Int) {
         val id = ActiveId(ActiveIdType.PhotoCategoryYear, year)

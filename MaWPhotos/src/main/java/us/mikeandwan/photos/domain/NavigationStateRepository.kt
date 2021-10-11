@@ -26,8 +26,10 @@ class NavigationStateRepository @Inject constructor(
                 setToolbarTitle("About")
             }
             R.id.navigation_categories -> {
+                val year = activeIdRepository.getActivePhotoCategoryYear().first()?.toString() ?: ""
+
                 enableDrawer()
-                setToolbarTitle(activeIdRepository.getActivePhotoCategoryYear().first().toString())
+                setToolbarTitle(year)
             }
             R.id.navigation_settings -> {
                 disableDrawer()
@@ -44,6 +46,10 @@ class NavigationStateRepository @Inject constructor(
         }
     }
 
+    fun setToolbarTitle(title: String) {
+        _toolbarTitle.value = title
+    }
+
     fun requestNavDrawerClose() {
         _closeNavDrawerSignal.value = true
     }
@@ -58,9 +64,5 @@ class NavigationStateRepository @Inject constructor(
 
     private fun enableDrawer() {
         _enableDrawer.value = true
-    }
-
-    private fun setToolbarTitle(title: String) {
-        _toolbarTitle.value = title
     }
 }

@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.ActiveIdDao
+import us.mikeandwan.photos.database.MawDatabase
 import us.mikeandwan.photos.database.PhotoCategoryDao
 import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.NavigationStateRepository
@@ -29,7 +30,7 @@ class DomainModule {
 
     @Provides
     @Singleton
-    fun providePhotoCategoryRepository(api: PhotoApiClient, dao: PhotoCategoryDao): PhotoCategoryRepository {
-        return PhotoCategoryRepository(api, dao)
+    fun providePhotoCategoryRepository(api: PhotoApiClient, db: MawDatabase, photoCategoryDao: PhotoCategoryDao, activeIdDao: ActiveIdDao): PhotoCategoryRepository {
+        return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao)
     }
 }

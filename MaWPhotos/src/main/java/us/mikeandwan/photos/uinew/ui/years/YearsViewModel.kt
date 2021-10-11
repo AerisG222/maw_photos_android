@@ -7,7 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
-import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import javax.inject.Inject
 
@@ -19,23 +18,20 @@ class YearsViewModel @Inject constructor (
     private val _years = MutableStateFlow<List<Int>>(emptyList())
     val years = _years.asStateFlow()
 
-    private val _activeYear = MutableStateFlow(0)
+    private val _activeYear = MutableStateFlow<Int?>(null)
     val activeYear = _activeYear.asStateFlow()
 
     init {
         photoCategoryRepository
             .getYears()
-            .onEach { yearList ->
-                _years.value = yearList
-            }
+            .filter { it.isNotEmpty() }
+            .onEach { _years.value = it }
             .flowOn(Dispatchers.IO)
             .launchIn(viewModelScope)
 
         activeIdRepository
             .getActivePhotoCategoryYear()
-            .onEach { year ->
-                _activeYear.value = year
-            }
+            .onEach { _activeYear.value = it }
             .flowOn(Dispatchers.IO)
             .launchIn(viewModelScope)
     }

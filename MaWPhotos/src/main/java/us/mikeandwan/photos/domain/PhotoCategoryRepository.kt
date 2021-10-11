@@ -1,16 +1,20 @@
 package us.mikeandwan.photos.domain
 
+import androidx.room.withTransaction
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.PhotoApiClient
-import us.mikeandwan.photos.database.PhotoCategoryDao
+import us.mikeandwan.photos.database.*
 import javax.inject.Inject
+import kotlin.math.max
 
 class PhotoCategoryRepository @Inject constructor(
     private val api: PhotoApiClient,
-    private val dao: PhotoCategoryDao
+    private val db: MawDatabase,
+    private val pcDao: PhotoCategoryDao,
+    private val idDao: ActiveIdDao
 ) {
     fun getYears() = flow {
-        val data = dao.getYears()
+        val data = pcDao.getYears()
 
         if(data.first().isEmpty()) {
             emit(emptyList())
@@ -20,13 +24,13 @@ class PhotoCategoryRepository @Inject constructor(
         emitAll(data)
     }
 
-    fun getCategories() = dao
+    fun getCategories() = pcDao
         .getCategoriesForActiveYear()
         .map { dbList ->
             dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
         }
 
-    fun getCategory() = dao
+    fun getCategory() = pcDao
         .getActiveCategory()
         .map { cat -> cat.toDomainPhotoCategory() }
 
@@ -41,6 +45,11 @@ class PhotoCategoryRepository @Inject constructor(
         val dbCategories = categories.items
             .map { apiCat -> apiCat.toDatabasePhotoCategory() }
 
-        dao.upsert(*dbCategories.toTypedArray())
+        val maxYear = dbCategories.maxOf { it.year }
+
+        db.withTransaction {
+            pcDao.upsert(*dbCategories.toTypedArray())
+            idDao.setActiveId(ActiveId(ActiveIdType.PhotoCategoryYear, maxYear))
+        }
     }
 }

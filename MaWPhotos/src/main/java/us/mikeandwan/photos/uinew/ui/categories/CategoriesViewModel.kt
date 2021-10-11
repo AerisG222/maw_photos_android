@@ -25,16 +25,22 @@ class CategoriesViewModel @Inject constructor (
         viewModelScope.launch {
             categoryPreferenceRepository
                 .getCategoryDisplayType()
-                .collect { type ->
-                    _displayType.value = type
-                }
+                .collect { _displayType.value = it }
         }
 
         viewModelScope.launch {
             photoCategoryRepository
                 .getCategories()
-                .collect { result ->
-                    _categories.value = result
+                .collect { _categories.value = it }
+        }
+
+        viewModelScope.launch {
+            activeIdRepository
+                .getActivePhotoCategoryYear()
+                .filter { it != null }
+                .collect {
+                    navigationStateRepository.requestNavDrawerClose()
+                    navigationStateRepository.setToolbarTitle(it.toString())
                 }
         }
     }
