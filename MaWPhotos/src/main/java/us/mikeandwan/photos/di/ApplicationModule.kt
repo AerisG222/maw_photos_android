@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
+import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
@@ -16,6 +17,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.MawPreferenceDataStore
 import us.mikeandwan.photos.services.*
 import javax.inject.Singleton
 

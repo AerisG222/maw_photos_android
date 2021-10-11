@@ -8,7 +8,6 @@ import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.preferences.CategoryDisplayPreference
 import us.mikeandwan.photos.preferences.NotificationPreference
 import us.mikeandwan.photos.preferences.PhotoDisplayPreference
-import us.mikeandwan.photos.preferences.SyncPreference
 import javax.inject.Singleton
 
 @Module
@@ -30,11 +29,5 @@ class PreferenceModule {
     @Singleton
     fun providePhotoDisplayPreference(sharedPrefs: SharedPreferences): PhotoDisplayPreference {
         return PhotoDisplayPreference(sharedPrefs)
-    }
-
-    @Provides
-    @Singleton
-    fun provideSyncPreference(sharedPrefs: SharedPreferences): SyncPreference {
-        return SyncPreference(sharedPrefs)
     }
 }

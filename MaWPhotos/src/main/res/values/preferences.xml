@@ -15,8 +15,8 @@
         <item>Thumbnail and Name List</item>
     </string-array>
     <string-array name="pref_category_display_values">
-        <item>grid</item>
-        <item>list</item>
+        <item>Grid</item>
+        <item>List</item>
     </string-array>
 
     <string name="pref_photo_display_header">Photo Display</string>
