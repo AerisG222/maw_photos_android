@@ -5,28 +5,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".uinew.ui.navigationRail.NavigationRailFragment">
 
+    <data>
+        <import type="us.mikeandwan.photos.R" />
+        <variable
+            name="viewModel"
+            type="us.mikeandwan.photos.uinew.ui.navigationRail.NavigationRailViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nav_rail"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.navigationrail.NavigationRailView
-            android:id="@+id/primary_navigation_rail"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/navigation_categories"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:labelVisibilityMode="unlabeled"
+            android:src="@drawable/ic_home"
+            android:paddingBottom="@dimen/_8dp"
+            android:paddingTop="@dimen/_8dp"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_categories) }"
+            app:tint="@{ viewModel.categoryButtonColor }"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:menu="@menu/drawer_nav_primary" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.navigationrail.NavigationRailView
-            android:id="@+id/utility_navigation_rail"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/navigation_random"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:labelVisibilityMode="unlabeled"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/ic_shuffle"
+            android:paddingBottom="@dimen/_8dp"
+            android:paddingTop="@dimen/_8dp"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_random) }"
+            app:tint="@{ viewModel.randomButtonColor }"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/drawer_nav_utility" />
+            app:layout_constraintTop_toBottomOf="@+id/navigation_categories" />
+
+
+        <ImageView
+            android:id="@+id/navigation_about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_help_outline"
+            android:paddingBottom="@dimen/_8dp"
+            android:paddingTop="@dimen/_8dp"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_about) }"
+            app:tint="@{ viewModel.aboutButtonColor }"
+            app:layout_constraintBottom_toTopOf="@+id/navigation_settings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/navigation_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_settings"
+            android:paddingBottom="@dimen/_8dp"
+            android:paddingTop="@dimen/_8dp"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_settings) }"
+            app:tint="@{ viewModel.settingsButtonColor }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

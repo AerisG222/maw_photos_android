@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.utils
 
 import android.widget.ImageView
+import androidx.annotation.ColorInt
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -41,5 +42,12 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             .placeholder(R.drawable.loading_animation)
             .error(R.drawable.ic_broken_image)
             .into(imgView)
+    }
+}
+
+@BindingAdapter("tint")
+fun bindTint(imgView: ImageView, color: Int?) {
+    color?.let {
+        imgView.setColorFilter(imgView.context.getColor(color))
     }
 }

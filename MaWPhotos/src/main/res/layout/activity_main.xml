@@ -80,7 +80,7 @@
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentNavRail"
                 android:name="us.mikeandwan.photos.uinew.ui.navigationRail.NavigationRailFragment"
-                android:layout_width="wrap_content"
+                android:layout_width="56dp"
                 android:layout_height="match_parent" />
 
             <androidx.fragment.app.FragmentContainerView

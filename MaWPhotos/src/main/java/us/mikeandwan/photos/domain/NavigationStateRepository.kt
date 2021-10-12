@@ -19,6 +19,12 @@ class NavigationStateRepository @Inject constructor(
     private val _enableDrawer = MutableStateFlow(true)
     val enableDrawer = _enableDrawer.asStateFlow()
 
+    private val _activeDestinationId = MutableStateFlow(-1)
+    val activeDestinationId = _activeDestinationId.asStateFlow()
+
+    private val _requestedNavigation = MutableStateFlow<Int?>(null)
+    val requestedNavigation = _requestedNavigation.asStateFlow()
+
     suspend fun onDestinationChanged(destinationId: Int) {
         when(destinationId) {
             R.id.navigation_about -> {
@@ -44,6 +50,8 @@ class NavigationStateRepository @Inject constructor(
                 setToolbarTitle(photoCategoryRepository.getCategory().first().name)
             }
         }
+
+        _activeDestinationId.value = destinationId
     }
 
     fun setToolbarTitle(title: String) {
@@ -56,6 +64,14 @@ class NavigationStateRepository @Inject constructor(
 
     fun closeNavDrawerCompleted() {
         _closeNavDrawerSignal.value = false
+    }
+
+    fun requestNavigation(id: Int) {
+        _requestedNavigation.value = id
+    }
+
+    fun requestNavigationCompleted() {
+        _requestedNavigation.value = null
     }
 
     private fun disableDrawer() {
