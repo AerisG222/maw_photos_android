@@ -16,9 +16,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@{ year.toString() }"
-        android:layout_marginTop="@dimen/_8dp"
-        android:layout_marginBottom="@dimen/_8dp"
+        android:paddingTop="@dimen/_8dp"
+        android:paddingBottom="@dimen/_8dp"
         android:textColor="@{ color }"
         android:gravity="center_horizontal|center_vertical"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
         />
 </layout>
