@@ -51,6 +51,8 @@ class NavigationStateRepository @Inject constructor(
             }
         }
 
+        requestNavDrawerClose()
+
         _activeDestinationId.value = destinationId
     }
 
