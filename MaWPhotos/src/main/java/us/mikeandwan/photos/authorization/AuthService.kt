@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import net.openid.appauth.*
 import timber.log.Timber
 import us.mikeandwan.photos.Constants
@@ -26,7 +26,7 @@ class AuthService(
         get() { return _authConfig }
 
     private val _isAuthorized = MutableStateFlow(authStateManager.current.isAuthorized)
-    val isAuthorized: StateFlow<Boolean> = _isAuthorized
+    val isAuthorized = _isAuthorized.asStateFlow()
 
     fun updateAuthorizationState(isAuthorized: Boolean) {
         _isAuthorized.value = isAuthorized
