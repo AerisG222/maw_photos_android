@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewModel"
+            type="us.mikeandwan.photos.uinew.ui.randomMenu.RandomMenuViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/manage_random_photos" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/fetch10TextView"
+            android:text="@string/fetch_10_photos"
+            android:onClick="@{ () -> viewModel.fetch(10) }"
+            style="@style/maw_nav_drawer_secondary_menu_item_textview" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/fetch20TextView"
+            android:text="@string/fetch_20_photos"
+            android:onClick="@{ () -> viewModel.fetch(20) }"
+            style="@style/maw_nav_drawer_secondary_menu_item_textview" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <TextView
+            android:id="@+id/clearTextView"
+            android:onClick="@{ () -> viewModel.clear() }"
+            android:background="#80FF0000"
+            android:text="@string/clear_random_photos"
+            style="@style/maw_nav_drawer_secondary_menu_item_textview"/>
+    </LinearLayout>
+</layout>

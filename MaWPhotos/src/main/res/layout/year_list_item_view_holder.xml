@@ -13,14 +13,7 @@
 
     <TextView
         android:id="@+id/yearTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="@{ year.toString() }"
-        android:paddingTop="@dimen/_8dp"
-        android:paddingBottom="@dimen/_8dp"
         android:textColor="@{ color }"
-        android:gravity="center_horizontal|center_vertical"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        />
+        style="@style/maw_nav_drawer_secondary_menu_item_textview" />
 </layout>

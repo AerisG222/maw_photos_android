@@ -60,4 +60,8 @@
     <string name="frg_toolbar_toggle_slideshow">Toggle Slideshow</string>
     <string name="title_activity_initial_load">InitialLoadActivity</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="manage_random_photos">Manage Random Photos</string>
+    <string name="fetch_10_photos">Fetch 10 Photos</string>
+    <string name="fetch_20_photos">Fetch 20 Photos</string>
+    <string name="clear_random_photos">Clear Photos</string>
 </resources>
