@@ -47,12 +47,10 @@ android {
     flavorDimensions "dev_or_prod"
 
     productFlavors {
-        //noinspection GroovyMissingReturnStatement
         development {
             dimension "dev_or_prod"
         }
 
-        //noinspection GroovyMissingReturnStatement
         production {
             dimension "dev_or_prod"
         }
@@ -76,10 +74,10 @@ android {
         }
     }
 
-    //noinspection GroovyMissingReturnStatement
     packagingOptions {
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
+        resources {
+            excludes += ['META-INF/LICENSE', 'META-INF/NOTICE']
+        }
     }
 
     lintOptions {
