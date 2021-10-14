@@ -45,3 +45,16 @@ fun us.mikeandwan.photos.database.PhotoPreference.toDomainPhotoPreference(): Pho
         this.slideshowIntervalSeconds
     )
 }
+
+fun us.mikeandwan.photos.api.Photo.toDomainPhoto(): Photo {
+    return Photo(
+        this.id,
+        this.categoryId,
+        this.imageMd.height,
+        this.imageMd.width,
+        this.imageMd.url,
+        this.imageXs.height,
+        this.imageXs.width,
+        this.imageXs.url
+    )
+}

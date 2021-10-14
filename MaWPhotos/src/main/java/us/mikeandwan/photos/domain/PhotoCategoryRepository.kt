@@ -34,6 +34,12 @@ class PhotoCategoryRepository @Inject constructor(
         .getActiveCategory()
         .map { cat -> cat.toDomainPhotoCategory() }
 
+    suspend fun getPhotos(categoryId: Int): List<Photo> {
+        val result = api.getPhotos(categoryId)
+
+        return result?.items?.map{ it.toDomainPhoto() } ?: emptyList()
+    }
+
     private suspend fun loadCategories() {
         val categories = api.getRecentCategories(-1)
 
