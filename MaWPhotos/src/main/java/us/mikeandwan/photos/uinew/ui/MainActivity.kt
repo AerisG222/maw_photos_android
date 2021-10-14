@@ -12,8 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,7 +25,6 @@ import us.mikeandwan.photos.uinew.ui.years.YearsFragment
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
     private val viewModel by viewModels<MainViewModel>()
 
@@ -45,13 +42,6 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-        appBarConfiguration = AppBarConfiguration.Builder(
-                R.id.navigation_categories,
-                R.id.navigation_random
-            )
-            .setOpenableLayout(binding.drawerLayout)
-            .build()
-
         binding.appIconImage.setOnClickListener {
             if(!binding.drawerLayout.isDrawerOpen(binding.navLayout)) {
                 binding.drawerLayout.openDrawer(binding.navLayout, true)
@@ -65,10 +55,6 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { controller, destination, bundle ->
             viewModel.destinationChanged(destination.id)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean { //Setup appBarConfiguration for back arrow
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
     }
 
     private fun initStateObservers() {
