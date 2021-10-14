@@ -16,6 +16,8 @@ import com.google.android.flexbox.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
@@ -61,18 +63,18 @@ class CategoriesFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                _width.collect { showGrid() }
-            }
-        }
+                _width
+                    .onEach { showGrid() }
+                    .launchIn(this)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.displayType.collect { type ->
-                    when (type) {
-                        CategoryDisplayType.Grid -> showGrid()
-                        CategoryDisplayType.List -> showList()
+                viewModel.displayType
+                    .onEach { type ->
+                        when (type) {
+                            CategoryDisplayType.Grid -> showGrid()
+                            CategoryDisplayType.List -> showList()
+                        }
                     }
-                }
+                    .launchIn(this)
             }
         }
     }

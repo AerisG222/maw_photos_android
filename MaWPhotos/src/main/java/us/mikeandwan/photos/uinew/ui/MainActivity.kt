@@ -11,12 +11,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityMainBinding
@@ -77,40 +77,36 @@ class MainActivity : AppCompatActivity() {
                 // DEV: uncomment to force reauth
                 // viewModel.authService.clearAuthState()
 
-                viewModel.isAuthenticated.collect {
-                    if (!it) {
-                        goToLoginScreen()
+                viewModel.isAuthenticated
+                    .onEach {
+                        if (!it) {
+                            goToLoginScreen()
+                        }
                     }
-                }
-            }
-        }
+                    .launchIn(this)
 
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.shouldCloseDrawer.collect{ doClose ->
-                    if(doClose) {
-                        binding.drawerLayout.closeDrawer(Gravity.START)
-                        viewModel.drawerClosed()
+                viewModel.shouldCloseDrawer
+                    .onEach { doClose ->
+                        if (doClose) {
+                            binding.drawerLayout.closeDrawer(Gravity.START)
+                            viewModel.drawerClosed()
+                        }
                     }
-                }
-            }
-        }
+                    .launchIn(this)
 
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.enableDrawer.collect { enableDrawer ->
-                    if(enableDrawer) {
-                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                    } else {
-                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                viewModel.enableDrawer
+                    .onEach { enableDrawer ->
+                        if(enableDrawer) {
+                            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                        } else {
+                            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                        }
                     }
-                }
-            }
-        }
+                    .launchIn(this)
 
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.navigationRequests.collect { onNavigate(it) }
+                viewModel.navigationRequests
+                    .onEach { onNavigate(it) }
+                    .launchIn(this)
             }
         }
     }
