@@ -28,7 +28,7 @@ class NavigationRailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentNavigationRailBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
         return binding.root

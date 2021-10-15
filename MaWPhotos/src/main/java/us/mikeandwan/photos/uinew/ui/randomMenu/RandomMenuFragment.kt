@@ -33,7 +33,7 @@ class RandomMenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentRandomMenuBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
         return binding.root

@@ -32,7 +32,7 @@ class YearsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentYearsBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
         val dividerItemDecoration = DividerItemDecoration(
