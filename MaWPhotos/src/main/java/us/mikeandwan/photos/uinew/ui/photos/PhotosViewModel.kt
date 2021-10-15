@@ -1,7 +1,26 @@
 package us.mikeandwan.photos.uinew.ui.photos
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
+import us.mikeandwan.photos.domain.ActiveIdRepository
+import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.toImageGridItem
+import javax.inject.Inject
 
-class PhotosViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
+@HiltViewModel
+class PhotosViewModel @Inject constructor (
+    private val activeIdRepository: ActiveIdRepository,
+    private val photoCategoryRepository: PhotoCategoryRepository
+) : ViewModel() {
+    val photos = activeIdRepository
+        .getActivePhotoCategoryId()
+        .filter { it != null }
+        .flatMapLatest { photoCategoryRepository.getPhotos(it!!) }
+        .map { list -> list.map { it.toImageGridItem() } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<ImageGridItem>())
 }

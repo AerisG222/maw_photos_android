@@ -1,32 +1,59 @@
 package us.mikeandwan.photos.uinew.ui.photos
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.databinding.FragmentPhotosBinding
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
 
+@AndroidEntryPoint
 class PhotosFragment : Fragment() {
-
     companion object {
         fun newInstance() = PhotosFragment()
     }
 
-    private lateinit var viewModel: PhotosViewModel
+    private lateinit var binding: FragmentPhotosBinding
+    val viewModel by viewModels<PhotosViewModel>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_photos, container, false)
-    }
+        binding = FragmentPhotosBinding.inflate(inflater)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(PhotosViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
+        childFragmentManager.commit {
+            setReorderingAllowed(true)
+            add(R.id.fragmentPhotoList, ImageGridFragment::class.java, null)
+        }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.photos.collect {
+                    val frag = childFragmentManager.fragments.first() as ImageGridFragment
+
+                    frag.setClickHandler(ImageGridRecyclerAdapter.ClickListener {
+                        item -> Timber.i("image clicked: $item")
+                    })
+
+                    frag.setData(it)
+                }
+            }
+        }
+
+        return binding.root
+    }
 }

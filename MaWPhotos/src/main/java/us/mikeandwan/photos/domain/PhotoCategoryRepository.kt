@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.*
 import javax.inject.Inject
-import kotlin.math.max
 
 class PhotoCategoryRepository @Inject constructor(
     private val api: PhotoApiClient,
@@ -34,10 +33,10 @@ class PhotoCategoryRepository @Inject constructor(
         .getActiveCategory()
         .map { cat -> cat.toDomainPhotoCategory() }
 
-    suspend fun getPhotos(categoryId: Int): List<Photo> {
+    fun getPhotos(categoryId: Int) = flow {
         val result = api.getPhotos(categoryId)
 
-        return result?.items?.map{ it.toDomainPhoto() } ?: emptyList()
+        emit(result?.items?.map{ it.toDomainPhoto() } ?: emptyList<Photo>())
     }
 
     private suspend fun loadCategories() {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".uinew.ui.imageGrid.ImageGridFragment">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridViewModel" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/image_grid_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
+            app:imageGridItemList="@{ viewModel.gridItems }"
+            tools:listitem="@layout/image_grid_item_view_holder" />
+
+    </FrameLayout>
+
+</layout>

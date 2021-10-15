@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="item"
+            type="us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem" />
+    </data>
+
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/imageGridItemImageView"
+        android:layout_width="@dimen/category_grid_thumbnail_size"
+        android:layout_height="@dimen/category_grid_thumbnail_size"
+        android:layout_marginBottom="@dimen/_2dp"
+        android:contentDescription="@string/li_category_thumbnail_description"
+        android:adjustViewBounds="true"
+        app:imageUrl="@{ item.url }" />
+
+</layout>

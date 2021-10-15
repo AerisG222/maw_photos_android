@@ -1,15 +1,14 @@
 package us.mikeandwan.photos.utils
 
 import android.widget.ImageView
-import androidx.annotation.ColorInt
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.PhotoCategory
 import us.mikeandwan.photos.uinew.ui.categories.CategoryGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.categories.CategoryListRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.years.YearListRecyclerAdapter
 
 @BindingAdapter("yearListData")
@@ -23,6 +22,13 @@ fun bindCategoryRecyclerView(recyclerView: RecyclerView, data: List<PhotoCategor
     when(val adapter = recyclerView.adapter) {
         is CategoryGridRecyclerAdapter -> adapter.submitList(data)
         is CategoryListRecyclerAdapter -> adapter.submitList(data)
+    }
+}
+
+@BindingAdapter("imageGridItemList")
+fun bindImageGridRecyclerView(recyclerView: RecyclerView, data: List<ImageGridItem>?) {
+    when(val adapter = recyclerView.adapter) {
+        is ImageGridRecyclerAdapter -> adapter.submitList(data)
     }
 }
 
