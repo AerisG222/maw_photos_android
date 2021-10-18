@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.commit
-import androidx.fragment.app.commitNow
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,13 +18,14 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
 import us.mikeandwan.photos.domain.CategoryDisplayType
+import us.mikeandwan.photos.domain.PhotoCategory
+import us.mikeandwan.photos.uinew.ui.categoryList.CategoryListFragment
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.toImageGridItem
 
 @AndroidEntryPoint
 class CategoriesFragment : Fragment() {
@@ -39,6 +39,14 @@ class CategoriesFragment : Fragment() {
     private lateinit var binding: FragmentCategoriesBinding
     private val viewModel by viewModels<CategoriesViewModel>()
 
+    private val onGridItemClicked = ImageGridRecyclerAdapter.ClickListener {
+        onSelectCategory(it.data as PhotoCategory)
+    }
+
+    private val onListItemClicked = us.mikeandwan.photos.uinew.ui.categoryList.CategoryListRecyclerAdapter.ClickListener {
+        onSelectCategory(it)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,9 +59,10 @@ class CategoriesFragment : Fragment() {
         if(savedInstanceState == null) {
             initStateObservers()
         } else {
-            val frag = childFragmentManager.fragments.first() as ImageGridFragment
-
-            frag.setClickHandler(onCategoryClicked)
+            when(val frag = childFragmentManager.fragments.first()) {
+                is ImageGridFragment -> frag.setClickHandler(onGridItemClicked)
+                is CategoryListFragment -> frag.setClickHandler(onListItemClicked)
+            }
         }
 
         return binding.root
@@ -64,10 +73,14 @@ class CategoriesFragment : Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.displayType
                     .combine(viewModel.categories) { type, categories -> Pair(type, categories) }
-                    .drop(1)
                     .onEach { (displayType, categories) ->
-                        showGrid()
+                        when(displayType) {
+                            CategoryDisplayType.Grid -> showGrid()
+                            CategoryDisplayType.List -> showList()
+                        }
+
                         delay(1)   // TODO: find a way to get rid of this
+
                         updateCategories(categories)
                     }
                     .launchIn(this)
@@ -75,15 +88,14 @@ class CategoriesFragment : Fragment() {
         }
     }
 
-    private val onCategoryClicked = ImageGridRecyclerAdapter.ClickListener {
-        viewModel.onCategorySelected(it.id)
-        navigateToCategory(it.id)
-    }
-
-    private fun updateCategories(categories: List<ImageGridItem>) {
+    private fun updateCategories(categories: List<PhotoCategory>) {
         when(val frag = childFragmentManager.fragments.first()) {
             is ImageGridFragment -> {
-                frag.setClickHandler(onCategoryClicked)
+                frag.setClickHandler(onGridItemClicked)
+                frag.setData(categories.map{ it.toImageGridItem() })
+            }
+            is CategoryListFragment -> {
+                frag.setClickHandler(onListItemClicked)
                 frag.setData(categories)
             }
         }
@@ -91,6 +103,10 @@ class CategoriesFragment : Fragment() {
 
     private fun showGrid() {
         setChildFragment(R.layout.fragment_image_grid, ImageGridFragment::class.java, FRAG_GRID)
+    }
+
+    private fun showList() {
+        setChildFragment(R.layout.fragment_category_list, CategoryListFragment::class.java, FRAG_LIST)
     }
 
     private fun <T: Fragment> setChildFragment(id: Int, fragmentClass: Class<T>, tag: String) {
@@ -126,29 +142,10 @@ class CategoriesFragment : Fragment() {
         }
     }
 
-    /*
-    private fun showList() {
-        if(updateListAdapterRequired()) {
-            val decoration = FlexboxItemDecoration(binding.categoryRecyclerView.context)
-
-            decoration.setOrientation(FlexboxItemDecoration.HORIZONTAL)
-
-            updateAdapter(CategoryListRecyclerAdapter(onCategoryClicked), decoration)
-        }
+    private fun onSelectCategory(category: PhotoCategory) {
+        viewModel.onCategorySelected(category.id)
+        navigateToCategory(category.id)
     }
-
-    private fun clearRecyclerDecorations() {
-        for(i in binding.categoryRecyclerView.itemDecorationCount - 1 downTo 0) {
-            binding.categoryRecyclerView.removeItemDecorationAt(i)
-        }
-    }
-
-    private fun updateGridAdapterRequired() =
-        binding.categoryRecyclerView.adapter !is CategoryGridRecyclerAdapter || _width.value != 0
-
-    private fun updateListAdapterRequired() =
-        binding.categoryRecyclerView.adapter !is CategoryListRecyclerAdapter
-     */
 
     private fun navigateToCategory(categoryId: Int) {
         val action = CategoriesFragmentDirections.actionNavigationCategoriesToNavigationPhotos(categoryId)

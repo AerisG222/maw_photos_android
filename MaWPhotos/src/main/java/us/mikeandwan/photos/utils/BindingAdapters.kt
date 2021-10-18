@@ -5,7 +5,7 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.PhotoCategory
-import us.mikeandwan.photos.uinew.ui.categories.CategoryListRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.categoryList.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.years.YearListRecyclerAdapter
@@ -16,8 +16,8 @@ fun bindYearRecyclerView(recyclerView: RecyclerView, data: List<Int>?) {
     adapter.submitList(data)
 }
 
-@BindingAdapter("listData")
-fun bindCategoryRecyclerView(recyclerView: RecyclerView, data: List<PhotoCategory>?) {
+@BindingAdapter("categoryList")
+fun bindCategoryListRecyclerView(recyclerView: RecyclerView, data: List<PhotoCategory>?) {
     when(val adapter = recyclerView.adapter) {
         is CategoryListRecyclerAdapter -> adapter.submitList(data)
     }

@@ -17,7 +17,7 @@ class CategoriesViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
     private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
-    private val _categories = MutableStateFlow<List<ImageGridItem>>(emptyList())
+    private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
     val categories = _categories.asStateFlow()
 
     private val _displayType = MutableStateFlow(CategoryDisplayType.Grid)
@@ -32,7 +32,6 @@ class CategoriesViewModel @Inject constructor (
 
             photoCategoryRepository
                 .getCategories()
-                .map { categories -> categories.map { it.toImageGridItem() } }
                 .onEach { _categories.value = it }
                 .launchIn(this)
 
