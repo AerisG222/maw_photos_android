@@ -34,7 +34,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:yearListData="@{ viewModel.years }"
             tools:itemCount="36"
-            tools:listitem="@layout/year_list_item_view_holder" />
+            tools:listitem="@layout/view_holder_year_list_item" />
 
     </LinearLayout>
 </layout>

@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.StateFlow
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.databinding.YearListItemViewHolderBinding
+import us.mikeandwan.photos.databinding.ViewHolderYearListItemBinding
 
 class YearListRecyclerAdapter(private val activeYear: StateFlow<Int?>, private val clickListener: ClickListener)
     : ListAdapter<Int, YearListRecyclerAdapter.ViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = YearListItemViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ViewHolderYearListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
@@ -34,7 +34,7 @@ class YearListRecyclerAdapter(private val activeYear: StateFlow<Int?>, private v
         }
     }
 
-    class ViewHolder(private var binding: YearListItemViewHolderBinding)
+    class ViewHolder(private var binding: ViewHolderYearListItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun bind(year: Int, activeYear: StateFlow<Int?>, clickListener: ClickListener) {
             binding.year = year

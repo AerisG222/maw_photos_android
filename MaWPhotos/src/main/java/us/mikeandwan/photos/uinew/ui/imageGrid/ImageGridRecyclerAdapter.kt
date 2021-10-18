@@ -6,12 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
-import us.mikeandwan.photos.databinding.ImageGridItemViewHolderBinding
+import us.mikeandwan.photos.databinding.ViewHolderImageGridItemBinding
 
 class ImageGridRecyclerAdapter(private val thumbnailSize: Int, private val clickListener: ClickListener)
     : ListAdapter<ImageGridItem, ImageGridRecyclerAdapter.ViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ImageGridItemViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ViewHolderImageGridItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding, thumbnailSize)
     }
@@ -32,7 +32,7 @@ class ImageGridRecyclerAdapter(private val thumbnailSize: Int, private val click
         }
     }
 
-    class ViewHolder(private var binding: ImageGridItemViewHolderBinding, private val thumbnailSize: Int)
+    class ViewHolder(private var binding: ViewHolderImageGridItemBinding, private val thumbnailSize: Int)
         : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ImageGridItem, clickListener: ClickListener) {
             binding.item = item
