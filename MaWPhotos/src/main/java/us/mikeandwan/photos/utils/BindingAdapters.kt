@@ -5,7 +5,6 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.PhotoCategory
-import us.mikeandwan.photos.uinew.ui.categories.CategoryGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.categories.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
@@ -20,7 +19,6 @@ fun bindYearRecyclerView(recyclerView: RecyclerView, data: List<Int>?) {
 @BindingAdapter("listData")
 fun bindCategoryRecyclerView(recyclerView: RecyclerView, data: List<PhotoCategory>?) {
     when(val adapter = recyclerView.adapter) {
-        is CategoryGridRecyclerAdapter -> adapter.submitList(data)
         is CategoryListRecyclerAdapter -> adapter.submitList(data)
     }
 }
@@ -29,13 +27,6 @@ fun bindCategoryRecyclerView(recyclerView: RecyclerView, data: List<PhotoCategor
 fun bindImageGridRecyclerView(recyclerView: RecyclerView, data: List<ImageGridItem>?) {
     when(val adapter = recyclerView.adapter) {
         is ImageGridRecyclerAdapter -> adapter.submitList(data)
-    }
-}
-
-@BindingAdapter("categoryGridImageUrl")
-fun bindCategoryGridImage(imgView: ImageView, imgUrl: String?) {
-    imgUrl?.let{
-        bindImage(imgView, imgUrl.replace("/xs/", "/md/"))
     }
 }
 

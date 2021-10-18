@@ -26,6 +26,10 @@ class PhotosFragment : Fragment() {
     private lateinit var binding: FragmentPhotosBinding
     val viewModel by viewModels<PhotosViewModel>()
 
+    private val onPhotoClicked = ImageGridRecyclerAdapter.ClickListener {
+        Timber.i("item clicked: $it")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,25 +39,37 @@ class PhotosFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        if(savedInstanceState == null) {
+            initGrid()
+            initStateObservers()
+        } else {
+            val frag = childFragmentManager.fragments.first() as ImageGridFragment
+
+            frag.setClickHandler(onPhotoClicked)
+        }
+
+        return binding.root
+    }
+
+    private fun initGrid() {
         childFragmentManager.commit {
             setReorderingAllowed(true)
             add(R.id.fragmentPhotoList, ImageGridFragment::class.java, null)
         }
 
+        childFragmentManager.executePendingTransactions()
+    }
+
+    private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.photos.collect {
                     val frag = childFragmentManager.fragments.first() as ImageGridFragment
 
-                    frag.setClickHandler(ImageGridRecyclerAdapter.ClickListener {
-                        item -> Timber.i("image clicked: $item")
-                    })
-
+                    frag.setClickHandler(onPhotoClicked)
                     frag.setData(it)
                 }
             }
         }
-
-        return binding.root
     }
 }

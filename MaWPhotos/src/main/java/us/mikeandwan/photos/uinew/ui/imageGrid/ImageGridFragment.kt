@@ -12,9 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.flexbox.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentImageGridBinding
 
@@ -24,7 +24,8 @@ class ImageGridFragment : Fragment() {
         fun newInstance() = ImageGridFragment()
     }
 
-    private var _clickHandler = ImageGridRecyclerAdapter.ClickListener { Timber.i("please set a click handler!")}
+    private val _clickHandlerForwarder = ImageGridRecyclerAdapter.ClickListener { _clickHandler?.onClick(it) }
+    private var _clickHandler: ImageGridRecyclerAdapter.ClickListener? = null
     private var _thumbSize = 0
     private val _width = MutableStateFlow(0)
     private var _listener: ViewTreeObserver.OnGlobalLayoutListener? = null
@@ -36,8 +37,6 @@ class ImageGridFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Timber.i("onCreateView")
-
         binding = FragmentImageGridBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
@@ -57,11 +56,31 @@ class ImageGridFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+       viewModel.setDoInvalidate(true)
+    }
+
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 _width
-                    .onEach { updateAdapter() }
+                    .onEach {
+                        updateAdapter()
+                    }
+                    .launchIn(this)
+
+                viewModel.doInvalidate
+                    .onEach {
+                        delay(1)
+                        if(it) {
+                            viewModel.setDoInvalidate(false)
+
+                            val adapter = binding.imageGridRecyclerView.adapter as ImageGridRecyclerAdapter
+                            adapter.submitList(viewModel.gridItems.value)
+                        }
+                    }
                     .launchIn(this)
             }
         }
@@ -77,7 +96,7 @@ class ImageGridFragment : Fragment() {
     }
 
     private fun updateAdapter() {
-        binding.imageGridRecyclerView.adapter = ImageGridRecyclerAdapter(getThumbnailSize(), _clickHandler)
+        binding.imageGridRecyclerView.adapter = ImageGridRecyclerAdapter(getThumbnailSize(), _clickHandlerForwarder)
     }
 
     private fun getThumbnailSize(): Int {

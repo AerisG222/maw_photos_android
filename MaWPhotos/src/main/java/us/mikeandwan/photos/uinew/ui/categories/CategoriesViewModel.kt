@@ -6,6 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.*
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.toImageGridItem
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,7 +17,7 @@ class CategoriesViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
     private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
-    private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
+    private val _categories = MutableStateFlow<List<ImageGridItem>>(emptyList())
     val categories = _categories.asStateFlow()
 
     private val _displayType = MutableStateFlow(CategoryDisplayType.Grid)
@@ -30,6 +32,7 @@ class CategoriesViewModel @Inject constructor (
 
             photoCategoryRepository
                 .getCategories()
+                .map { categories -> categories.map { it.toImageGridItem() } }
                 .onEach { _categories.value = it }
                 .launchIn(this)
 
@@ -44,9 +47,9 @@ class CategoriesViewModel @Inject constructor (
         }
     }
 
-    fun onCategorySelected(photoCategory: PhotoCategory) {
+    fun onCategorySelected(categoryId: Int) {
         viewModelScope.launch {
-            activeIdRepository.setActivePhotoCategory(photoCategory.id)
+            activeIdRepository.setActivePhotoCategory(categoryId)
         }
     }
 }

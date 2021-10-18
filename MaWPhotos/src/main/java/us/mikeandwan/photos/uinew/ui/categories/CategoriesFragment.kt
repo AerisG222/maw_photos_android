@@ -5,34 +5,37 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.flexbox.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
 import us.mikeandwan.photos.domain.CategoryDisplayType
-import us.mikeandwan.photos.domain.PhotoCategory
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
 
 @AndroidEntryPoint
 class CategoriesFragment : Fragment() {
     companion object {
         fun newInstance() = CategoriesFragment()
+
+        const val FRAG_GRID = "grid"
+        const val FRAG_LIST = "list"
     }
 
-    private var _thumbSize = 0
-    private var _listener: ViewTreeObserver.OnGlobalLayoutListener? = null
-    private val _width = MutableStateFlow<Int>(0)
     private lateinit var binding: FragmentCategoriesBinding
     private val viewModel by viewModels<CategoriesViewModel>()
 
@@ -45,16 +48,12 @@ class CategoriesFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
-        _thumbSize = resources.getDimension(R.dimen.category_grid_thumbnail_size).toInt()
+        if(savedInstanceState == null) {
+            initStateObservers()
+        } else {
+            val frag = childFragmentManager.fragments.first() as ImageGridFragment
 
-        initStateObservers()
-        listenForWidth()
-
-        binding.categoryRecyclerView.layoutManager = FlexboxLayoutManager(activity).apply {
-            flexWrap = FlexWrap.WRAP
-            flexDirection = FlexDirection.ROW
-            alignItems = AlignItems.STRETCH
-            justifyContent = JustifyContent.SPACE_BETWEEN
+            frag.setClickHandler(onCategoryClicked)
         }
 
         return binding.root
@@ -63,42 +62,71 @@ class CategoriesFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                _width
-                    .onEach { showGrid() }
-                    .launchIn(this)
-
                 viewModel.displayType
-                    .onEach { type ->
-                        when (type) {
-                            CategoryDisplayType.Grid -> showGrid()
-                            CategoryDisplayType.List -> showList()
-                        }
+                    .combine(viewModel.categories) { type, categories -> Pair(type, categories) }
+                    .drop(1)
+                    .onEach { (displayType, categories) ->
+                        showGrid()
+                        delay(1)   // TODO: find a way to get rid of this
+                        updateCategories(categories)
                     }
                     .launchIn(this)
             }
         }
     }
 
-    private val onCategoryClicked = CategoryRecyclerAdapter.ClickListener {
-        viewModel.onCategorySelected(it)
-        navigateToCategory(it)
+    private val onCategoryClicked = ImageGridRecyclerAdapter.ClickListener {
+        viewModel.onCategorySelected(it.id)
+        navigateToCategory(it.id)
     }
 
-    private fun listenForWidth() {
-        _listener = ViewTreeObserver.OnGlobalLayoutListener {
-            binding.container.viewTreeObserver.removeOnGlobalLayoutListener(_listener)
-            _width.value = binding.container.width
+    private fun updateCategories(categories: List<ImageGridItem>) {
+        when(val frag = childFragmentManager.fragments.first()) {
+            is ImageGridFragment -> {
+                frag.setClickHandler(onCategoryClicked)
+                frag.setData(categories)
+            }
         }
-
-        binding.container.viewTreeObserver.addOnGlobalLayoutListener(_listener)
     }
 
     private fun showGrid() {
-        if(updateGridAdapterRequired()) {
-            updateAdapter(CategoryGridRecyclerAdapter(getThumbnailSize(), onCategoryClicked), null)
+        setChildFragment(R.layout.fragment_image_grid, ImageGridFragment::class.java, FRAG_GRID)
+    }
+
+    private fun <T: Fragment> setChildFragment(id: Int, fragmentClass: Class<T>, tag: String) {
+        val fragment = getCurrentFragment()
+        var doRemove = false
+
+        if(fragment != null) {
+            if(fragment.tag == tag) {
+                return
+            } else {
+                doRemove = true
+            }
+        }
+
+        childFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            if(doRemove) {
+                remove(fragment!!)
+            }
+
+            add(R.id.fragmentCategoryList, fragmentClass, null, tag)
+        }
+
+        childFragmentManager.executePendingTransactions()
+    }
+
+    private fun getCurrentFragment(): Fragment? {
+        return if(childFragmentManager.fragments.isNotEmpty()) {
+            childFragmentManager.fragments.first()
+        } else {
+            null
         }
     }
 
+    /*
     private fun showList() {
         if(updateListAdapterRequired()) {
             val decoration = FlexboxItemDecoration(binding.categoryRecyclerView.context)
@@ -109,32 +137,10 @@ class CategoriesFragment : Fragment() {
         }
     }
 
-    private fun <T : RecyclerView.ViewHolder?> updateAdapter(adapter: RecyclerView.Adapter<T>, decoration: FlexboxItemDecoration?) {
-        binding.categoryRecyclerView.adapter = adapter
-
-        clearRecyclerDecorations()
-
-        decoration?.let {
-            binding.categoryRecyclerView.addItemDecoration(decoration)
-        }
-
-        binding.invalidateAll()
-    }
-
     private fun clearRecyclerDecorations() {
         for(i in binding.categoryRecyclerView.itemDecorationCount - 1 downTo 0) {
             binding.categoryRecyclerView.removeItemDecorationAt(i)
         }
-    }
-
-    private fun getThumbnailSize(): Int {
-        val width = _width.value
-        val cols = maxOf(1, width / _thumbSize)
-
-        val totalInteriorMargins = cols * resources.getDimension(R.dimen._2dp)
-        val remainingSpaceForImages = width - totalInteriorMargins.toInt()
-
-        return remainingSpaceForImages / cols
     }
 
     private fun updateGridAdapterRequired() =
@@ -142,9 +148,10 @@ class CategoriesFragment : Fragment() {
 
     private fun updateListAdapterRequired() =
         binding.categoryRecyclerView.adapter !is CategoryListRecyclerAdapter
+     */
 
-    private fun navigateToCategory(category: PhotoCategory) {
-        val action = CategoriesFragmentDirections.actionNavigationCategoriesToNavigationPhotos(category.id)
+    private fun navigateToCategory(categoryId: Int) {
+        val action = CategoriesFragmentDirections.actionNavigationCategoriesToNavigationPhotos(categoryId)
 
         findNavController().navigate(action)
     }

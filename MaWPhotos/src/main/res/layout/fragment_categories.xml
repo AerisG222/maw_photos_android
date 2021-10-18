@@ -16,16 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/category_recycler_view"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentCategoryList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="0dp"
-            app:listData="@{ viewModel.categories }"
-            tools:listitem="@layout/category_list_item_view_holder" />
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 </layout>
