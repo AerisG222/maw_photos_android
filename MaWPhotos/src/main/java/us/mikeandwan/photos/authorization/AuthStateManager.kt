@@ -1,37 +1,21 @@
 package us.mikeandwan.photos.authorization
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.annotation.AnyThread
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import net.openid.appauth.*
 import org.json.JSONException
 import timber.log.Timber
-import java.lang.ref.WeakReference
+import us.mikeandwan.photos.database.Authorization
+import us.mikeandwan.photos.database.AuthorizationDao
 import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.locks.ReentrantLock
 
-/*
- * Copyright 2017 The AppAuth for Android Authors. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
- */
-// package net.openid.appauthdemo;
-/**
- * An example persistence mechanism for an [AuthState] instance.
- * This stores the instance in a shared preferences file, and provides thread-safe access and
- * mutation.
- */
-class AuthStateManager private constructor(context: Context) {
-    private val mPrefs: SharedPreferences = context.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE)
-    private val mPrefsLock: ReentrantLock = ReentrantLock()
+// based on: https://github.com/openid/AppAuth-Android/blob/master/app/java/net/openid/appauthdemo/AuthStateManager.java
+class AuthStateManager constructor(
+    private val authorizationDao: AuthorizationDao
+) {
+    private val _lock: ReentrantLock = ReentrantLock()
     private val mCurrentAuthState: AtomicReference<AuthState> = AtomicReference()
 
     @get:AnyThread
@@ -54,6 +38,7 @@ class AuthStateManager private constructor(context: Context) {
     fun replace(state: AuthState): AuthState {
         writeState(state)
         mCurrentAuthState.set(state)
+
         return state
     }
 
@@ -64,6 +49,7 @@ class AuthStateManager private constructor(context: Context) {
     ): AuthState {
         val current = current
         current.update(response, ex)
+
         return replace(current)
     }
 
@@ -74,69 +60,55 @@ class AuthStateManager private constructor(context: Context) {
     ): AuthState {
         val current = current
         current.update(response, ex)
-        return replace(current)
-    }
 
-    @AnyThread
-    fun updateAfterRegistration(
-        response: RegistrationResponse?,
-        ex: AuthorizationException?
-    ): AuthState {
-        val current = current
-        if (ex != null) {
-            return current
-        }
-        current.update(response)
         return replace(current)
     }
 
     @AnyThread
     private fun readState(): AuthState {
-        mPrefsLock.lock()
+        _lock.lock()
+
         return try {
-            val currentState = mPrefs.getString(KEY_STATE, null)
-                ?: return AuthState()
-            try {
-                AuthState.jsonDeserialize(currentState)
-            } catch (ex: JSONException) {
-                Timber.w("Failed to deserialize stored auth state - discarding")
-                AuthState()
+            var authState = AuthState()
+
+            runBlocking {
+                val currentState = authorizationDao.getAuthorization(AUTHORIZATION_ID).firstOrNull()
+
+                if(currentState != null) {
+                    try {
+                        authState = AuthState.jsonDeserialize(currentState.json)
+                    } catch (ex: JSONException) {
+                        Timber.w("Failed to deserialize stored auth state - discarding")
+                    }
+                }
             }
+
+            return authState
         } finally {
-            mPrefsLock.unlock()
+            _lock.unlock()
         }
     }
 
     @AnyThread
     private fun writeState(state: AuthState?) {
-        mPrefsLock.lock()
+        _lock.lock()
+
         try {
-            val editor = mPrefs.edit()
-            if (state == null) {
-                editor.remove(KEY_STATE)
-            } else {
-                editor.putString(KEY_STATE, state.jsonSerializeString())
+            runBlocking {
+                if(state == null) {
+                    authorizationDao.deleteAuthorization(AUTHORIZATION_ID)
+                } else {
+                    val auth = Authorization(AUTHORIZATION_ID, state.jsonSerializeString())
+
+                    authorizationDao.setAuthorization(auth)
+                }
             }
-            check(editor.commit()) { "Failed to write state to shared prefs" }
         } finally {
-            mPrefsLock.unlock()
+            _lock.unlock()
         }
     }
 
     companion object {
-        private val INSTANCE_REF = AtomicReference(WeakReference<AuthStateManager?>(null))
-        private const val TAG = "AuthStateManager"
-        private const val STORE_NAME = "AuthState"
-        private const val KEY_STATE = "state"
-
-        @AnyThread
-        fun getInstance(context: Context): AuthStateManager {
-            var manager = INSTANCE_REF.get().get()
-            if (manager == null) {
-                manager = AuthStateManager(context.applicationContext)
-                INSTANCE_REF.set(WeakReference(manager))
-            }
-            return manager
-        }
+        private const val AUTHORIZATION_ID = 1
     }
 }

@@ -19,6 +19,7 @@ import us.mikeandwan.photos.authorization.AuthAuthenticator
 import us.mikeandwan.photos.authorization.AuthInterceptor
 import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.authorization.AuthStateManager
+import us.mikeandwan.photos.database.AuthorizationDao
 import javax.inject.Singleton
 
 @Module
@@ -32,8 +33,8 @@ class AuthModule {
 
     @Provides
     @Singleton
-    fun provideAuthStateManager(application: Application): AuthStateManager {
-        return AuthStateManager.getInstance(application)
+    fun provideAuthStateManager(authorizationDao: AuthorizationDao): AuthStateManager {
+        return AuthStateManager(authorizationDao)
     }
 
     @Provides
