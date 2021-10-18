@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.utils
+package us.mikeandwan.photos.uinew.ui
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
@@ -9,6 +9,7 @@ import us.mikeandwan.photos.uinew.ui.categoryList.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.years.YearListRecyclerAdapter
+import us.mikeandwan.photos.utils.GlideApp
 
 @BindingAdapter("yearListData")
 fun bindYearRecyclerView(recyclerView: RecyclerView, data: List<Int>?) {
