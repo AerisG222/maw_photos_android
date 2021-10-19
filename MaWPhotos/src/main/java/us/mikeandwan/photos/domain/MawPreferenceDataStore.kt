@@ -7,7 +7,8 @@ import kotlinx.coroutines.runBlocking
 class MawPreferenceDataStore(
     private val categoryPreferenceRepository: CategoryPreferenceRepository,
     private val notificationPreferenceRepository: NotificationPreferenceRepository,
-    private val photoPreferenceRepository: PhotoPreferenceRepository
+    private val photoPreferenceRepository: PhotoPreferenceRepository,
+    private val randomPreferenceRepository: RandomPreferenceRepository
 ) : PreferenceDataStore() {
     override fun getBoolean(key: String?, defValue: Boolean): Boolean {
         return runBlocking {
@@ -29,7 +30,9 @@ class MawPreferenceDataStore(
                 "category_grid_thumbnail_size" -> categoryPreferenceRepository.getCategoryGridItemSize().first().toString()
                 "category_view_mode" -> categoryPreferenceRepository.getCategoryDisplayType().first().toString()
                 "photo_grid_thumbnail_size" -> photoPreferenceRepository.getPhotoGridItemSize().first().toString()
-                "slideshow_interval" -> photoPreferenceRepository.getSlideshowIntervalSeconds().first().toString()
+                "photo_slideshow_interval" -> photoPreferenceRepository.getSlideshowIntervalSeconds().first().toString()
+                "random_grid_thumbnail_size" -> randomPreferenceRepository.getPhotoGridItemSize().first().toString()
+                "random_slideshow_interval" -> randomPreferenceRepository.getSlideshowIntervalSeconds().first().toString()
                 else -> throw IllegalArgumentException("Invalid string key: $key")
             }
         }
@@ -59,7 +62,9 @@ class MawPreferenceDataStore(
                 "category_grid_thumbnail_size" -> categoryPreferenceRepository.setCategoryGridItemSize((enumValueOf(value)))
                 "category_view_mode" -> categoryPreferenceRepository.setCategoryDisplayType(enumValueOf(value))
                 "photo_grid_thumbnail_size" -> photoPreferenceRepository.setPhotoGridItemSize((enumValueOf(value)))
-                "slideshow_interval" -> photoPreferenceRepository.setSlideshowIntervalSeconds(value.toInt())
+                "photo_slideshow_interval" -> photoPreferenceRepository.setSlideshowIntervalSeconds(value.toInt())
+                "random_grid_thumbnail_size" -> randomPreferenceRepository.setPhotoGridItemSize((enumValueOf(value)))
+                "random_slideshow_interval" -> randomPreferenceRepository.setSlideshowIntervalSeconds(value.toInt())
                 else -> throw IllegalArgumentException("Invalid string key: $key")
             }
         }

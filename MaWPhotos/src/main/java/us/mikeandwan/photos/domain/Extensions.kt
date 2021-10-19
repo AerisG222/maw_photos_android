@@ -48,6 +48,13 @@ fun us.mikeandwan.photos.database.PhotoPreference.toDomainPhotoPreference(): Pho
     )
 }
 
+fun us.mikeandwan.photos.database.RandomPreference.toDomainRandomPreference(): RandomPreference {
+    return RandomPreference(
+        this.slideshowIntervalSeconds,
+        this.gridThumbnailSize
+    )
+}
+
 fun us.mikeandwan.photos.api.Photo.toDomainPhoto(): Photo {
     return Photo(
         this.id,

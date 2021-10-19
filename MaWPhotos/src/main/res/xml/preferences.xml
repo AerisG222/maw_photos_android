@@ -52,7 +52,7 @@
             app:defaultValue="true" />
 
         <ListPreference
-            app:key="slideshow_interval"
+            app:key="photo_slideshow_interval"
             app:title="@string/pref_photo_display_slideshow_interval"
             app:summary="%s"
             app:entries="@array/pref_photo_display_slideshow_intervals"
@@ -68,5 +68,25 @@
             app:entries="@array/pref_grid_thumbnail_size_names"
             app:entryValues="@array/pref_grid_thumbnail_sizes"
             app:defaultValue="@string/pref_photo_grid_thumbnail_size_default_value" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_random_display_header">
+        <ListPreference
+            app:key="random_slideshow_interval"
+            app:title="@string/pref_photo_display_slideshow_interval"
+            app:summary="%s"
+            app:entries="@array/pref_photo_display_slideshow_intervals"
+            app:entryValues="@array/pref_photo_display_slideshow_interval_values"
+            app:defaultValue="@string/pref_photo_display_slideshow_interval_default_value"
+            app:negativeButtonText="@null"
+            app:positiveButtonText="@null" />
+
+        <ListPreference
+            app:key="random_grid_thumbnail_size"
+            app:title="Grid Thumbnail Size"
+            app:summary="%s"
+            app:entries="@array/pref_grid_thumbnail_size_names"
+            app:entryValues="@array/pref_grid_thumbnail_sizes"
+            app:defaultValue="@string/pref_random_grid_thumbnail_size_default_value" />
     </PreferenceCategory>
 </PreferenceScreen>

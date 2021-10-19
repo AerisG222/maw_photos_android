@@ -23,11 +23,13 @@ class DataStorageModule {
         categoryPreferenceRepository: CategoryPreferenceRepository,
         notificationPreferenceRepository: NotificationPreferenceRepository,
         photoPreferenceRepository: PhotoPreferenceRepository,
+        randomPreferenceRepository: RandomPreferenceRepository
     ): PreferenceDataStore {
         return MawPreferenceDataStore(
             categoryPreferenceRepository,
             notificationPreferenceRepository,
-            photoPreferenceRepository)
+            photoPreferenceRepository,
+            randomPreferenceRepository)
     }
 
     @Provides
@@ -77,6 +79,18 @@ class DataStorageModule {
     @Singleton
     fun providePhotoPreferenceDao(mawDatabase: MawDatabase): PhotoPreferenceDao {
         return mawDatabase.photoPreferenceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRandomPreferenceRepository(randomPreferenceDao: RandomPreferenceDao): RandomPreferenceRepository {
+        return RandomPreferenceRepository(randomPreferenceDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRandomPreferenceDao(mawDatabase: MawDatabase): RandomPreferenceDao {
+        return mawDatabase.randomPreferenceDao()
     }
 
     @Provides

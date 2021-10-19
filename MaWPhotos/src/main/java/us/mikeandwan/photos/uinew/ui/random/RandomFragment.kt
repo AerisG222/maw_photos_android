@@ -1,32 +1,68 @@
 package us.mikeandwan.photos.uinew.ui.random
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import us.mikeandwan.photos.R
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import us.mikeandwan.photos.databinding.FragmentRandomBinding
+import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
 
+@AndroidEntryPoint
 class RandomFragment : Fragment() {
-
     companion object {
         fun newInstance() = RandomFragment()
     }
 
-    private lateinit var viewModel: RandomViewModel
+    private lateinit var binding: FragmentRandomBinding
+    val viewModel by viewModels<RandomViewModel>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_random, container, false)
+        binding = FragmentRandomBinding.inflate(inflater)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        initStateObservers()
+        performInitialFetch()
+
+        return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(RandomViewModel::class.java)
-        // TODO: Use the ViewModel
+    private fun initStateObservers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.preferences
+                    .combine(viewModel.photos) { preferences, photos -> Pair(preferences, photos) }
+                    .onEach { (preference, photos) ->
+                        val frag = childFragmentManager.fragments.first() as ImageGridFragment
+
+                        //frag.setClickHandler(onPhotoClicked)
+                        frag.setThumbnailSize(preference.gridThumbnailSize)
+                        frag.setData(photos)
+                    }
+                    .launchIn(this)
+            }
+        }
     }
 
+    private fun performInitialFetch() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            if(viewModel.photos.value.isEmpty()) {
+                viewModel.performInitialFetch()
+            }
+        }
+    }
 }
