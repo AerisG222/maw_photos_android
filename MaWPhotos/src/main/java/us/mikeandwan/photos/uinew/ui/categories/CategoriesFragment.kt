@@ -14,13 +14,13 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
 import us.mikeandwan.photos.domain.CategoryDisplayType
+import us.mikeandwan.photos.domain.GridThumbnailSize
 import us.mikeandwan.photos.domain.PhotoCategory
 import us.mikeandwan.photos.uinew.ui.categoryList.CategoryListFragment
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
@@ -71,11 +71,11 @@ class CategoriesFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.displayType
-                    .combine(viewModel.categories) { type, categories -> Pair(type, categories) }
-                    .onEach { (displayType, categories) ->
-                        when(displayType) {
-                            CategoryDisplayType.Grid -> showGrid()
+                viewModel.preferences
+                    .combine(viewModel.categories) { preferences, categories -> Pair(preferences, categories) }
+                    .onEach { (preferences, categories) ->
+                        when(preferences.displayType) {
+                            CategoryDisplayType.Grid -> showGrid(preferences.gridThumbnailSize)
                             CategoryDisplayType.List -> showList()
                         }
 
@@ -101,8 +101,12 @@ class CategoriesFragment : Fragment() {
         }
     }
 
-    private fun showGrid() {
+    private fun showGrid(thumbnailSize: GridThumbnailSize) {
         setChildFragment(R.layout.fragment_image_grid, ImageGridFragment::class.java, FRAG_GRID)
+
+        val frag = childFragmentManager.fragments.first() as ImageGridFragment
+
+        frag.setThumbnailSize(thumbnailSize)
     }
 
     private fun showList() {

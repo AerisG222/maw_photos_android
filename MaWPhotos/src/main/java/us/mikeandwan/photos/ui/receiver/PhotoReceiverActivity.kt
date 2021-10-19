@@ -38,7 +38,7 @@ class PhotoReceiverActivity : BaseActivity() {
         binding = ActivityPhotoReceiverBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        _thumbSize = resources.getDimension(R.dimen.category_grid_thumbnail_size).toInt()
+        _thumbSize = resources.getDimension(R.dimen.image_grid_thumbnail_size_medium).toInt()
         binding.receiverRecyclerView.setHasFixedSize(true)
         binding.receiverRecyclerView.adapter = _receiverAdapter
 

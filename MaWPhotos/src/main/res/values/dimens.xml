@@ -4,8 +4,11 @@
     <dimen name="_4dp">4dp</dimen>
     <dimen name="_8dp">8dp</dimen>
 
-    <!-- category thumbnail items -->
-    <dimen name="category_grid_thumbnail_size">120dp</dimen>
+    <!-- image grid thumbnail sizes -->
+    <dimen name="image_grid_thumbnail_size_extra_small">60dp</dimen>
+    <dimen name="image_grid_thumbnail_size_small">90dp</dimen>
+    <dimen name="image_grid_thumbnail_size_medium">120dp</dimen>
+    <dimen name="image_grid_thumbnail_size_large">180dp</dimen>
 
     <!-- category list items -->
     <dimen name="category_list_thumbnail_size">60dp</dimen>

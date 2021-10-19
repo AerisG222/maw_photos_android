@@ -47,4 +47,19 @@
         <item>20</item>
         <item>30</item>
     </string-array>
+
+    <string name="pref_category_grid_thumbnail_size_default_value">Medium</string>
+    <string name="pref_photo_grid_thumbnail_size_default_value">Medium</string>
+    <string-array name="pref_grid_thumbnail_sizes">
+        <item>ExtraSmall</item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+    <string-array name="pref_grid_thumbnail_size_names">
+        <item>Extra Small</item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
 </resources>

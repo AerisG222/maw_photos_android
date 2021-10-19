@@ -20,6 +20,14 @@
             app:entries="@array/pref_category_display_names"
             app:entryValues="@array/pref_category_display_values"
             app:defaultValue="@string/pref_category_display_default_value" />
+
+        <ListPreference
+            app:key="category_grid_thumbnail_size"
+            app:title="Grid Thumbnail Size"
+            app:summary="%s"
+            app:entries="@array/pref_grid_thumbnail_size_names"
+            app:entryValues="@array/pref_grid_thumbnail_sizes"
+            app:defaultValue="@string/pref_category_grid_thumbnail_size_default_value" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_photo_display_header">
@@ -52,5 +60,13 @@
             app:defaultValue="@string/pref_photo_display_slideshow_interval_default_value"
             app:negativeButtonText="@null"
             app:positiveButtonText="@null" />
+
+        <ListPreference
+            app:key="photo_grid_thumbnail_size"
+            app:title="Grid Thumbnail Size"
+            app:summary="%s"
+            app:entries="@array/pref_grid_thumbnail_size_names"
+            app:entryValues="@array/pref_grid_thumbnail_sizes"
+            app:defaultValue="@string/pref_photo_grid_thumbnail_size_default_value" />
     </PreferenceCategory>
 </PreferenceScreen>

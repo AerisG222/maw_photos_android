@@ -16,12 +16,23 @@ class CategoryPreferenceRepository @Inject constructor(
         .getCategoryPreference(Constants.ID)
         .map { it.displayType }
 
+    fun getCategoryGridItemSize() = dao
+        .getCategoryPreference(Constants.ID)
+        .map { it.gridThumbnailSize}
+
     suspend fun setCategoryDisplayType(displayType: CategoryDisplayType) {
         setPreference { it.copy(displayType = displayType) }
     }
 
+    suspend fun setCategoryGridItemSize(size: GridThumbnailSize) {
+        setPreference { it.copy(gridThumbnailSize = size) }
+    }
+
     private suspend fun setCategoryPreference(pref: CategoryPreference) {
-        val dbPref = us.mikeandwan.photos.database.CategoryPreference(Constants.ID, pref.displayType)
+        val dbPref = us.mikeandwan.photos.database.CategoryPreference(
+            Constants.ID,
+            pref.displayType,
+            pref.gridThumbnailSize)
 
         dao.setCategoryPreference(dbPref)
     }

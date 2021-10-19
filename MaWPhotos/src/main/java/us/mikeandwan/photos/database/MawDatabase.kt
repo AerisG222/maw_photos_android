@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [
         ActiveId::class,
+        Authorization::class,
         CategoryPreference::class,
         NotificationPreference::class,
         PhotoCategory::class,
@@ -15,6 +16,7 @@ import androidx.room.RoomDatabase
 )
 abstract class MawDatabase : RoomDatabase() {
     abstract fun activeIdDao(): ActiveIdDao
+    abstract fun authorizationDao(): AuthorizationDao
     abstract fun categoryPreferenceDao(): CategoryPreferenceDao
     abstract fun notificationPreferenceDao(): NotificationPreferenceDao
     abstract fun photoCategoryDao(): PhotoCategoryDao

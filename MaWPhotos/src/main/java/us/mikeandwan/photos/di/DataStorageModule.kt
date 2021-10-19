@@ -93,6 +93,12 @@ class DataStorageModule {
 
     @Provides
     @Singleton
+    fun provideAuthorizationDao(mawDatabase: MawDatabase): AuthorizationDao {
+        return mawDatabase.authorizationDao()
+    }
+
+    @Provides
+    @Singleton
     fun provideMawSQLiteOpenHelper(application: Application): MawSQLiteOpenHelper {
         return MawSQLiteOpenHelper(application)
     }

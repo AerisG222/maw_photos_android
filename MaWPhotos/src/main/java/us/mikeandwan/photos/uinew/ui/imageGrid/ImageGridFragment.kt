@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentImageGridBinding
+import us.mikeandwan.photos.domain.GridThumbnailSize
 
 @AndroidEntryPoint
 class ImageGridFragment : Fragment() {
@@ -26,8 +27,6 @@ class ImageGridFragment : Fragment() {
 
     private val _clickHandlerForwarder = ImageGridRecyclerAdapter.ClickListener { _clickHandler?.onClick(it) }
     private var _clickHandler: ImageGridRecyclerAdapter.ClickListener? = null
-    private var _thumbSize = 0
-    private val _width = MutableStateFlow(0)
     private var _listener: ViewTreeObserver.OnGlobalLayoutListener? = null
     private lateinit var binding: FragmentImageGridBinding
     val viewModel by viewModels<ImageGridViewModel>()
@@ -44,11 +43,9 @@ class ImageGridFragment : Fragment() {
         binding.imageGridRecyclerView.layoutManager = FlexboxLayoutManager(activity).apply {
             flexWrap = FlexWrap.WRAP
             flexDirection = FlexDirection.ROW
-            alignItems = AlignItems.STRETCH
-            justifyContent = JustifyContent.SPACE_BETWEEN
+            alignItems = AlignItems.FLEX_START
+            justifyContent = JustifyContent.FLEX_START
         }
-
-        _thumbSize = resources.getDimension(R.dimen.category_grid_thumbnail_size).toInt()
 
         initStateObservers()
         listenForWidth()
@@ -65,9 +62,10 @@ class ImageGridFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                _width
-                    .onEach {
-                        updateAdapter()
+                viewModel.screenWidth
+                    .combine(viewModel.thumbnailSize) { screenWidth, thumbnailSize -> Pair(screenWidth, thumbnailSize)}
+                    .onEach { (screenWidth, thumbnailSize) ->
+                        updateAdapter(screenWidth, thumbnailSize)
                     }
                     .launchIn(this)
 
@@ -89,28 +87,44 @@ class ImageGridFragment : Fragment() {
     private fun listenForWidth() {
         _listener = ViewTreeObserver.OnGlobalLayoutListener {
             binding.container.viewTreeObserver.removeOnGlobalLayoutListener(_listener)
-            _width.value = binding.container.width
+
+            viewModel.setScreenWidth(binding.container.width)
         }
 
         binding.container.viewTreeObserver.addOnGlobalLayoutListener(_listener)
     }
 
-    private fun updateAdapter() {
-        binding.imageGridRecyclerView.adapter = ImageGridRecyclerAdapter(getThumbnailSize(), _clickHandlerForwarder)
+    private fun updateAdapter(screenWidth: Int, thumbnailSize: GridThumbnailSize) {
+        val thumbSize = getThumbnailSize(screenWidth, thumbnailSize)
+
+        binding.imageGridRecyclerView.adapter = ImageGridRecyclerAdapter(thumbSize, _clickHandlerForwarder)
     }
 
-    private fun getThumbnailSize(): Int {
-        val width = _width.value
-        val cols = maxOf(1, width / _thumbSize)
+    private fun getThumbnailSize(screenWidth: Int, thumbnailSize: GridThumbnailSize): Int {
+        val thumbSize = getThumbnailSizeInDps(thumbnailSize)
+        val cols = maxOf(1, screenWidth / thumbSize)
 
         val totalInteriorMargins = cols * resources.getDimension(R.dimen._2dp)
-        val remainingSpaceForImages = width - totalInteriorMargins.toInt()
+        val remainingSpaceForImages = screenWidth - totalInteriorMargins.toInt()
 
         return remainingSpaceForImages / cols
     }
 
+    private fun getThumbnailSizeInDps(thumbnailSize: GridThumbnailSize): Int {
+        return when(thumbnailSize) {
+            GridThumbnailSize.ExtraSmall -> resources.getDimension(R.dimen.image_grid_thumbnail_size_extra_small).toInt()
+            GridThumbnailSize.Small -> resources.getDimension(R.dimen.image_grid_thumbnail_size_small).toInt()
+            GridThumbnailSize.Medium -> resources.getDimension(R.dimen.image_grid_thumbnail_size_medium).toInt()
+            GridThumbnailSize.Large -> resources.getDimension(R.dimen.image_grid_thumbnail_size_large).toInt()
+        }
+    }
+
     fun setClickHandler(handler: ImageGridRecyclerAdapter.ClickListener) {
         _clickHandler = handler
+    }
+
+    fun setThumbnailSize(thumbnailSize: GridThumbnailSize) {
+        viewModel.setThumbnailSize(thumbnailSize)
     }
 
     fun setData(data: List<ImageGridItem>) {

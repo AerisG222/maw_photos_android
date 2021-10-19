@@ -63,12 +63,16 @@ class PhotosFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.photos.collect {
-                    val frag = childFragmentManager.fragments.first() as ImageGridFragment
+                viewModel.preferences
+                    .combine(viewModel.photos) { preferences, photos -> Pair(preferences, photos) }
+                    .onEach { (preferences, photos) ->
+                        val frag = childFragmentManager.fragments.first() as ImageGridFragment
 
-                    frag.setClickHandler(onPhotoClicked)
-                    frag.setData(it)
-                }
+                        frag.setClickHandler(onPhotoClicked)
+                        frag.setThumbnailSize(preferences.gridThumbnailSize)
+                        frag.setData(photos)
+                    }
+                    .launchIn(this)
             }
         }
     }

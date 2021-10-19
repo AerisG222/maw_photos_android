@@ -32,6 +32,10 @@ class PhotoPreferenceRepository @Inject constructor (
         .getPhotoPreference(Constants.ID)
         .map { it.slideshowIntervalSeconds }
 
+    fun getPhotoGridItemSize() = dao
+        .getPhotoPreference(Constants.ID)
+        .map { it.gridThumbnailSize}
+
     suspend fun setDisplayToolbar(doDisplayToolbar: Boolean) {
         setPreference { it.copy(displayToolbar = doDisplayToolbar) }
     }
@@ -52,6 +56,10 @@ class PhotoPreferenceRepository @Inject constructor (
         setPreference { it.copy(slideshowIntervalSeconds = seconds) }
     }
 
+    suspend fun setPhotoGridItemSize(size: GridThumbnailSize) {
+        setPreference { it.copy(gridThumbnailSize = size) }
+    }
+
     private suspend fun setPhotoPreferences(pref: PhotoPreference) {
         val dbPref = us.mikeandwan.photos.database.PhotoPreference(
             Constants.ID,
@@ -59,7 +67,8 @@ class PhotoPreferenceRepository @Inject constructor (
             pref.displayThumbnails,
             pref.displayTopToolbar,
             pref.doFadeControls,
-            pref.slideshowIntervalSeconds)
+            pref.slideshowIntervalSeconds,
+            pref.gridThumbnailSize)
 
         dao.setPhotoPreference(dbPref)
     }

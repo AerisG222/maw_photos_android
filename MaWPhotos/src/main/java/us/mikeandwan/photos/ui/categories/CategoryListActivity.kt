@@ -56,7 +56,7 @@ class CategoryListActivity : BaseActivity(), ICategoryListActivity {
         binding = ActivityCategoryListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        _thumbSize = resources.getDimension(R.dimen.category_grid_thumbnail_size).toInt()
+        _thumbSize = resources.getDimension(R.dimen.image_grid_thumbnail_size_medium).toInt()
 
         _year = intent.getIntExtra("YEAR", 0)
     }

@@ -26,7 +26,9 @@ class MawPreferenceDataStore(
     override fun getString(key: String?, defValue: String?): String? {
         return runBlocking {
             when(key) {
-                "category_view_mode" -> categoryPreferenceRepository.getCategoryPreference().first().displayType.toString()
+                "category_grid_thumbnail_size" -> categoryPreferenceRepository.getCategoryGridItemSize().first().toString()
+                "category_view_mode" -> categoryPreferenceRepository.getCategoryDisplayType().first().toString()
+                "photo_grid_thumbnail_size" -> photoPreferenceRepository.getPhotoGridItemSize().first().toString()
                 "slideshow_interval" -> photoPreferenceRepository.getSlideshowIntervalSeconds().first().toString()
                 else -> throw IllegalArgumentException("Invalid string key: $key")
             }
@@ -54,7 +56,9 @@ class MawPreferenceDataStore(
 
         runBlocking {
             when(key) {
+                "category_grid_thumbnail_size" -> categoryPreferenceRepository.setCategoryGridItemSize((enumValueOf(value)))
                 "category_view_mode" -> categoryPreferenceRepository.setCategoryDisplayType(enumValueOf(value))
+                "photo_grid_thumbnail_size" -> photoPreferenceRepository.setPhotoGridItemSize((enumValueOf(value)))
                 "slideshow_interval" -> photoPreferenceRepository.setSlideshowIntervalSeconds(value.toInt())
                 else -> throw IllegalArgumentException("Invalid string key: $key")
             }

@@ -24,7 +24,8 @@ fun us.mikeandwan.photos.api.Category.toDatabasePhotoCategory(): us.mikeandwan.p
 
 fun us.mikeandwan.photos.database.CategoryPreference.toDomainCategoryPreference(): CategoryPreference {
     return CategoryPreference(
-        this.displayType
+        this.displayType,
+        this.gridThumbnailSize
     )
 }
 
@@ -42,7 +43,8 @@ fun us.mikeandwan.photos.database.PhotoPreference.toDomainPhotoPreference(): Pho
         this.displayThumbnails,
         this.displayTopToolbar,
         this.doFadeControls,
-        this.slideshowIntervalSeconds
+        this.slideshowIntervalSeconds,
+        this.gridThumbnailSize
     )
 }
 

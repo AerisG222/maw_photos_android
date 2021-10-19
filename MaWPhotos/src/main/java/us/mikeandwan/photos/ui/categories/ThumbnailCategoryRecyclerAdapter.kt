@@ -34,7 +34,7 @@ class ThumbnailCategoryRecyclerAdapter(
         Picasso
             .get()
             .load(imageFile)
-            .resizeDimen(R.dimen.category_grid_thumbnail_size, R.dimen.category_grid_thumbnail_size)
+            .resizeDimen(R.dimen.image_grid_thumbnail_size_medium, R.dimen.image_grid_thumbnail_size_medium)
             .centerCrop()
             .into(viewHolder!!._thumbnailImageView)
     }
