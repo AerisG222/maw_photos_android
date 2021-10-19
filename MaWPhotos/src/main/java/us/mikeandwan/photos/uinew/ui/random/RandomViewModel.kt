@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.RANDOM_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
@@ -25,7 +26,17 @@ class RandomViewModel @Inject constructor(
         .getRandomPreferences()
         .stateIn(viewModelScope, SharingStarted.Eagerly, RANDOM_PREFERENCE_DEFAULT)
 
-    suspend fun performInitialFetch() {
-        randomPhotoRepository.fetch(20)
+    private suspend fun performInitialFetch() {
+        randomPhotoRepository.fetch(24)
+    }
+
+    suspend fun fetchNext() {
+        randomPhotoRepository.fetch(1)
+    }
+
+    init {
+        viewModelScope.launch {
+            performInitialFetch()
+        }
     }
 }

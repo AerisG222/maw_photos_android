@@ -10,9 +10,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentRandomBinding
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
@@ -36,7 +35,6 @@ class RandomFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         initStateObservers()
-        performInitialFetch()
 
         return binding.root
     }
@@ -54,14 +52,15 @@ class RandomFragment : Fragment() {
                         frag.setData(photos)
                     }
                     .launchIn(this)
-            }
-        }
-    }
 
-    private fun performInitialFetch() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            if(viewModel.photos.value.isEmpty()) {
-                viewModel.performInitialFetch()
+                viewModel.preferences
+                    .onEach { preference ->
+                        while(true) {
+                            delay((preference.slideshowIntervalSeconds * 1000).toLong())
+                            viewModel.fetchNext()
+                        }
+                    }
+                    .launchIn(this)
             }
         }
     }
