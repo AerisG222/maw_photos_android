@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/categoryListItemThumbnailImageView"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/category_list_thumbnail_size"
+            android:layout_height="@dimen/category_list_thumbnail_size"
             android:layout_marginBottom="2dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="0dp"
@@ -29,7 +29,7 @@
         <TextView
             android:id="@+id/categoryListItemNameTextView"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/category_list_thumbnail_size"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="4dp"
             android:gravity="center_vertical"
