@@ -6,20 +6,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.RandomPhotoRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class RandomMenuViewModel @Inject constructor (
-    private val photoCategoryRepository: PhotoCategoryRepository,
-    private val activeIdRepository: ActiveIdRepository
+    private val randomPhotoRepository: RandomPhotoRepository
 ): ViewModel() {
     fun fetch(count: Int) {
         viewModelScope.launch {
-            throw NotImplementedError()
+            randomPhotoRepository.fetch(count)
         }
     }
 
     fun clear() {
-        throw NotImplementedError()
+        randomPhotoRepository.clear()
     }
 }

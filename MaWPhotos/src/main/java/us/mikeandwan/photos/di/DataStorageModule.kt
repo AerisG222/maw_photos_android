@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.domain.*
 import us.mikeandwan.photos.services.DatabaseAccessor
@@ -91,6 +92,12 @@ class DataStorageModule {
     @Singleton
     fun provideRandomPreferenceDao(mawDatabase: MawDatabase): RandomPreferenceDao {
         return mawDatabase.randomPreferenceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRandomPhotoRepository(api: PhotoApiClient): RandomPhotoRepository {
+        return RandomPhotoRepository(api)
     }
 
     @Provides

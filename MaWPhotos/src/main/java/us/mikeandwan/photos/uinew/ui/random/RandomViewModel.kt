@@ -42,6 +42,10 @@ class RandomViewModel @Inject constructor(
         randomPhotoRepository.fetch(1)
     }
 
+    fun clearRandomPhotos() {
+        randomPhotoRepository.clear()
+    }
+
     init {
         viewModelScope.launch {
             performInitialFetch()

@@ -39,6 +39,12 @@ class RandomFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroy() {
+        viewModel.clearRandomPhotos()
+
+        super.onDestroy()
+    }
+
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {

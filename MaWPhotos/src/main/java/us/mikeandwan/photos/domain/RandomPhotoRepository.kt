@@ -20,6 +20,12 @@ class RandomPhotoRepository @Inject constructor(
 
         val newPhotos = result.items.map { it.toDomainPhoto() }
 
-        _photos.value = _photos.value + newPhotos
+        val x = _photos.value + newPhotos
+
+        _photos.value = x
+    }
+
+    fun clear() {
+        _photos.value = emptyList()
     }
 }
