@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".uinew.ui.photos.PhotosFragment">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="viewModel"
             type="us.mikeandwan.photos.uinew.ui.photos.PhotosViewModel" />
@@ -18,6 +20,14 @@
             android:id="@+id/fragmentPhotoList"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/photoFragment"
+            android:name="us.mikeandwan.photos.uinew.ui.photo.PhotoFragment"
+            android:background="?android:attr/colorBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{ viewModel.activePhoto == null ? View.GONE : View.VISIBLE }" />
 
     </FrameLayout>
 

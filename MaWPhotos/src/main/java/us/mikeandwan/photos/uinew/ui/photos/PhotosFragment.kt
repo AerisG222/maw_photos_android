@@ -9,13 +9,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentPhotosBinding
+import us.mikeandwan.photos.domain.Photo
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
 import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.photo.PhotoFragment
 
 @AndroidEntryPoint
 class PhotosFragment : Fragment() {
@@ -27,7 +29,7 @@ class PhotosFragment : Fragment() {
     val viewModel by viewModels<PhotosViewModel>()
 
     private val onPhotoClicked = ImageGridRecyclerAdapter.ClickListener {
-        Timber.i("item clicked: $it")
+        viewModel.setActivePhoto(it.data as Photo)
     }
 
     override fun onCreateView(
@@ -43,7 +45,7 @@ class PhotosFragment : Fragment() {
             initGrid()
             initStateObservers()
         } else {
-            val frag = childFragmentManager.fragments.first() as ImageGridFragment
+            val frag = getImageGridFragment()
 
             frag.setClickHandler(onPhotoClicked)
         }
@@ -51,10 +53,11 @@ class PhotosFragment : Fragment() {
         return binding.root
     }
 
+    // TODO: can we just specify the fragment in the layout? or is this in case we want to support a different view type?
     private fun initGrid() {
         childFragmentManager.commit {
             setReorderingAllowed(true)
-            add(R.id.fragmentPhotoList, ImageGridFragment::class.java, null)
+            add(R.id.fragmentPhotoList, ImageGridFragment::class.java, null, "grid")
         }
 
         childFragmentManager.executePendingTransactions()
@@ -66,14 +69,31 @@ class PhotosFragment : Fragment() {
                 viewModel.preferences
                     .combine(viewModel.photos) { preferences, photos -> Pair(preferences, photos) }
                     .onEach { (preferences, photos) ->
-                        val frag = childFragmentManager.fragments.first() as ImageGridFragment
+                        val imageGridFragment = getImageGridFragment()
 
-                        frag.setClickHandler(onPhotoClicked)
-                        frag.setThumbnailSize(preferences.gridThumbnailSize)
-                        frag.setData(photos)
+                        imageGridFragment.setClickHandler(onPhotoClicked)
+                        imageGridFragment.setThumbnailSize(preferences.gridThumbnailSize)
+                        imageGridFragment.setData(photos)
+                    }
+                    .launchIn(this)
+
+                viewModel.activePhoto
+                    .filter { it != null }
+                    .onEach {
+                        val photoFragment = getPhotoFragment()
+
+                        photoFragment?.setSourceData(viewModel)
                     }
                     .launchIn(this)
             }
         }
+    }
+
+    private fun getImageGridFragment(): ImageGridFragment {
+        return childFragmentManager.findFragmentByTag("grid") as ImageGridFragment
+    }
+
+    private fun getPhotoFragment(): PhotoFragment? {
+        return childFragmentManager.findFragmentById(R.id.photoFragment) as PhotoFragment?
     }
 }
