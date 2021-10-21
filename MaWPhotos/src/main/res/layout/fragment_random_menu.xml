@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.randomMenu.RandomMenuViewModel" />
+            type="us.mikeandwan.photos.uinew.ui.randomnavmenu.RandomMenuViewModel" />
     </data>
 
     <LinearLayout

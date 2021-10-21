@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityMainBinding
 import us.mikeandwan.photos.ui.login.LoginActivity
-import us.mikeandwan.photos.uinew.ui.randomMenu.RandomMenuFragment
-import us.mikeandwan.photos.uinew.ui.years.YearsFragment
+import us.mikeandwan.photos.uinew.ui.randomnavmenu.RandomMenuFragment
+import us.mikeandwan.photos.uinew.ui.yearnavmenu.YearsFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

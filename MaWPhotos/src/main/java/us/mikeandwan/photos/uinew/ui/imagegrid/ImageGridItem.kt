@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.imageGrid
+package us.mikeandwan.photos.uinew.ui.imagegrid
 
 data class ImageGridItem (
     val id: Int,

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.categoryList
+package us.mikeandwan.photos.uinew.ui.categorylist
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentCategoryListBinding
 import us.mikeandwan.photos.domain.PhotoCategory
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment
 
 @AndroidEntryPoint
 class CategoryListFragment : Fragment() {

@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".uinew.ui.categoryList.CategoryListFragment">
+    tools:context=".uinew.ui.categorylist.CategoryListFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.categoryList.CategoryListViewModel" />
+            type="us.mikeandwan.photos.uinew.ui.categorylist.CategoryListViewModel" />
     </data>
 
     <FrameLayout

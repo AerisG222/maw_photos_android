@@ -5,10 +5,10 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.PhotoCategory
-import us.mikeandwan.photos.uinew.ui.categoryList.CategoryListRecyclerAdapter
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
-import us.mikeandwan.photos.uinew.ui.years.YearListRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.categorylist.CategoryListRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.yearnavmenu.YearListRecyclerAdapter
 import us.mikeandwan.photos.utils.GlideApp
 
 @BindingAdapter("yearListData")

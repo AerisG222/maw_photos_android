@@ -9,14 +9,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentPhotosBinding
 import us.mikeandwan.photos.domain.Photo
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.photo.PhotoFragment
 
 @AndroidEntryPoint

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.imageGrid
+package us.mikeandwan.photos.uinew.ui.imagegrid
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

@@ -3,7 +3,7 @@
     <data>
         <variable
             name="item"
-            type="us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem" />
+            type="us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridItem" />
     </data>
 
     <ImageView

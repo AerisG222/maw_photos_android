@@ -79,13 +79,13 @@
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentNavRail"
-                android:name="us.mikeandwan.photos.uinew.ui.navigationRail.NavigationRailFragment"
+                android:name="us.mikeandwan.photos.uinew.ui.navigationrail.NavigationRailFragment"
                 android:layout_width="56dp"
                 android:layout_height="match_parent" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentSubnav"
-                android:name="us.mikeandwan.photos.uinew.ui.years.YearsFragment"
+                android:name="us.mikeandwan.photos.uinew.ui.yearnavmenu.YearsFragment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />

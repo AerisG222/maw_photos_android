@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.years
+package us.mikeandwan.photos.uinew.ui.yearnavmenu
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

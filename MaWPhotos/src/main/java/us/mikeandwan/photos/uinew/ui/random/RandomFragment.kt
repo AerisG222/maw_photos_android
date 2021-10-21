@@ -14,7 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentRandomBinding
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment
 
 @AndroidEntryPoint
 class RandomFragment : Fragment() {

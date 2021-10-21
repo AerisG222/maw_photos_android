@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.years
+package us.mikeandwan.photos.uinew.ui.yearnavmenu
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.databinding.FragmentYearsBinding
+import us.mikeandwan.photos.databinding.FragmentYearMenuBinding
 
 
 @AndroidEntryPoint
@@ -23,7 +23,7 @@ class YearsFragment : Fragment() {
         fun newInstance() = YearsFragment()
     }
 
-    private lateinit var binding: FragmentYearsBinding
+    private lateinit var binding: FragmentYearMenuBinding
     private val viewModel by viewModels<YearsViewModel>()
 
     override fun onCreateView(
@@ -31,7 +31,7 @@ class YearsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentYearsBinding.inflate(inflater)
+        binding = FragmentYearMenuBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 

@@ -17,7 +17,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentPhotoGrid"
-            android:name="us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment"
+            android:name="us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

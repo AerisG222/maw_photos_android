@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.navigationRail
+package us.mikeandwan.photos.uinew.ui.navigationrail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

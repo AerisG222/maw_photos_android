@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.categoryList
+package us.mikeandwan.photos.uinew.ui.categorylist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

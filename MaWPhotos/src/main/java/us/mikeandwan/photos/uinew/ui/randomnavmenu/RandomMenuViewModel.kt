@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.randomMenu
+package us.mikeandwan.photos.uinew.ui.randomnavmenu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

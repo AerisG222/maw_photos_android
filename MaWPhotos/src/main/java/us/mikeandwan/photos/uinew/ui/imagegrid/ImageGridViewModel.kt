@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.uinew.ui.imageGrid
+package us.mikeandwan.photos.uinew.ui.imagegrid
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.*

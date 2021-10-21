@@ -22,9 +22,9 @@ import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
 import us.mikeandwan.photos.domain.CategoryDisplayType
 import us.mikeandwan.photos.domain.GridThumbnailSize
 import us.mikeandwan.photos.domain.PhotoCategory
-import us.mikeandwan.photos.uinew.ui.categoryList.CategoryListFragment
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridFragment
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.categorylist.CategoryListFragment
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.toImageGridItem
 
 @AndroidEntryPoint
@@ -43,7 +43,7 @@ class CategoriesFragment : Fragment() {
         onSelectCategory(it.data as PhotoCategory)
     }
 
-    private val onListItemClicked = us.mikeandwan.photos.uinew.ui.categoryList.CategoryListRecyclerAdapter.ClickListener {
+    private val onListItemClicked = us.mikeandwan.photos.uinew.ui.categorylist.CategoryListRecyclerAdapter.ClickListener {
         onSelectCategory(it)
     }
 

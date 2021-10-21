@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.domain.*
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridItem
 import us.mikeandwan.photos.uinew.ui.photo.IPhotoListViewModel
 import us.mikeandwan.photos.uinew.ui.toImageGridItem
 import javax.inject.Inject

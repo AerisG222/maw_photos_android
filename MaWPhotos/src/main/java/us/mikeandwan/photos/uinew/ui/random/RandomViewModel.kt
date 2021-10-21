@@ -9,7 +9,7 @@ import us.mikeandwan.photos.domain.Photo
 import us.mikeandwan.photos.domain.RANDOM_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
-import us.mikeandwan.photos.uinew.ui.imageGrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridItem
 import us.mikeandwan.photos.uinew.ui.photo.IPhotoListViewModel
 import us.mikeandwan.photos.uinew.ui.toImageGridItem
 import javax.inject.Inject
