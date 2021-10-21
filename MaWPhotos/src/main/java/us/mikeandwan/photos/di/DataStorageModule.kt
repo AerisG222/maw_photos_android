@@ -96,8 +96,8 @@ class DataStorageModule {
 
     @Provides
     @Singleton
-    fun provideRandomPhotoRepository(api: PhotoApiClient): RandomPhotoRepository {
-        return RandomPhotoRepository(api)
+    fun provideRandomPhotoRepository(api: PhotoApiClient, randomPreferenceRepository: RandomPreferenceRepository): RandomPhotoRepository {
+        return RandomPhotoRepository(api, randomPreferenceRepository)
     }
 
     @Provides

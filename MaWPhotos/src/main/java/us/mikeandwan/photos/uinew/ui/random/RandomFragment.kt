@@ -10,7 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentRandomBinding
@@ -39,11 +38,19 @@ class RandomFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroy() {
-        viewModel.clearRandomPhotos()
+    override fun onResume() {
+        viewModel.onResume()
 
-        super.onDestroy()
+        super.onResume()
     }
+
+    override fun onPause() {
+        viewModel.onPause()
+
+        super.onPause()
+    }
+
+    // TODO: make sure we do not fetch once they've left the random area
 
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -56,15 +63,6 @@ class RandomFragment : Fragment() {
                         //frag.setClickHandler(onPhotoClicked)
                         frag.setThumbnailSize(preference.gridThumbnailSize)
                         frag.setData(photos)
-                    }
-                    .launchIn(this)
-
-                viewModel.preferences
-                    .onEach { preference ->
-                        while(true) {
-                            delay((preference.slideshowIntervalSeconds * 1000).toLong())
-                            viewModel.fetchNext()
-                        }
                     }
                     .launchIn(this)
             }
