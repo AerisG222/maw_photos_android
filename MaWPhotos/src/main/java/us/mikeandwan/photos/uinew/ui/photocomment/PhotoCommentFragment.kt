@@ -69,8 +69,8 @@ class PhotoCommentFragment : Fragment() {
             val commentRow = TableRow(ctx)
 
             if (idx % 2 == 1) {
-                titleRow.setBackgroundColor(0xddddde)
-                commentRow.setBackgroundColor(0xddddde)
+                titleRow.setBackgroundColor(-0xddddde)
+                commentRow.setBackgroundColor(-0xddddde)
             }
 
             binding.commentTableLayout.addView(titleRow)

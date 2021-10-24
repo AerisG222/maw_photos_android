@@ -142,7 +142,7 @@ class PhotoExifFragment : Fragment() {
         binding.exifView.addView(row)
 
         if (binding.exifView.childCount % 2 == 1) {
-            row.setBackgroundColor(0xddddde)
+            row.setBackgroundColor(-0xddddde)
         }
 
         val nameView = TextView(ctx)
