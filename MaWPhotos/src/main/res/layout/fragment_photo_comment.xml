@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="us.mikeandwan.photos.uinew.ui.photocomment.PhotoCommentViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:id="@+id/commentScrollView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/commentEditTextLayout"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TableLayout
+                android:id="@+id/commentTableLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:divider="@android:drawable/divider_horizontal_dim_dark"
+                android:stretchColumns="*"
+                app:layout_constraintTop_toBottomOf="@+id/addCommentButton"
+                tools:layout_editor_absoluteX="8dp" />
+
+        </ScrollView>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/commentEditTextLayout"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:hint="@string/frg_comment_comment"
+            app:layout_constraintBottom_toTopOf="@id/addCommentButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/commentScrollView">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/commentEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=".AUTOFILL_HINT_NOT_APPLICABLE"
+                android:ems="30"
+                android:inputType="textMultiLine|textAutoCorrect"
+                android:lines="3"
+                tools:layout_editor_absoluteX="87dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/addCommentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            android:onClick="@{ () -> viewModel.addComments(commentEditText.getText().toString()) }"
+            android:text="@string/frg_comment_add_comment"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/commentEditTextLayout" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
+

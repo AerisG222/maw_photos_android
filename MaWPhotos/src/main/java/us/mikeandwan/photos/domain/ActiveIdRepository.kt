@@ -11,6 +11,7 @@ class ActiveIdRepository @Inject constructor(
 ) {
     fun getActivePhotoCategoryYear(): Flow<Int?> = dao.getActiveId(ActiveIdType.PhotoCategoryYear)
     fun getActivePhotoCategoryId(): Flow<Int?> = dao.getActiveId(ActiveIdType.PhotoCategory)
+    fun getActivePhotoId(): Flow<Int?> = dao.getActiveId(ActiveIdType.Photo)
 
     suspend fun setActivePhotoCategoryYear(year: Int) {
         val id = ActiveId(ActiveIdType.PhotoCategoryYear, year)
@@ -20,6 +21,12 @@ class ActiveIdRepository @Inject constructor(
 
     suspend fun setActivePhotoCategory(categoryId: Int) {
         val id = ActiveId(ActiveIdType.PhotoCategory, categoryId)
+
+        dao.setActiveId(id)
+    }
+
+    suspend fun setActivePhoto(photoId: Int) {
+        val id = ActiveId(ActiveIdType.Photo, photoId)
 
         dao.setActiveId(id)
     }

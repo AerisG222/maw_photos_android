@@ -15,11 +15,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentPhotoBinding
+import us.mikeandwan.photos.uinew.ui.photodetail.PhotoDetailBottomSheetFragment
 
 @AndroidEntryPoint
 class PhotoFragment : Fragment() {
     companion object {
         fun newInstance() = PhotoFragment()
+
+        const val TAG = "ModalBottomSheet"
     }
 
     private lateinit var binding: FragmentPhotoBinding
@@ -42,6 +45,11 @@ class PhotoFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.pager.adapter = PhotoFragmentStateAdapter(viewModel.photos, this)
         binding.pager.registerOnPageChangeCallback(pageChangeCallback)
+
+        binding.info.setOnClickListener {
+            val modalBottomSheet = PhotoDetailBottomSheetFragment()
+            modalBottomSheet.show(childFragmentManager, TAG)
+        }
 
         initStateObservers()
 

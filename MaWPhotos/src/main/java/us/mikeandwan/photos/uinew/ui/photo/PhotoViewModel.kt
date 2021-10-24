@@ -1,10 +1,17 @@
 package us.mikeandwan.photos.uinew.ui.photo
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.*
+import javax.inject.Inject
 
-class PhotoViewModel : ViewModel() {
+@HiltViewModel
+class PhotoViewModel @Inject constructor (
+    private val activeIdRepository: ActiveIdRepository
+): ViewModel() {
     private val _photos = MutableStateFlow<List<Photo>>(emptyList())
     val photos = _photos.asStateFlow()
 
@@ -23,8 +30,14 @@ class PhotoViewModel : ViewModel() {
     }
 
     fun updateActivePhoto(index: Int) {
+        val photo = _photos.value[index]
+
         _activePhotoIndex.value = index
-        _activePhoto.value = _photos.value[index]
+        _activePhoto.value = photo
+
+        viewModelScope.launch {
+            activeIdRepository.setActivePhoto(photo.id)
+        }
     }
 
     private fun updateActivePhoto(photo: Photo) {
