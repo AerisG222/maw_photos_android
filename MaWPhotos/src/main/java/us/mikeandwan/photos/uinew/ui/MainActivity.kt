@@ -13,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -91,14 +92,15 @@ class MainActivity : AppCompatActivity() {
                     .launchIn(this)
 
                 viewModel.navigationRequests
-                    .onEach { onNavigate(it) }
+                    .filter { it != null }
+                    .onEach { onNavigate(it!!) }
                     .launchIn(this)
             }
         }
     }
 
-    private fun onNavigate(id: Int?) {
-        if (id != null) {
+    private fun onNavigate(id: Int) {
+        if (id != navController.currentDestination?.id) {
             navController.navigate(id)
             updateSubnav(id)
             viewModel.navigationRequestCompleted()
