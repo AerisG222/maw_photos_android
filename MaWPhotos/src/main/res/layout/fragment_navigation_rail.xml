@@ -19,14 +19,9 @@
 
         <ImageView
             android:id="@+id/navigation_categories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_home"
-            android:paddingBottom="@dimen/_8dp"
-            android:paddingTop="@dimen/_8dp"
             android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_categories) }"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
+            style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.categoryButtonColor }"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,14 +29,9 @@
 
         <ImageView
             android:id="@+id/navigation_random"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_shuffle"
-            android:paddingBottom="@dimen/_8dp"
-            android:paddingTop="@dimen/_8dp"
             android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_random) }"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
+            style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.randomButtonColor }"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -50,14 +40,9 @@
 
         <ImageView
             android:id="@+id/navigation_about"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_help_outline"
-            android:paddingBottom="@dimen/_8dp"
-            android:paddingTop="@dimen/_8dp"
             android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_about) }"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
+            style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.aboutButtonColor }"
             app:layout_constraintBottom_toTopOf="@+id/navigation_settings"
             app:layout_constraintEnd_toEndOf="parent"
@@ -65,14 +50,9 @@
 
         <ImageView
             android:id="@+id/navigation_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_settings"
-            android:paddingBottom="@dimen/_8dp"
-            android:paddingTop="@dimen/_8dp"
             android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_settings) }"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
+            style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.settingsButtonColor }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
