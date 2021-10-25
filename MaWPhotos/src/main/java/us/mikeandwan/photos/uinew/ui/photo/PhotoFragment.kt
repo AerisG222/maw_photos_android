@@ -83,6 +83,7 @@ class PhotoFragment : Fragment() {
                     .onEach {
                         delay(1)
                         binding.pager.currentItem = it
+                        binding.positionTextView.text = "${it + 1} / ${binding.pager.adapter!!.itemCount}"
                     }
                     .launchIn(this)
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+<layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -15,8 +15,17 @@
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/positionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            app:layout_anchor="@id/pager"
+            app:layout_anchorGravity="center_horizontal|top"
+            tools:text="asdfasdfas" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_drawer"
