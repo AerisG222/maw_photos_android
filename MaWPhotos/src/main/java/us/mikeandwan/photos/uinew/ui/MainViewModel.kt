@@ -39,4 +39,8 @@ class MainViewModel @Inject constructor(
     fun navigationRequestCompleted() {
         navigationStateRepository.requestNavigationCompleted()
     }
+
+    fun requestNavDrawerClose() {
+        navigationStateRepository.requestNavDrawerClose()
+    }
 }

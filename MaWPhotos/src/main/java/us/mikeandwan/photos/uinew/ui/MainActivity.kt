@@ -103,8 +103,11 @@ class MainActivity : AppCompatActivity() {
         if (id != navController.currentDestination?.id) {
             navController.navigate(id)
             updateSubnav(id)
-            viewModel.navigationRequestCompleted()
+        } else {
+            viewModel.requestNavDrawerClose()
         }
+
+        viewModel.navigationRequestCompleted()
     }
 
     private fun updateSubnav(id: Int) {
