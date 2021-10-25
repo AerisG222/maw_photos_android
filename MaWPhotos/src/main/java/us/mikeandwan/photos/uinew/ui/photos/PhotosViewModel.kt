@@ -24,6 +24,7 @@ class PhotosViewModel @Inject constructor (
     override val photoList = activeIdRepository
         .getActivePhotoCategoryId()
         .filter { it != null }
+        .distinctUntilChanged()
         .flatMapLatest { photoCategoryRepository.getPhotos(it!!) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
 
