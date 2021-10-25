@@ -81,8 +81,8 @@ class PhotoFragment : Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.activePhotoIndex
                     .onEach {
-                        delay(1)
-                        binding.pager.currentItem = it
+                        delay(10)  // TODO: how to properly remove the delay hack
+                        binding.pager.setCurrentItem(it, true)
                         binding.positionTextView.text = "${it + 1} / ${binding.pager.adapter!!.itemCount}"
                     }
                     .launchIn(this)
