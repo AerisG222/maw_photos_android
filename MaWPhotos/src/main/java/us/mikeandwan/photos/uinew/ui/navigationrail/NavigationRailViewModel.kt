@@ -39,13 +39,13 @@ class NavigationRailViewModel @Inject constructor(
 
     private fun updateNavColors(id: Int) {
         _aboutButtonColor.value = getColor(id, R.id.navigation_about)
-        _categoryButtonColor.value = getColor(id, R.id.navigation_categories)
+        _categoryButtonColor.value = getColor(id, R.id.navigation_categories, R.id.navigation_photos)
         _randomButtonColor.value = getColor(id, R.id.navigation_random)
         _settingsButtonColor.value = getColor(id, R.id.navigation_settings)
     }
 
-    private fun getColor(id: Int, otherId: Int): Int {
-        return if(id == otherId) {
+    private fun getColor(id: Int, vararg otherIds: Int): Int {
+        return if(otherIds.contains(id)) {
             R.color.pink_700
         } else {
             R.color.material_on_surface_stroke
