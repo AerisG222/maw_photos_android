@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.shouldCloseDrawer
                     .onEach { doClose ->
                         if (doClose) {
-                            binding.drawerLayout.closeDrawer(Gravity.START)
+                            binding.drawerLayout.closeDrawer(binding.navLayout)
                             viewModel.drawerClosed()
                         }
                     }
