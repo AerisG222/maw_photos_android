@@ -50,10 +50,17 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <ImageView
+                android:id="@+id/slideshowButton"
+                android:src="@drawable/ic_play_arrow"
+                style="@style/maw_photo_toolbar_button"
+                app:layout_constraintStart_toEndOf="@id/rotateRightButton"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <ImageView
                 android:id="@+id/share_button"
                 android:src="@drawable/ic_share"
                 style="@style/maw_photo_toolbar_button"
-                app:layout_constraintStart_toEndOf="@id/rotateRightButton"
+                app:layout_constraintStart_toEndOf="@id/slideshowButton"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <ImageView
