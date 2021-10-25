@@ -26,8 +26,6 @@
 
             <ImageView
                 android:id="@+id/rotateLeftButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_rotate_left"
                 android:onClick="@{ () -> viewModel.rotatePhoto(-1) }"
                 style="@style/maw_photo_toolbar_button"
@@ -36,8 +34,6 @@
 
             <ImageView
                 android:id="@+id/rotateRightButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_rotate_right"
                 android:onClick="@{ () -> viewModel.rotatePhoto(1) }"
                 style="@style/maw_photo_toolbar_button"
@@ -46,8 +42,6 @@
 
             <ImageView
                 android:id="@+id/share_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_share"
                 style="@style/maw_photo_toolbar_button"
                 app:layout_constraintStart_toEndOf="@id/rotateRightButton"
@@ -55,8 +49,6 @@
 
             <ImageView
                 android:id="@+id/info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_keyboard_double_arrow_up"
                 style="@style/maw_photo_toolbar_button"
                 app:layout_constraintEnd_toEndOf="parent"
