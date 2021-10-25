@@ -4,13 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.core.view.children
+import androidx.core.view.get
 import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.github.chrisbanes.photoview.PhotoView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -61,6 +67,15 @@ class PhotoFragment : Fragment() {
         binding.pager.unregisterOnPageChangeCallback(pageChangeCallback)
     }
 
+    private fun rotatePhoto(direction: Int) {
+        // TODO: make this not suck
+        val photoView = ((binding.pager.get(0) as RecyclerView).layoutManager?.getChildAt(0) as FrameLayout).children.first() as PhotoView
+
+        photoView.setRotationBy(90f * direction)
+
+        viewModel.rotateComplete()
+    }
+
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -68,6 +83,14 @@ class PhotoFragment : Fragment() {
                     .onEach {
                         delay(1)
                         binding.pager.currentItem = it
+                    }
+                    .launchIn(this)
+
+                viewModel.rotatePhoto
+                    .filter { it != 0 }
+                    .onEach {
+                        delay(1)
+                        rotatePhoto(it)
                     }
                     .launchIn(this)
             }
