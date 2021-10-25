@@ -33,5 +33,6 @@ class PhotoViewHolderFragment : Fragment() {
 
     companion object {
         const val PHOTO_URL = "photo_url"
+        const val TAG_PHOTO_VIEW = "photoview"
     }
 }

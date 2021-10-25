@@ -68,8 +68,7 @@ class PhotoFragment : Fragment() {
     }
 
     private fun rotatePhoto(direction: Int) {
-        // TODO: make this not suck
-        val photoView = ((binding.pager.get(0) as RecyclerView).layoutManager?.getChildAt(0) as FrameLayout).children.first() as PhotoView
+        val photoView = binding.pager.findViewWithTag<PhotoView>(PhotoViewHolderFragment.TAG_PHOTO_VIEW)
 
         photoView.setRotationBy(90f * direction)
 
