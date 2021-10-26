@@ -80,12 +80,12 @@
             android:screenOrientation="fullSensor" />
 
         <provider
-            android:name="com.commonsware.cwac.provider.StreamProvider"
-            android:authorities="us.mikeandwan.streamprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="us.mikeandwan.photos.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
-                android:name="com.commonsware.cwac.provider.STREAM_PROVIDER_PATHS"
+                android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
 

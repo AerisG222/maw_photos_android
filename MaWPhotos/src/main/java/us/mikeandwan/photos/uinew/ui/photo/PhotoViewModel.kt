@@ -24,12 +24,23 @@ class PhotoViewModel @Inject constructor (
     private val _rotatePhoto = MutableStateFlow<Int>(0)
     val rotatePhoto = _rotatePhoto.asStateFlow()
 
+    private val _sharePhoto = MutableStateFlow<Photo?>(null)
+    val sharePhoto = _sharePhoto.asStateFlow()
+
     fun rotatePhoto(direction: Int) {
         _rotatePhoto.value = direction
     }
 
     fun rotateComplete() {
         _rotatePhoto.value = 0
+    }
+
+    fun sharePhoto() {
+        _sharePhoto.value = activePhoto.value
+    }
+
+    fun sharePhotoComplete() {
+        _sharePhoto.value = null
     }
 
     fun updatePhotoList(photoList: StateFlow<List<Photo>>, initialPhoto: Photo? = null) {
