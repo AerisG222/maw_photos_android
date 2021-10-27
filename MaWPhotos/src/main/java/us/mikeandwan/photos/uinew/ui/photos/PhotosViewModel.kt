@@ -7,6 +7,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.domain.*
 import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.photo.IPhotoListViewModel
 import us.mikeandwan.photos.uinew.ui.toImageGridItem
 import javax.inject.Inject
@@ -29,8 +30,8 @@ class PhotosViewModel @Inject constructor (
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
 
     val photos = photoList
-        .map { list -> list.map { it.toImageGridItem() } }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<ImageGridItem>())
+        //.map { list -> list.map { it.toImageGridItem() } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
 
     val preferences = photoPreferenceRepository
         .getPhotoPreferences()
@@ -38,5 +39,9 @@ class PhotosViewModel @Inject constructor (
 
     fun setActivePhoto(photo: Photo) {
         _activePhoto.value = photo
+    }
+
+    val onPhotoClicked = ImageGridRecyclerAdapter.ClickListener {
+        _activePhoto.value = it.data as Photo
     }
 }

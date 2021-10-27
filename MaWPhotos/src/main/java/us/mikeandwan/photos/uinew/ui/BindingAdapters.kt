@@ -2,10 +2,15 @@ package us.mikeandwan.photos.uinew.ui
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.findFragment
 import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.GridThumbnailSize
+import us.mikeandwan.photos.domain.Photo
 import us.mikeandwan.photos.domain.PhotoCategory
 import us.mikeandwan.photos.uinew.ui.categorylist.CategoryListRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridItem
 import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.uinew.ui.yearnavmenu.YearListRecyclerAdapter
@@ -48,4 +53,25 @@ fun bindTint(imgView: ImageView, color: Int?) {
     color?.let {
         imgView.setColorFilter(imgView.context.getColor(color))
     }
+}
+
+@BindingAdapter("imageGridThumbnailSize")
+fun bindImageGridThumbnailSize(container: FragmentContainerView, thumbnailSize: GridThumbnailSize) {
+    val imageGridFragment = container.getFragment<ImageGridFragment>()
+
+    imageGridFragment.setThumbnailSize(thumbnailSize)
+}
+
+@BindingAdapter("imageGridPhotoList")
+fun bindImageGridPhotoList(container: FragmentContainerView, photoList: List<Photo>) {
+    val imageGridFragment = container.getFragment<ImageGridFragment>()
+
+    imageGridFragment.setData(photoList.map { it -> it.toImageGridItem() })
+}
+
+@BindingAdapter("imageGridClickHandler")
+fun bindImageGridClickHandler(container: FragmentContainerView, handler: ImageGridRecyclerAdapter.ClickListener) {
+    val imageGridFragment = container.getFragment<ImageGridFragment>()
+
+    imageGridFragment.setClickHandler(handler)
 }
