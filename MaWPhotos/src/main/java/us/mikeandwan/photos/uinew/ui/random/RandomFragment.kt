@@ -33,8 +33,6 @@ class RandomFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        initStateObservers()
-
         return binding.root
     }
 
@@ -48,24 +46,5 @@ class RandomFragment : Fragment() {
         viewModel.onPause()
 
         super.onPause()
-    }
-
-    // TODO: make sure we do not fetch once they've left the random area
-
-    private fun initStateObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.preferences
-                    .combine(viewModel.photos) { preferences, photos -> Pair(preferences, photos) }
-                    .onEach { (preference, photos) ->
-                        val frag = childFragmentManager.fragments.first() as ImageGridFragment
-
-                        //frag.setClickHandler(onPhotoClicked)
-                        frag.setThumbnailSize(preference.gridThumbnailSize)
-                        frag.setData(photos)
-                    }
-                    .launchIn(this)
-            }
-        }
     }
 }
