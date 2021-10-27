@@ -7,13 +7,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.ActivityScoped
 import us.mikeandwan.photos.services.DataServices
-import us.mikeandwan.photos.ui.categories.ICategoryListActivity
-import us.mikeandwan.photos.ui.categories.ListCategoryRecyclerAdapter
-import us.mikeandwan.photos.ui.categories.ThumbnailCategoryRecyclerAdapter
-import us.mikeandwan.photos.ui.photos.FullScreenImageAdapter
-import us.mikeandwan.photos.ui.photos.IPhotoActivity
-import us.mikeandwan.photos.ui.photos.ThumbnailRecyclerAdapter
-import us.mikeandwan.photos.ui.receiver.ReceiverRecyclerAdapter
+import us.mikeandwan.photos.uiold.categories.ICategoryListActivity
+import us.mikeandwan.photos.uiold.categories.ListCategoryRecyclerAdapter
+import us.mikeandwan.photos.uiold.categories.ThumbnailCategoryRecyclerAdapter
+import us.mikeandwan.photos.uiold.photos.FullScreenImageAdapter
+import us.mikeandwan.photos.uiold.photos.IPhotoActivity
+import us.mikeandwan.photos.uiold.photos.ThumbnailRecyclerAdapter
+import us.mikeandwan.photos.uiold.receiver.ReceiverRecyclerAdapter
 
 @Module
 @InstallIn(ActivityComponent::class)

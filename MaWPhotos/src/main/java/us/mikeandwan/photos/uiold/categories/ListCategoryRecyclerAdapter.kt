@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.categories
+package us.mikeandwan.photos.uiold.categories
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

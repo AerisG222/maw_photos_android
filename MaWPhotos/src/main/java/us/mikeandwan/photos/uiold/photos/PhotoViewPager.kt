@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.photos
+package us.mikeandwan.photos.uiold.photos
 
 import android.content.Context
 import android.util.AttributeSet

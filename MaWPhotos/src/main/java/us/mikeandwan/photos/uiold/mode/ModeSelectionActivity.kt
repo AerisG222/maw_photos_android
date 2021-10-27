@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.mode
+package us.mikeandwan.photos.uiold.mode
 
 import android.app.NotificationManager
 import android.content.Intent
@@ -28,12 +28,12 @@ import us.mikeandwan.photos.authorization.AuthStateManager
 import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.services.PhotoListType
 import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler
-import us.mikeandwan.photos.ui.BaseActivity
-import us.mikeandwan.photos.ui.categories.CategoryListActivity
+import us.mikeandwan.photos.uiold.BaseActivity
+import us.mikeandwan.photos.uiold.categories.CategoryListActivity
 import us.mikeandwan.photos.uinew.ui.login.LoginActivity
-import us.mikeandwan.photos.ui.photos.PhotoListActivity
-import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity
-import us.mikeandwan.photos.ui.settings.SettingsActivity
+import us.mikeandwan.photos.uiold.photos.PhotoListActivity
+import us.mikeandwan.photos.uiold.receiver.PhotoReceiverActivity
+import us.mikeandwan.photos.uiold.settings.SettingsActivity
 import java.util.*
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.receiver
+package us.mikeandwan.photos.uiold.receiver
 
 import android.content.Intent
 import android.net.Uri
@@ -16,7 +16,7 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityPhotoReceiverBinding
 import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.services.UploadJobScheduler
-import us.mikeandwan.photos.ui.BaseActivity
+import us.mikeandwan.photos.uiold.BaseActivity
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*

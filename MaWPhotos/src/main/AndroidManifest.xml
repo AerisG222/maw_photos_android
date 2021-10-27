@@ -29,7 +29,7 @@
         </activity>
 
         <activity
-            android:name=".ui.receiver.PhotoReceiverActivity"
+            android:name=".uiold.receiver.PhotoReceiverActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:noHistory="true"
@@ -55,27 +55,27 @@
         </activity>
 
         <activity
-            android:name=".ui.mode.ModeSelectionActivity"
+            android:name=".uiold.mode.ModeSelectionActivity"
             android:label="@string/title_activity_mode_selection"
             android:screenOrientation="fullSensor" />
 
         <activity
-            android:name=".ui.photos.PhotoListActivity"
+            android:name=".uiold.photos.PhotoListActivity"
             android:label="@string/title_activity_photo_list"
             android:launchMode="singleTask"
             android:screenOrientation="fullSensor" />
 
         <activity
-            android:name=".ui.categories.CategoryListActivity"
+            android:name=".uiold.categories.CategoryListActivity"
             android:label="@string/title_activity_category_list"
             android:screenOrientation="fullSensor">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.mode.ModeSelectionActivity" />
+                android:value=".uiold.mode.ModeSelectionActivity" />
         </activity>
 
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".uiold.settings.SettingsActivity"
             android:label="@string/pref_activity_settings_title"
             android:screenOrientation="fullSensor" />
 

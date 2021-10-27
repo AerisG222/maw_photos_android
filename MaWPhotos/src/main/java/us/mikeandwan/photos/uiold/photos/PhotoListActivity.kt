@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.photos
+package us.mikeandwan.photos.uiold.photos
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -27,9 +27,9 @@ import us.mikeandwan.photos.models.PhotoSize
 import us.mikeandwan.photos.preferences.PhotoDisplayPreference
 import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.services.PhotoListType
-import us.mikeandwan.photos.ui.BaseActivity
-import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity
-import us.mikeandwan.photos.ui.settings.SettingsActivity
+import us.mikeandwan.photos.uiold.BaseActivity
+import us.mikeandwan.photos.uiold.receiver.PhotoReceiverActivity
+import us.mikeandwan.photos.uiold.settings.SettingsActivity
 import java.util.*
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit

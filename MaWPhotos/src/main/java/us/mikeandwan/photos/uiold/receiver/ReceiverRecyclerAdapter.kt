@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.receiver
+package us.mikeandwan.photos.uiold.receiver
 
 import android.app.Activity
 import android.media.MediaPlayer

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui
+package us.mikeandwan.photos.uiold
 
 import android.R.id.content
 import android.annotation.SuppressLint

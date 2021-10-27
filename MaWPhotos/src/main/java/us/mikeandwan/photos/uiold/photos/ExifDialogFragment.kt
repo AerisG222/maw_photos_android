@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.photos
+package us.mikeandwan.photos.uiold.photos
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,14 +15,14 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.DialogExifBinding
 import us.mikeandwan.photos.models.ExifData
 import us.mikeandwan.photos.services.DataServices
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.format
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatAltitude
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatFourDecimals
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatLatitude
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatLongitude
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatMeters
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatMillimeters
-import us.mikeandwan.photos.ui.photos.ExifDataFormatter.formatOneDecimal
+import us.mikeandwan.photos.uiold.photos.ExifDataFormatter.format
+import us.mikeandwan.photos.uiold.photos.ExifDataFormatter.formatAltitude
+import us.mikeandwan.photos.uiold.photos.ExifDataFormatter.formatFourDecimals
+import us.mikeandwan.photos.uiold.photos.ExifDataFormatter.formatLatitude
+import us.mikeandwan.photos.uiold.photos.ExifDataFormatter.formatLongitude
+import us.mikeandwan.photos.uiold.photos.ExifDataFormatter.formatMeters
+import us.mikeandwan.photos.uiold.photos.ExifDataFormatter.formatMillimeters
+import us.mikeandwan.photos.uiold.photos.ExifDataFormatter.formatOneDecimal
 import javax.inject.Inject
 
 @AndroidEntryPoint

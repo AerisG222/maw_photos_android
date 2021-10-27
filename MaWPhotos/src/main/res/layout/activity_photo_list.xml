@@ -28,7 +28,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
 
-    <us.mikeandwan.photos.ui.photos.PhotoViewPager
+    <us.mikeandwan.photos.uiold.photos.PhotoViewPager
         android:id="@+id/photoPager"
         android:layout_width="0dp"
         android:layout_height="0dp"

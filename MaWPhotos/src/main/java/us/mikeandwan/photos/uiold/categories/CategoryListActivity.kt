@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.categories
+package us.mikeandwan.photos.uiold.categories
 
 import android.content.Intent
 import android.os.Bundle
@@ -26,10 +26,10 @@ import us.mikeandwan.photos.preferences.CategoryDisplay
 import us.mikeandwan.photos.preferences.CategoryDisplayPreference
 import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.services.PhotoListType
-import us.mikeandwan.photos.ui.BaseActivity
-import us.mikeandwan.photos.ui.photos.PhotoListActivity
-import us.mikeandwan.photos.ui.receiver.PhotoReceiverActivity
-import us.mikeandwan.photos.ui.settings.SettingsActivity
+import us.mikeandwan.photos.uiold.BaseActivity
+import us.mikeandwan.photos.uiold.photos.PhotoListActivity
+import us.mikeandwan.photos.uiold.receiver.PhotoReceiverActivity
+import us.mikeandwan.photos.uiold.settings.SettingsActivity
 import java.util.*
 import javax.inject.Inject
 

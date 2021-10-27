@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.settings
+package us.mikeandwan.photos.uiold.settings
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
