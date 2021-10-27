@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.login.LoginViewModel" />
+            type="us.mikeandwan.photos.ui.login.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

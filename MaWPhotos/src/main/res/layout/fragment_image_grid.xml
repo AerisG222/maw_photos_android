@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".uinew.ui.controls.imagegrid.ImageGridFragment">
+    tools:context=".ui.controls.imagegrid.ImageGridFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.controls.imagegrid.ImageGridViewModel" />
+            type="us.mikeandwan.photos.ui.controls.imagegrid.ImageGridViewModel" />
     </data>
 
     <FrameLayout

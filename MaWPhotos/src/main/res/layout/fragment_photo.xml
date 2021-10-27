@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.photo.PhotoViewModel" />
+            type="us.mikeandwan.photos.ui.photo.PhotoViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

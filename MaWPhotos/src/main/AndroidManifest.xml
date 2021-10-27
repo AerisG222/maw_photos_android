@@ -19,7 +19,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".uinew.ui.main.MainActivity"
+            android:name="us.mikeandwan.photos.ui.main.MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main">
             <intent-filter>
@@ -47,7 +47,7 @@
         </activity>
 
         <activity
-            android:name="us.mikeandwan.photos.uinew.ui.login.LoginActivity"
+            android:name="us.mikeandwan.photos.ui.login.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:noHistory="true"

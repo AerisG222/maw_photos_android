@@ -9,7 +9,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.main.MainViewModel" />
+            type="us.mikeandwan.photos.ui.main.MainViewModel" />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -79,13 +79,13 @@
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentNavRail"
-                android:name="us.mikeandwan.photos.uinew.ui.controls.navigationrail.NavigationRailFragment"
+                android:name="us.mikeandwan.photos.ui.controls.navigationrail.NavigationRailFragment"
                 android:layout_width="56dp"
                 android:layout_height="match_parent" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentSubnav"
-                android:name="us.mikeandwan.photos.uinew.ui.controls.yearnavmenu.YearsFragment"
+                android:name="us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />

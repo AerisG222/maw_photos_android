@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".uinew.ui.screens.random.RandomFragment">
+    tools:context=".ui.screens.random.RandomFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.screens.random.RandomViewModel" />
+            type="us.mikeandwan.photos.ui.screens.random.RandomViewModel" />
     </data>
 
     <FrameLayout
@@ -17,7 +17,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentPhotoGrid"
-            android:name="us.mikeandwan.photos.uinew.ui.controls.imagegrid.ImageGridFragment"
+            android:name="us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:imageGridThumbnailSize="@{ viewModel.gridItemThumbnailSize }"

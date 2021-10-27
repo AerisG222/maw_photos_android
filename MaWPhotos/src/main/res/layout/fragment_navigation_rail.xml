@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".uinew.ui.controls.navigationrail.NavigationRailFragment">
+    tools:context=".ui.controls.navigationrail.NavigationRailFragment">
 
     <data>
         <import type="us.mikeandwan.photos.R" />
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.controls.navigationrail.NavigationRailViewModel" />
+            type="us.mikeandwan.photos.ui.controls.navigationrail.NavigationRailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

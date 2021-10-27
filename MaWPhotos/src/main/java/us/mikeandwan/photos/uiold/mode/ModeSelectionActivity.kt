@@ -30,7 +30,7 @@ import us.mikeandwan.photos.services.PhotoListType
 import us.mikeandwan.photos.services.UpdateCategoriesJobScheduler
 import us.mikeandwan.photos.uiold.BaseActivity
 import us.mikeandwan.photos.uiold.categories.CategoryListActivity
-import us.mikeandwan.photos.uinew.ui.login.LoginActivity
+import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.uiold.photos.PhotoListActivity
 import us.mikeandwan.photos.uiold.receiver.PhotoReceiverActivity
 import us.mikeandwan.photos.uiold.settings.SettingsActivity
