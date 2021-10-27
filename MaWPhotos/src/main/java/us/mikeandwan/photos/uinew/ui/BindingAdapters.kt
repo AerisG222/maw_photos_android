@@ -3,17 +3,16 @@ package us.mikeandwan.photos.uinew.ui
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.findFragment
 import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.GridThumbnailSize
 import us.mikeandwan.photos.domain.Photo
 import us.mikeandwan.photos.domain.PhotoCategory
-import us.mikeandwan.photos.uinew.ui.categorylist.CategoryListRecyclerAdapter
-import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment
-import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridItem
-import us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridRecyclerAdapter
-import us.mikeandwan.photos.uinew.ui.yearnavmenu.YearListRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.controls.categorylist.CategoryListRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.controls.imagegrid.ImageGridFragment
+import us.mikeandwan.photos.uinew.ui.controls.imagegrid.ImageGridItem
+import us.mikeandwan.photos.uinew.ui.controls.imagegrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.uinew.ui.controls.yearnavmenu.YearListRecyclerAdapter
 import us.mikeandwan.photos.utils.GlideApp
 
 @BindingAdapter("yearListData")

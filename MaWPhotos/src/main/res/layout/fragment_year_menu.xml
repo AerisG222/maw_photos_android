@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".uinew.ui.yearnavmenu.YearsFragment">
+    tools:context=".uinew.ui.controls.yearnavmenu.YearsFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.yearnavmenu.YearsViewModel" />
+            type="us.mikeandwan.photos.uinew.ui.controls.yearnavmenu.YearsViewModel" />
     </data>
 
     <LinearLayout

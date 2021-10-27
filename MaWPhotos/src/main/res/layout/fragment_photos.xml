@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".uinew.ui.photos.PhotosFragment">
+    tools:context=".uinew.ui.screens.photos.PhotosFragment">
 
     <data>
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.photos.PhotosViewModel" />
+            type="us.mikeandwan.photos.uinew.ui.screens.photos.PhotosViewModel" />
     </data>
 
     <FrameLayout
@@ -18,7 +18,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentPhotoList"
-            android:name="us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment"
+            android:name="us.mikeandwan.photos.uinew.ui.controls.imagegrid.ImageGridFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:imageGridThumbnailSize="@{ viewModel.gridItemThumbnailSize }"

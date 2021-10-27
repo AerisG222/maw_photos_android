@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_about"
-        android:name="us.mikeandwan.photos.uinew.ui.about.AboutFragment"
+        android:name="us.mikeandwan.photos.uinew.ui.screens.about.AboutFragment"
         android:label="About"
         tools:layout="@layout/fragment_about" />
 
     <fragment
         android:id="@+id/navigation_categories"
-        android:name="us.mikeandwan.photos.uinew.ui.categories.CategoriesFragment"
+        android:name="us.mikeandwan.photos.uinew.ui.screens.categories.CategoriesFragment"
         android:label="@string/title_categories"
         tools:layout="@layout/fragment_categories">
         <action
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/navigation_photos"
-        android:name="us.mikeandwan.photos.uinew.ui.photos.PhotosFragment"
+        android:name="us.mikeandwan.photos.uinew.ui.screens.photos.PhotosFragment"
         android:label="fragment_photos"
         tools:layout="@layout/fragment_photos" >
         <argument
@@ -33,13 +33,13 @@
 
     <fragment
         android:id="@+id/navigation_random"
-        android:name="us.mikeandwan.photos.uinew.ui.random.RandomFragment"
+        android:name="us.mikeandwan.photos.uinew.ui.screens.random.RandomFragment"
         android:label="@string/title_random"
         tools:layout="@layout/fragment_random" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="us.mikeandwan.photos.uinew.ui.settings.SettingsFragment"
+        android:name="us.mikeandwan.photos.uinew.ui.screens.settings.SettingsFragment"
         android:label="@string/title_settings" />
 
     <action

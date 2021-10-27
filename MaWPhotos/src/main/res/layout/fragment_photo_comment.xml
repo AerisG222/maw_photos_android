@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.photocomment.PhotoCommentViewModel" />
+            type="us.mikeandwan.photos.uinew.ui.controls.photocomment.PhotoCommentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

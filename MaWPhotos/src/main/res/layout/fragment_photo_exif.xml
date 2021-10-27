@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="us.mikeandwan.photos.uinew.ui.photoexif.PhotoExifViewModel" />
+            type="us.mikeandwan.photos.uinew.ui.controls.photoexif.PhotoExifViewModel" />
     </data>
 
     <LinearLayout
