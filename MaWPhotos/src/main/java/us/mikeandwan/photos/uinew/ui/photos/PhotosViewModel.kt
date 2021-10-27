@@ -30,16 +30,11 @@ class PhotosViewModel @Inject constructor (
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
 
     val photos = photoList
-        //.map { list -> list.map { it.toImageGridItem() } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
 
-    val preferences = photoPreferenceRepository
-        .getPhotoPreferences()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, PHOTO_PREFERENCE_DEFAULT)
-
-    fun setActivePhoto(photo: Photo) {
-        _activePhoto.value = photo
-    }
+    val gridItemThumbnailSize = photoPreferenceRepository
+        .getPhotoGridItemSize()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
     val onPhotoClicked = ImageGridRecyclerAdapter.ClickListener {
         _activePhoto.value = it.data as Photo

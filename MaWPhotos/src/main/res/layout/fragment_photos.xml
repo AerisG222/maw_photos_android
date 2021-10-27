@@ -21,9 +21,9 @@
             android:name="us.mikeandwan.photos.uinew.ui.imagegrid.ImageGridFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:imageGridThumbnailSize="@{ viewModel.preferences.gridThumbnailSize }"
+            app:imageGridThumbnailSize="@{ viewModel.gridItemThumbnailSize }"
             app:imageGridPhotoList="@{ viewModel.photos }"
-            app:imageGridClickHandler="@{ viewModel.onPhotoClicked }"/>
+            app:imageGridClickHandler="@{ viewModel.onPhotoClicked }" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/photoFragment"
