@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.screens.photos
+package us.mikeandwan.photos.ui.screens.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class PhotosViewModel @Inject constructor (
+class CategoryViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val photoPreferenceRepository: PhotoPreferenceRepository

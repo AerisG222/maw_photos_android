@@ -45,7 +45,7 @@ class NavigationStateRepository @Inject constructor(
                 enableDrawer()
                 setToolbarTitle("Random")
             }
-            R.id.navigation_photos -> {
+            R.id.navigation_category -> {
                 enableDrawer()
                 setToolbarTitle(photoCategoryRepository.getCategory().first().name)
             }

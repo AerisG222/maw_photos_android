@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.screens.photos
+package us.mikeandwan.photos.ui.screens.category
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,24 +12,24 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.databinding.FragmentPhotosBinding
+import us.mikeandwan.photos.databinding.FragmentCategoryBinding
 import us.mikeandwan.photos.ui.photo.PhotoFragment
 
 @AndroidEntryPoint
-class PhotosFragment : Fragment() {
+class CategoryFragment : Fragment() {
     companion object {
-        fun newInstance() = PhotosFragment()
+        fun newInstance() = CategoryFragment()
     }
 
-    private lateinit var binding: FragmentPhotosBinding
-    val viewModel by viewModels<PhotosViewModel>()
+    private lateinit var binding: FragmentCategoryBinding
+    val viewModel by viewModels<CategoryViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentPhotosBinding.inflate(inflater)
+        binding = FragmentCategoryBinding.inflate(inflater)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 

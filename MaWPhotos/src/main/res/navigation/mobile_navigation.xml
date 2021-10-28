@@ -18,14 +18,14 @@
         tools:layout="@layout/fragment_categories">
         <action
             android:id="@+id/action_navigation_categories_to_navigation_photos"
-            app:destination="@id/navigation_photos" />
+            app:destination="@id/navigation_category" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_photos"
-        android:name="us.mikeandwan.photos.ui.screens.photos.PhotosFragment"
-        android:label="fragment_photos"
-        tools:layout="@layout/fragment_photos" >
+        android:id="@+id/navigation_category"
+        android:name="us.mikeandwan.photos.ui.screens.category.CategoryFragment"
+        android:label="fragment_category"
+        tools:layout="@layout/fragment_category">
         <argument
             android:name="categoryId"
             app:argType="integer" />
