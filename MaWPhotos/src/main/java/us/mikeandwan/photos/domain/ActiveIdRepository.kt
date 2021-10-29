@@ -30,4 +30,8 @@ class ActiveIdRepository @Inject constructor(
 
         dao.setActiveId(id)
     }
+
+    suspend fun clearActivePhoto() {
+        dao.deleteActiveId(ActiveIdType.Photo)
+    }
 }

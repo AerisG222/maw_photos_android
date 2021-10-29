@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.photo
+package us.mikeandwan.photos.ui.screens.photo
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,20 +6,27 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import kotlinx.coroutines.flow.StateFlow
 import us.mikeandwan.photos.domain.Photo
 
-class PhotoFragmentStateAdapter(private val photos: StateFlow<List<Photo>>, fragment: Fragment): FragmentStateAdapter(fragment) {
+class PhotoFragmentStateAdapter(fragment: Fragment): FragmentStateAdapter(fragment) {
+    private var _photos = emptyList<Photo>()
+
     override fun getItemCount(): Int {
-        return photos.value.size
+        return _photos.size
     }
 
     override fun createFragment(position: Int): Fragment {
         val fragment = PhotoViewHolderFragment()
 
         fragment.arguments = Bundle().apply {
-            val photo = photos.value[position]
+            val photo = _photos[position]
 
             putString(PhotoViewHolderFragment.PHOTO_URL, photo.mdUrl)
         }
 
         return fragment
+    }
+
+    fun updatePhotoList(photos: List<Photo>) {
+        _photos = photos
+        notifyDataSetChanged()
     }
 }

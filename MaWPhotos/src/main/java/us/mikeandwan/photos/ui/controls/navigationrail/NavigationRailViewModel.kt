@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.NavigationArea
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class NavigationRailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            navigationStateRepository.activeDestinationId.collect { updateNavColors(it) }
+            navigationStateRepository.navArea.collect { updateNavColors(it) }
         }
     }
 
@@ -37,15 +38,15 @@ class NavigationRailViewModel @Inject constructor(
         navigationStateRepository.requestNavigation(id)
     }
 
-    private fun updateNavColors(id: Int) {
-        _aboutButtonColor.value = getColor(id, R.id.navigation_about)
-        _categoryButtonColor.value = getColor(id, R.id.navigation_categories, R.id.navigation_category)
-        _randomButtonColor.value = getColor(id, R.id.navigation_random)
-        _settingsButtonColor.value = getColor(id, R.id.navigation_settings)
+    private fun updateNavColors(navigationArea: NavigationArea) {
+        _aboutButtonColor.value = getColor(navigationArea == NavigationArea.About)
+        _categoryButtonColor.value = getColor(navigationArea == NavigationArea.Category)
+        _randomButtonColor.value = getColor(navigationArea == NavigationArea.Random)
+        _settingsButtonColor.value = getColor(navigationArea == NavigationArea.Settings)
     }
 
-    private fun getColor(id: Int, vararg otherIds: Int): Int {
-        return if(otherIds.contains(id)) {
+    private fun getColor(isInArea: Boolean): Int {
+        return if(isInArea) {
             R.color.pink_700
         } else {
             R.color.material_on_surface_stroke

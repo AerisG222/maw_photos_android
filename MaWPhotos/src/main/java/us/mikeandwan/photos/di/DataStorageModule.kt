@@ -96,12 +96,6 @@ class DataStorageModule {
 
     @Provides
     @Singleton
-    fun provideRandomPhotoRepository(api: PhotoApiClient, randomPreferenceRepository: RandomPreferenceRepository): RandomPhotoRepository {
-        return RandomPhotoRepository(api, randomPreferenceRepository)
-    }
-
-    @Provides
-    @Singleton
     fun providePhotoCategoryDao(mawDatabase: MawDatabase): PhotoCategoryDao {
         return mawDatabase.photoCategoryDao()
     }

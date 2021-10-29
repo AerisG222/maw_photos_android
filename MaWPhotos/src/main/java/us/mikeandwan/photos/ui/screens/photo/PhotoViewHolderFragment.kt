@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.photo
+package us.mikeandwan.photos.ui.screens.photo
 
 import android.os.Bundle
 import android.view.LayoutInflater

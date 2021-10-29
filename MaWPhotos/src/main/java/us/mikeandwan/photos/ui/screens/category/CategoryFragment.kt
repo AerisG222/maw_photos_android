@@ -8,12 +8,11 @@ import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoryBinding
-import us.mikeandwan.photos.ui.photo.PhotoFragment
 
 @AndroidEntryPoint
 class CategoryFragment : Fragment() {
@@ -33,9 +32,7 @@ class CategoryFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        if(savedInstanceState == null) {
-            initStateObservers()
-        }
+        initStateObservers()
 
         return binding.root
     }
@@ -43,19 +40,19 @@ class CategoryFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.activePhoto
+                viewModel.requestNavigateToPhoto
                     .filter { it != null }
-                    .onEach {
-                        val photoFragment = getPhotoFragment()
-
-                        photoFragment?.setSourceData(viewModel)
-                    }
+                    .onEach { navigateToPhoto(it!!) }
                     .launchIn(this)
             }
         }
     }
 
-    private fun getPhotoFragment(): PhotoFragment? {
-        return childFragmentManager.findFragmentById(R.id.photoFragment) as PhotoFragment?
+    private fun navigateToPhoto(id: Int) {
+        viewModel.onNavigateComplete()
+
+        val action = CategoryFragmentDirections.actionNavigationCategoryToNavigationPhoto(id)
+
+        findNavController().navigate(action)
     }
 }

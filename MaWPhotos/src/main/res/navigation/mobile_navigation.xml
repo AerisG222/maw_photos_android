@@ -17,7 +17,7 @@
         android:label="@string/title_categories"
         tools:layout="@layout/fragment_categories">
         <action
-            android:id="@+id/action_navigation_categories_to_navigation_photos"
+            android:id="@+id/action_navigation_categories_to_navigation_category"
             app:destination="@id/navigation_category" />
     </fragment>
 
@@ -29,13 +29,29 @@
         <argument
             android:name="categoryId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_navigation_category_to_navigation_photo"
+            app:destination="@id/navigation_photo" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_random"
         android:name="us.mikeandwan.photos.ui.screens.random.RandomFragment"
         android:label="@string/title_random"
-        tools:layout="@layout/fragment_random" />
+        tools:layout="@layout/fragment_random" >
+        <action
+            android:id="@+id/action_navigation_random_to_navigation_photo"
+            app:destination="@id/navigation_photo" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_photo"
+        android:name="us.mikeandwan.photos.ui.screens.photo.PhotoFragment"
+        android:label="fragment_photo">
+        <argument
+            android:name="photoId"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_settings"

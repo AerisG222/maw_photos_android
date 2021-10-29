@@ -10,4 +10,7 @@ interface ActiveIdDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setActiveId(activeId: ActiveId)
+
+    @Query("DELETE FROM active_id WHERE type = :type")
+    suspend fun deleteActiveId(type: ActiveIdType)
 }

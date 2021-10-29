@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.photo
+package us.mikeandwan.photos.ui.screens.photo
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,13 +12,16 @@ import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.github.chrisbanes.photoview.PhotoView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 import us.mikeandwan.photos.databinding.FragmentPhotoBinding
 import us.mikeandwan.photos.domain.Photo
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment
@@ -29,6 +32,7 @@ import java.lang.Exception
 import java.net.URL
 import java.util.*
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class PhotoFragment : Fragment() {
     companion object {
@@ -55,7 +59,7 @@ class PhotoFragment : Fragment() {
         binding = FragmentPhotoBinding.inflate(inflater)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.pager.adapter = PhotoFragmentStateAdapter(viewModel.photos, this)
+        binding.pager.adapter = PhotoFragmentStateAdapter(this)
         binding.pager.registerOnPageChangeCallback(pageChangeCallback)
 
         binding.info.setOnClickListener {
@@ -69,8 +73,9 @@ class PhotoFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         binding.pager.unregisterOnPageChangeCallback(pageChangeCallback)
+
+        super.onDestroy()
     }
 
     private fun rotatePhoto(direction: Int) {
@@ -84,11 +89,19 @@ class PhotoFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.activePhotoIndex
-                    .onEach {
-                        delay(10)  // TODO: how to properly remove the delay hack
-                        binding.pager.setCurrentItem(it, true)
-                        binding.positionTextView.text = "${it + 1} / ${binding.pager.adapter!!.itemCount}"
+                viewModel.photos
+                    .filter { it.isNotEmpty() }
+                    .combine(viewModel.activePhotoIndex) { photos, index -> Pair(photos, index) }
+                    .filter { it.second >= 0 }
+                    .onEach { (photos, index) ->
+                        if(photos.size != binding.pager.adapter?.itemCount) {
+                            Timber.i("updating adapter, new count: ${photos.size} old count: ${binding.pager.adapter?.itemCount}")
+                            (binding.pager.adapter as PhotoFragmentStateAdapter).updatePhotoList(photos)
+                        }
+
+                        Timber.i("setting item to: $index")
+                        binding.pager.setCurrentItem(index, true)
+                        binding.positionTextView.text = "${index + 1} / ${photos.size}"
                     }
                     .launchIn(this)
 
@@ -106,10 +119,6 @@ class PhotoFragment : Fragment() {
                     .launchIn(this)
             }
         }
-    }
-
-    fun setSourceData(vm: IPhotoListViewModel) {
-        viewModel.updatePhotoList(vm.photoList, vm.activePhoto.value)
     }
 
     private suspend fun sharePhoto(photo: Photo) = coroutineScope {

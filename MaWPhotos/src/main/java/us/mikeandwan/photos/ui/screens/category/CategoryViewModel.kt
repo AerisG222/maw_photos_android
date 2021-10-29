@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.*
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
-import us.mikeandwan.photos.ui.photo.IPhotoListViewModel
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -16,18 +16,15 @@ class CategoryViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val photoPreferenceRepository: PhotoPreferenceRepository
-) : ViewModel(), IPhotoListViewModel {
-    private val _activePhoto = MutableStateFlow<Photo?>(null)
-    override val activePhoto = _activePhoto.asStateFlow()
+) : ViewModel() {
+    private val _requestNavigateToPhoto = MutableStateFlow<Int?>(null)
+    val requestNavigateToPhoto = _requestNavigateToPhoto.asStateFlow()
 
-    override val photoList = activeIdRepository
+    val photos = activeIdRepository
         .getActivePhotoCategoryId()
         .filter { it != null }
         .distinctUntilChanged()
         .flatMapLatest { photoCategoryRepository.getPhotos(it!!) }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
-
-    val photos = photoList
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
 
     val gridItemThumbnailSize = photoPreferenceRepository
@@ -35,6 +32,13 @@ class CategoryViewModel @Inject constructor (
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
     val onPhotoClicked = ImageGridRecyclerAdapter.ClickListener {
-        _activePhoto.value = it.data as Photo
+        viewModelScope.launch {
+            activeIdRepository.setActivePhoto(it.id)
+            _requestNavigateToPhoto.value = it.id
+        }
+    }
+
+    fun onNavigateComplete() {
+        _requestNavigateToPhoto.value = null
     }
 }

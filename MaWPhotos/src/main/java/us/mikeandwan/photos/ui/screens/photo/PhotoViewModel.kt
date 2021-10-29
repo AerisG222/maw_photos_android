@@ -1,25 +1,29 @@
-package us.mikeandwan.photos.ui.photo
+package us.mikeandwan.photos.ui.screens.photo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.*
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @HiltViewModel
 class PhotoViewModel @Inject constructor (
-    private val activeIdRepository: ActiveIdRepository
+    private val activeIdRepository: ActiveIdRepository,
+    private val photoListMediator: PhotoListMediator
 ): ViewModel() {
-    private val _photos = MutableStateFlow<List<Photo>>(emptyList())
-    val photos = _photos.asStateFlow()
+    val photos = photoListMediator.photos
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
 
-    private val _activePhotoIndex = MutableStateFlow(0)
-    val activePhotoIndex = _activePhotoIndex.asStateFlow()
+    val activePhotoIndex = photoListMediator.activePhotoIndex
+        .filter { it >= 0 }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, -1)
 
-    private val _activePhoto = MutableStateFlow<Photo?>(null)
-    val activePhoto = _activePhoto.asStateFlow()
+    val activePhoto = photoListMediator.activePhoto
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _rotatePhoto = MutableStateFlow<Int>(0)
     val rotatePhoto = _rotatePhoto.asStateFlow()
@@ -43,26 +47,11 @@ class PhotoViewModel @Inject constructor (
         _sharePhoto.value = null
     }
 
-    fun updatePhotoList(photoList: StateFlow<List<Photo>>, initialPhoto: Photo? = null) {
-        _photos.value = photoList.value
-
-        if(initialPhoto != null) {
-            updateActivePhoto(initialPhoto)
-        }
-    }
-
     fun updateActivePhoto(index: Int) {
-        val photo = _photos.value[index]
-
-        _activePhotoIndex.value = index
-        _activePhoto.value = photo
+        val photo = photos.value[index]
 
         viewModelScope.launch {
             activeIdRepository.setActivePhoto(photo.id)
         }
-    }
-
-    private fun updateActivePhoto(photo: Photo) {
-        updateActivePhoto(photos.value.indexOf(photo))
     }
 }

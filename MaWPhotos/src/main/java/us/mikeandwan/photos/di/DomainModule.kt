@@ -8,9 +8,7 @@ import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.ActiveIdDao
 import us.mikeandwan.photos.database.MawDatabase
 import us.mikeandwan.photos.database.PhotoCategoryDao
-import us.mikeandwan.photos.domain.ActiveIdRepository
-import us.mikeandwan.photos.domain.NavigationStateRepository
-import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.*
 import javax.inject.Singleton
 
 @Module
@@ -32,5 +30,17 @@ class DomainModule {
     @Singleton
     fun providePhotoCategoryRepository(api: PhotoApiClient, db: MawDatabase, photoCategoryDao: PhotoCategoryDao, activeIdDao: ActiveIdDao): PhotoCategoryRepository {
         return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRandomPhotoRepository(api: PhotoApiClient, randomPreferenceRepository: RandomPreferenceRepository): RandomPhotoRepository {
+        return RandomPhotoRepository(api, randomPreferenceRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providePhotoListMediator(activeIdRepository: ActiveIdRepository, navigationStateRepository: NavigationStateRepository, photoCategoryRepository: PhotoCategoryRepository, randomPhotoRepository: RandomPhotoRepository): PhotoListMediator {
+        return PhotoListMediator(activeIdRepository, navigationStateRepository, photoCategoryRepository, randomPhotoRepository)
     }
 }

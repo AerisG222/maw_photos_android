@@ -25,14 +25,6 @@
             app:imageGridPhotoList="@{ viewModel.photos }"
             app:imageGridClickHandler="@{ viewModel.onPhotoClicked }" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/photoFragment"
-            android:name="us.mikeandwan.photos.ui.photo.PhotoFragment"
-            android:background="?android:attr/colorBackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="@{ viewModel.activePhoto == null ? View.GONE : View.VISIBLE }" />
-
     </FrameLayout>
 
 </layout>

@@ -152,7 +152,7 @@ class CategoriesFragment : Fragment() {
     }
 
     private fun navigateToCategory(categoryId: Int) {
-        val action = CategoriesFragmentDirections.actionNavigationCategoriesToNavigationPhotos(categoryId)
+        val action = CategoriesFragmentDirections.actionNavigationCategoriesToNavigationCategory(categoryId)
 
         findNavController().navigate(action)
     }
