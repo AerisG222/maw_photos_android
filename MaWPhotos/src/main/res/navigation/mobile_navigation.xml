@@ -60,11 +60,17 @@
 
     <action
         android:id="@+id/action_navigate_to_categories"
-        app:destination="@id/navigation_categories" />
+        app:destination="@id/navigation_categories"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/navigation_categories"
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_navigate_to_random"
-        app:destination="@id/navigation_random" />
+        app:destination="@id/navigation_random"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/navigation_random"
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_navigate_to_settings"

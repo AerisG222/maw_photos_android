@@ -20,7 +20,7 @@
         <ImageView
             android:id="@+id/navigation_categories"
             android:src="@drawable/ic_home"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_categories) }"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_categories) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.categoryButtonColor }"
             app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +30,7 @@
         <ImageView
             android:id="@+id/navigation_random"
             android:src="@drawable/ic_shuffle"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_random) }"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_random) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.randomButtonColor }"
             app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +41,7 @@
         <ImageView
             android:id="@+id/navigation_about"
             android:src="@drawable/ic_help_outline"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_about) }"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_about) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.aboutButtonColor }"
             app:layout_constraintBottom_toTopOf="@+id/navigation_settings"
@@ -51,7 +51,7 @@
         <ImageView
             android:id="@+id/navigation_settings"
             android:src="@drawable/ic_settings"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.navigation_settings) }"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_settings) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.settingsButtonColor }"
             app:layout_constraintBottom_toBottomOf="parent"

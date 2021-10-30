@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityMainBinding
+import us.mikeandwan.photos.domain.NavigationInstruction
 import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenuFragment
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment
@@ -91,17 +92,21 @@ class MainActivity : AppCompatActivity() {
                     .launchIn(this)
 
                 viewModel.navigationRequests
-                    .filter { it != null }
-                    .onEach { onNavigate(it!!) }
+                    .filter { it.actionId != null }
+                    .onEach { onNavigate(it) }
                     .launchIn(this)
             }
         }
     }
 
-    private fun onNavigate(id: Int) {
-        if (id != navController.currentDestination?.id) {
-            navController.navigate(id)
-            updateSubnav(id)
+    private fun onNavigate(instruction: NavigationInstruction) {
+        if (instruction.actionId != navController.currentDestination?.id) {
+            if(instruction.popBackId != null) {
+                navController.popBackStack(instruction.popBackId, false)
+            }
+
+            navController.navigate(instruction.actionId!!)
+            updateSubnav(instruction.actionId!!)
         } else {
             viewModel.requestNavDrawerClose()
         }
