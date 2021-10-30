@@ -12,11 +12,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RandomViewModel @Inject constructor(
+    private val activeIdRepository: ActiveIdRepository,
     private val randomPhotoRepository: RandomPhotoRepository,
     private val randomPreferenceRepository: RandomPreferenceRepository
 ) : ViewModel() {
-    private val _activePhoto = MutableStateFlow<Photo?>(null)
-    val activePhoto = _activePhoto.asStateFlow()
+    private val _requestNavigateToPhoto = MutableStateFlow<Int?>(null)
+    val requestNavigateToPhoto = _requestNavigateToPhoto.asStateFlow()
 
     val photos = randomPhotoRepository
         .photos
@@ -27,12 +28,14 @@ class RandomViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
     val onPhotoClicked = ImageGridRecyclerAdapter.ClickListener {
-        Timber.i("photo clicked: ${it.id}")
-        _activePhoto.value = it.data as Photo
+        viewModelScope.launch {
+            activeIdRepository.setActivePhoto(it.id)
+            _requestNavigateToPhoto.value = it.id
+        }
     }
 
-    private suspend fun performInitialFetch() {
-        randomPhotoRepository.fetch(24)
+    fun onNavigateComplete() {
+        _requestNavigateToPhoto.value = null
     }
 
     fun onResume() {
@@ -51,5 +54,9 @@ class RandomViewModel @Inject constructor(
 
             randomPhotoRepository.setDoFetch(true)
         }
+    }
+
+    private suspend fun performInitialFetch() {
+        randomPhotoRepository.fetch(24)
     }
 }
