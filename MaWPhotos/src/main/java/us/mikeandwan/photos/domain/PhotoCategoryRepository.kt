@@ -17,11 +17,15 @@ class PhotoCategoryRepository @Inject constructor(
 
         if(data.first().isEmpty()) {
             emit(emptyList())
-            loadCategories()
+            loadCategories(-1)
         }
 
         emitAll(data)
     }
+
+    fun getNewCategories() = pcDao
+        .getMostRecentCategory()
+        .map { loadCategories(it.id) }
 
     fun getCategories() = pcDao
         .getCategoriesForActiveYear()
@@ -39,12 +43,11 @@ class PhotoCategoryRepository @Inject constructor(
         emit(result?.items?.map{ it.toDomainPhoto() } ?: emptyList<Photo>())
     }
 
-    private suspend fun loadCategories() {
-        val categories = api.getRecentCategories(-1)
+    private suspend fun loadCategories(mostRecentCategory: Int): List<PhotoCategory> {
+        val categories = api.getRecentCategories(mostRecentCategory)
 
         if(categories == null || categories.count == 0L) {
-            // handle error
-            return
+            return emptyList()
         }
 
         val dbCategories = categories.items
@@ -56,5 +59,7 @@ class PhotoCategoryRepository @Inject constructor(
             pcDao.upsert(*dbCategories.toTypedArray())
             idDao.setActiveId(ActiveId(ActiveIdType.PhotoCategoryYear, maxYear))
         }
+
+        return dbCategories.map { it.toDomainPhotoCategory() }
     }
 }

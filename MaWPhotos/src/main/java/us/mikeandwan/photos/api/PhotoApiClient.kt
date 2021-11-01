@@ -23,10 +23,6 @@ class PhotoApiClient @Inject constructor(
         return makeApiCall(::getPhotos.name, suspend { _photoApi.getPhotosByCategory(categoryId) })
     }
 
-    suspend fun getRandomPhoto(): Photo? {
-        return makeApiCall(::getRandomPhoto.name, suspend { _photoApi.getRandomPhoto() })
-    }
-
     suspend fun getRandomPhotos(count: Int): ApiCollection<Photo>? {
         return makeApiCall(::getRandomPhotos.name, suspend { _photoApi.getRandomPhotos(count) })
     }
@@ -98,7 +94,7 @@ class PhotoApiClient @Inject constructor(
         return result.result
     }
 
-    fun getMediaTypeForFile(file:File): MediaType {
+    private fun getMediaTypeForFile(file:File): MediaType {
         val mimeType = _mimeMap.getMimeTypeFromExtension(FilenameUtils.getExtension(file.name))
         var type: MediaType? = null
 

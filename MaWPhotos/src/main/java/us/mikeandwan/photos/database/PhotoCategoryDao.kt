@@ -31,6 +31,13 @@ abstract class PhotoCategoryDao {
     """)
     abstract fun getActiveCategory(type: ActiveIdType): Flow<PhotoCategory>
 
+    @Query("""
+        SELECT pc.*
+          FROM photo_category pc
+         WHERE pc.id = (SELECT MAX(id) FROM photo_category)
+    """)
+    abstract fun getMostRecentCategory(): Flow<PhotoCategory>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun upsert(vararg categories: PhotoCategory)
 

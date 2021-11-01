@@ -39,10 +39,11 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun provideNotificationManager(app: Application): NotificationManager {
-        val notificationManager =
-            app.getSystemService(Application.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = app.getSystemService(Application.NOTIFICATION_SERVICE) as NotificationManager
+
         addNewCategoriesNotificationChannel(app, notificationManager)
         addUploadNotificationChannel(app, notificationManager)
+
         return notificationManager
     }
 
