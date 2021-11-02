@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.screens.photo
 
+import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -7,13 +8,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.*
+import java.io.File
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class PhotoViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
-    private val photoListMediator: PhotoListMediator
+    private val photoListMediator: PhotoListMediator,
+    private val fileStorageRepository: FileStorageRepository
 ): ViewModel() {
     val photos = photoListMediator.photos
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
@@ -53,5 +56,9 @@ class PhotoViewModel @Inject constructor (
         viewModelScope.launch {
             activeIdRepository.setActivePhoto(photo.id)
         }
+    }
+
+    suspend fun savePhotoToShare(drawable: Drawable, originalFilename: String): File {
+        return fileStorageRepository.savePhotoToShare(drawable, originalFilename)
     }
 }

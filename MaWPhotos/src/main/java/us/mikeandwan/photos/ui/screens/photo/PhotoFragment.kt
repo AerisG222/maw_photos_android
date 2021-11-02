@@ -1,8 +1,7 @@
 package us.mikeandwan.photos.ui.screens.photo
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.github.chrisbanes.photoview.PhotoView
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,11 +24,7 @@ import us.mikeandwan.photos.databinding.FragmentPhotoBinding
 import us.mikeandwan.photos.domain.Photo
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment
 import us.mikeandwan.photos.utils.GlideApp
-import java.io.File
-import java.io.FileOutputStream
-import java.lang.Exception
 import java.net.URL
-import java.util.*
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -121,13 +115,11 @@ class PhotoFragment : Fragment() {
         }
     }
 
-    private suspend fun sharePhoto(photo: Photo) = coroutineScope {
+    private suspend fun sharePhoto(photo: Photo) {
         viewModel.sharePhotoComplete()
 
-        val fileToShare = getTempFileName(photo)
-
-        saveTempFile(photo, fileToShare)
-
+        val drawable = getPhotoToShare(photo)
+        val fileToShare = viewModel.savePhotoToShare(drawable, URL(photo.mdUrl).file)
         val contentUri = FileProvider.getUriForFile(requireActivity(), "us.mikeandwan.photos.fileprovider", fileToShare)
         val sendIntent = Intent(Intent.ACTION_SEND)
 
@@ -140,27 +132,13 @@ class PhotoFragment : Fragment() {
         startActivity(shareIntent)
     }
 
-    private suspend fun saveTempFile(photo: Photo, fileToShare: File) = coroutineScope {
-        launch(Dispatchers.IO) {
+    private suspend fun getPhotoToShare(photo: Photo): Drawable {
+        return withContext(Dispatchers.IO) {
             // reuse glide to try to pull the cached image
-            val drawable = GlideApp.with(requireActivity())
+            GlideApp.with(requireActivity())
                 .load(photo.mdUrl)
                 .submit()
                 .get()
-
-            val outputStream = FileOutputStream(fileToShare)
-            val bitmap = (drawable as BitmapDrawable).bitmap
-
-            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 92, outputStream)) {
-                throw Exception("failed to save drawable!")
-            }
         }
-    }
-
-    private fun getTempFileName(photo: Photo): File {
-        val extension = URL(photo.mdUrl).file.substringAfterLast('.')
-        val rootPath = requireActivity().getExternalFilesDir("photos")
-
-        return File(rootPath, "${UUID.randomUUID()}.${extension}")
     }
 }

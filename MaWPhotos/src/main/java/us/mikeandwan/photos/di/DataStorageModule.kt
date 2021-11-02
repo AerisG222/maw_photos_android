@@ -48,6 +48,12 @@ class DataStorageModule {
 
     @Provides
     @Singleton
+    fun provideFileStorageRepository(application: Application): FileStorageRepository {
+        return FileStorageRepository(application)
+    }
+
+    @Provides
+    @Singleton
     fun provideCategoryPreferenceRepository(categoryPreferenceDao: CategoryPreferenceDao): CategoryPreferenceRepository {
         return CategoryPreferenceRepository(categoryPreferenceDao)
     }
