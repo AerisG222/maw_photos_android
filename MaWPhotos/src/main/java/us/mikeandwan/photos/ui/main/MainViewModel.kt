@@ -6,13 +6,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.authorization.AuthService
+import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val authService: AuthService,
-    private val navigationStateRepository: NavigationStateRepository
+    private val navigationStateRepository: NavigationStateRepository,
+    private val fileStorageRepository: FileStorageRepository
 ) : ViewModel() {
     val isAuthenticated: StateFlow<Boolean>
         get() {
@@ -40,5 +42,9 @@ class MainViewModel @Inject constructor(
 
     fun requestNavDrawerClose() {
         navigationStateRepository.requestNavDrawerClose()
+    }
+
+    suspend fun clearShareCache() {
+        fileStorageRepository.clearShareCache()
     }
 }

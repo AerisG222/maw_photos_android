@@ -28,10 +28,22 @@ class FileStorageRepository @Inject constructor(
         }
     }
 
+    suspend fun clearShareCache() {
+        withContext(Dispatchers.IO) {
+            getShareDirectory()
+                ?.walkBottomUp()
+                ?.forEach { it.delete() }
+        }
+    }
+
     private fun getShareFile(originalFilename: String): File {
         val extension = originalFilename.substringAfterLast('.')
-        val rootPath = _context.getExternalFilesDir("photos")
+        val rootPath = getShareDirectory()
 
         return File(rootPath, "${UUID.randomUUID()}.${extension}")
+    }
+
+    private fun getShareDirectory(): File? {
+        return _context.getExternalFilesDir("photos_to_share")
     }
 }

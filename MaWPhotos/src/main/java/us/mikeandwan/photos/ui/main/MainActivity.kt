@@ -95,6 +95,8 @@ class MainActivity : AppCompatActivity() {
                     .filter { it.actionId != null }
                     .onEach { onNavigate(it) }
                     .launchIn(this)
+
+                viewModel.clearShareCache()
             }
         }
     }
