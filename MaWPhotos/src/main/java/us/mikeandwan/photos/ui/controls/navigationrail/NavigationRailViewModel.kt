@@ -28,6 +28,9 @@ class NavigationRailViewModel @Inject constructor(
     private val _settingsButtonColor = MutableStateFlow(R.color.material_on_surface_stroke)
     val settingsButtonColor = _settingsButtonColor.asStateFlow()
 
+    private val _uploadButtonColor = MutableStateFlow(R.color.material_on_surface_stroke)
+    val uploadButtonColor = _uploadButtonColor.asStateFlow()
+
     init {
         viewModelScope.launch {
             navigationStateRepository.navArea.collect { updateNavColors(it) }
@@ -43,6 +46,7 @@ class NavigationRailViewModel @Inject constructor(
         _categoryButtonColor.value = getColor(navigationArea == NavigationArea.Category)
         _randomButtonColor.value = getColor(navigationArea == NavigationArea.Random)
         _settingsButtonColor.value = getColor(navigationArea == NavigationArea.Settings)
+        _uploadButtonColor.value = getColor(navigationArea == NavigationArea.Upload)
     }
 
     private fun getColor(isInArea: Boolean): Int {

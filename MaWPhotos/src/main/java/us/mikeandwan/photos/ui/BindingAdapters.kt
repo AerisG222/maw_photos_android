@@ -4,6 +4,7 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.GridThumbnailSize
 import us.mikeandwan.photos.domain.Photo
@@ -14,6 +15,7 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListRecyclerAdapter
 import us.mikeandwan.photos.utils.GlideApp
+import java.io.File
 
 @BindingAdapter("yearListData")
 fun bindYearRecyclerView(recyclerView: RecyclerView, data: List<Int>?) {
@@ -66,6 +68,13 @@ fun bindImageGridPhotoList(container: FragmentContainerView, photoList: List<Pho
     val imageGridFragment = container.getFragment<ImageGridFragment>()
 
     imageGridFragment.setData(photoList.map { it -> it.toImageGridItem() })
+}
+
+@BindingAdapter("imageGridFileList")
+fun bindImageGridFileList(container: FragmentContainerView, fileList: List<File>) {
+    val imageGridFragment = container.getFragment<ImageGridFragment>()
+
+    imageGridFragment.setData(fileList.mapIndexed { id, file -> ImageGridItem(id, file.path, file) })
 }
 
 @BindingAdapter("imageGridClickHandler")

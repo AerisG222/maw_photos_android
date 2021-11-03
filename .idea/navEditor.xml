@@ -127,6 +127,11 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="navigation_upload">
+                    <value>
+                      <LayoutPositions />
+                    </value>
+                  </entry>
                 </map>
               </option>
             </LayoutPositions>

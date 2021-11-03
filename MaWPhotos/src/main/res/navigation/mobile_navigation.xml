@@ -58,6 +58,11 @@
         android:name="us.mikeandwan.photos.ui.screens.settings.SettingsFragment"
         android:label="@string/title_settings" />
 
+    <fragment
+        android:id="@+id/navigation_upload"
+        android:name="us.mikeandwan.photos.ui.screens.upload.UploadReceiverFragment"
+        android:label="@string/title_upload" />
+
     <action
         android:id="@+id/action_navigate_to_categories"
         app:destination="@id/navigation_categories"
@@ -79,5 +84,9 @@
     <action
         android:id="@+id/action_navigate_to_about"
         app:destination="@id/navigation_about" />
+
+    <action
+        android:id="@+id/action_navigate_to_upload"
+        app:destination="@id/navigation_upload" />
 
 </navigation>

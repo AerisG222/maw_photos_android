@@ -16,7 +16,6 @@ import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
-import us.mikeandwan.photos.domain.PhotoCategory
 import us.mikeandwan.photos.uiold.receiver.PhotoReceiverActivity
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import java.io.File
@@ -38,7 +37,7 @@ class UploadWorker @AssistedInject constructor(
         val file = inputData.getString(KEY_FILENAME)
 
         return try {
-            if (file == null || !file.isNotBlank() || !File(file).exists()) {
+            if (file == null || file.isBlank() || !File(file).exists()) {
                 Result.failure(
                     workDataOf(
                         KEY_FAILURE_REASON to "invalid file: $file"
@@ -46,7 +45,11 @@ class UploadWorker @AssistedInject constructor(
                 )
             }
 
-            apiClient.uploadFile(File(file!!))
+            val fileToUpload = File(file!!)
+
+            apiClient.uploadFile(fileToUpload)
+
+            fileToUpload.delete()
 
             showNotification()
 

@@ -51,6 +51,7 @@ class NavigationStateRepository @Inject constructor(
                 R.id.navigation_random -> { setDestinationInfo(NavigationArea.Random, true, "Random") }
                 R.id.navigation_category -> { setDestinationInfo(NavigationArea.Category, true, photoCategoryRepository.getCategory().first().name) }
                 R.id.navigation_photo -> { _isPhotoScreen.value = true }
+                R.id.navigation_upload -> { setDestinationInfo(NavigationArea.Upload, false, "Upload Queue") }
             }
 
             requestNavDrawerClose()

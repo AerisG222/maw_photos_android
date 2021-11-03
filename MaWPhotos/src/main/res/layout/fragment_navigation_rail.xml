@@ -37,6 +37,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/navigation_categories" />
 
+        <ImageView
+            android:id="@+id/navigation_upload"
+            android:src="@drawable/ic_file_upload"
+            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_upload) }"
+            style="@style/maw_nav_rail_primary_nav_icon"
+            app:tint="@{ viewModel.uploadButtonColor }"
+            app:layout_constraintBottom_toTopOf="@+id/navigation_about"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/navigation_about"

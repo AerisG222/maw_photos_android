@@ -1,13 +1,16 @@
 package us.mikeandwan.photos.ui.main
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.NavigationStateRepository
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,7 +47,12 @@ class MainViewModel @Inject constructor(
         navigationStateRepository.requestNavDrawerClose()
     }
 
-    suspend fun clearShareCache() {
+    suspend fun clearFileCache() {
         fileStorageRepository.clearShareCache()
+        fileStorageRepository.clearLegacyFiles()
+    }
+
+    suspend fun saveUploadFile(mediaUri: Uri): File? {
+        return fileStorageRepository.saveFileToUpload(mediaUri)
     }
 }

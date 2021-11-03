@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.main
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -11,17 +12,23 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.work.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import us.mikeandwan.photos.MobileNavigationDirections
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityMainBinding
 import us.mikeandwan.photos.domain.NavigationInstruction
 import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenuFragment
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment
+import us.mikeandwan.photos.workers.UpdateCategoriesWorker
+import us.mikeandwan.photos.workers.UploadWorker
+import java.util.ArrayList
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -55,6 +62,20 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { controller, destination, bundle ->
             viewModel.destinationChanged(destination.id)
+        }
+
+        initShareReceiver()
+    }
+
+    private fun initShareReceiver() {
+        val intent = intent
+        val action = intent.action
+
+        if (action != null) {
+            when (action) {
+                Intent.ACTION_SEND -> handleSendSingle(intent)
+                Intent.ACTION_SEND_MULTIPLE -> handleSendMultiple(intent)
+            }
         }
     }
 
@@ -96,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     .onEach { onNavigate(it) }
                     .launchIn(this)
 
-                viewModel.clearShareCache()
+                viewModel.clearFileCache()
             }
         }
     }
@@ -133,5 +154,57 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun handleSendSingle(intent: Intent) {
+        val mediaUri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+
+        if(mediaUri != null) {
+            enqueueUpload(mediaUri)
+        }
+    }
+
+    private fun handleSendMultiple(intent: Intent) {
+        val mediaUris = intent.getParcelableArrayListExtra<Uri?>(Intent.EXTRA_STREAM)
+
+        if(mediaUris != null) {
+            enqueueUpload(*mediaUris.toTypedArray())
+        }
+    }
+
+    // TODO: handle token expiration / 401 on upload
+    private fun enqueueUpload(vararg mediaUri: Uri) {
+        lifecycleScope.launch {
+            mediaUri.forEach {
+                val file = viewModel.saveUploadFile(it)
+
+                if (file != null) {
+                    val constraints = Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.UNMETERED)
+                        .build()
+
+                    val data = workDataOf(
+                        UploadWorker.KEY_FILENAME to file.path
+                    )
+
+                    val work = OneTimeWorkRequestBuilder<UploadWorker>()
+                        .setConstraints(constraints)
+                        .setInputData(data)
+                        .build()
+
+                    val workManager = WorkManager.getInstance(applicationContext)
+
+                    workManager.enqueueUniqueWork(
+                        "upload ${file.path}",
+                        ExistingWorkPolicy.REPLACE,
+                        work
+                    )
+                }
+            }
+
+            val action = MobileNavigationDirections.actionNavigateToUpload()
+
+            navController.navigate(action)
+        }
     }
 }
