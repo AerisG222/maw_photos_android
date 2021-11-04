@@ -5,7 +5,6 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
-import us.mikeandwan.photos.utils.CrashReportingTree
 import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.workers.UpdateCategoriesWorker
 import java.util.concurrent.TimeUnit
@@ -24,8 +23,6 @@ class MawApplication : Application(), Configuration.Provider {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-        } else {
-            Timber.plant(CrashReportingTree())
         }
 
         dataServices.wipeTempFiles()
