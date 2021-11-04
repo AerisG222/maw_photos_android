@@ -40,6 +40,7 @@ class ImageGridFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
+        binding.imageGridRecyclerView.setHasFixedSize(true)
         binding.imageGridRecyclerView.layoutManager = FlexboxLayoutManager(activity).apply {
             flexWrap = FlexWrap.WRAP
             flexDirection = FlexDirection.ROW

@@ -38,6 +38,7 @@ class CategoryListFragment : Fragment() {
         binding = FragmentCategoryListBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        binding.categoryListRecyclerView.setHasFixedSize(true)
         binding.categoryListRecyclerView.adapter = CategoryListRecyclerAdapter(_clickHandlerForwarder)
 
         val decoration = DividerItemDecoration(binding.categoryListRecyclerView.context, DividerItemDecoration.VERTICAL)
