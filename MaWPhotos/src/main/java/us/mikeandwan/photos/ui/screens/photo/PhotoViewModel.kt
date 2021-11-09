@@ -72,6 +72,18 @@ class PhotoViewModel @Inject constructor (
         }
     }
 
+    fun navigateToYear(year: Int) {
+        viewModelScope.launch {
+            navigationStateRepository.requestNavigateToYear(year)
+        }
+    }
+
+    fun navigateToCategory(category: PhotoCategory) {
+        viewModelScope.launch {
+            navigationStateRepository.requestNavigateToCategory(category)
+        }
+    }
+
     suspend fun savePhotoToShare(drawable: Drawable, originalFilename: String): File {
         return fileStorageRepository.savePhotoToShare(drawable, originalFilename)
     }

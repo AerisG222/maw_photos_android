@@ -27,6 +27,8 @@
             android:paddingStart="@dimen/_8dp"
             android:paddingTop="@dimen/_2dp"
             android:paddingEnd="@dimen/_8dp"
+            android:paddingBottom="@dimen/_2dp"
+            android:background="@color/black_800_opaque"
             app:layout_anchorGravity="start|top">
 
             <LinearLayout
@@ -41,7 +43,9 @@
                     android:id="@+id/yearTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/pink_500"
                     android:text='@{ viewModel.activeCategory == null ? "" : Integer.toString(viewModel.activeCategory.year) }'
+                    android:onClick="@{ () -> viewModel.navigateToYear(viewModel.activeCategory.year) }"
                     tools:text="2000" />
 
                 <TextView
@@ -54,7 +58,9 @@
                     android:id="@+id/categoryTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/pink_500"
                     android:text='@{ viewModel.activeCategory == null ? "" : viewModel.activeCategory.name }'
+                    android:onClick="@{ () -> viewModel.navigateToCategory(viewModel.activeCategory) }"
                     tools:text="Category Name" />
             </LinearLayout>
 

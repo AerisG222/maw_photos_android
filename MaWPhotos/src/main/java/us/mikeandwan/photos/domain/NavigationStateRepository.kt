@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
+import us.mikeandwan.photos.MobileNavigationDirections
 import us.mikeandwan.photos.R
 import javax.inject.Inject
 
@@ -104,5 +105,20 @@ class NavigationStateRepository @Inject constructor(
         _toolbarTitle.value = title
 
         if(enableDrawer) enableDrawer() else disableDrawer()
+    }
+
+    suspend fun requestNavigateToYear(year: Int) {
+        activeIdRepository.clearActiveCategory()
+        activeIdRepository.setActivePhotoCategoryYear(year)
+
+        requestNavigation(R.id.action_navigate_to_categories)
+    }
+
+    suspend fun requestNavigateToCategory(category: PhotoCategory) {
+        activeIdRepository.clearActivePhoto()
+        activeIdRepository.setActivePhotoCategoryYear(category.year)
+        activeIdRepository.setActivePhotoCategory(category.id)
+
+        requestNavigation(R.id.navigation_category)
     }
 }

@@ -2,6 +2,7 @@
 <resources>
     <color name="black_800">#121212</color>
     <color name="black_900">#000000</color>
+    <color name="black_800_opaque">#99121212</color>
 
     <color name="pink_500">#e91e63</color>
     <color name="pink_700">#c2185b</color>
