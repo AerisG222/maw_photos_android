@@ -37,8 +37,8 @@ class NavigationRailViewModel @Inject constructor(
         }
     }
 
-    fun requestNavigation(id: Int) {
-        navigationStateRepository.requestNavigation(id)
+    fun requestNavigateToArea(area: NavigationArea) {
+        navigationStateRepository.requestNavigateToArea(area)
     }
 
     private fun updateNavColors(navigationArea: NavigationArea) {

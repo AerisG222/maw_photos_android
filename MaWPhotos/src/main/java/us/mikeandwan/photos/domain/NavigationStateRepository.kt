@@ -69,7 +69,36 @@ class NavigationStateRepository @Inject constructor(
         _closeNavDrawerSignal.value = false
     }
 
-    fun requestNavigation(id: Int?) {
+    suspend fun requestNavigateToYear(year: Int) {
+        activeIdRepository.clearActiveCategory()
+        activeIdRepository.setActivePhotoCategoryYear(year)
+
+        requestNavigation(R.id.action_navigate_to_categories)
+    }
+
+    suspend fun requestNavigateToCategory(category: PhotoCategory) {
+        activeIdRepository.clearActivePhoto()
+        activeIdRepository.setActivePhotoCategoryYear(category.year)
+        activeIdRepository.setActivePhotoCategory(category.id)
+
+        requestNavigation(R.id.navigation_category)
+    }
+
+    fun requestNavigateToArea(area: NavigationArea) {
+        when(area) {
+            NavigationArea.Category -> requestNavigation(R.id.action_navigate_to_categories)
+            NavigationArea.Random -> requestNavigation(R.id.action_navigate_to_random)
+            NavigationArea.Upload -> requestNavigation(R.id.action_navigate_to_upload)
+            NavigationArea.About -> requestNavigation(R.id.action_navigate_to_about)
+            NavigationArea.Settings -> requestNavigation(R.id.action_navigate_to_settings)
+        }
+    }
+
+    fun requestNavigationCompleted() {
+        _requestedNavigation.value = NavigationInstruction(null, null)
+    }
+
+    private fun requestNavigation(id: Int?) {
         var popBackId: Int? = null
 
         if(isPhotoScreen.value && _activeDestinationId.value == R.id.navigation_photo) {
@@ -81,10 +110,6 @@ class NavigationStateRepository @Inject constructor(
         }
 
         _requestedNavigation.value = NavigationInstruction(id, popBackId)
-    }
-
-    fun requestNavigationCompleted() {
-        _requestedNavigation.value = NavigationInstruction(null, null)
     }
 
     private fun disableDrawer() {
@@ -105,20 +130,5 @@ class NavigationStateRepository @Inject constructor(
         _toolbarTitle.value = title
 
         if(enableDrawer) enableDrawer() else disableDrawer()
-    }
-
-    suspend fun requestNavigateToYear(year: Int) {
-        activeIdRepository.clearActiveCategory()
-        activeIdRepository.setActivePhotoCategoryYear(year)
-
-        requestNavigation(R.id.action_navigate_to_categories)
-    }
-
-    suspend fun requestNavigateToCategory(category: PhotoCategory) {
-        activeIdRepository.clearActivePhoto()
-        activeIdRepository.setActivePhotoCategoryYear(category.year)
-        activeIdRepository.setActivePhotoCategory(category.id)
-
-        requestNavigation(R.id.navigation_category)
     }
 }

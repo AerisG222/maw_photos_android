@@ -41,8 +41,7 @@ class YearsViewModel @Inject constructor (
 
     fun onYearSelected(year: Int) {
         viewModelScope.launch {
-            activeIdRepository.setActivePhotoCategoryYear(year)
-            navigationStateRepository.requestNavigation(R.id.navigation_categories)
+            navigationStateRepository.requestNavigateToYear(year)
         }
     }
 }

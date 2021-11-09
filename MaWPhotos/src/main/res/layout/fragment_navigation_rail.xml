@@ -7,6 +7,7 @@
 
     <data>
         <import type="us.mikeandwan.photos.R" />
+        <import type="us.mikeandwan.photos.domain.NavigationArea" />
         <variable
             name="viewModel"
             type="us.mikeandwan.photos.ui.controls.navigationrail.NavigationRailViewModel" />
@@ -20,7 +21,7 @@
         <ImageView
             android:id="@+id/navigation_categories"
             android:src="@drawable/ic_home"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_categories) }"
+            android:onClick="@{ () -> viewModel.requestNavigateToArea(NavigationArea.Category) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.categoryButtonColor }"
             app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +31,7 @@
         <ImageView
             android:id="@+id/navigation_random"
             android:src="@drawable/ic_shuffle"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_random) }"
+            android:onClick="@{ () -> viewModel.requestNavigateToArea(NavigationArea.Random) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.randomButtonColor }"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +41,7 @@
         <ImageView
             android:id="@+id/navigation_upload"
             android:src="@drawable/ic_file_upload"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_upload) }"
+            android:onClick="@{ () -> viewModel.requestNavigateToArea(NavigationArea.Upload) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.uploadButtonColor }"
             app:layout_constraintBottom_toTopOf="@+id/navigation_about"
@@ -50,7 +51,7 @@
         <ImageView
             android:id="@+id/navigation_about"
             android:src="@drawable/ic_help_outline"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_about) }"
+            android:onClick="@{ () -> viewModel.requestNavigateToArea(NavigationArea.About) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.aboutButtonColor }"
             app:layout_constraintBottom_toTopOf="@+id/navigation_settings"
@@ -60,7 +61,7 @@
         <ImageView
             android:id="@+id/navigation_settings"
             android:src="@drawable/ic_settings"
-            android:onClick="@{ () -> viewModel.requestNavigation(R.id.action_navigate_to_settings) }"
+            android:onClick="@{ () -> viewModel.requestNavigateToArea(NavigationArea.Settings) }"
             style="@style/maw_nav_rail_primary_nav_icon"
             app:tint="@{ viewModel.settingsButtonColor }"
             app:layout_constraintBottom_toBottomOf="parent"
