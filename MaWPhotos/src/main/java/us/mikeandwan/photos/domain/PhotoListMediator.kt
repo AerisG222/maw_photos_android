@@ -40,4 +40,8 @@ class PhotoListMediator @Inject constructor (
         .flatMapLatest { activePhotoIndex }
         .filter { it >= 0 }
         .combine(photos) { index, photos -> if(photos.size > index) photos[index] else null }
+
+    val activeCategory = activePhoto
+        .filter { it != null }
+        .flatMapLatest { photoCategoryRepository.getCategory(it!!.categoryId) }
 }

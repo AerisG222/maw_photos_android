@@ -95,7 +95,6 @@ class PhotoFragment : Fragment() {
 
                         Timber.i("setting item to: $index")
                         binding.pager.setCurrentItem(index, true)
-                        binding.positionTextView.text = "${index + 1} / ${photos.size}"
                     }
                     .launchIn(this)
 

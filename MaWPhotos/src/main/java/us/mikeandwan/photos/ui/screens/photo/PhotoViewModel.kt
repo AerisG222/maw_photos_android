@@ -16,7 +16,8 @@ import javax.inject.Inject
 class PhotoViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
     private val photoListMediator: PhotoListMediator,
-    private val fileStorageRepository: FileStorageRepository
+    private val fileStorageRepository: FileStorageRepository,
+    private val navigationStateRepository: NavigationStateRepository,
 ): ViewModel() {
     val photos = photoListMediator.photos
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
@@ -27,6 +28,19 @@ class PhotoViewModel @Inject constructor (
 
     val activePhoto = photoListMediator.activePhoto
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    val activeCategory = photoListMediator.activeCategory
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    val showYearAndCategory = navigationStateRepository.navArea
+        .filter { it == NavigationArea.Random }
+        .flatMapLatest { activeCategory }
+        .map { it != null }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    val showPosition = combine(activePhotoIndex, photos) { index, photos -> Pair(index, photos)}
+        .map { (index, photos) -> index >= 0 && photos.isNotEmpty() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val _rotatePhoto = MutableStateFlow<Int>(0)
     val rotatePhoto = _rotatePhoto.asStateFlow()

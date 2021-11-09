@@ -34,6 +34,13 @@ abstract class PhotoCategoryDao {
     @Query("""
         SELECT pc.*
           FROM photo_category pc
+         WHERE id = :id
+    """)
+    abstract fun getCategory(id: Int): Flow<PhotoCategory>
+
+    @Query("""
+        SELECT pc.*
+          FROM photo_category pc
          WHERE pc.id = (SELECT MAX(id) FROM photo_category)
     """)
     abstract fun getMostRecentCategory(): Flow<PhotoCategory>

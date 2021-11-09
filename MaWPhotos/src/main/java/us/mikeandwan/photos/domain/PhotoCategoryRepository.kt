@@ -37,6 +37,10 @@ class PhotoCategoryRepository @Inject constructor(
         .getActiveCategory()
         .map { cat -> cat.toDomainPhotoCategory() }
 
+    fun getCategory(id: Int) = pcDao
+        .getCategory(id)
+        .map { cat -> cat.toDomainPhotoCategory() }
+
     fun getPhotos(categoryId: Int) = flow {
         val result = api.getPhotos(categoryId)
 
