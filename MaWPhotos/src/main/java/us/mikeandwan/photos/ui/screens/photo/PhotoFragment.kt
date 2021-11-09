@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import us.mikeandwan.photos.databinding.FragmentPhotoBinding
 import us.mikeandwan.photos.domain.Photo
+import us.mikeandwan.photos.ui.ZoomOutPageTransformer
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment
 import us.mikeandwan.photos.utils.GlideApp
 import java.net.URL
@@ -53,6 +54,7 @@ class PhotoFragment : Fragment() {
         binding = FragmentPhotoBinding.inflate(inflater)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.pager.setPageTransformer(ZoomOutPageTransformer())
         binding.pager.adapter = PhotoFragmentStateAdapter(this)
         binding.pager.registerOnPageChangeCallback(pageChangeCallback)
 
