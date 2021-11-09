@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.MobileNavigationDirections
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityMainBinding
+import us.mikeandwan.photos.domain.NavigationArea
 import us.mikeandwan.photos.domain.NavigationInstruction
 import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenuFragment
@@ -129,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             navController.navigate(instruction.actionId!!)
-            updateSubnav(instruction.actionId!!)
+            updateSubnav(instruction)
         } else {
             viewModel.requestNavDrawerClose()
         }
@@ -137,10 +138,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.navigationRequestCompleted()
     }
 
-    private fun updateSubnav(id: Int) {
-        val frag = when(id) {
-            R.id.navigation_random -> RandomMenuFragment::class.java
-            R.id.navigation_categories -> YearsFragment::class.java
+    private fun updateSubnav(navigationInstruction: NavigationInstruction) {
+        val frag = when(navigationInstruction.targetNavigationArea) {
+            NavigationArea.Category -> YearsFragment::class.java
+            NavigationArea.Random -> RandomMenuFragment::class.java
             else -> null
         } ?: return
 

@@ -30,7 +30,7 @@ class NavigationStateRepository @Inject constructor(
 
     private val _activeDestinationId = MutableStateFlow(-1)
 
-    private val _requestedNavigation = MutableStateFlow<NavigationInstruction>(NavigationInstruction(null, null))
+    private val _requestedNavigation = MutableStateFlow<NavigationInstruction>(NavigationInstruction(null, null, NavigationArea.None))
     val requestedNavigation = _requestedNavigation.asStateFlow()
 
     private val _navArea = MutableStateFlow(NavigationArea.None)
@@ -73,7 +73,7 @@ class NavigationStateRepository @Inject constructor(
         activeIdRepository.clearActiveCategory()
         activeIdRepository.setActivePhotoCategoryYear(year)
 
-        requestNavigation(R.id.action_navigate_to_categories)
+        requestNavigation(NavigationArea.Category, R.id.action_navigate_to_categories)
     }
 
     suspend fun requestNavigateToCategory(category: PhotoCategory) {
@@ -81,24 +81,24 @@ class NavigationStateRepository @Inject constructor(
         activeIdRepository.setActivePhotoCategoryYear(category.year)
         activeIdRepository.setActivePhotoCategory(category.id)
 
-        requestNavigation(R.id.navigation_category)
+        requestNavigation(NavigationArea.Category, R.id.navigation_category)
     }
 
     fun requestNavigateToArea(area: NavigationArea) {
         when(area) {
-            NavigationArea.Category -> requestNavigation(R.id.action_navigate_to_categories)
-            NavigationArea.Random -> requestNavigation(R.id.action_navigate_to_random)
-            NavigationArea.Upload -> requestNavigation(R.id.action_navigate_to_upload)
-            NavigationArea.About -> requestNavigation(R.id.action_navigate_to_about)
-            NavigationArea.Settings -> requestNavigation(R.id.action_navigate_to_settings)
+            NavigationArea.Category -> requestNavigation(area, R.id.action_navigate_to_categories)
+            NavigationArea.Random -> requestNavigation(area, R.id.action_navigate_to_random)
+            NavigationArea.Upload -> requestNavigation(area, R.id.action_navigate_to_upload)
+            NavigationArea.About -> requestNavigation(area, R.id.action_navigate_to_about)
+            NavigationArea.Settings -> requestNavigation(area, R.id.action_navigate_to_settings)
         }
     }
 
     fun requestNavigationCompleted() {
-        _requestedNavigation.value = NavigationInstruction(null, null)
+        _requestedNavigation.value = NavigationInstruction(null, null, NavigationArea.None)
     }
 
-    private fun requestNavigation(id: Int?) {
+    private fun requestNavigation(destinationArea: NavigationArea, id: Int?) {
         var popBackId: Int? = null
 
         if(isPhotoScreen.value && _activeDestinationId.value == R.id.navigation_photo) {
@@ -109,7 +109,7 @@ class NavigationStateRepository @Inject constructor(
             }
         }
 
-        _requestedNavigation.value = NavigationInstruction(id, popBackId)
+        _requestedNavigation.value = NavigationInstruction(id, popBackId, destinationArea)
     }
 
     private fun disableDrawer() {
