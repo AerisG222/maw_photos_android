@@ -22,7 +22,8 @@
             android:id="@+id/body_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:fitsSystemWindows="true">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/top_appbar"
@@ -72,12 +73,17 @@
 
         </LinearLayout>
 
+        <!--
+            onclick below swallows clicks on the layout that aren't first handled by a button - which
+            effectively does not allow clicking on anything under the nav drawer
+        -->
         <LinearLayout
             android:id="@+id/nav_layout"
             android:layout_width="280dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="?attr/colorPrimarySurface">
+            android:background="?attr/colorPrimarySurface"
+            android:onClick="@{ () -> null }">
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentNavRail"

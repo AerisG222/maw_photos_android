@@ -23,6 +23,8 @@
         <item name="colorOnBackground">@color/black_900</item>
         <item name="colorOnSurface">@color/black_900</item>
         <item name="colorOnError">@color/white_50</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <!--Base custom theme which will be shared between both light and dark theme variants-->
