@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -97,8 +98,11 @@ class ImageGridFragment : Fragment() {
 
     private fun updateAdapter(screenWidth: Int, thumbnailSize: GridThumbnailSize) {
         val thumbSize = getThumbnailSize(screenWidth, thumbnailSize)
+        val adapter = ImageGridRecyclerAdapter(thumbSize, _clickHandlerForwarder)
 
-        binding.imageGridRecyclerView.adapter = ImageGridRecyclerAdapter(thumbSize, _clickHandlerForwarder)
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
+        binding.imageGridRecyclerView.adapter = adapter
     }
 
     private fun getThumbnailSize(screenWidth: Int, thumbnailSize: GridThumbnailSize): Int {
