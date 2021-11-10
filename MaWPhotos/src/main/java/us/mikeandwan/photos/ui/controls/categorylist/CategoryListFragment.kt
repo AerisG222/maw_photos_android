@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
@@ -39,7 +40,11 @@ class CategoryListFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
         binding.categoryListRecyclerView.setHasFixedSize(true)
-        binding.categoryListRecyclerView.adapter = CategoryListRecyclerAdapter(_clickHandlerForwarder)
+
+        val adapter = CategoryListRecyclerAdapter(_clickHandlerForwarder)
+
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        binding.categoryListRecyclerView.adapter = adapter
 
         val decoration = DividerItemDecoration(binding.categoryListRecyclerView.context, DividerItemDecoration.VERTICAL)
 
