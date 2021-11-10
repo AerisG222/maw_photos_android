@@ -1,10 +1,11 @@
 package us.mikeandwan.photos.ui
 
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.flow.map
+import io.noties.markwon.Markwon
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.GridThumbnailSize
 import us.mikeandwan.photos.domain.Photo
@@ -16,6 +17,7 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListRecyclerAdapter
 import us.mikeandwan.photos.utils.GlideApp
 import java.io.File
+
 
 @BindingAdapter("yearListData")
 fun bindYearRecyclerView(recyclerView: RecyclerView, data: List<Int>?) {
@@ -82,4 +84,11 @@ fun bindImageGridClickHandler(container: FragmentContainerView, handler: ImageGr
     val imageGridFragment = container.getFragment<ImageGridFragment>()
 
     imageGridFragment.setClickHandler(handler)
+}
+
+@BindingAdapter("markdownText")
+fun bindMarkdownText(textView: TextView, markdown: String) {
+    val markwon = Markwon.create(textView.context)
+
+    markwon.setMarkdown(textView, markdown)
 }
