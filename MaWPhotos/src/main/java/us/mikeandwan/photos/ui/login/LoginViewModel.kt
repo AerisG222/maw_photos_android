@@ -13,10 +13,8 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(val authService: AuthService): ViewModel() {
     private var _doAuth = MutableStateFlow(false)
     val doAuth = _doAuth.asStateFlow()
-    val isAuthorized: StateFlow<Boolean>
-        get() {
-            return authService.isAuthorized
-        }
+
+    val isAuthorized = authService.isAuthorized
 
     fun initiateAuthentication() {
         _doAuth.value = true

@@ -14,25 +14,13 @@ class CategoriesViewModel @Inject constructor (
     private val categoryPreferenceRepository: CategoryPreferenceRepository,
     private val activeIdRepository: ActiveIdRepository
 ): ViewModel() {
-    private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
-    val categories = _categories.asStateFlow()
+    val categories = photoCategoryRepository
+        .getCategories()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<PhotoCategory>())
 
-    private val _preferences = MutableStateFlow(CATEGORY_PREFERENCE_DEFAULT)
-    val preferences = _preferences.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            categoryPreferenceRepository
-                .getCategoryPreference()
-                .onEach { _preferences.value = it }
-                .launchIn(this)
-
-            photoCategoryRepository
-                .getCategories()
-                .onEach { _categories.value = it }
-                .launchIn(this)
-        }
-    }
+    val preferences = categoryPreferenceRepository
+        .getCategoryPreference()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
 
     fun onCategorySelected(categoryId: Int) {
         viewModelScope.launch {

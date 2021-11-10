@@ -18,26 +18,14 @@ class YearsViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
     private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
-    private val _years = MutableStateFlow<List<Int>>(emptyList())
-    val years = _years.asStateFlow()
+    val years = photoCategoryRepository
+        .getYears()
+        .filter { it.isNotEmpty() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Int>())
 
-    private val _activeYear = MutableStateFlow<Int?>(null)
-    val activeYear = _activeYear.asStateFlow()
-
-    init {
-        photoCategoryRepository
-            .getYears()
-            .filter { it.isNotEmpty() }
-            .onEach { _years.value = it }
-            .flowOn(Dispatchers.IO)
-            .launchIn(viewModelScope)
-
-        activeIdRepository
-            .getActivePhotoCategoryYear()
-            .onEach { _activeYear.value = it }
-            .flowOn(Dispatchers.IO)
-            .launchIn(viewModelScope)
-    }
+    val activeYear = activeIdRepository
+        .getActivePhotoCategoryYear()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     fun onYearSelected(year: Int) {
         viewModelScope.launch {
