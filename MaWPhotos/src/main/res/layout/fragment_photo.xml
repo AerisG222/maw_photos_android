@@ -28,7 +28,7 @@
             android:paddingTop="@dimen/_2dp"
             android:paddingEnd="@dimen/_8dp"
             android:paddingBottom="@dimen/_2dp"
-            android:background="@color/black_800_opaque"
+            android:background="@color/black_900_opaque"
             app:layout_anchorGravity="start|top">
 
             <LinearLayout
