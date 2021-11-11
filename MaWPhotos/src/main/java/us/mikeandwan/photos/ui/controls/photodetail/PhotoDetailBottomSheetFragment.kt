@@ -19,6 +19,7 @@ class PhotoDetailBottomSheetFragment : BottomSheetDialogFragment() {
         fun newInstance() = PhotoDetailBottomSheetFragment()
     }
 
+    private var modalHandler: IHandleModalClose? = null
     private lateinit var binding: FragmentPhotoDetailBottomSheetBinding
 
     override fun onCreateView(
@@ -37,5 +38,15 @@ class PhotoDetailBottomSheetFragment : BottomSheetDialogFragment() {
         }.attach()
 
         return binding.root
+    }
+
+    fun setModalCloseHandler(handler: IHandleModalClose) {
+        modalHandler = handler
+    }
+
+    override fun onDestroy() {
+        modalHandler?.handleModalClose()
+
+        super.onDestroy()
     }
 }

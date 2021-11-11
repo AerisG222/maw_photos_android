@@ -119,7 +119,8 @@
 
             <ImageView
                 android:id="@+id/slideshowButton"
-                android:src="@drawable/ic_play_arrow"
+                android:src="@{ viewModel.playSlideshow ? @drawable/ic_stop : @drawable/ic_play_arrow }"
+                android:onClick="@{ () -> viewModel.toggleSlideshow() }"
                 style="@style/maw_photo_toolbar_button"
                 app:layout_constraintStart_toEndOf="@id/rotateRightButton"
                 app:layout_constraintBottom_toBottomOf="parent" />

@@ -40,7 +40,7 @@ class DomainModule {
 
     @Provides
     @Singleton
-    fun providePhotoListMediator(activeIdRepository: ActiveIdRepository, navigationStateRepository: NavigationStateRepository, photoCategoryRepository: PhotoCategoryRepository, randomPhotoRepository: RandomPhotoRepository): PhotoListMediator {
-        return PhotoListMediator(activeIdRepository, navigationStateRepository, photoCategoryRepository, randomPhotoRepository)
+    fun providePhotoListMediator(activeIdRepository: ActiveIdRepository, navigationStateRepository: NavigationStateRepository, photoCategoryRepository: PhotoCategoryRepository, randomPhotoRepository: RandomPhotoRepository, photoPreferenceRepository: PhotoPreferenceRepository, randomPreferenceRepository: RandomPreferenceRepository): PhotoListMediator {
+        return PhotoListMediator(activeIdRepository, navigationStateRepository, photoCategoryRepository, randomPhotoRepository, photoPreferenceRepository, randomPreferenceRepository)
     }
 }

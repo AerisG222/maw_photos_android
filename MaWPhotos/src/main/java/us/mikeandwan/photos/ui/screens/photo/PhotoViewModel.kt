@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.*
@@ -26,7 +27,7 @@ class PhotoViewModel @Inject constructor (
         .filter { it >= 0 }
         .stateIn(viewModelScope, SharingStarted.Eagerly, -1)
 
-    val activePhoto = photoListMediator.activePhoto
+    private val activePhoto = photoListMediator.activePhoto
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val activeCategory = photoListMediator.activeCategory
@@ -42,11 +43,29 @@ class PhotoViewModel @Inject constructor (
         .map { (index, photos) -> index >= 0 && photos.isNotEmpty() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    private val _pauseSlideshow = MutableStateFlow(false)
+
+    private val _playSlideshow = MutableStateFlow(false)
+    val playSlideshow = _playSlideshow.asStateFlow()
+
     private val _rotatePhoto = MutableStateFlow<Int>(0)
     val rotatePhoto = _rotatePhoto.asStateFlow()
 
     private val _sharePhoto = MutableStateFlow<Photo?>(null)
     val sharePhoto = _sharePhoto.asStateFlow()
+
+    // this is used for its side effects - do not delete
+    val slideshowTicker = combine(playSlideshow, _pauseSlideshow, photoListMediator.slideshowInterval) { play, pause, interval -> Triple(play, pause, interval) }
+        .mapLatest { (play, pause, interval) ->
+            while(true) {
+                delay(interval * 1000L)
+
+                if (play && !pause) {
+                    gotoNextPhoto()
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, Unit)
 
     fun rotatePhoto(direction: Int) {
         _rotatePhoto.value = direction
@@ -86,5 +105,27 @@ class PhotoViewModel @Inject constructor (
 
     suspend fun savePhotoToShare(drawable: Drawable, originalFilename: String): File {
         return fileStorageRepository.savePhotoToShare(drawable, originalFilename)
+    }
+
+    fun toggleSlideshow() {
+        _playSlideshow.update { !it }
+    }
+
+    fun pauseSlideshow() {
+        _pauseSlideshow.value = true
+    }
+
+    fun unpauseSlideshow() {
+        _pauseSlideshow.value = false
+    }
+
+    private fun gotoNextPhoto() {
+        val idx = activePhotoIndex.value
+
+        if(idx + 1 < photos.value.size) {
+            updateActivePhoto(idx + 1)
+        } else {
+            _playSlideshow.value = false
+        }
     }
 }

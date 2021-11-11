@@ -23,13 +23,14 @@ import timber.log.Timber
 import us.mikeandwan.photos.databinding.FragmentPhotoBinding
 import us.mikeandwan.photos.domain.Photo
 import us.mikeandwan.photos.ui.ZoomOutPageTransformer
+import us.mikeandwan.photos.ui.controls.photodetail.IHandleModalClose
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment
 import us.mikeandwan.photos.utils.GlideApp
 import java.net.URL
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class PhotoFragment : Fragment() {
+class PhotoFragment : Fragment(), IHandleModalClose {
     companion object {
         fun newInstance() = PhotoFragment()
 
@@ -59,8 +60,11 @@ class PhotoFragment : Fragment() {
         binding.pager.registerOnPageChangeCallback(pageChangeCallback)
 
         binding.info.setOnClickListener {
+            viewModel.pauseSlideshow()
+
             val modalBottomSheet = PhotoDetailBottomSheetFragment()
             modalBottomSheet.show(childFragmentManager, TAG)
+            modalBottomSheet.setModalCloseHandler(this)
         }
 
         initStateObservers()
@@ -72,6 +76,10 @@ class PhotoFragment : Fragment() {
         binding.pager.unregisterOnPageChangeCallback(pageChangeCallback)
 
         super.onDestroy()
+    }
+
+    override fun handleModalClose() {
+        viewModel.unpauseSlideshow()
     }
 
     private fun rotatePhoto(direction: Int) {

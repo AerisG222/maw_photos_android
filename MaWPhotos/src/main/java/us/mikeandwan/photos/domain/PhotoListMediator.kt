@@ -10,7 +10,9 @@ class PhotoListMediator @Inject constructor (
     activeIdRepository: ActiveIdRepository,
     navigationStateRepository: NavigationStateRepository,
     photoCategoryRepository: PhotoCategoryRepository,
-    randomPhotoRepository: RandomPhotoRepository
+    randomPhotoRepository: RandomPhotoRepository,
+    photoPreferenceRepository: PhotoPreferenceRepository,
+    randomPreferenceRepository: RandomPreferenceRepository
 ) {
     private val isPhotoScreen = navigationStateRepository.isPhotoScreen
         .filter { it }
@@ -29,7 +31,16 @@ class PhotoListMediator @Inject constructor (
         .distinctUntilChanged()
         .flatMapLatest { photoCategoryRepository.getPhotos(it!!) }
 
+    private val categorySlideshowInterval = navArea
+        .filter { it == NavigationArea.Category }
+        .flatMapLatest { photoPreferenceRepository.getSlideshowIntervalSeconds() }
+
+    private val randomSlideshowInterval = navArea
+        .filter { it == NavigationArea.Random }
+        .flatMapLatest { randomPreferenceRepository.getSlideshowIntervalSeconds() }
+
     val photos = merge(randomPhotos, categoryPhotos)
+    val slideshowInterval = merge(categorySlideshowInterval, randomSlideshowInterval)
 
     val activePhotoIndex = isPhotoScreen
         .flatMapLatest { activeIdRepository.getActivePhotoId() }
