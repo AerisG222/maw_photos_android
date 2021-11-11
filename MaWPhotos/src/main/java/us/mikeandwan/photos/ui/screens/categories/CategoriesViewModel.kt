@@ -12,7 +12,8 @@ import javax.inject.Inject
 class CategoriesViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val categoryPreferenceRepository: CategoryPreferenceRepository,
-    private val activeIdRepository: ActiveIdRepository
+    private val activeIdRepository: ActiveIdRepository,
+    private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
     val categories = photoCategoryRepository
         .getCategories()
@@ -21,6 +22,12 @@ class CategoriesViewModel @Inject constructor (
     val preferences = categoryPreferenceRepository
         .getCategoryPreference()
         .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
+
+    // used for its side effect - do not delete
+    val updateTitlebar = activeIdRepository
+        .getActivePhotoCategoryYear()
+        .mapLatest { navigationStateRepository.overrideTitle(it.toString()) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "")
 
     fun onCategorySelected(categoryId: Int) {
         viewModelScope.launch {

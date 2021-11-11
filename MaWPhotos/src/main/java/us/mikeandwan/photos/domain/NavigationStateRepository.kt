@@ -98,6 +98,10 @@ class NavigationStateRepository @Inject constructor(
         _requestedNavigation.value = NavigationInstruction(null, null, NavigationArea.None)
     }
 
+    fun overrideTitle(title: String) {
+        _toolbarTitle.value = title
+    }
+
     private fun requestNavigation(destinationArea: NavigationArea, id: Int?) {
         var popBackId: Int? = null
 
