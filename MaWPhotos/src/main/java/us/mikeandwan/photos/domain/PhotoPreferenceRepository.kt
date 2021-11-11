@@ -12,22 +12,6 @@ class PhotoPreferenceRepository @Inject constructor (
         .getPhotoPreference(Constants.ID)
         .map { it.toDomainPhotoPreference() }
 
-    fun getDisplayToolbar() = dao
-        .getPhotoPreference(Constants.ID)
-        .map { it.displayToolbar }
-
-    fun getDisplayThumbnails() = dao
-        .getPhotoPreference(Constants.ID)
-        .map { it.displayThumbnails }
-
-    fun getDisplayTopToolbar() = dao
-        .getPhotoPreference(Constants.ID)
-        .map { it.displayTopToolbar }
-
-    fun getDoFadeControls() = dao
-        .getPhotoPreference(Constants.ID)
-        .map { it.doFadeControls }
-
     fun getSlideshowIntervalSeconds() = dao
         .getPhotoPreference(Constants.ID)
         .map { it.slideshowIntervalSeconds }
@@ -35,22 +19,6 @@ class PhotoPreferenceRepository @Inject constructor (
     fun getPhotoGridItemSize() = dao
         .getPhotoPreference(Constants.ID)
         .map { it.gridThumbnailSize}
-
-    suspend fun setDisplayToolbar(doDisplayToolbar: Boolean) {
-        setPreference { it.copy(displayToolbar = doDisplayToolbar) }
-    }
-
-    suspend fun setDisplayThumbnails(doDisplayThumbnails: Boolean) {
-        setPreference { it.copy(displayThumbnails = doDisplayThumbnails) }
-    }
-
-    suspend fun setDisplayTopToolbar(doDisplayTopToolbar: Boolean) {
-        setPreference { it.copy(displayTopToolbar = doDisplayTopToolbar) }
-    }
-
-    suspend fun setDoFadeControls(doFadeControls: Boolean) {
-        setPreference { it.copy(doFadeControls = doFadeControls) }
-    }
 
     suspend fun setSlideshowIntervalSeconds(seconds: Int) {
         setPreference { it.copy(slideshowIntervalSeconds = seconds) }
@@ -63,10 +31,6 @@ class PhotoPreferenceRepository @Inject constructor (
     private suspend fun setPhotoPreferences(pref: PhotoPreference) {
         val dbPref = us.mikeandwan.photos.database.PhotoPreference(
             Constants.ID,
-            pref.displayToolbar,
-            pref.displayThumbnails,
-            pref.displayTopToolbar,
-            pref.doFadeControls,
             pref.slideshowIntervalSeconds,
             pref.gridThumbnailSize)
 

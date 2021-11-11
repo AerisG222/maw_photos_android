@@ -31,26 +31,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_photo_display_header">
-        <SwitchPreferenceCompat
-            app:key="display_top_toolbar"
-            app:title="@string/pref_photo_display_show_top_toolbar"
-            app:defaultValue="true" />
-
-        <SwitchPreferenceCompat
-            app:key="display_toolbar"
-            app:title="@string/pref_photo_display_show_toolbar"
-            app:defaultValue="true" />
-
-        <SwitchPreferenceCompat
-            app:key="display_thumbnails"
-            app:title="@string/pref_photo_display_show_thumbnails"
-            app:defaultValue="true" />
-
-        <SwitchPreferenceCompat
-            app:key="fade_controls"
-            app:title="@string/pref_photo_display_fade_controls"
-            app:defaultValue="true" />
-
         <ListPreference
             app:key="photo_slideshow_interval"
             app:title="@string/pref_photo_display_slideshow_interval"

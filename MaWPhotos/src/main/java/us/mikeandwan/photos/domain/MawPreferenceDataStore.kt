@@ -15,10 +15,6 @@ class MawPreferenceDataStore(
             when (key) {
                 "notifications_new_message" -> notificationPreferenceRepository.getDoNotify().first()
                 "notifications_new_message_vibrate" -> notificationPreferenceRepository.getDoVibrate().first()
-                "display_top_toolbar" -> photoPreferenceRepository.getDisplayTopToolbar().first()
-                "display_toolbar" -> photoPreferenceRepository.getDisplayToolbar().first()
-                "display_thumbnails" -> photoPreferenceRepository.getDisplayThumbnails().first()
-                "fade_controls" -> photoPreferenceRepository.getDoFadeControls().first()
                 else -> throw IllegalArgumentException("Invalid boolean key: $key")
             }
         }
@@ -43,10 +39,6 @@ class MawPreferenceDataStore(
             when (key) {
                 "notifications_new_message" -> notificationPreferenceRepository.setDoNotify(value)
                 "notifications_new_message_vibrate" -> notificationPreferenceRepository.setDoVibrate(value)
-                "display_top_toolbar" -> photoPreferenceRepository.setDisplayTopToolbar(value)
-                "display_toolbar" -> photoPreferenceRepository.setDisplayToolbar(value)
-                "display_thumbnails" -> photoPreferenceRepository.setDisplayThumbnails(value)
-                "fade_controls" -> photoPreferenceRepository.setDoFadeControls(value)
                 else -> throw IllegalArgumentException("Invalid boolean key: $key")
             }
         }
