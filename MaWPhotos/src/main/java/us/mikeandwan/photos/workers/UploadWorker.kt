@@ -16,7 +16,6 @@ import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
-import us.mikeandwan.photos.uiold.receiver.PhotoReceiverActivity
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import java.io.File
 
@@ -70,7 +69,7 @@ class UploadWorker @AssistedInject constructor(
     private suspend fun showNotification() {
         val i = Intent(Intent.ACTION_MAIN)
 
-        i.setClass(applicationContext, PhotoReceiverActivity::class.java)
+        // i.setClass(applicationContext, PhotoReceiverActivity::class.java)
 
         val pendingIntentFlag = PendingIntentFlagHelper.getMutableFlag(PendingIntent.FLAG_UPDATE_CURRENT)
         val detailsIntent = PendingIntent.getActivity(applicationContext, 0, i, pendingIntentFlag)

@@ -31,19 +31,7 @@ class PhotoApiModule {
 
     @Provides
     @Singleton
-    fun providePhotoApiClient(
-        httpClient: OkHttpClient,
-        retrofit: Retrofit
-    ): PhotoApiClient {
-        return PhotoApiClient(httpClient, retrofit)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLegacyPhotoApiClient(
-        httpClient: OkHttpClient,
-        retrofit: Retrofit
-    ): us.mikeandwan.photos.services.PhotoApiClient {
-        return us.mikeandwan.photos.services.PhotoApiClient(httpClient, retrofit)
+    fun providePhotoApiClient(retrofit: Retrofit): PhotoApiClient {
+        return PhotoApiClient(retrofit)
     }
 }

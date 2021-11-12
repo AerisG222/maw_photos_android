@@ -49,31 +49,6 @@
             android:screenOrientation="fullSensor">
         </activity>
 
-        <activity
-            android:name=".uiold.mode.ModeSelectionActivity"
-            android:label="@string/title_activity_mode_selection"
-            android:screenOrientation="fullSensor" />
-
-        <activity
-            android:name=".uiold.photos.PhotoListActivity"
-            android:label="@string/title_activity_photo_list"
-            android:launchMode="singleTask"
-            android:screenOrientation="fullSensor" />
-
-        <activity
-            android:name=".uiold.categories.CategoryListActivity"
-            android:label="@string/title_activity_category_list"
-            android:screenOrientation="fullSensor">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".uiold.mode.ModeSelectionActivity" />
-        </activity>
-
-        <activity
-            android:name=".uiold.settings.SettingsActivity"
-            android:label="@string/pref_activity_settings_title"
-            android:screenOrientation="fullSensor" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="us.mikeandwan.photos.fileprovider"
@@ -90,15 +65,5 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove">
         </provider>
-
-        <service
-            android:name=".services.UpdateCategoriesJobService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <service
-            android:name=".services.UploadJobService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

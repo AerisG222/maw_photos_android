@@ -5,17 +5,13 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
-import us.mikeandwan.photos.services.DataServices
 import us.mikeandwan.photos.workers.UpdateCategoriesWorker
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltAndroidApp
 class MawApplication : Application(), Configuration.Provider {
-    var notificationCount = 0
-
     @Inject lateinit var workerFactory: HiltWorkerFactory
-    @Inject lateinit var dataServices: DataServices
 
     override fun onCreate() {
         super.onCreate()
@@ -24,8 +20,6 @@ class MawApplication : Application(), Configuration.Provider {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-
-        dataServices.wipeTempFiles()
 
         schedulePeriodicRefresh()
     }
@@ -56,8 +50,6 @@ class MawApplication : Application(), Configuration.Provider {
     companion object {
         const val NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES = "notify_new_categories"
         const val NOTIFICATION_CHANNEL_ID_UPLOAD_FILES = "files_uploaded"
-        const val JOB_ID_UPDATE_CATEGORY = 2
-        const val JOB_ID_UPLOAD_FILES = 3
 
         lateinit var instance: MawApplication
             private set

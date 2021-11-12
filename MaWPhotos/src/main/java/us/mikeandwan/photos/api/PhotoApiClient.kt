@@ -2,14 +2,12 @@ package us.mikeandwan.photos.api
 
 import android.webkit.MimeTypeMap
 import okhttp3.*
-import org.apache.commons.io.FilenameUtils
 import retrofit2.Retrofit
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
 class PhotoApiClient @Inject constructor(
-    private val _httpClient: OkHttpClient,
     retrofit: Retrofit
 ) {
     private val _photoApi: PhotoApi by lazy { retrofit.create(PhotoApi::class.java) }
@@ -53,21 +51,6 @@ class PhotoApiClient @Inject constructor(
         makeApiCall(::addComment.name, suspend { _photoApi.addCommentForPhoto(photoId, cp) })
     }
 
-    /*
-    fun downloadPhoto(photoUrl: String): Response? {
-        try {
-            val url = URL(photoUrl)
-            val request = Request.Builder().url(url).build()
-
-            return _httpClient.newCall(request).execute()
-        } catch (ex: IOException) {
-            Timber.w("Error when getting photo blob: %s", ex.message)
-        }
-
-        return null
-    }
-    */
-
     // https://futurestud.io/tutorials/retrofit-2-how-to-upload-files-to-server
     suspend fun uploadFile(file: File): FileOperationResult? {
         val type = getMediaTypeForFile(file)
@@ -95,7 +78,7 @@ class PhotoApiClient @Inject constructor(
     }
 
     private fun getMediaTypeForFile(file:File): MediaType {
-        val mimeType = _mimeMap.getMimeTypeFromExtension(FilenameUtils.getExtension(file.name))
+        val mimeType = _mimeMap.getMimeTypeFromExtension(file.extension)
         var type: MediaType? = null
 
         if(mimeType != null) {

@@ -9,7 +9,6 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
-import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
@@ -17,8 +16,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.domain.MawPreferenceDataStore
-import us.mikeandwan.photos.services.*
 import javax.inject.Singleton
 
 @Module
@@ -45,34 +42,6 @@ class ApplicationModule {
         addUploadNotificationChannel(app, notificationManager)
 
         return notificationManager
-    }
-
-    @Provides
-    @Singleton
-    fun provideUpdateCategoriesJobScheduler(
-        app: Application,
-        jobScheduler: JobScheduler
-    ): UpdateCategoriesJobScheduler {
-        return UpdateCategoriesJobScheduler(app, jobScheduler)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUploadScheduler(
-        app: Application,
-        jobScheduler: JobScheduler
-    ): UploadJobScheduler {
-        return UploadJobScheduler(app, jobScheduler)
-    }
-
-    @Provides
-    @Singleton
-    fun provideDataServices(
-        databaseAccessor: DatabaseAccessor,
-        photoApiClient: PhotoApiClient,
-        photoStorage: PhotoStorage
-    ): DataServices {
-        return DataServices(databaseAccessor, photoApiClient, photoStorage)
     }
 
     private fun addNewCategoriesNotificationChannel(

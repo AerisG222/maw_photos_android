@@ -2,7 +2,6 @@ package us.mikeandwan.photos.api
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
-import us.mikeandwan.photos.models.FileLocation
 import java.util.*
 
 data class UploadedFile(
