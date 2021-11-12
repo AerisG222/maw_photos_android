@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.domain
+package us.mikeandwan.photos.domain.models
 
 data class RandomPreference (
     val slideshowIntervalSeconds: Int,

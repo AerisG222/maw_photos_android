@@ -3,8 +3,7 @@ package us.mikeandwan.photos.ui.screens.photo
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import kotlinx.coroutines.flow.StateFlow
-import us.mikeandwan.photos.domain.Photo
+import us.mikeandwan.photos.domain.models.Photo
 
 class PhotoFragmentStateAdapter(fragment: Fragment): FragmentStateAdapter(fragment) {
     private var _photos = emptyList<Photo>()

@@ -2,7 +2,7 @@ package us.mikeandwan.photos.domain
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
+import us.mikeandwan.photos.domain.models.NavigationArea
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi

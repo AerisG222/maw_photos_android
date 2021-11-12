@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import us.mikeandwan.photos.databinding.ViewHolderCategoryListItemBinding
-import us.mikeandwan.photos.domain.PhotoCategory
+import us.mikeandwan.photos.domain.models.PhotoCategory
 
 class CategoryListRecyclerAdapter(private val clickListener: ClickListener)
     : ListAdapter<PhotoCategory, CategoryListRecyclerAdapter.ViewHolder>(DiffCallback) {

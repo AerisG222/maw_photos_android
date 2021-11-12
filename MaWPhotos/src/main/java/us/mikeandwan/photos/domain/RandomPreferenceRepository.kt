@@ -3,6 +3,8 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.database.RandomPreferenceDao
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.RandomPreference
 import javax.inject.Inject
 
 class RandomPreferenceRepository @Inject constructor (

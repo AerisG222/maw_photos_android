@@ -7,9 +7,9 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.RecyclerView
 import io.noties.markwon.Markwon
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.domain.GridThumbnailSize
-import us.mikeandwan.photos.domain.Photo
-import us.mikeandwan.photos.domain.PhotoCategory
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem

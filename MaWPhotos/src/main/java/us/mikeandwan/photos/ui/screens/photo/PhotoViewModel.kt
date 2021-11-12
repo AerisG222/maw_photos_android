@@ -9,6 +9,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.*
+import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import java.io.File
 import javax.inject.Inject
 

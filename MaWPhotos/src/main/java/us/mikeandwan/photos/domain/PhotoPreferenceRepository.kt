@@ -3,6 +3,8 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.database.PhotoPreferenceDao
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.PhotoPreference
 import javax.inject.Inject
 
 class PhotoPreferenceRepository @Inject constructor (

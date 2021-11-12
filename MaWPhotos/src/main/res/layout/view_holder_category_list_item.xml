@@ -7,7 +7,7 @@
     <data>
         <variable
             name="category"
-            type="us.mikeandwan.photos.domain.PhotoCategory" />
+            type="us.mikeandwan.photos.domain.models.PhotoCategory" />
     </data>
 
     <LinearLayout

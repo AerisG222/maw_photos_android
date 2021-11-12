@@ -3,6 +3,7 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.database.NotificationPreferenceDao
+import us.mikeandwan.photos.domain.models.NotificationPreference
 import javax.inject.Inject
 
 class NotificationPreferenceRepository @Inject constructor(

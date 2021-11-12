@@ -3,6 +3,8 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
 import javax.inject.Inject
 
 class RandomPhotoRepository @Inject constructor(

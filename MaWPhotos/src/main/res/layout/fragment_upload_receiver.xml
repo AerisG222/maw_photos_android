@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="us.mikeandwan.photos.domain.GridThumbnailSize" />
+        <import type="us.mikeandwan.photos.domain.models.GridThumbnailSize" />
 
         <variable
             name="viewModel"

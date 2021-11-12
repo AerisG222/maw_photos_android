@@ -3,7 +3,7 @@ package us.mikeandwan.photos.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import us.mikeandwan.photos.domain.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 @Entity(tableName = "random_preference")
 data class RandomPreference(

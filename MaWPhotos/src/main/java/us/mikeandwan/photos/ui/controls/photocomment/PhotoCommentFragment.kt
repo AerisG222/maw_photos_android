@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentPhotoCommentBinding
-import us.mikeandwan.photos.domain.PhotoComment
+import us.mikeandwan.photos.domain.models.PhotoComment
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*

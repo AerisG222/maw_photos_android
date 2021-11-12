@@ -1,5 +1,7 @@
 package us.mikeandwan.photos.domain
 
+import us.mikeandwan.photos.domain.models.*
+
 fun us.mikeandwan.photos.database.PhotoCategory.toDomainPhotoCategory(): PhotoCategory {
     return PhotoCategory(
         this.id,

@@ -3,6 +3,9 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.database.CategoryPreferenceDao
+import us.mikeandwan.photos.domain.models.CategoryDisplayType
+import us.mikeandwan.photos.domain.models.CategoryPreference
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import javax.inject.Inject
 
 class CategoryPreferenceRepository @Inject constructor(
@@ -37,7 +40,7 @@ class CategoryPreferenceRepository @Inject constructor(
         dao.setCategoryPreference(dbPref)
     }
 
-    private suspend fun setPreference(update: (pref:CategoryPreference) -> CategoryPreference) {
+    private suspend fun setPreference(update: (pref: CategoryPreference) -> CategoryPreference) {
         val pref = getCategoryPreference().first()
 
         setCategoryPreference(update(pref))

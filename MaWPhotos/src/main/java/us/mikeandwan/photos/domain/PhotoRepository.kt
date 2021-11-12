@@ -3,6 +3,7 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.domain.models.PhotoComment
 import javax.inject.Inject
 
 class PhotoRepository @Inject constructor (

@@ -7,7 +7,7 @@
 
     <data>
         <import type="us.mikeandwan.photos.R" />
-        <import type="us.mikeandwan.photos.domain.NavigationArea" />
+        <import type="us.mikeandwan.photos.domain.models.NavigationArea" />
         <variable
             name="viewModel"
             type="us.mikeandwan.photos.ui.controls.navigationrail.NavigationRailViewModel" />

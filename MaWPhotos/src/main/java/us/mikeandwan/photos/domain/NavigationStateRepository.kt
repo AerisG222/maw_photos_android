@@ -8,9 +8,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import timber.log.Timber
-import us.mikeandwan.photos.MobileNavigationDirections
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.domain.models.NavigationInstruction
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import javax.inject.Inject
 
 class NavigationStateRepository @Inject constructor(

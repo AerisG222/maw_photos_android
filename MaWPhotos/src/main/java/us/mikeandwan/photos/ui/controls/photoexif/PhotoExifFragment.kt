@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentPhotoExifBinding
-import us.mikeandwan.photos.domain.PhotoExifData
+import us.mikeandwan.photos.domain.models.PhotoExifData
 
 @AndroidEntryPoint
 class PhotoExifFragment : Fragment() {

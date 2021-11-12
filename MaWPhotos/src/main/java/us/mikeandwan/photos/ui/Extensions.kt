@@ -1,7 +1,7 @@
 package us.mikeandwan.photos.ui
 
-import us.mikeandwan.photos.domain.Photo
-import us.mikeandwan.photos.domain.PhotoCategory
+import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 
 fun Photo.toImageGridItem(): ImageGridItem {

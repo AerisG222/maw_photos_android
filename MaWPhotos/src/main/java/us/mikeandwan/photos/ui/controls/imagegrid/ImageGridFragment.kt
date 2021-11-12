@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentImageGridBinding
-import us.mikeandwan.photos.domain.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 @AndroidEntryPoint
 class ImageGridFragment : Fragment() {

@@ -4,6 +4,8 @@ import androidx.room.withTransaction
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.*
+import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import javax.inject.Inject
 
 class PhotoCategoryRepository @Inject constructor(

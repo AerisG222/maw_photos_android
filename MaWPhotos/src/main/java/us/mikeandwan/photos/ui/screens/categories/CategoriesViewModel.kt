@@ -6,6 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.*
+import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import javax.inject.Inject
 
 @HiltViewModel

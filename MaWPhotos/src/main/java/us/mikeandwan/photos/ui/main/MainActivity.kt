@@ -21,15 +21,12 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.MobileNavigationDirections
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityMainBinding
-import us.mikeandwan.photos.domain.NavigationArea
-import us.mikeandwan.photos.domain.NavigationInstruction
+import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.domain.models.NavigationInstruction
 import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenuFragment
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment
-import us.mikeandwan.photos.workers.UpdateCategoriesWorker
 import us.mikeandwan.photos.workers.UploadWorker
-import java.util.ArrayList
-import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

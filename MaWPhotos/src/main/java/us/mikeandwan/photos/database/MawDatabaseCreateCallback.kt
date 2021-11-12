@@ -2,8 +2,8 @@ package us.mikeandwan.photos.database
 
 import androidx.room.RoomDatabase.Callback
 import androidx.sqlite.db.SupportSQLiteDatabase
-import us.mikeandwan.photos.domain.CategoryDisplayType
-import us.mikeandwan.photos.domain.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.CategoryDisplayType
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 class MawDatabaseCreateCallback : Callback() {
     override fun onCreate(db: SupportSQLiteDatabase) {

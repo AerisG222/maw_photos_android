@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import us.mikeandwan.photos.databinding.FragmentPhotoBinding
-import us.mikeandwan.photos.domain.Photo
+import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.ZoomOutPageTransformer
 import us.mikeandwan.photos.ui.controls.photodetail.IHandleModalClose
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment

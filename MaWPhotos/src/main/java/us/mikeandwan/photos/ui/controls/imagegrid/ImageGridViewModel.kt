@@ -2,7 +2,7 @@ package us.mikeandwan.photos.ui.controls.imagegrid
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.*
-import us.mikeandwan.photos.domain.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 class ImageGridViewModel: ViewModel() {
     private val _screenWidth = MutableStateFlow(0)
