@@ -12,12 +12,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentPhotoExifBinding
 import us.mikeandwan.photos.domain.models.PhotoExifData
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class PhotoExifFragment : Fragment() {
     companion object {

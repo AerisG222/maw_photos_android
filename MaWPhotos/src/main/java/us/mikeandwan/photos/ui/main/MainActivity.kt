@@ -28,6 +28,7 @@ import us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment
 import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.workers.UploadWorker
 
+@Suppress("UNUSED_ANONYMOUS_PARAMETER")
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

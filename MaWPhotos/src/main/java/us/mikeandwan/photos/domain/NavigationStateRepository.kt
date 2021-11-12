@@ -92,6 +92,7 @@ class NavigationStateRepository @Inject constructor(
             NavigationArea.Upload -> requestNavigation(area, R.id.action_navigate_to_upload)
             NavigationArea.About -> requestNavigation(area, R.id.action_navigate_to_about)
             NavigationArea.Settings -> requestNavigation(area, R.id.action_navigate_to_settings)
+            else -> throw Exception("cannot navigate to area: $area")
         }
     }
 

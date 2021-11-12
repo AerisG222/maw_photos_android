@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -27,6 +28,7 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.ui.toImageGridItem
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class CategoriesFragment : Fragment() {
     companion object {
@@ -51,7 +53,7 @@ class CategoriesFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentCategoriesBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
@@ -102,7 +104,7 @@ class CategoriesFragment : Fragment() {
     }
 
     private fun showGrid(thumbnailSize: GridThumbnailSize) {
-        setChildFragment(R.layout.fragment_image_grid, ImageGridFragment::class.java, FRAG_GRID)
+        setChildFragment(ImageGridFragment::class.java, FRAG_GRID)
 
         val frag = childFragmentManager.fragments.first() as ImageGridFragment
 
@@ -110,10 +112,10 @@ class CategoriesFragment : Fragment() {
     }
 
     private fun showList() {
-        setChildFragment(R.layout.fragment_category_list, CategoryListFragment::class.java, FRAG_LIST)
+        setChildFragment(CategoryListFragment::class.java, FRAG_LIST)
     }
 
-    private fun <T: Fragment> setChildFragment(id: Int, fragmentClass: Class<T>, tag: String) {
+    private fun <T: Fragment> setChildFragment(fragmentClass: Class<T>, tag: String) {
         val fragment = getCurrentFragment()
         var doRemove = false
 

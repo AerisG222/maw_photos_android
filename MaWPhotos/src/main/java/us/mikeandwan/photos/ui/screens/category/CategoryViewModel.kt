@@ -14,7 +14,7 @@ import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@ExperimentalCoroutinesApi
 @HiltViewModel
 class CategoryViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,

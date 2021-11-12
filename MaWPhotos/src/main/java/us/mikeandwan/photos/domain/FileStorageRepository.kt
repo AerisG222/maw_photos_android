@@ -29,7 +29,7 @@ class FileStorageRepository @Inject constructor(
         if(dir == null) {
             emit(emptyList<File>())
         } else {
-            emit(dir.listFiles(FileFilter { it.isFile }).asList())
+            emit(dir.listFiles(FileFilter { it.isFile })!!.asList())
         }
     }
 

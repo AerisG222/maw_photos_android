@@ -2,6 +2,7 @@ package us.mikeandwan.photos.ui.controls.photodetail
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import us.mikeandwan.photos.ui.controls.photocomment.PhotoCommentFragment
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment.Companion.TAB_INDEX_COMMENTS
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment.Companion.TAB_INDEX_EXIF
@@ -9,6 +10,7 @@ import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragme
 import us.mikeandwan.photos.ui.controls.photoexif.PhotoExifFragment
 import us.mikeandwan.photos.ui.controls.photorating.PhotoRatingFragment
 
+@ExperimentalCoroutinesApi
 class PhotoDetailPagerAdapter(fragment: Fragment)
     : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int {

@@ -12,6 +12,7 @@ import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+@Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class AuthAuthenticator(
     private val _authService: AuthorizationService,
     private val _authStateManager: AuthStateManager

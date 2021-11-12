@@ -71,7 +71,7 @@ class AuthStateManager constructor(
     private fun readState(): AuthState {
         _lock.lock()
 
-        return try {
+        try {
             var authState = AuthState()
 
             runBlocking {
