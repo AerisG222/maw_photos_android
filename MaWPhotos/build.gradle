@@ -17,6 +17,12 @@ android {
         versionCode 47
         versionName "6.2"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+
         manifestPlaceholders = [
             'appAuthRedirectScheme': 'us.mikeandwan.photos'
         ]
