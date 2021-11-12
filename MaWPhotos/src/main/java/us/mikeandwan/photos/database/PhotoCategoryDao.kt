@@ -29,25 +29,25 @@ abstract class PhotoCategoryDao {
                  ON ai.type = :type
                 AND ai.id = pc.id
     """)
-    abstract fun getActiveCategory(type: ActiveIdType): Flow<PhotoCategory>
+    abstract fun getActiveCategory(type: ActiveIdType): Flow<PhotoCategory?>
 
     @Query("""
         SELECT pc.*
           FROM photo_category pc
          WHERE id = :id
     """)
-    abstract fun getCategory(id: Int): Flow<PhotoCategory>
+    abstract fun getCategory(id: Int): Flow<PhotoCategory?>
 
     @Query("""
         SELECT pc.*
           FROM photo_category pc
          WHERE pc.id = (SELECT MAX(id) FROM photo_category)
     """)
-    abstract fun getMostRecentCategory(): Flow<PhotoCategory>
+    abstract fun getMostRecentCategory(): Flow<PhotoCategory?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun upsert(vararg categories: PhotoCategory)
 
     fun getCategoriesForActiveYear(): Flow<List<PhotoCategory>> = getCategoriesForActiveYear(ActiveIdType.PhotoCategoryYear)
-    fun getActiveCategory(): Flow<PhotoCategory> = getActiveCategory(ActiveIdType.PhotoCategory)
+    fun getActiveCategory(): Flow<PhotoCategory?> = getActiveCategory(ActiveIdType.PhotoCategory)
 }

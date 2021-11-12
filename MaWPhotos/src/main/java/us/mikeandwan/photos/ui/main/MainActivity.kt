@@ -124,17 +124,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onNavigate(instruction: NavigationInstruction) {
-        if (instruction.actionId != navController.currentDestination?.id) {
-            if(instruction.popBackId != null) {
-                navController.popBackStack(instruction.popBackId, false)
-            }
-
-            navController.navigate(instruction.actionId!!)
-            updateSubnav(instruction)
-        } else {
-            viewModel.requestNavDrawerClose()
+        if(instruction.popBackId != null) {
+            navController.popBackStack(instruction.popBackId, false)
         }
 
+        navController.navigate(instruction.actionId!!)
+        updateSubnav(instruction)
+
+        viewModel.requestNavDrawerClose()
         viewModel.navigationRequestCompleted()
     }
 

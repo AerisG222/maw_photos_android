@@ -25,7 +25,7 @@ class PhotoCategoryRepository @Inject constructor(
 
     fun getNewCategories() = pcDao
         .getMostRecentCategory()
-        .map { loadCategories(it.id) }
+        .map { if(it == null) loadCategories(-1) else loadCategories(it.id) }
 
     fun getCategories() = pcDao
         .getCategoriesForActiveYear()
@@ -35,11 +35,13 @@ class PhotoCategoryRepository @Inject constructor(
 
     fun getCategory() = pcDao
         .getActiveCategory()
-        .map { cat -> cat.toDomainPhotoCategory() }
+        .filter { it != null }
+        .map { cat -> cat!!.toDomainPhotoCategory() }
 
     fun getCategory(id: Int) = pcDao
         .getCategory(id)
-        .map { cat -> cat.toDomainPhotoCategory() }
+        .filter { it != null }
+        .map { cat -> cat!!.toDomainPhotoCategory() }
 
     fun getPhotos(categoryId: Int) = flow {
         val result = api.getPhotos(categoryId)
