@@ -42,7 +42,7 @@ class PhotoRatingViewModel @Inject constructor (
                 .flatMapLatest { photoRepository.getRating(it!!) }
                 .onEach {
                     _userRating.value = it!!.userRating
-                    _averageRating.value = it!!.averageRating
+                    _averageRating.value = it.averageRating
                 }
                 .launchIn(this)
         }

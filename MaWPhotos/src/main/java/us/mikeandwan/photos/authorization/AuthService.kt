@@ -21,7 +21,7 @@ class AuthService(
     val authSchemeRedirect: String = application.resources.getString(R.string.auth_scheme_redirect_uri)
     val authSchemeRedirectUri: Uri = Uri.parse(authSchemeRedirect)
 
-    private var _authConfig: AuthorizationServiceConfiguration? = null;
+    private var _authConfig: AuthorizationServiceConfiguration? = null
     val authConfig: AuthorizationServiceConfiguration?
         get() { return _authConfig }
 
