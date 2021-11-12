@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.first
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
-import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 
 @HiltWorker

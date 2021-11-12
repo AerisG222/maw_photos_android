@@ -1,10 +1,10 @@
 package us.mikeandwan.photos.ui.screens.random
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentRandomBinding
-import us.mikeandwan.photos.ui.screens.category.CategoryFragmentDirections
 
 @AndroidEntryPoint
 class RandomFragment : Fragment() {

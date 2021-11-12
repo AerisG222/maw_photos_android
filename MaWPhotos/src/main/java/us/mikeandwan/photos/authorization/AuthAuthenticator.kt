@@ -1,6 +1,6 @@
 package us.mikeandwan.photos.authorization
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
 import okhttp3.Authenticator

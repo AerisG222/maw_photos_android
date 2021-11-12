@@ -12,11 +12,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import net.openid.appauth.*
+import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationService
+import net.openid.appauth.ResponseTypeValues
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityLoginBinding
-import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import us.mikeandwan.photos.ui.main.MainActivity
+import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {

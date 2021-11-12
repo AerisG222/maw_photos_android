@@ -23,9 +23,9 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ActivityMainBinding
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.NavigationInstruction
-import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenuFragment
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment
+import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.workers.UploadWorker
 
 @AndroidEntryPoint

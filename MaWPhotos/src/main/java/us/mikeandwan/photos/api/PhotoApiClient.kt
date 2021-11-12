@@ -1,7 +1,9 @@
 package us.mikeandwan.photos.api
 
 import android.webkit.MimeTypeMap
-import okhttp3.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Retrofit
 import timber.log.Timber
 import java.io.File

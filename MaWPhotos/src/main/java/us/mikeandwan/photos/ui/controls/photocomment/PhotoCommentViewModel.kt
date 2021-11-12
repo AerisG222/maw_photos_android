@@ -6,8 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
-import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.domain.PhotoRepository
+import us.mikeandwan.photos.domain.models.PhotoComment
 import javax.inject.Inject
 
 @HiltViewModel

@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.NavigationStateRepository
+import us.mikeandwan.photos.domain.models.NavigationArea
 import javax.inject.Inject
 
 @HiltViewModel
