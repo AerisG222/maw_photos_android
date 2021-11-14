@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ class CategoriesViewModel @Inject constructor (
     // used for its side effect - do not delete
     val updateTitlebar = activeIdRepository
         .getActivePhotoCategoryYear()
+        .distinctUntilChanged()
         .mapLatest { navigationStateRepository.overrideTitle(it.toString()) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, "")
 
