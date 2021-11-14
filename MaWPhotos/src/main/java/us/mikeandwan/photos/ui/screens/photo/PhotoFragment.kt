@@ -27,6 +27,7 @@ import us.mikeandwan.photos.ui.ZoomOutPageTransformer
 import us.mikeandwan.photos.ui.controls.photodetail.IHandleModalClose
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment
 import us.mikeandwan.photos.utils.GlideApp
+import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.net.URL
 
 @ExperimentalCoroutinesApi
@@ -129,7 +130,7 @@ class PhotoFragment : Fragment(), IHandleModalClose {
         viewModel.sharePhotoComplete()
 
         val drawable = getPhotoToShare(photo)
-        val fileToShare = viewModel.savePhotoToShare(drawable, URL(photo.mdUrl).file)
+        val fileToShare = viewModel.savePhotoToShare(drawable, getFilenameFromUrl(photo.mdUrl))
         val contentUri = FileProvider.getUriForFile(requireActivity(), "us.mikeandwan.photos.fileprovider", fileToShare)
         val sendIntent = Intent(Intent.ACTION_SEND)
 
