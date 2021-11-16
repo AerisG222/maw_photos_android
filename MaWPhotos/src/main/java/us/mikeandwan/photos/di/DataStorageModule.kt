@@ -44,8 +44,22 @@ class DataStorageModule {
 
     @Provides
     @Singleton
-    fun provideFileStorageRepository(application: Application): FileStorageRepository {
-        return FileStorageRepository(application)
+    fun provideFileStorageRepository(application: Application, uploadFileObserver: UploadFileObserver): FileStorageRepository {
+        return FileStorageRepository(application, uploadFileObserver)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUploadFileObserver(application: Application): UploadFileObserver {
+        val dir = application.getExternalFilesDir(FileStorageRepository.DIR_UPLOAD)
+            ?: throw Exception("Directory cannot be null!")
+
+        dir.mkdirs()
+
+        val observer = UploadFileObserver(dir)
+        observer.startWatching()
+
+        return observer
     }
 
     @Provides

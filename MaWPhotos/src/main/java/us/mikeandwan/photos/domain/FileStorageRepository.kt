@@ -8,30 +8,22 @@ import android.net.Uri
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileFilter
 import java.io.FileOutputStream
 import javax.inject.Inject
 
 class FileStorageRepository @Inject constructor(
-    private val _context: Context
+    private val _context: Context,
+    private val _uploadObserver: UploadFileObserver
 ) {
     companion object {
         val mimeTypeMap = MimeTypeMap.getSingleton()!!
+        const val DIR_SHARE = "photos_to_share"
+        const val DIR_UPLOAD = "upload"
     }
 
-    fun getPendingUploads(): Flow<List<File>> = flow {
-        val dir = getUploadDirectory()
-
-        if(dir == null) {
-            emit(emptyList<File>())
-        } else {
-            emit(dir.listFiles(FileFilter { it.isFile })!!.asList())
-        }
-    }
+    val pendingUploads = _uploadObserver.fileQueue
 
     suspend fun savePhotoToShare(drawable: Drawable, originalFilename: String): File {
         return withContext(Dispatchers.IO) {
@@ -108,7 +100,7 @@ class FileStorageRepository @Inject constructor(
     }
 
     private fun getUploadDirectory(): File? {
-        return _context.getExternalFilesDir("upload")
+        return _context.getExternalFilesDir(DIR_UPLOAD)
     }
 
     private fun getShareFile(originalFilename: String): File {
@@ -116,7 +108,7 @@ class FileStorageRepository @Inject constructor(
     }
 
     private fun getShareDirectory(): File? {
-        return _context.getExternalFilesDir("photos_to_share")
+        return _context.getExternalFilesDir(DIR_SHARE)
     }
 
     private fun isValidType(mimeType: String?): Boolean {

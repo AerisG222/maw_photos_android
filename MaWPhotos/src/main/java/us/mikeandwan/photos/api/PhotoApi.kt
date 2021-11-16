@@ -37,5 +37,5 @@ internal interface PhotoApi {
 
     @Multipart
     @POST("upload/upload")
-    suspend fun uploadFile(@Part file: MultipartBody.Part): Response<FileOperationResult>
+    suspend fun uploadFile(@Part file: MultipartBody.Part): Response<FileOperationResult?>
 }

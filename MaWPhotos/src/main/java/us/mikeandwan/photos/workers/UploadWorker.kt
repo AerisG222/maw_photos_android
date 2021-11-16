@@ -35,7 +35,7 @@ class UploadWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val file = inputData.getString(KEY_FILENAME)
 
-        return try {
+        try {
             if (file == null || file.isBlank() || !File(file).exists()) {
                 Result.failure(
                     workDataOf(
@@ -52,9 +52,9 @@ class UploadWorker @AssistedInject constructor(
 
             showNotification()
 
-            Result.success()
+            return Result.success()
         } catch (error: Error) {
-            if(runAttemptCount < 3) {
+            return if(runAttemptCount < 3) {
                 Result.retry()
             } else {
                 Result.failure(
@@ -68,9 +68,6 @@ class UploadWorker @AssistedInject constructor(
 
     private suspend fun showNotification() {
         val i = Intent(Intent.ACTION_MAIN)
-
-        // i.setClass(applicationContext, PhotoReceiverActivity::class.java)
-
         val pendingIntentFlag = PendingIntentFlagHelper.getMutableFlag(PendingIntent.FLAG_UPDATE_CURRENT)
         val detailsIntent = PendingIntent.getActivity(applicationContext, 0, i, pendingIntentFlag)
 
