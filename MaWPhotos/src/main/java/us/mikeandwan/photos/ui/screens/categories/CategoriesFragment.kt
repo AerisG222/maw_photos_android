@@ -98,7 +98,7 @@ class CategoriesFragment : Fragment() {
             }
             is CategoryListFragment -> {
                 frag.setClickHandler(onListItemClicked)
-                frag.setData(categories)
+                frag.setCategories(categories)
             }
         }
     }

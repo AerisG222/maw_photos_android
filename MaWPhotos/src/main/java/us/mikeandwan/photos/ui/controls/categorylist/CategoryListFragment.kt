@@ -50,34 +50,14 @@ class CategoryListFragment : Fragment() {
 
         binding.categoryListRecyclerView.addItemDecoration(decoration)
 
-        initStateObservers()
-
         return binding.root
-    }
-
-    private fun initStateObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.doInvalidate
-                    .onEach {
-                        delay(1)
-                        if(it) {
-                            viewModel.setDoInvalidate(false)
-
-                            val adapter = binding.categoryListRecyclerView.adapter as CategoryListRecyclerAdapter
-                            adapter.submitList(viewModel.categories.value)
-                        }
-                    }
-                    .launchIn(this)
-            }
-        }
     }
 
     fun setClickHandler(handler: CategoryListRecyclerAdapter.ClickListener) {
         _clickHandler = handler
     }
 
-    fun setData(categories: List<PhotoCategory>) {
+    fun setCategories(categories: List<PhotoCategory>) {
         viewModel.setCategories(categories)
     }
 }
