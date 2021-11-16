@@ -14,6 +14,9 @@ class PhotoCategoryRepository @Inject constructor(
     private val pcDao: PhotoCategoryDao,
     private val idDao: ActiveIdDao
 ) {
+    private var _lastCategoryId = -1
+    private var _lastCategoryPhotos = emptyList<Photo>()
+
     fun getYears() = flow {
         val data = pcDao.getYears()
 
@@ -46,9 +49,17 @@ class PhotoCategoryRepository @Inject constructor(
         .map { cat -> cat!!.toDomainPhotoCategory() }
 
     fun getPhotos(categoryId: Int) = flow {
-        val result = api.getPhotos(categoryId)
+        if(categoryId != _lastCategoryId) {
+            val result = api.getPhotos(categoryId)
 
-        emit(result?.items?.map{ it.toDomainPhoto() } ?: emptyList<Photo>())
+            _lastCategoryPhotos = result?.items?.map { it.toDomainPhoto() } ?: emptyList<Photo>()
+
+            if(_lastCategoryPhotos.isNotEmpty()) {
+                _lastCategoryId = categoryId
+            }
+        }
+
+        emit(_lastCategoryPhotos)
     }
 
     private suspend fun loadCategories(mostRecentCategory: Int): List<PhotoCategory> {
