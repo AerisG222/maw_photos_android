@@ -28,7 +28,6 @@ import us.mikeandwan.photos.ui.controls.photodetail.IHandleModalClose
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment
 import us.mikeandwan.photos.utils.GlideApp
 import us.mikeandwan.photos.utils.getFilenameFromUrl
-import java.net.URL
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -113,7 +112,6 @@ class PhotoFragment : Fragment(), IHandleModalClose {
                 viewModel.rotatePhoto
                     .filter { it != 0 }
                     .onEach {
-                        delay(1)
                         rotatePhoto(it)
                     }
                     .launchIn(this)
