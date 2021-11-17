@@ -63,12 +63,6 @@ class ImageGridFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroy() {
-        binding.container.viewTreeObserver.removeOnGlobalLayoutListener(_listener)
-
-        super.onDestroy()
-    }
-
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -84,6 +78,8 @@ class ImageGridFragment : Fragment() {
 
     private fun listenForWidth() {
         _listener = ViewTreeObserver.OnGlobalLayoutListener {
+            binding.container.viewTreeObserver.removeOnGlobalLayoutListener(_listener)
+
             _screenWidth.value = binding.container.width
         }
 
