@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import us.mikeandwan.photos.databinding.ViewHolderImageGridItemBinding
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
-class ImageGridRecyclerAdapter(private val thumbnailSize: Int, private val clickListener: ClickListener)
+class ImageGridRecyclerAdapter(private val clickListener: ClickListener)
     : ListAdapter<ImageGridItem, ImageGridRecyclerAdapter.ViewHolder>(DiffCallback) {
+    private var thumbnailSize: Int = 120
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ViewHolderImageGridItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
@@ -30,6 +33,11 @@ class ImageGridRecyclerAdapter(private val thumbnailSize: Int, private val click
         override fun areContentsTheSame(oldItem: ImageGridItem, newItem: ImageGridItem): Boolean {
             return oldItem.id == newItem.id
         }
+    }
+
+    fun updateThumbnailSize(newSize: Int) {
+        thumbnailSize = newSize
+        notifyItemRangeChanged(0, itemCount)
     }
 
     class ViewHolder(private var binding: ViewHolderImageGridItemBinding, private val thumbnailSize: Int)

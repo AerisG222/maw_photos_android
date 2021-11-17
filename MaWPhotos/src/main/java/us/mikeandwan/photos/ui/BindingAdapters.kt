@@ -39,6 +39,15 @@ fun bindImageGridRecyclerView(recyclerView: RecyclerView, data: List<ImageGridIt
     }
 }
 
+@BindingAdapter("imageGridThumbnailSize")
+fun bindImageGridThumbnailSize(recyclerView: RecyclerView, size: Int) {
+    when(val adapter = recyclerView.adapter) {
+        is ImageGridRecyclerAdapter -> if(size > 0) {
+            adapter.updateThumbnailSize(size)
+        }
+    }
+}
+
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {
     imgUrl?.let {
