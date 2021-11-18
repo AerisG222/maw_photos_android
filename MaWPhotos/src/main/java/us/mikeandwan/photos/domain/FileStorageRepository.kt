@@ -34,11 +34,12 @@ class FileStorageRepository @Inject constructor(
                 fileToShare.delete()
             }
 
-            val outputStream = FileOutputStream(fileToShare)
-            val bitmap = (drawable as BitmapDrawable).bitmap
+            FileOutputStream(fileToShare).use { outputStream ->
+                val bitmap = (drawable as BitmapDrawable).bitmap
 
-            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 92, outputStream)) {
-                throw Exception("failed to save drawable!")
+                if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 92, outputStream)) {
+                    throw Exception("failed to save drawable!")
+                }
             }
 
             fileToShare
@@ -77,15 +78,16 @@ class FileStorageRepository @Inject constructor(
             if(uploadFile.exists()) {
                 null
             } else {
-                val inputStream = _context.contentResolver.openInputStream(mediaUri)
-                val outputStream = uploadFile.outputStream()
+                _context.contentResolver.openInputStream(mediaUri).use { inputStream ->
+                    uploadFile.outputStream().use { outputStream ->
+                        if (inputStream != null) {
+                            inputStream.copyTo(outputStream)
 
-                if (inputStream != null) {
-                    inputStream.copyTo(outputStream)
-
-                    uploadFile
-                } else {
-                    null
+                            uploadFile
+                        } else {
+                            null
+                        }
+                    }
                 }
             }
         }
