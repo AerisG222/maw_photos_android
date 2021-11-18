@@ -18,7 +18,11 @@ import javax.inject.Singleton
 class AuthModule {
     @Provides
     @Singleton
-    fun provideAuthService(application: Application, authorizationService: AuthorizationService, authStateManager: AuthStateManager): AuthService {
+    fun provideAuthService(
+        application: Application,
+        authorizationService: AuthorizationService,
+        authStateManager: AuthStateManager
+    ): AuthService {
         return AuthService(application, authorizationService, authStateManager)
     }
 

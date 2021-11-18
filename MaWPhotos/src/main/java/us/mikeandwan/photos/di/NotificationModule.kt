@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ApplicationModule {
+class NotificationModule {
     @Provides
     @Singleton
     fun provideNotificationManager(app: Application): NotificationManager {
@@ -48,7 +48,12 @@ class ApplicationModule {
         createChannel(notificationManager, name, description, MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
     }
 
-    private fun createChannel(notificationManager: NotificationManager, name: String, description: String, channelId: String) {
+    private fun createChannel(
+        notificationManager: NotificationManager,
+        name: String,
+        description: String,
+        channelId: String
+    ) {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .build()

@@ -11,11 +11,25 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import us.mikeandwan.photos.Constants
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.authorization.AuthAuthenticator
+import us.mikeandwan.photos.authorization.AuthInterceptor
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class PhotoApiModule {
+class NetworkModule {
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        authenticator: AuthAuthenticator,
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .authenticator(authenticator)
+            .addInterceptor(authInterceptor)
+            .build()
+    }
+
     @Provides
     @Singleton
     fun provideRetrofit(httpClient: OkHttpClient): Retrofit {
