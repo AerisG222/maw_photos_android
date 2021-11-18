@@ -3,11 +3,9 @@ package us.mikeandwan.photos.di
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
-import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,12 +17,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class ApplicationModule {
-    @Provides
-    @Singleton
-    fun provideSharedPreferences(app: Application): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(app)
-    }
-
     @Provides
     @Singleton
     fun provideNotificationManager(app: Application): NotificationManager {
