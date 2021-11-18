@@ -90,7 +90,7 @@ class CategoriesFragment : Fragment() {
 
         frag.setThumbnailSize(thumbnailSize)
         frag.setClickHandler(onGridItemClicked)
-        frag.setData(categories.map{ it.toImageGridItem() })
+        frag.setGridItems(categories.map{ it.toImageGridItem() })
     }
 
     private fun showList(categories: List<PhotoCategory>) {

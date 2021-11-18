@@ -24,7 +24,7 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:layout_marginTop="0dp"
-            app:imageGridItemList="@{ viewModel.gridItems }"
+            app:imageGridItemList="@{ viewModel.gridItemsWithSize }"
             tools:listitem="@layout/view_holder_image_grid_item" />
 
     </FrameLayout>

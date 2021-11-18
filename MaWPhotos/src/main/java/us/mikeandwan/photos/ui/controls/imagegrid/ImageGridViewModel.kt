@@ -7,10 +7,10 @@ import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.ui.toImageGridItemWithSize
 
 class ImageGridViewModel: ViewModel() {
-    private val _items = MutableStateFlow(emptyList<ImageGridItem>())
+    private val _gridItems = MutableStateFlow(emptyList<ImageGridItem>())
     private val _thumbnailSize = MutableStateFlow(0)
 
-    val gridItems = _items
+    val gridItemsWithSize = _gridItems
         .combine(_thumbnailSize) { data, size -> Pair(data, size) }
         .filter { (data, size) -> data.isNotEmpty() && size > 0 }
         .map { (data, size) -> data.map { it.toImageGridItemWithSize(size) }}
@@ -19,8 +19,8 @@ class ImageGridViewModel: ViewModel() {
     private val _requestedThumbnailSize = MutableStateFlow<GridThumbnailSize?>(null)
     val requestedThumbnailSize = _requestedThumbnailSize.asStateFlow()
 
-    fun setData(items: List<ImageGridItem>) {
-        _items.value = items
+    fun setGridItems(items: List<ImageGridItem>) {
+        _gridItems.value = items
     }
 
     fun setThumbnailSize(thumbnailSize: Int) {

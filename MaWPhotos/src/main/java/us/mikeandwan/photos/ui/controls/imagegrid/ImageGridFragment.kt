@@ -94,8 +94,8 @@ class ImageGridFragment : Fragment() {
         viewModel.setRequestedThumbnailSize(thumbnailSize)
     }
 
-    fun setData(data: List<ImageGridItem>) {
-        viewModel.setData(data)
+    fun setGridItems(data: List<ImageGridItem>) {
+        viewModel.setGridItems(data)
     }
 
     private fun getThumbnailSize(screenWidth: Int, thumbnailSize: GridThumbnailSize): Int {
