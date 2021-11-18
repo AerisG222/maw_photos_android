@@ -3,8 +3,6 @@ package us.mikeandwan.photos.di
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.job.JobScheduler
-import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.media.AudioAttributes
@@ -25,12 +23,6 @@ class ApplicationModule {
     @Singleton
     fun provideSharedPreferences(app: Application): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(app)
-    }
-
-    @Provides
-    @Singleton
-    fun provideJobScheduler(app: Application): JobScheduler {
-        return app.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
     }
 
     @Provides
