@@ -1,6 +1,7 @@
 package us.mikeandwan.photos
 
 import android.app.Application
+import android.os.StrictMode
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
@@ -19,6 +20,7 @@ class MawApplication : Application(), Configuration.Provider {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+            StrictMode.enableDefaults()
         }
 
         schedulePeriodicRefresh()
