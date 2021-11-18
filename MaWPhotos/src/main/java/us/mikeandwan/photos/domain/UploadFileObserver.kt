@@ -1,7 +1,11 @@
 package us.mikeandwan.photos.domain
 
 import android.os.FileObserver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileFilter
 
@@ -29,6 +33,10 @@ class UploadFileObserver(private val directory: File)
     }
 
     private fun updateFileList() {
-        _fileQueue.value = directory.listFiles(FileFilter { it.isFile })!!.asList()
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                _fileQueue.value = directory.listFiles(FileFilter { it.isFile })!!.asList()
+            }
+        }
     }
 }
