@@ -1,23 +1,26 @@
 package us.mikeandwan.photos.ui.controls.imagegrid
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.ui.toImageGridItemWithSize
 
 class ImageGridViewModel: ViewModel() {
-    private val _gridItems = MutableStateFlow(emptyList<ImageGridItem>())
-    val gridItems = _gridItems.asStateFlow()
-
+    private val _items = MutableStateFlow(emptyList<ImageGridItem>())
     private val _thumbnailSize = MutableStateFlow(0)
-    val thumbnailSize = _thumbnailSize.asStateFlow()
 
-    // store the requested size here so it survives orientation change
+    val gridItems = _items
+        .combine(_thumbnailSize) { data, size -> Pair(data, size) }
+        .filter { (data, size) -> data.isNotEmpty() && size > 0 }
+        .map { (data, size) -> data.map { it.toImageGridItemWithSize(size) }}
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<ImageGridItemWithSize>())
+
     private val _requestedThumbnailSize = MutableStateFlow<GridThumbnailSize?>(null)
     val requestedThumbnailSize = _requestedThumbnailSize.asStateFlow()
 
     fun setData(items: List<ImageGridItem>) {
-        _gridItems.value = items
+        _items.value = items
     }
 
     fun setThumbnailSize(thumbnailSize: Int) {

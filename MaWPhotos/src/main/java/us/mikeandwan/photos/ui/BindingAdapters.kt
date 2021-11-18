@@ -13,6 +13,7 @@ import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
+import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListRecyclerAdapter
 import us.mikeandwan.photos.utils.GlideApp
@@ -33,18 +34,9 @@ fun bindCategoryListRecyclerView(recyclerView: RecyclerView, data: List<PhotoCat
 }
 
 @BindingAdapter("imageGridItemList")
-fun bindImageGridRecyclerView(recyclerView: RecyclerView, data: List<ImageGridItem>?) {
+fun bindImageGridRecyclerView(recyclerView: RecyclerView, gridItems: List<ImageGridItemWithSize>?) {
     when(val adapter = recyclerView.adapter) {
-        is ImageGridRecyclerAdapter -> adapter.submitList(data)
-    }
-}
-
-@BindingAdapter("imageGridThumbnailSize")
-fun bindImageGridThumbnailSize(recyclerView: RecyclerView, size: Int) {
-    when(val adapter = recyclerView.adapter) {
-        is ImageGridRecyclerAdapter -> if(size > 0) {
-            adapter.updateThumbnailSize(size)
-        }
+        is ImageGridRecyclerAdapter -> adapter.submitList(gridItems)
     }
 }
 

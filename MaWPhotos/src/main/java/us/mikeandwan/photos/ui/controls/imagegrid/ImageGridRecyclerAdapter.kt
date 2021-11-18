@@ -10,13 +10,11 @@ import us.mikeandwan.photos.databinding.ViewHolderImageGridItemBinding
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 class ImageGridRecyclerAdapter(private val clickListener: ClickListener)
-    : ListAdapter<ImageGridItem, ImageGridRecyclerAdapter.ViewHolder>(DiffCallback) {
-    private var thumbnailSize: Int = 120
-
+    : ListAdapter<ImageGridItemWithSize, ImageGridRecyclerAdapter.ViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ViewHolderImageGridItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return ViewHolder(binding, thumbnailSize)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -25,29 +23,23 @@ class ImageGridRecyclerAdapter(private val clickListener: ClickListener)
         holder.bind(item, clickListener)
     }
 
-    companion object DiffCallback : DiffUtil.ItemCallback<ImageGridItem>() {
-        override fun areItemsTheSame(oldItem: ImageGridItem, newItem: ImageGridItem): Boolean {
+    companion object DiffCallback : DiffUtil.ItemCallback<ImageGridItemWithSize>() {
+        override fun areItemsTheSame(oldItem: ImageGridItemWithSize, newItem: ImageGridItemWithSize): Boolean {
             return oldItem === newItem
         }
 
-        override fun areContentsTheSame(oldItem: ImageGridItem, newItem: ImageGridItem): Boolean {
+        override fun areContentsTheSame(oldItem: ImageGridItemWithSize, newItem: ImageGridItemWithSize): Boolean {
             return oldItem.id == newItem.id
         }
     }
 
-    fun updateThumbnailSize(newSize: Int) {
-        thumbnailSize = newSize
-        notifyItemRangeChanged(0, itemCount)
-    }
-
-    class ViewHolder(private var binding: ViewHolderImageGridItemBinding, private val thumbnailSize: Int)
+    class ViewHolder(private var binding: ViewHolderImageGridItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ImageGridItem, clickListener: ClickListener) {
+        fun bind(item: ImageGridItemWithSize, clickListener: ClickListener) {
             binding.item = item
-            binding.imageGridItemImageView.layoutParams.height = thumbnailSize
-            binding.imageGridItemImageView.layoutParams.width = thumbnailSize
-
             binding.root.setOnClickListener { clickListener.onClick(item) }
+            binding.imageGridItemImageView.layoutParams.height = item.size
+            binding.imageGridItemImageView.layoutParams.width = item.size
 
             val layoutParams = binding.root.layoutParams
 
@@ -59,7 +51,7 @@ class ImageGridRecyclerAdapter(private val clickListener: ClickListener)
         }
     }
 
-    class ClickListener(val clickListener: (item: ImageGridItem) -> Unit) {
-        fun onClick(item: ImageGridItem) = clickListener(item)
+    class ClickListener(val clickListener: (item: ImageGridItemWithSize) -> Unit) {
+        fun onClick(item: ImageGridItemWithSize) = clickListener(item)
     }
 }

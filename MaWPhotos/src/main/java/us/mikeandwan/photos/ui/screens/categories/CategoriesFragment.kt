@@ -13,10 +13,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
@@ -74,45 +72,34 @@ class CategoriesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.preferences
-                    .combine(viewModel.categories) { preferences, categories -> Pair(preferences, categories) }
-                    .onEach { (preferences, categories) ->
+                    .combine(viewModel.categories) { preferences, categories ->
                         when(preferences.displayType) {
-                            CategoryDisplayType.Grid -> showGrid(preferences.gridThumbnailSize)
-                            CategoryDisplayType.List -> showList()
+                            CategoryDisplayType.Grid -> showGrid(preferences.gridThumbnailSize, categories)
+                            CategoryDisplayType.List -> showList(categories)
                         }
-
-                        delay(1)   // TODO: find a way to get rid of this
-
-                        updateCategories(categories)
                     }
                     .launchIn(this)
             }
         }
     }
 
-    private fun updateCategories(categories: List<PhotoCategory>) {
-        when(val frag = childFragmentManager.fragments.first()) {
-            is ImageGridFragment -> {
-                frag.setClickHandler(onGridItemClicked)
-                frag.setData(categories.map{ it.toImageGridItem() })
-            }
-            is CategoryListFragment -> {
-                frag.setClickHandler(onListItemClicked)
-                frag.setCategories(categories)
-            }
-        }
-    }
-
-    private fun showGrid(thumbnailSize: GridThumbnailSize) {
+    private fun showGrid(thumbnailSize: GridThumbnailSize, categories: List<PhotoCategory>) {
         setChildFragment(ImageGridFragment::class.java, FRAG_GRID)
 
         val frag = childFragmentManager.fragments.first() as ImageGridFragment
 
         frag.setThumbnailSize(thumbnailSize)
+        frag.setClickHandler(onGridItemClicked)
+        frag.setData(categories.map{ it.toImageGridItem() })
     }
 
-    private fun showList() {
+    private fun showList(categories: List<PhotoCategory>) {
         setChildFragment(CategoryListFragment::class.java, FRAG_LIST)
+
+        val frag = childFragmentManager.fragments.first() as CategoryListFragment
+
+        frag.setClickHandler(onListItemClicked)
+        frag.setCategories(categories)
     }
 
     private fun <T: Fragment> setChildFragment(fragmentClass: Class<T>, tag: String) {
