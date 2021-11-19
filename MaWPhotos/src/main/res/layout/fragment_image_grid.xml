@@ -20,10 +20,6 @@
             android:id="@+id/image_grid_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="0dp"
             app:imageGridItemList="@{ viewModel.gridItemsWithSize }"
             tools:listitem="@layout/view_holder_image_grid_item" />
 
