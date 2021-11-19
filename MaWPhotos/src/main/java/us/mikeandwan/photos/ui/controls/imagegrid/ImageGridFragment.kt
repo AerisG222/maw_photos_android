@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentImageGridBinding
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import kotlin.math.ceil
 
 @AndroidEntryPoint
 class ImageGridFragment : Fragment() {
@@ -44,11 +45,16 @@ class ImageGridFragment : Fragment() {
         binding.viewModel = viewModel
 
         binding.imageGridRecyclerView.setHasFixedSize(true)
+
+        // TODO: i believe space_between should push the start and end images against the edges, but this is not working
+        // if i wrap the ImageView in the item layout in a LinearLayout, then the first image will be flush on the left
+        // but the right image has a full padding of space at the end.  If I remove the wrapping layout, then the padding
+        // is evenly spaced on both left and right, which is more visually appealing
         binding.imageGridRecyclerView.layoutManager = FlexboxLayoutManager(activity).apply {
             flexWrap = FlexWrap.WRAP
             flexDirection = FlexDirection.ROW
             alignItems = AlignItems.FLEX_START
-            justifyContent = JustifyContent.FLEX_START
+            justifyContent = JustifyContent.SPACE_BETWEEN
         }
 
         val adapter = ImageGridRecyclerAdapter(_clickHandlerForwarder)
@@ -100,20 +106,20 @@ class ImageGridFragment : Fragment() {
 
     private fun getThumbnailSize(screenWidth: Int, thumbnailSize: GridThumbnailSize): Int {
         val thumbSize = getThumbnailSizeInDps(thumbnailSize)
-        val cols = maxOf(1, screenWidth / thumbSize)
+        val cols = maxOf(1, screenWidth / ceil(thumbSize).toInt())
+        val totalInteriorMargins = (cols - 1) * resources.getDimension(R.dimen._2dp)
+        val remainingSpaceForImages = screenWidth - totalInteriorMargins
 
-        val totalInteriorMargins = cols * resources.getDimension(R.dimen._2dp)
-        val remainingSpaceForImages = screenWidth - totalInteriorMargins.toInt()
-
-        return remainingSpaceForImages / cols
+        return ceil(remainingSpaceForImages / cols).toInt()
     }
 
-    private fun getThumbnailSizeInDps(thumbnailSize: GridThumbnailSize): Int {
+    // TODO: try using doubles throughout
+    private fun getThumbnailSizeInDps(thumbnailSize: GridThumbnailSize): Float {
         return when(thumbnailSize) {
-            GridThumbnailSize.ExtraSmall -> resources.getDimension(R.dimen.image_grid_thumbnail_size_extra_small).toInt()
-            GridThumbnailSize.Small -> resources.getDimension(R.dimen.image_grid_thumbnail_size_small).toInt()
-            GridThumbnailSize.Medium -> resources.getDimension(R.dimen.image_grid_thumbnail_size_medium).toInt()
-            GridThumbnailSize.Large -> resources.getDimension(R.dimen.image_grid_thumbnail_size_large).toInt()
+            GridThumbnailSize.ExtraSmall -> resources.getDimension(R.dimen.image_grid_thumbnail_size_extra_small)
+            GridThumbnailSize.Small -> resources.getDimension(R.dimen.image_grid_thumbnail_size_small)
+            GridThumbnailSize.Medium -> resources.getDimension(R.dimen.image_grid_thumbnail_size_medium)
+            GridThumbnailSize.Large -> resources.getDimension(R.dimen.image_grid_thumbnail_size_large)
         }
     }
 }
