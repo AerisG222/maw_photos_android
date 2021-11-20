@@ -1,21 +1,28 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory app:title="@string/pref_notifications_header">
+    <PreferenceCategory
+        app:title="@string/pref_notifications_header"
+        app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             app:key="notifications_new_message"
             app:title="@string/pref_notifications_new_message_title"
+            app:iconSpaceReserved="false"
             app:defaultValue="true" />
 
         <SwitchPreferenceCompat
             app:dependency="notifications_new_message"
             app:key="notifications_new_message_vibrate"
             app:title="@string/pref_notifications_vibrate"
+            app:iconSpaceReserved="false"
             app:defaultValue="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_category_display_header">
+    <PreferenceCategory
+        app:title="@string/pref_category_display_header"
+        app:iconSpaceReserved="false">
         <ListPreference
             app:key="category_view_mode"
             app:title="@string/pref_category_display_header"
+            app:iconSpaceReserved="false"
             app:summary="%s"
             app:entries="@array/pref_category_display_names"
             app:entryValues="@array/pref_category_display_values"
@@ -24,16 +31,20 @@
         <ListPreference
             app:key="category_grid_thumbnail_size"
             app:title="Grid Thumbnail Size"
+            app:iconSpaceReserved="false"
             app:summary="%s"
             app:entries="@array/pref_grid_thumbnail_size_names"
             app:entryValues="@array/pref_grid_thumbnail_sizes"
             app:defaultValue="@string/pref_category_grid_thumbnail_size_default_value" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_photo_display_header">
+    <PreferenceCategory
+        app:title="@string/pref_photo_display_header"
+        app:iconSpaceReserved="false">
         <ListPreference
             app:key="photo_slideshow_interval"
             app:title="@string/pref_photo_display_slideshow_interval"
+            app:iconSpaceReserved="false"
             app:summary="%s"
             app:entries="@array/pref_photo_display_slideshow_intervals"
             app:entryValues="@array/pref_photo_display_slideshow_interval_values"
@@ -44,16 +55,20 @@
         <ListPreference
             app:key="photo_grid_thumbnail_size"
             app:title="Grid Thumbnail Size"
+            app:iconSpaceReserved="false"
             app:summary="%s"
             app:entries="@array/pref_grid_thumbnail_size_names"
             app:entryValues="@array/pref_grid_thumbnail_sizes"
             app:defaultValue="@string/pref_photo_grid_thumbnail_size_default_value" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_random_display_header">
+    <PreferenceCategory
+        app:title="@string/pref_random_display_header"
+        app:iconSpaceReserved="false">
         <ListPreference
             app:key="random_slideshow_interval"
             app:title="@string/pref_photo_display_slideshow_interval"
+            app:iconSpaceReserved="false"
             app:summary="%s"
             app:entries="@array/pref_photo_display_slideshow_intervals"
             app:entryValues="@array/pref_photo_display_slideshow_interval_values"
@@ -64,6 +79,7 @@
         <ListPreference
             app:key="random_grid_thumbnail_size"
             app:title="Grid Thumbnail Size"
+            app:iconSpaceReserved="false"
             app:summary="%s"
             app:entries="@array/pref_grid_thumbnail_size_names"
             app:entryValues="@array/pref_grid_thumbnail_sizes"
