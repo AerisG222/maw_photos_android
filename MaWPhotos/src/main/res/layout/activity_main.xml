@@ -96,6 +96,7 @@
                 android:name="us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:paddingEnd="@dimen/_8dp"
                 android:layout_weight="1" />
 
         </LinearLayout>
