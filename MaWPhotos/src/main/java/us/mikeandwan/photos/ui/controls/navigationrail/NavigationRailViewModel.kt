@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.models.NavigationArea
 import javax.inject.Inject
@@ -16,25 +15,33 @@ import javax.inject.Inject
 class NavigationRailViewModel @Inject constructor(
     private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
-    private val _aboutButtonColor = MutableStateFlow(R.color.material_on_surface_stroke)
+    private var _activeColor: Int = 0
+    private var _inActiveColor: Int = 0
+
+    private val _aboutButtonColor = MutableStateFlow(0)
     val aboutButtonColor = _aboutButtonColor.asStateFlow()
 
-    private val _categoryButtonColor = MutableStateFlow(R.color.material_on_surface_stroke)
+    private val _categoryButtonColor = MutableStateFlow(0)
     val categoryButtonColor = _categoryButtonColor.asStateFlow()
 
-    private val _randomButtonColor = MutableStateFlow(R.color.material_on_surface_stroke)
+    private val _randomButtonColor = MutableStateFlow(0)
     val randomButtonColor = _randomButtonColor.asStateFlow()
 
-    private val _settingsButtonColor = MutableStateFlow(R.color.material_on_surface_stroke)
+    private val _settingsButtonColor = MutableStateFlow(0)
     val settingsButtonColor = _settingsButtonColor.asStateFlow()
 
-    private val _uploadButtonColor = MutableStateFlow(R.color.material_on_surface_stroke)
+    private val _uploadButtonColor = MutableStateFlow(0)
     val uploadButtonColor = _uploadButtonColor.asStateFlow()
 
     init {
         viewModelScope.launch {
             navigationStateRepository.navArea.collect { updateNavColors(it) }
         }
+    }
+
+    fun setTextColors(activeColor: Int, inactiveColor: Int) {
+        _activeColor = activeColor
+        _inActiveColor = inactiveColor
     }
 
     fun requestNavigateToArea(area: NavigationArea) {
@@ -51,9 +58,9 @@ class NavigationRailViewModel @Inject constructor(
 
     private fun getColor(isInArea: Boolean): Int {
         return if(isInArea) {
-            R.color.pink_700
+            _activeColor
         } else {
-            R.color.material_on_surface_stroke
+            _inActiveColor
         }
     }
 }

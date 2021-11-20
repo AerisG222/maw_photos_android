@@ -2,13 +2,13 @@ package us.mikeandwan.photos.ui.controls.yearnavmenu
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.StateFlow
-import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.ViewHolderYearListItemBinding
+import us.mikeandwan.photos.utils.getTextColor
+
 
 class YearListRecyclerAdapter(private val activeYear: StateFlow<Int?>, private val clickListener: ClickListener)
     : ListAdapter<Int, YearListRecyclerAdapter.ViewHolder>(DiffCallback) {
@@ -44,11 +44,7 @@ class YearListRecyclerAdapter(private val activeYear: StateFlow<Int?>, private v
         }
 
         private fun getColor(year: Int, activeYear: StateFlow<Int?>): Int {
-            return if(year == activeYear.value) {
-                ContextCompat.getColor(itemView.context, R.color.pink_700)
-            } else {
-                ContextCompat.getColor(itemView.context, R.color.white_50)
-            }
+            return this.itemView.context.getTextColor(year == activeYear.value)
         }
     }
 

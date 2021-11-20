@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import us.mikeandwan.photos.databinding.FragmentNavigationRailBinding
+import us.mikeandwan.photos.utils.getTextColor
 
 @AndroidEntryPoint
 class NavigationRailFragment : Fragment() {
@@ -26,6 +28,14 @@ class NavigationRailFragment : Fragment() {
         binding = FragmentNavigationRailBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+
+        val ctx = context
+
+        if(ctx != null) {
+            viewModel.setTextColors(ctx.getTextColor(true), ctx.getTextColor(false))
+        } else {
+            Timber.w("context is null")
+        }
 
         return binding.root
     }

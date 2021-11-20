@@ -55,7 +55,7 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
 @BindingAdapter("tint")
 fun bindTint(imgView: ImageView, color: Int?) {
     color?.let {
-        imgView.setColorFilter(imgView.context.getColor(color))
+        imgView.setColorFilter(color)
     }
 }
 
