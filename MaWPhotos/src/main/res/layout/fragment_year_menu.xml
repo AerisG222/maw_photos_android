@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:gravity="center_horizontal"
-            android:text="Choose Year" />
+            android:text="Choose Year"
+            android:textColor="?attr/colorOnSurface" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"

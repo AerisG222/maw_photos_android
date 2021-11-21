@@ -4,20 +4,26 @@
         <!--Material color attributes (dark theme) -->
         <item name="colorPrimary">@color/pink_500</item>
         <item name="colorPrimaryVariant">@color/pink_700</item>
-        <item name="colorSecondary">@color/purple_200</item>
-        <item name="colorSecondaryVariant">@color/purple_500</item>
+        <item name="colorSecondary">@color/pink_500</item>
+        <item name="colorSecondaryVariant">@color/pink_700</item>
 
-        <item name="android:colorBackground">@color/black_900</item>
+        <item name="android:colorBackground">@color/black_800</item>
         <item name="colorSurface">@color/black_800</item>
         <item name="colorError">@color/red_200</item>
 
         <item name="colorOnPrimary">@color/black_900</item>
         <item name="colorOnSecondary">@color/black_900</item>
-        <item name="colorOnBackground">@color/white_50</item>
-        <item name="colorOnSurface">@color/white_50</item>
+        <item name="colorOnBackground">@color/white_100</item>
+        <item name="colorOnSurface">@color/white_100</item>
         <item name="colorOnError">@color/black_900</item>
 
+        <item name="mawPhotoWidgetOverlayBackground">@color/black_800_opaque</item>
+        <item name="mawUploadWatermarkColor">@color/white_500</item>
+        <item name="mawAlternateRowColor">@color/black_700</item>
+
+        <!--
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+        -->
     </style>
 </resources>

@@ -28,7 +28,7 @@
             android:paddingTop="@dimen/_2dp"
             android:paddingEnd="@dimen/_8dp"
             android:paddingBottom="@dimen/_2dp"
-            android:background="@color/black_900_opaque"
+            android:background="?attr/mawPhotoWidgetOverlayBackground"
             app:layout_anchorGravity="start|top">
 
             <LinearLayout
@@ -77,18 +77,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text='@{ Integer.toString(viewModel.activePhotoIndex + 1) }'
+                    android:textColor="?attr/colorOnSurface"
                     tools:text="1" />
 
                 <TextView
                     android:id="@+id/positionCountSeparatorTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
                     android:text=" / " />
 
                 <TextView
                     android:id="@+id/photoCountTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
                     android:text='@{ Integer.toString(viewModel.photos.size) }'
                     tools:text="143" />
 
@@ -99,6 +102,7 @@
             android:id="@+id/bottom_drawer"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:background="?attr/mawPhotoWidgetOverlayBackground"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <ImageView

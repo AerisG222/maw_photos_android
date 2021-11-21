@@ -34,6 +34,7 @@
             android:fontFamily="@font/tangerine"
             android:text="mikeandwan.us"
             android:textSize="42sp"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/logoImageView" />
@@ -45,6 +46,7 @@
             android:fontFamily="@font/tangerine"
             android:text="Photos"
             android:textSize="42sp"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,6 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:text="@{ viewModel.version }"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title2TextView"
@@ -81,6 +84,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
+                android:textColor="?attr/colorOnSurface"
                 app:markdownText="@{ viewModel.history }" />
         </ScrollView>
 

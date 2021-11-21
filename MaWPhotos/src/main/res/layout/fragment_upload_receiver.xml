@@ -26,6 +26,7 @@
             app:layout_constraintEnd_toEndOf="@+id/fragmentUploadList"
             app:layout_constraintStart_toStartOf="@+id/fragmentUploadList"
             app:layout_constraintTop_toTopOf="@+id/fragmentUploadList"
+            app:tint="?attr/mawUploadWatermarkColor"
             app:srcCompat="@drawable/ic_share" />
 
         <androidx.fragment.app.FragmentContainerView

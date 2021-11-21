@@ -16,8 +16,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentPhotoExifBinding
 import us.mikeandwan.photos.domain.models.PhotoExifData
+import us.mikeandwan.photos.utils.getColorFromAttribute
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -29,6 +31,7 @@ class PhotoExifFragment : Fragment() {
     private var _2dp = 0
     private var _4dp = 0
     private var _8dp = 0
+    private var alternatingRowColor = 0
     private lateinit var binding: FragmentPhotoExifBinding
     val viewModel by viewModels<PhotoExifViewModel>()
 
@@ -40,6 +43,8 @@ class PhotoExifFragment : Fragment() {
         binding = FragmentPhotoExifBinding.inflate(inflater)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        alternatingRowColor = requireContext().getColorFromAttribute(R.attr.mawAlternateRowColor)
 
         initStateObservers()
 
@@ -143,7 +148,7 @@ class PhotoExifFragment : Fragment() {
         binding.exifView.addView(row)
 
         if (binding.exifView.childCount % 2 == 1) {
-            row.setBackgroundColor(-0xddddde)
+            row.setBackgroundColor(alternatingRowColor)
         }
 
         val nameView = TextView(ctx)
