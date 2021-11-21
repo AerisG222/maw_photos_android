@@ -18,7 +18,11 @@
         tools:layout="@layout/fragment_categories">
         <action
             android:id="@+id/action_navigation_categories_to_navigation_category"
-            app:destination="@id/navigation_category" />
+            app:destination="@id/navigation_category"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -31,7 +35,11 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_navigation_category_to_navigation_photo"
-            app:destination="@id/navigation_photo" />
+            app:destination="@id/navigation_photo"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -41,7 +49,11 @@
         tools:layout="@layout/fragment_random" >
         <action
             android:id="@+id/action_navigation_random_to_navigation_photo"
-            app:destination="@id/navigation_photo" />
+            app:destination="@id/navigation_photo"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
