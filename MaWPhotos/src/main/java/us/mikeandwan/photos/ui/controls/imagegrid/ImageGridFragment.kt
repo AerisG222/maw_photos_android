@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentImageGridBinding
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import kotlin.math.ceil
 
 @AndroidEntryPoint
 class ImageGridFragment : Fragment() {

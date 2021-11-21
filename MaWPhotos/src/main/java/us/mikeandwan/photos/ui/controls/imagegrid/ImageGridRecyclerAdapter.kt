@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import us.mikeandwan.photos.databinding.ViewHolderImageGridItemBinding
-import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 class ImageGridRecyclerAdapter(private val clickListener: ClickListener)
     : ListAdapter<ImageGridItemWithSize, ImageGridRecyclerAdapter.ViewHolder>(DiffCallback) {
