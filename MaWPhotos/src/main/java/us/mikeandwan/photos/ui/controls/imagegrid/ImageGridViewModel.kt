@@ -16,7 +16,7 @@ class ImageGridViewModel: ViewModel() {
         .map { (data, size) -> data.map { it.toImageGridItemWithSize(size) }}
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<ImageGridItemWithSize>())
 
-    private val _requestedThumbnailSize = MutableStateFlow<GridThumbnailSize?>(null)
+    private val _requestedThumbnailSize = MutableStateFlow(GridThumbnailSize.Unspecified)
     val requestedThumbnailSize = _requestedThumbnailSize.asStateFlow()
 
     fun setGridItems(items: List<ImageGridItem>) {

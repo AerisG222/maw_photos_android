@@ -7,5 +7,5 @@ data class CategoryPreference(
 
 val CATEGORY_PREFERENCE_DEFAULT = CategoryPreference(
     CategoryDisplayType.Grid,
-    GridThumbnailSize.Medium
+    GridThumbnailSize.Unspecified
 )

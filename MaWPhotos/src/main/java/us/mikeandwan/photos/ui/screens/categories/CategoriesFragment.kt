@@ -14,7 +14,9 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoriesBinding
@@ -72,7 +74,9 @@ class CategoriesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.preferences
-                    .combine(viewModel.categories) { preferences, categories ->
+                    .combine(viewModel.categories) { preferences, categories -> Pair(preferences, categories) }
+                    .filter { (preferences, categories) -> preferences.gridThumbnailSize != GridThumbnailSize.Unspecified && categories.isNotEmpty() }
+                    .onEach { (preferences, categories) ->
                         when(preferences.displayType) {
                             CategoryDisplayType.Grid -> showGrid(preferences.gridThumbnailSize, categories)
                             CategoryDisplayType.List -> showList(categories)

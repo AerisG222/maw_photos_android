@@ -105,21 +105,25 @@ class ImageGridFragment : Fragment() {
     }
 
     private fun getThumbnailSize(screenWidth: Int, thumbnailSize: GridThumbnailSize): Int {
+        if(thumbnailSize == GridThumbnailSize.Unspecified) {
+            return 0;
+        }
+
         val thumbSize = getThumbnailSizeInDps(thumbnailSize)
-        val cols = maxOf(1, screenWidth / ceil(thumbSize).toInt())
+        val cols = maxOf(1, screenWidth / thumbSize)
         val totalInteriorMargins = (cols - 1) * resources.getDimension(R.dimen._2dp)
         val remainingSpaceForImages = screenWidth - totalInteriorMargins
 
-        return ceil(remainingSpaceForImages / cols).toInt()
+        return (remainingSpaceForImages / cols).toInt()
     }
 
-    // TODO: try using doubles throughout
-    private fun getThumbnailSizeInDps(thumbnailSize: GridThumbnailSize): Float {
+    private fun getThumbnailSizeInDps(thumbnailSize: GridThumbnailSize): Int {
         return when(thumbnailSize) {
-            GridThumbnailSize.ExtraSmall -> resources.getDimension(R.dimen.image_grid_thumbnail_size_extra_small)
-            GridThumbnailSize.Small -> resources.getDimension(R.dimen.image_grid_thumbnail_size_small)
-            GridThumbnailSize.Medium -> resources.getDimension(R.dimen.image_grid_thumbnail_size_medium)
-            GridThumbnailSize.Large -> resources.getDimension(R.dimen.image_grid_thumbnail_size_large)
+            GridThumbnailSize.ExtraSmall -> resources.getDimension(R.dimen.image_grid_thumbnail_size_extra_small).toInt()
+            GridThumbnailSize.Small -> resources.getDimension(R.dimen.image_grid_thumbnail_size_small).toInt()
+            GridThumbnailSize.Medium -> resources.getDimension(R.dimen.image_grid_thumbnail_size_medium).toInt()
+            GridThumbnailSize.Large -> resources.getDimension(R.dimen.image_grid_thumbnail_size_large).toInt()
+            GridThumbnailSize.Unspecified -> 0
         }
     }
 }

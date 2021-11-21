@@ -7,5 +7,5 @@ data class PhotoPreference (
 
 val PHOTO_PREFERENCE_DEFAULT = PhotoPreference(
     3,
-    GridThumbnailSize.Medium
+    GridThumbnailSize.Unspecified
 )

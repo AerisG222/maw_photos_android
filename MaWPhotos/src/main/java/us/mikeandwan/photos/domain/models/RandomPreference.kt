@@ -7,5 +7,5 @@ data class RandomPreference (
 
 val RANDOM_PREFERENCE_DEFAULT = RandomPreference(
     3,
-    GridThumbnailSize.Medium
+    GridThumbnailSize.Unspecified
 )

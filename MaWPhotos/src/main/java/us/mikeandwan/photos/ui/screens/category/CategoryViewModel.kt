@@ -33,7 +33,7 @@ class CategoryViewModel @Inject constructor (
 
     val gridItemThumbnailSize = photoPreferenceRepository
         .getPhotoGridItemSize()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Unspecified)
 
     val onPhotoClicked = ImageGridRecyclerAdapter.ClickListener {
         viewModelScope.launch {
