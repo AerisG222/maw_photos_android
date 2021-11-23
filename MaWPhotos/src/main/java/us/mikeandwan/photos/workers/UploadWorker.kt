@@ -11,6 +11,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
@@ -32,50 +33,49 @@ class UploadWorker @AssistedInject constructor(
         const val KEY_FAILURE_REASON = "failure_reason"
     }
 
-    override suspend fun doWork(): Result {
+    override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val file = inputData.getString(KEY_FILENAME)
+        val fileToUpload = getValidatedFile(file)
+            ?: return@withContext Result.failure(
+                workDataOf(KEY_FAILURE_REASON to "invalid file: $file")
+            )
 
         try {
-            if (file == null || file.isBlank() || !File(file).exists()) {
-                Result.failure(
-                    workDataOf(
-                        KEY_FAILURE_REASON to "invalid file: $file"
-                    )
-                )
-            }
-
-            val fileToUpload = File(file!!)
-
             apiClient.uploadFile(fileToUpload)
-
             fileToUpload.delete()
+            showNotification(true)
 
-            showNotification()
+            Result.success()
+        } catch(error: Throwable) {
+            showNotification(false)
 
-            return Result.success()
-        } catch (error: Error) {
-            return if(runAttemptCount < 3) {
-                Result.retry()
-            } else {
-                Result.failure(
-                    workDataOf(
-                        KEY_FAILURE_REASON to error.message
-                    )
-                )
-            }
+            Result.failure(
+                workDataOf(KEY_FAILURE_REASON to error.message)
+            )
         }
     }
 
-    private suspend fun showNotification() {
+    private fun getValidatedFile(filename: String?): File? {
+        if (filename == null || filename.isBlank() || !File(filename).exists()) {
+            return null
+        }
+
+        return File(filename)
+    }
+
+    private suspend fun showNotification(wasSuccessful: Boolean) {
         val i = Intent(Intent.ACTION_MAIN)
         val pendingIntentFlag = PendingIntentFlagHelper.getMutableFlag(PendingIntent.FLAG_UPDATE_CURRENT)
         val detailsIntent = PendingIntent.getActivity(applicationContext, 0, i, pendingIntentFlag)
 
+        val title = if(wasSuccessful) "Media Uploaded!" else "Upload Failed"
+        val msg = if(wasSuccessful) "File uploaded.  Go to files.mikeandwan.us to manage your files." else "File upload will be tried again later."
+
         val builder =
             NotificationCompat.Builder(applicationContext, MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
                 .setSmallIcon(R.drawable.ic_status_notification)
-                .setContentTitle("Media Uploaded!")
-                .setContentText("File uploaded.  Go to files.mikeandwan.us to manage your files.")
+                .setContentTitle(title)
+                .setContentText(msg)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(detailsIntent)
                 .setAutoCancel(true)
