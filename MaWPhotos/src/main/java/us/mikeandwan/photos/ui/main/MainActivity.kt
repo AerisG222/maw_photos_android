@@ -27,6 +27,7 @@ import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenuFragment
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment
 import us.mikeandwan.photos.ui.login.LoginActivity
 import us.mikeandwan.photos.workers.UploadWorker
+import java.util.concurrent.TimeUnit
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
 @AndroidEntryPoint
@@ -183,6 +184,11 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     val work = OneTimeWorkRequestBuilder<UploadWorker>()
+                        .setBackoffCriteria(
+                            BackoffPolicy.EXPONENTIAL,
+                            1,
+                            TimeUnit.MINUTES
+                        )
                         .setConstraints(constraints)
                         .setInputData(data)
                         .build()

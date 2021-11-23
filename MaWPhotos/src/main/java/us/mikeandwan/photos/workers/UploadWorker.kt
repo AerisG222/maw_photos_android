@@ -13,7 +13,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.domain.FileStorageRepository
@@ -34,6 +33,7 @@ class UploadWorker @AssistedInject constructor(
     companion object {
         const val KEY_FILENAME = "filename"
         const val KEY_FAILURE_REASON = "failure_reason"
+        const val MAX_RETRIES = 8
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
@@ -51,12 +51,17 @@ class UploadWorker @AssistedInject constructor(
 
             Result.success()
         } catch(error: Throwable) {
-            showNotification(false)
-            fileStorageRepository.refreshPendingUploads()
+            if(runAttemptCount < MAX_RETRIES) {
+                Result.retry()
+            } else {
+                showNotification(false)
+                fileToUpload.delete()
+                fileStorageRepository.refreshPendingUploads()
 
-            Result.failure(
-                workDataOf(KEY_FAILURE_REASON to error.message)
-            )
+                Result.failure(
+                    workDataOf(KEY_FAILURE_REASON to error.message)
+                )
+            }
         }
     }
 
@@ -74,7 +79,7 @@ class UploadWorker @AssistedInject constructor(
         val detailsIntent = PendingIntent.getActivity(applicationContext, 0, i, pendingIntentFlag)
 
         val title = if(wasSuccessful) "Media Uploaded!" else "Upload Failed"
-        val msg = if(wasSuccessful) "File uploaded.  Go to files.mikeandwan.us to manage your files." else "File upload will be tried again later."
+        val msg = if(wasSuccessful) "File uploaded.  Go to files.mikeandwan.us to manage your files." else "File was not able to be uploaded after multiple attempts.  Please try again later."
 
         val builder =
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
