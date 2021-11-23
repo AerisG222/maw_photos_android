@@ -142,7 +142,11 @@ dependencies {
     // appauth
     implementation 'net.openid:appauth:0.10.0'
 
-    // retrofit (pulls in okhttp)
+    // okhttp
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.2"))
+    implementation("com.squareup.okhttp3:okhttp")
+
+    // retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-jackson:$retrofit_version"
 

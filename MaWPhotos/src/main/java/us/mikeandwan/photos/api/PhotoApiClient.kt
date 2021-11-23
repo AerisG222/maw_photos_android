@@ -2,8 +2,10 @@ package us.mikeandwan.photos.api
 
 import android.webkit.MimeTypeMap
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import timber.log.Timber
 import java.io.File
@@ -56,7 +58,7 @@ class PhotoApiClient @Inject constructor(
     // https://futurestud.io/tutorials/retrofit-2-how-to-upload-files-to-server
     suspend fun uploadFile(file: File): FileOperationResult? {
         val type = getMediaTypeForFile(file)
-        val requestFile = RequestBody.create(type, file)
+        val requestFile = file.asRequestBody(type)
         val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
         return makeApiCall(::uploadFile.name, suspend { _photoApi.uploadFile(body) })
@@ -84,14 +86,14 @@ class PhotoApiClient @Inject constructor(
         var type: MediaType? = null
 
         if(mimeType != null) {
-            type = MediaType.parse(mimeType)
+            type = mimeType.toMediaTypeOrNull()
         }
 
         if(type == null)
         {
-            type = MediaType.get("binary/octet-stream")
+            type = "binary/octet-stream".toMediaType()
         }
 
-        return type!!
+        return type
     }
 }

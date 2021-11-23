@@ -44,7 +44,7 @@ class AuthAuthenticator(
                         }
                         else -> {
                             Timber.i("authenticate: obtained access token")
-                            request = response.request().newBuilder()
+                            request = response.request.newBuilder()
                                 .header("Authorization", String.format("Bearer %s", accessToken))
                                 .build()
                             continuation.resume(Unit)
