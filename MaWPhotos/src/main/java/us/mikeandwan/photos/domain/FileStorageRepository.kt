@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
 import java.io.FileFilter
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 class FileStorageRepository @Inject constructor(
@@ -36,7 +35,7 @@ class FileStorageRepository @Inject constructor(
                 fileToShare.delete()
             }
 
-            FileOutputStream(fileToShare).use { outputStream ->
+            fileToShare.outputStream().use { outputStream ->
                 val bitmap = (drawable as BitmapDrawable).bitmap
 
                 if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 92, outputStream)) {

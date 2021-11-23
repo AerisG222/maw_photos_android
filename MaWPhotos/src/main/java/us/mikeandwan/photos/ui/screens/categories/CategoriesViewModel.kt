@@ -20,8 +20,8 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class CategoriesViewModel @Inject constructor (
-    private val photoCategoryRepository: PhotoCategoryRepository,
-    private val categoryPreferenceRepository: CategoryPreferenceRepository,
+    photoCategoryRepository: PhotoCategoryRepository,
+    categoryPreferenceRepository: CategoryPreferenceRepository,
     private val activeIdRepository: ActiveIdRepository,
     private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {

@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MaW Photos</string>
-    <string name="title_years">Years</string>
     <string name="title_categories">Categories</string>
     <string name="title_random">Random</string>
     <string name="title_settings">Settings</string>
-    <string name="title_about">About</string>
     <string name="title_upload">Upload Queue</string>
-
-    <string name="action_settings">Settings</string>
-    <string name="action_sync">Sync</string>
-    <string name="action_share">Share</string>
-    <string name="action_wipe_cache">Wipe Cache</string>
-    <string name="action_view_upload_queue">View Upload Queue</string>
-    <string name="action_reauthenticate">Re-Authenticate</string>
-    <string name="title_activity_mode_selection">Browse By:</string>
-    <string name="title_activity_photo_list">Photos</string>
-    <string name="title_activity_category_list">CategoryList</string>
 
     <!-- notifications -->
     <string name="channel_name_new_categories">New Category Notification</string>
@@ -41,9 +29,6 @@
     <string name="act_photo_receiver_share_background">Share Background</string>
     <string name="act_photo_receiver_description">Files will be uploaded in the background when connected to WiFi</string>
 
-    <string name="photo_caption">[photo]</string>
-    <string name="video_caption">[video]</string>
-
     <!-- add comment dialog -->
     <string name="frg_comment_comment">Comment</string>
     <string name="frg_comment_add_comment">Add Comment</string>
@@ -53,13 +38,6 @@
     <string name="frg_rating_avg_rating">Average Rating:</string>
 
     <!-- main image toolbar -->
-    <string name="frg_toolbar_comment">Comment</string>
-    <string name="frg_toolbar_exif">Exif Data</string>
-    <string name="frg_toolbar_rate">Rate Photo</string>
-    <string name="frg_toolbar_rotate_left">Rotate Left</string>
-    <string name="frg_toolbar_rotate_right">Rotate Right</string>
-    <string name="frg_toolbar_toggle_slideshow">Toggle Slideshow</string>
-    <string name="title_activity_initial_load">InitialLoadActivity</string>
     <string name="manage_random_photos">Manage Random Photos</string>
     <string name="fetch_10_photos">Fetch 10 Photos</string>
     <string name="fetch_20_photos">Fetch 20 Photos</string>

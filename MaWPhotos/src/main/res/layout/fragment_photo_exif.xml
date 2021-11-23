@@ -6,24 +6,19 @@
             type="us.mikeandwan.photos.ui.controls.photoexif.PhotoExifViewModel" />
     </data>
 
-    <LinearLayout
+    <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
-            android:id="@+id/scrollView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TableLayout
+            android:id="@+id/exifView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1"
+            android:paddingBottom="60dp" />
 
-            <TableLayout
-                android:id="@+id/exifView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:stretchColumns="1"
-                android:paddingBottom="60dp" />
+    </ScrollView>
 
-        </ScrollView>
-
-    </LinearLayout>
 </layout>
