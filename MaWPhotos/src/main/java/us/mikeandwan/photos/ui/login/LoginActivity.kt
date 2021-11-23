@@ -66,6 +66,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun isDestroyed(): Boolean {
         authService.dispose()
+
         return super.isDestroyed()
     }
 
@@ -87,7 +88,6 @@ class LoginActivity : AppCompatActivity() {
 
             val request = buildAuthorizationRequest()
 
-            //Intent(activity, LoginCallbackActivity::class.java),
             authService.performAuthorizationRequest(
                 request,
                 PendingIntent.getActivity(
