@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import java.io.File
@@ -26,7 +27,8 @@ class UploadWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val apiClient: PhotoApiClient,
     private val preferenceRepository: NotificationPreferenceRepository,
-    private val notificationManager: NotificationManager
+    private val notificationManager: NotificationManager,
+    private val fileStorageRepository: FileStorageRepository
 ): CoroutineWorker(appContext, params) {
     companion object {
         const val KEY_FILENAME = "filename"
@@ -44,10 +46,12 @@ class UploadWorker @AssistedInject constructor(
             apiClient.uploadFile(fileToUpload)
             fileToUpload.delete()
             showNotification(true)
+            fileStorageRepository.refreshPendingUploads()
 
             Result.success()
         } catch(error: Throwable) {
             showNotification(false)
+            fileStorageRepository.refreshPendingUploads()
 
             Result.failure(
                 workDataOf(KEY_FAILURE_REASON to error.message)

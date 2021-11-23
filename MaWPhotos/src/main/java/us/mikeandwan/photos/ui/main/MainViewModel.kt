@@ -49,4 +49,10 @@ class MainViewModel @Inject constructor(
     suspend fun saveUploadFile(mediaUri: Uri): File? {
         return fileStorageRepository.saveFileToUpload(mediaUri)
     }
+
+    init {
+        viewModelScope.launch {
+            fileStorageRepository.refreshPendingUploads()
+        }
+    }
 }

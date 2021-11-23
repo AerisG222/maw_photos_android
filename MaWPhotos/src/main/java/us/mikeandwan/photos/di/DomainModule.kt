@@ -73,10 +73,9 @@ class DomainModule {
     @Provides
     @Singleton
     fun provideFileStorageRepository(
-        application: Application,
-        uploadFileObserver: UploadFileObserver
+        application: Application
     ): FileStorageRepository {
-        return FileStorageRepository(application, uploadFileObserver)
+        return FileStorageRepository(application)
     }
 
     @Provides
@@ -116,19 +115,5 @@ class DomainModule {
             notificationPreferenceRepository,
             photoPreferenceRepository,
             randomPreferenceRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUploadFileObserver(application: Application): UploadFileObserver {
-        val dir = application.getExternalFilesDir(FileStorageRepository.DIR_UPLOAD)
-            ?: throw Exception("Directory cannot be null!")
-
-        dir.mkdirs()
-
-        val observer = UploadFileObserver(dir)
-        observer.startWatching()
-
-        return observer
     }
 }

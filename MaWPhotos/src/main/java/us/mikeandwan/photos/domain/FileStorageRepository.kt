@@ -7,15 +7,18 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.webkit.MimeTypeMap
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
+import java.io.FileFilter
 import java.io.FileOutputStream
 import javax.inject.Inject
 
 class FileStorageRepository @Inject constructor(
-    private val _context: Context,
-    private val _uploadObserver: UploadFileObserver
+    private val _context: Context
 ) {
     companion object {
         val mimeTypeMap = MimeTypeMap.getSingleton()!!
@@ -23,7 +26,9 @@ class FileStorageRepository @Inject constructor(
         const val DIR_UPLOAD = "upload"
     }
 
-    val pendingUploads = _uploadObserver.fileQueue
+    private val uploadMutex = Mutex()
+    private val _pendingUploads = MutableStateFlow(emptyList<File>())
+    val pendingUploads = _pendingUploads.asStateFlow()
 
     suspend fun savePhotoToShare(drawable: Drawable, originalFilename: String): File {
         return withContext(Dispatchers.IO) {
@@ -71,6 +76,14 @@ class FileStorageRepository @Inject constructor(
         }
     }
 
+    suspend fun refreshPendingUploads() {
+        uploadMutex.withLock {
+            CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+                _pendingUploads.value = getUploadDirectory()!!.listFiles(FileFilter { it.isFile })!!.asList()
+            }
+        }
+    }
+
     private suspend fun writeUploadFile(mediaUri: Uri, mimeType: String): File? {
         return withContext(Dispatchers.IO) {
             val uploadFile = getUploadFile(mediaUri, mimeType)
@@ -97,8 +110,11 @@ class FileStorageRepository @Inject constructor(
         val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
         val typeName = mimeType.substring(0, mimeType.indexOf('/'))
         val filename = "${typeName}_${mediaUri.lastPathSegment}.$extension"
+        val dir = getUploadDirectory()
 
-        return File(getUploadDirectory(), filename)
+        dir?.mkdirs()
+
+        return File(dir, filename)
     }
 
     private fun getUploadDirectory(): File? {
