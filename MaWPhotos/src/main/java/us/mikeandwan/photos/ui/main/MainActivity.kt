@@ -16,6 +16,7 @@ import androidx.work.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.MobileNavigationDirections
@@ -86,30 +87,21 @@ class MainActivity : AppCompatActivity() {
                 // viewModel.authService.clearAuthState()
 
                 viewModel.isAuthenticated
-                    .onEach {
-                        if (!it) {
-                            goToLoginScreen()
-                        }
-                    }
+                    .filter { !it }
+                    .onEach { goToLoginScreen() }
                     .launchIn(this)
 
                 viewModel.shouldCloseDrawer
-                    .onEach { doClose ->
-                        if (doClose) {
-                            binding.drawerLayout.closeDrawer(binding.navLayout)
-                            viewModel.drawerClosed()
-                        }
+                    .filter { it }
+                    .onEach {
+                        binding.drawerLayout.closeDrawer(binding.navLayout)
+                        viewModel.drawerClosed()
                     }
                     .launchIn(this)
 
                 viewModel.enableDrawer
-                    .onEach { enableDrawer ->
-                        if(enableDrawer) {
-                            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                        } else {
-                            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                        }
-                    }
+                    .map { if(it) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED }
+                    .onEach { binding.drawerLayout.setDrawerLockMode(it) }
                     .launchIn(this)
 
                 viewModel.navigationRequests
