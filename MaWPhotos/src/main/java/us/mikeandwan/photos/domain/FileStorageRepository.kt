@@ -10,8 +10,6 @@ import android.webkit.MimeTypeMap
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.io.FileFilter
 import java.io.FileOutputStream
@@ -26,7 +24,6 @@ class FileStorageRepository @Inject constructor(
         const val DIR_UPLOAD = "upload"
     }
 
-    private val uploadMutex = Mutex()
     private val _pendingUploads = MutableStateFlow(emptyList<File>())
     val pendingUploads = _pendingUploads.asStateFlow()
 
@@ -77,10 +74,8 @@ class FileStorageRepository @Inject constructor(
     }
 
     suspend fun refreshPendingUploads() {
-        uploadMutex.withLock {
-            CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
-                _pendingUploads.value = getUploadDirectory()!!.listFiles(FileFilter { it.isFile })!!.asList()
-            }
+        withContext(Dispatchers.IO) {
+            _pendingUploads.value = getUploadDirectory()!!.listFiles(FileFilter { it.isFile })!!.asList()
         }
     }
 
