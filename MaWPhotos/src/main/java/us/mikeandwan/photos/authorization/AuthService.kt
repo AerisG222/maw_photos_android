@@ -55,7 +55,7 @@ class AuthService(
         }
     }
 
-    suspend fun completeAuthorization(intent: Intent) {
+    fun completeAuthorization(intent: Intent) {
         val response = AuthorizationResponse.fromIntent(intent)
         val ex = AuthorizationException.fromIntent(intent)
 
@@ -76,7 +76,7 @@ class AuthService(
         }
     }
 
-    private suspend fun exchangeAuthorizationCode(authorizationResponse: AuthorizationResponse) {
+    private fun exchangeAuthorizationCode(authorizationResponse: AuthorizationResponse) {
         Timber.d("Exchanging authorization code")
 
         performTokenRequest(
@@ -89,7 +89,7 @@ class AuthService(
         }
     }
 
-    private suspend fun performTokenRequest(request: TokenRequest, callback: AuthorizationService.TokenResponseCallback) {
+    private fun performTokenRequest(request: TokenRequest, callback: AuthorizationService.TokenResponseCallback) {
         val clientAuthentication: ClientAuthentication = try {
             Timber.d("Attempting token request")
             authStateManager.current.clientAuthentication
