@@ -19,7 +19,7 @@ import javax.inject.Inject
 class CategoryViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
     private val photoCategoryRepository: PhotoCategoryRepository,
-    private val photoPreferenceRepository: PhotoPreferenceRepository
+    photoPreferenceRepository: PhotoPreferenceRepository
 ) : ViewModel() {
     private val _requestNavigateToPhoto = MutableStateFlow<Int?>(null)
     val requestNavigateToPhoto = _requestNavigateToPhoto.asStateFlow()

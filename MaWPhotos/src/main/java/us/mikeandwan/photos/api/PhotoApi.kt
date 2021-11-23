@@ -11,9 +11,6 @@ internal interface PhotoApi {
     @GET("photos/{photoId}/exif")
     suspend fun getExifData(@Path("photoId") photoId: Int): Response<ExifData>
 
-    @GET("photos/random")
-    suspend fun getRandomPhoto(): Response<Photo>
-
     @GET("photos/random/{count}")
     suspend fun getRandomPhotos(@Path("count") count: Int): Response<ApiCollection<Photo>>
 

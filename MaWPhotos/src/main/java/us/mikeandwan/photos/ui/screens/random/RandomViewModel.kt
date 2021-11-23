@@ -20,7 +20,7 @@ import javax.inject.Inject
 class RandomViewModel @Inject constructor(
     private val activeIdRepository: ActiveIdRepository,
     private val randomPhotoRepository: RandomPhotoRepository,
-    private val randomPreferenceRepository: RandomPreferenceRepository
+    randomPreferenceRepository: RandomPreferenceRepository
 ) : ViewModel() {
     private val _requestNavigateToPhoto = MutableStateFlow<Int?>(null)
     val requestNavigateToPhoto = _requestNavigateToPhoto.asStateFlow()

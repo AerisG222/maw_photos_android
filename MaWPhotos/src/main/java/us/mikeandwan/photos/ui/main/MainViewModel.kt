@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val authService: AuthService,
+    authService: AuthService,
     private val navigationStateRepository: NavigationStateRepository,
     private val fileStorageRepository: FileStorageRepository
 ) : ViewModel() {

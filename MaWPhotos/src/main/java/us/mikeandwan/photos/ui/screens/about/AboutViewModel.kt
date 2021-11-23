@@ -3,13 +3,10 @@ package us.mikeandwan.photos.ui.screens.about
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import us.mikeandwan.photos.BuildConfig
-import us.mikeandwan.photos.domain.NavigationStateRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class AboutViewModel @Inject constructor(
-    private val navigationStateRepository: NavigationStateRepository
-) : ViewModel() {
+class AboutViewModel @Inject constructor() : ViewModel() {
     val version = "v${BuildConfig.VERSION_NAME}"
 
     var history = """

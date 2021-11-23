@@ -27,7 +27,7 @@ class PhotoDetailBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentPhotoDetailBottomSheetBinding.inflate(inflater)
         binding.pager.adapter = PhotoDetailPagerAdapter(this)
 

@@ -14,11 +14,11 @@ import kotlin.coroutines.suspendCoroutine
 
 class AuthService(
     application: Application,
-    val authorizationService: AuthorizationService,
+    private val authorizationService: AuthorizationService,
     private val authStateManager: AuthStateManager
 ) {
     val authClientId: String = application.resources.getString(R.string.auth_client_id)
-    val authSchemeRedirect: String = application.resources.getString(R.string.auth_scheme_redirect_uri)
+    private val authSchemeRedirect: String = application.resources.getString(R.string.auth_scheme_redirect_uri)
     val authSchemeRedirectUri: Uri = Uri.parse(authSchemeRedirect)
 
     private var _authConfig: AuthorizationServiceConfiguration? = null
@@ -28,7 +28,7 @@ class AuthService(
     private val _isAuthorized = MutableStateFlow(authStateManager.current.isAuthorized)
     val isAuthorized = _isAuthorized.asStateFlow()
 
-    fun updateAuthorizationState(isAuthorized: Boolean) {
+    private fun updateAuthorizationState(isAuthorized: Boolean) {
         _isAuthorized.value = isAuthorized
     }
 
@@ -38,7 +38,7 @@ class AuthService(
         authStateManager.replace(AuthState(_authConfig!!))
     }
 
-    suspend fun loadConfig(): AuthorizationServiceConfiguration {
+    private suspend fun loadConfig(): AuthorizationServiceConfiguration {
         return suspendCoroutine { cont ->
             AuthorizationServiceConfiguration.fetchFromIssuer(
                 Uri.parse(Constants.AUTH_BASE_URL)

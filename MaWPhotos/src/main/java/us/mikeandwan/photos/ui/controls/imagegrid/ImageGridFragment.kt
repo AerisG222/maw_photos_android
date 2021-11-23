@@ -36,7 +36,7 @@ class ImageGridFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentImageGridBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
@@ -102,7 +102,7 @@ class ImageGridFragment : Fragment() {
 
     private fun getThumbnailSize(screenWidth: Int, thumbnailSize: GridThumbnailSize): Int {
         if(thumbnailSize == GridThumbnailSize.Unspecified) {
-            return 0;
+            return 0
         }
 
         val thumbSize = getThumbnailSizeInDps(thumbnailSize)

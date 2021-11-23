@@ -14,8 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class YearsViewModel @Inject constructor (
-    private val photoCategoryRepository: PhotoCategoryRepository,
-    private val activeIdRepository: ActiveIdRepository,
+    photoCategoryRepository: PhotoCategoryRepository,
+    activeIdRepository: ActiveIdRepository,
     private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
     val years = photoCategoryRepository

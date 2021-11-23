@@ -20,7 +20,7 @@ class MawPreferenceDataStore(
         }
     }
 
-    override fun getString(key: String?, defValue: String?): String? {
+    override fun getString(key: String?, defValue: String?): String {
         return runBlocking {
             when(key) {
                 "category_grid_thumbnail_size" -> categoryPreferenceRepository.getCategoryGridItemSize().first().toString()

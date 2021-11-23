@@ -70,7 +70,7 @@ fun bindImageGridThumbnailSize(container: FragmentContainerView, thumbnailSize: 
 fun bindImageGridPhotoList(container: FragmentContainerView, photoList: List<Photo>) {
     val imageGridFragment = container.getFragment<ImageGridFragment>()
 
-    imageGridFragment.setGridItems(photoList.map { it -> it.toImageGridItem() })
+    imageGridFragment.setGridItems(photoList.map { it.toImageGridItem() })
 }
 
 @BindingAdapter("imageGridFileList")

@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class RandomPhotoRepository @Inject constructor(
     private val api: PhotoApiClient,
-    private val randomPreferenceRepository: RandomPreferenceRepository
+    randomPreferenceRepository: RandomPreferenceRepository
 ) {
     private var scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var fetchNextJob: Job? = null

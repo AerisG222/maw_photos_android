@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PhotoViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
-    private val photoListMediator: PhotoListMediator,
+    photoListMediator: PhotoListMediator,
     private val fileStorageRepository: FileStorageRepository,
     private val navigationStateRepository: NavigationStateRepository,
 ): ViewModel() {
