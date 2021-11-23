@@ -12,7 +12,6 @@ import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import javax.inject.Inject
 

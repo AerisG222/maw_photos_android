@@ -14,7 +14,6 @@ import us.mikeandwan.photos.domain.CategoryPreferenceRepository
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
-import us.mikeandwan.photos.domain.models.PhotoCategory
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi

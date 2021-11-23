@@ -23,7 +23,7 @@ class LoginViewModel @Inject constructor(val authService: AuthService): ViewMode
         _doAuth.value = false
     }
 
-    suspend fun completeAuthorization(intent: Intent) {
+    fun completeAuthorization(intent: Intent) {
         authService.completeAuthorization(intent)
     }
 }
