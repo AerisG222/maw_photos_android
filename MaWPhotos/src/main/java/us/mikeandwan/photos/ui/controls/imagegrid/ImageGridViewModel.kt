@@ -12,7 +12,7 @@ class ImageGridViewModel: ViewModel() {
 
     val gridItemsWithSize = _gridItems
         .combine(_thumbnailSize) { data, size -> Pair(data, size) }
-        .filter { (data, size) -> data.isNotEmpty() && size > 0 }
+        .filter { (data, size) -> size > 0 }
         .map { (data, size) -> data.map { it.toImageGridItemWithSize(size) }}
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<ImageGridItemWithSize>())
 
