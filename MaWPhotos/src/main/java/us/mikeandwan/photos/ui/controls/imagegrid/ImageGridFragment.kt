@@ -13,9 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentImageGridBinding
@@ -71,12 +69,11 @@ class ImageGridFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                _screenWidth.combine(viewModel.requestedThumbnailSize) { screenWidth, thumbnailSize ->
-                    if(screenWidth > 0 && thumbnailSize != null) {
-                        viewModel.setThumbnailSize(getThumbnailSize(screenWidth, thumbnailSize))
-                    }
-                }
-                .launchIn(this)
+                _screenWidth
+                    .combine(viewModel.requestedThumbnailSize) { screenWidth, thumbnailSize -> Pair(screenWidth, thumbnailSize) }
+                    .filter { (screenWidth, thumbnailSize) -> screenWidth > 0 && thumbnailSize != GridThumbnailSize.Unspecified }
+                    .onEach { (screenWidth, thumbnailSize) -> viewModel.setThumbnailSize(getThumbnailSize(screenWidth, thumbnailSize)) }
+                    .launchIn(this)
             }
         }
     }
