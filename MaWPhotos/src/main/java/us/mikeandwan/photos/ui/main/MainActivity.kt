@@ -168,7 +168,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: handle token expiration / 401 on upload
     private fun enqueueUpload(vararg mediaUri: Uri) {
         lifecycleScope.launch {
             mediaUri.forEach {
