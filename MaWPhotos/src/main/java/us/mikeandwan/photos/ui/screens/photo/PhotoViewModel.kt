@@ -27,7 +27,7 @@ class PhotoViewModel @Inject constructor (
     private val navigationStateRepository: NavigationStateRepository,
 ): ViewModel() {
     val photos = photoListMediator.photos
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val activePhotoIndex = photoListMediator.activePhotoIndex
         .filter { it >= 0 }
@@ -54,7 +54,7 @@ class PhotoViewModel @Inject constructor (
     private val _playSlideshow = MutableStateFlow(false)
     val playSlideshow = _playSlideshow.asStateFlow()
 
-    private val _rotatePhoto = MutableStateFlow<Int>(0)
+    private val _rotatePhoto = MutableStateFlow(0)
     val rotatePhoto = _rotatePhoto.asStateFlow()
 
     private val _sharePhoto = MutableStateFlow<Photo?>(null)

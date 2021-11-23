@@ -27,7 +27,7 @@ class RandomViewModel @Inject constructor(
 
     val photos = randomPhotoRepository
         .photos
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val gridItemThumbnailSize = randomPreferenceRepository
         .getPhotoGridItemSize()

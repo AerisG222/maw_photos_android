@@ -29,7 +29,7 @@ class CategoryViewModel @Inject constructor (
         .filter { it != null }
         .distinctUntilChanged()
         .flatMapLatest { photoCategoryRepository.getPhotos(it!!) }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Photo>())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val gridItemThumbnailSize = photoPreferenceRepository
         .getPhotoGridItemSize()

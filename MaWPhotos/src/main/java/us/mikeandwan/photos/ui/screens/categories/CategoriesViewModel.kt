@@ -27,7 +27,7 @@ class CategoriesViewModel @Inject constructor (
 ): ViewModel() {
     val categories = photoCategoryRepository
         .getCategories()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<PhotoCategory>())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val preferences = categoryPreferenceRepository
         .getCategoryPreference()

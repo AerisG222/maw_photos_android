@@ -31,7 +31,7 @@ class NavigationStateRepository @Inject constructor(
 
     private val _activeDestinationId = MutableStateFlow(-1)
 
-    private val _requestedNavigation = MutableStateFlow<NavigationInstruction>(NavigationInstruction(null, null, NavigationArea.None))
+    private val _requestedNavigation = MutableStateFlow(NavigationInstruction(null, null, NavigationArea.None))
     val requestedNavigation = _requestedNavigation.asStateFlow()
 
     private val _navArea = MutableStateFlow(NavigationArea.None)

@@ -34,7 +34,7 @@ class CategoryListRecyclerAdapter(private val clickListener: ClickListener)
 
     class ViewHolder(private var binding: ViewHolderCategoryListItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
-        fun bind(photoCategory: PhotoCategory, clickListener: CategoryListRecyclerAdapter.ClickListener) {
+        fun bind(photoCategory: PhotoCategory, clickListener: ClickListener) {
             binding.category = photoCategory
             binding.root.setOnClickListener { clickListener.onClick(photoCategory) }
             binding.executePendingBindings()

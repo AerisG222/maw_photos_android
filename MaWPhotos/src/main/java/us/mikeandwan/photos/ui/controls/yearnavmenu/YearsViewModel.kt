@@ -21,7 +21,7 @@ class YearsViewModel @Inject constructor (
     val years = photoCategoryRepository
         .getYears()
         .filter { it.isNotEmpty() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<Int>())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val activeYear = activeIdRepository
         .getActivePhotoCategoryYear()

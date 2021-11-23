@@ -19,7 +19,7 @@ class PhotoRatingViewModel @Inject constructor (
     private val _userRating = MutableStateFlow<Short>(0)
     val userRating = _userRating.asStateFlow()
 
-    private val _averageRating = MutableStateFlow<Float>(0f)
+    private val _averageRating = MutableStateFlow(0f)
     val averageRating = _averageRating.asStateFlow()
     
     suspend fun setRating(rating: Short) {

@@ -25,7 +25,7 @@ class ImageGridFragment : Fragment() {
         fun newInstance() = ImageGridFragment()
     }
 
-    private val _screenWidth = MutableStateFlow<Int>(-1)
+    private val _screenWidth = MutableStateFlow(-1)
     private val _clickHandlerForwarder = ImageGridRecyclerAdapter.ClickListener { _clickHandler?.onClick(it) }
     private var _clickHandler: ImageGridRecyclerAdapter.ClickListener? = null
     private var _listener: ViewTreeObserver.OnGlobalLayoutListener? = null

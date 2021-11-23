@@ -52,7 +52,7 @@ class PhotoCategoryRepository @Inject constructor(
         if(categoryId != _lastCategoryId) {
             val result = api.getPhotos(categoryId)
 
-            _lastCategoryPhotos = result?.items?.map { it.toDomainPhoto() } ?: emptyList<Photo>()
+            _lastCategoryPhotos = result?.items?.map { it.toDomainPhoto() } ?: emptyList()
 
             if(_lastCategoryPhotos.isNotEmpty()) {
                 _lastCategoryId = categoryId
