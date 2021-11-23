@@ -18,6 +18,7 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
+import us.mikeandwan.photos.utils.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import java.io.File
 
@@ -76,7 +77,7 @@ class UploadWorker @AssistedInject constructor(
         val msg = if(wasSuccessful) "File uploaded.  Go to files.mikeandwan.us to manage your files." else "File upload will be tried again later."
 
         val builder =
-            NotificationCompat.Builder(applicationContext, MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
+            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
                 .setSmallIcon(R.drawable.ic_status_notification)
                 .setContentTitle(title)
                 .setContentText(msg)

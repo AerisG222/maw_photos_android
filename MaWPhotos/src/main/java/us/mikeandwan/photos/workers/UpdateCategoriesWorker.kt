@@ -16,6 +16,7 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.utils.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 
 @HiltWorker
@@ -52,7 +53,7 @@ class UpdateCategoriesWorker @AssistedInject constructor(
         val detailsIntent = PendingIntent.getActivity(applicationContext, 0, i, pendingIntentFlag)
 
         val builder =
-            NotificationCompat.Builder(applicationContext, MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
+            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
                 .setSmallIcon(R.drawable.ic_status_notification)
                 .setContentTitle("New Photos Available")
                 .setContentText(contentText)

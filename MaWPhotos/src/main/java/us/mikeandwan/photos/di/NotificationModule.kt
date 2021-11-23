@@ -10,8 +10,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.utils.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES
+import us.mikeandwan.photos.utils.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES
 import javax.inject.Singleton
 
 @Module
@@ -35,7 +36,7 @@ class NotificationModule {
         val name = app.getString(R.string.channel_name_new_categories)
         val description = app.getString(R.string.channel_description_new_categories)
 
-        createChannel(notificationManager, name, description, MawApplication.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
+        createChannel(notificationManager, name, description, NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
     }
 
     private fun addUploadNotificationChannel(
@@ -45,7 +46,7 @@ class NotificationModule {
         val name = app.getString(R.string.channel_name_upload)
         val description = app.getString(R.string.channel_description_upload)
 
-        createChannel(notificationManager, name, description, MawApplication.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
+        createChannel(notificationManager, name, description, NOTIFICATION_CHANNEL_ID_UPLOAD_FILES)
     }
 
     private fun createChannel(
