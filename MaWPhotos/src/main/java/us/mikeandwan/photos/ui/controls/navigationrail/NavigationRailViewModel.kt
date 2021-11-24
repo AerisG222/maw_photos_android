@@ -5,7 +5,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.models.NavigationArea
@@ -35,7 +36,9 @@ class NavigationRailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            navigationStateRepository.navArea.collect { updateNavColors(it) }
+            navigationStateRepository.navArea
+                .onEach { updateNavColors(it) }
+                .launchIn(this)
         }
     }
 

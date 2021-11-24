@@ -104,6 +104,10 @@ class NavigationStateRepository @Inject constructor(
         _toolbarTitle.value = title
     }
 
+    fun setIsOnLoginScreen() {
+        _navArea.value = NavigationArea.Login
+    }
+
     private fun requestNavigation(destinationArea: NavigationArea, id: Int?) {
         var popBackId: Int? = null
 
