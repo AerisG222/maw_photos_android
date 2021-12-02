@@ -20,8 +20,8 @@
             android:id="@+id/recentSearchTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             android:gravity="center_horizontal"
+            android:padding="16dp"
             android:text="Recent Searches"
             android:textColor="?attr/colorOnSurface"
             app:layout_constraintTop_toTopOf="parent"
@@ -38,19 +38,16 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/materialDivider"
-            app:layout_constraintBottom_toTopOf="@id/divider2"
+            app:layout_constraintTop_toBottomOf="@+id/materialDivider"
             app:layout_constraintVertical_bias="0.0"
             app:searchTerms="@{ viewModel.searchTerms }"
-            tools:itemCount="36"
-            tools:layout_editor_absoluteX="-33dp"
-            tools:listitem="@layout/view_holder_year_list_item" />
+            tools:itemCount="36" />
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/divider2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/search_term_recycler_view" />
+            app:layout_constraintTop_toBottomOf="@+id/search_term_recycler_view" />
 
         <Space
             android:id="@+id/spacer"
