@@ -66,4 +66,16 @@ class DatabaseModule {
     fun provideRandomPreferenceDao(mawDatabase: MawDatabase): RandomPreferenceDao {
         return mawDatabase.randomPreferenceDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideSearchHistoryDao(mawDatabase: MawDatabase): SearchHistoryDao {
+        return mawDatabase.searchHistoryDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchPreferenceDao(mawDatabase: MawDatabase): SearchPreferenceDao {
+        return mawDatabase.searchPreferenceDao()
+    }
 }

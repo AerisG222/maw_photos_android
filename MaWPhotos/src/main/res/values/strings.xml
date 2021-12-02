@@ -3,6 +3,7 @@
     <string name="app_name">MaW Photos</string>
     <string name="title_categories">Categories</string>
     <string name="title_random">Random</string>
+    <string name="title_search">Search</string>
     <string name="title_settings">Settings</string>
     <string name="title_upload">Upload Queue</string>
 
@@ -29,17 +30,23 @@
     <string name="act_photo_receiver_share_background">Share Background</string>
     <string name="act_photo_receiver_description">Files will be uploaded in the background when connected to WiFi</string>
 
-    <!-- add comment dialog -->
+    <!-- comment screen -->
     <string name="frg_comment_comment">Comment</string>
     <string name="frg_comment_add_comment">Add Comment</string>
 
-    <!-- rating dialog -->
+    <!-- rating screen -->
     <string name="frg_rating_your_rating">Your Rating:</string>
     <string name="frg_rating_avg_rating">Average Rating:</string>
 
-    <!-- main image toolbar -->
+    <!-- random subnav -->
     <string name="manage_random_photos">Manage Random Photos</string>
     <string name="fetch_10_photos">Fetch 10 Photos</string>
     <string name="fetch_20_photos">Fetch 20 Photos</string>
     <string name="clear_random_photos">Clear Photos</string>
+
+    <!-- search subnav -->
+    <string name="clear_search_history">Clear History</string>
+
+    <!-- search gragment -->
+    <string name="frg_search_term">Query</string>
 </resources>

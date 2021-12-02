@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.domain
 
+import us.mikeandwan.photos.Constants
 import us.mikeandwan.photos.domain.models.*
 
 fun us.mikeandwan.photos.database.PhotoCategory.toDomainPhotoCategory(): PhotoCategory {
@@ -160,5 +161,39 @@ fun us.mikeandwan.photos.api.ExifData.toDomainExifData(): PhotoExifData {
         this.lightValue,
         this.scaleFactor35Efl,
         this.shutterSpeed
+    )
+}
+
+fun us.mikeandwan.photos.database.SearchHistory.toDomainSearchHistory(): SearchHistory {
+    return SearchHistory(
+        this.term,
+        this.searchDate
+    )
+}
+
+fun us.mikeandwan.photos.database.SearchPreference.toDomainSearchPreference(): SearchPreference {
+    return SearchPreference(
+        this.id,
+        this.recentQueryCount,
+        this.displayType,
+        this.gridThumbnailSize
+    )
+}
+
+fun us.mikeandwan.photos.api.SearchResultCategory.toDomainSearchResult(): SearchResultCategory {
+    return SearchResultCategory(
+        this.solrId,
+        this.id,
+        this.year,
+        this.name,
+        this.multimediaType,
+        this.teaserPhotoHeight,
+        this.teaserPhotoWidth,
+        "${ Constants.WWW_BASE_URL}${this.teaserPhotoPath}",
+        this.teaserPhotoSqHeight,
+        this.teaserPhotoSqWidth,
+        "${ Constants.WWW_BASE_URL}${this.teaserPhotoSqPath}",
+        "${ Constants.WWW_BASE_URL}${this.teaserPhotoPath.replace("/xs/", "/md/")}",
+        this.score
     )
 }

@@ -49,6 +49,7 @@ class NavigationStateRepository @Inject constructor(
 
                     setDestinationInfo(NavigationArea.Category, true, year)
                 }
+                R.id.navigation_search -> { setDestinationInfo(NavigationArea.Search, true, "Search") }
                 R.id.navigation_settings -> { setDestinationInfo(NavigationArea.Settings, false, "Settings") }
                 R.id.navigation_random -> { setDestinationInfo(NavigationArea.Random, true, "Random") }
                 R.id.navigation_category -> { setDestinationInfo(NavigationArea.Category, true, photoCategoryRepository.getCategory().first().name) }
@@ -91,6 +92,7 @@ class NavigationStateRepository @Inject constructor(
             NavigationArea.Random -> requestNavigation(area, R.id.action_navigate_to_random)
             NavigationArea.Upload -> requestNavigation(area, R.id.action_navigate_to_upload)
             NavigationArea.About -> requestNavigation(area, R.id.action_navigate_to_about)
+            NavigationArea.Search -> requestNavigation(area, R.id.action_navigate_to_search)
             NavigationArea.Settings -> requestNavigation(area, R.id.action_navigate_to_settings)
             else -> throw Exception("cannot navigate to area: $area")
         }

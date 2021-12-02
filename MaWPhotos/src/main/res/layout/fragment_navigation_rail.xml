@@ -29,6 +29,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/navigation_search"
+            android:src="@drawable/ic_search"
+            android:onClick="@{ () -> viewModel.requestNavigateToArea(NavigationArea.Search) }"
+            style="@style/maw_nav_rail_primary_nav_icon"
+            app:tint="@{ viewModel.searchButtonColor }"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/navigation_categories" />
+
+        <ImageView
             android:id="@+id/navigation_random"
             android:src="@drawable/ic_shuffle"
             android:onClick="@{ () -> viewModel.requestNavigateToArea(NavigationArea.Random) }"
@@ -36,7 +46,7 @@
             app:tint="@{ viewModel.randomButtonColor }"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/navigation_categories" />
+            app:layout_constraintTop_toBottomOf="@+id/navigation_search" />
 
         <ImageView
             android:id="@+id/navigation_upload"

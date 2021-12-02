@@ -55,6 +55,10 @@ class PhotoApiClient @Inject constructor(
         makeApiCall(::addComment.name, suspend { _photoApi.addCommentForPhoto(photoId, cp) })
     }
 
+    suspend fun searchCategories(query: String, start: Int = 0): SearchResults<SearchResultCategory>? {
+        return makeApiCall(::searchCategories.name, suspend { _photoApi.searchCategories(query, start) })
+    }
+
     // https://futurestud.io/tutorials/retrofit-2-how-to-upload-files-to-server
     suspend fun uploadFile(file: File): FileOperationResult? {
         val type = getMediaTypeForFile(file)

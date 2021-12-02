@@ -28,6 +28,9 @@ class NavigationRailViewModel @Inject constructor(
     private val _randomButtonColor = MutableStateFlow(0)
     val randomButtonColor = _randomButtonColor.asStateFlow()
 
+    private val _searchButtonColor = MutableStateFlow(0)
+    val searchButtonColor = _searchButtonColor.asStateFlow()
+
     private val _settingsButtonColor = MutableStateFlow(0)
     val settingsButtonColor = _settingsButtonColor.asStateFlow()
 
@@ -55,6 +58,7 @@ class NavigationRailViewModel @Inject constructor(
         _aboutButtonColor.value = getColor(navigationArea == NavigationArea.About)
         _categoryButtonColor.value = getColor(navigationArea == NavigationArea.Category)
         _randomButtonColor.value = getColor(navigationArea == NavigationArea.Random)
+        _searchButtonColor.value = getColor(navigationArea == NavigationArea.Search)
         _settingsButtonColor.value = getColor(navigationArea == NavigationArea.Settings)
         _uploadButtonColor.value = getColor(navigationArea == NavigationArea.Upload)
     }

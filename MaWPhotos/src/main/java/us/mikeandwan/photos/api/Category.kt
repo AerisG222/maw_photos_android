@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Category(
     @JsonProperty("id") val id: Int,
-    @JsonProperty("year") var year: Int,
-    @JsonProperty("name") var name: String,
-    @JsonProperty("teaserImage") var teaserImage: MultimediaAsset
-)
+    @JsonProperty("year") val year: Int,
+    @JsonProperty("name") val name: String,
+    @JsonProperty("teaserImage") val teaserImage: MultimediaAsset)

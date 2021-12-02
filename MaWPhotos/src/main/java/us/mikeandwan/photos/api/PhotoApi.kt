@@ -23,6 +23,9 @@ internal interface PhotoApi {
     @GET("photo-categories/{categoryId}/photos")
     suspend fun getPhotosByCategory(@Path("categoryId") categoryId: Int): Response<ApiCollection<Photo>>
 
+    @GET("search/multimedia-categories")
+    suspend fun searchCategories(@Query("query") query: String, @Query("start") start: Int): Response<SearchResults<SearchResultCategory>>
+
     @PATCH("photos/{photoId}/rating")
     suspend fun ratePhoto(@Path("photoId") photoId: Int, @Body rating: RatePhoto): Response<Rating>
 

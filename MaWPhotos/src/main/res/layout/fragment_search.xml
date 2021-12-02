@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.screens.search.SearchFragment">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="us.mikeandwan.photos.ui.screens.search.SearchViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8dp"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_marginEnd="@dimen/_8dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/queryEditTextLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/frg_search_term"
+                app:layout_constraintEnd_toStartOf="@+id/button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginEnd="@dimen/_8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/queryEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=".AUTOFILL_HINT_NOT_APPLICABLE"
+                    android:inputType="textAutoCorrect" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:onClick="@{ () -> viewModel.search(queryEditText.getText().toString()) }"
+                app:icon="@drawable/ic_search"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentPhotoGrid"
+            android:name="us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:imageGridThumbnailSize="@{ viewModel.gridItemThumbnailSize }"
+            app:imageGridSearchResultList="@{ viewModel.searchResults }"
+            app:imageGridClickHandler="@{ viewModel.onCategoryClicked }"/>
+
+    </LinearLayout>
+</layout>

@@ -7,14 +7,13 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.RecyclerView
 import io.noties.markwon.Markwon
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.*
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.ui.controls.searchnavmenu.SearchTermListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListRecyclerAdapter
 import us.mikeandwan.photos.utils.GlideApp
 import java.io.File
@@ -31,6 +30,12 @@ fun bindCategoryListRecyclerView(recyclerView: RecyclerView, data: List<PhotoCat
     when(val adapter = recyclerView.adapter) {
         is CategoryListRecyclerAdapter -> adapter.submitList(data)
     }
+}
+
+@BindingAdapter("searchTerms")
+fun bindSearchTermRecyclerView(recyclerView: RecyclerView, data: List<SearchHistory>?) {
+    val adapter = recyclerView.adapter as SearchTermListRecyclerAdapter
+    adapter.submitList(data?.map{ it.term })
 }
 
 @BindingAdapter("imageGridItemList")
@@ -78,6 +83,13 @@ fun bindImageGridFileList(container: FragmentContainerView, fileList: List<File>
     val imageGridFragment = container.getFragment<ImageGridFragment>()
 
     imageGridFragment.setGridItems(fileList.mapIndexed { id, file -> ImageGridItem(id, file.path, file) })
+}
+
+@BindingAdapter("imageGridSearchResultList")
+fun bindImageGridSearchResultList(container: FragmentContainerView, results: List<SearchResultCategory>) {
+    val imageGridFragment = container.getFragment<ImageGridFragment>()
+
+    imageGridFragment.setGridItems(results.map { it.toImageGridItem() })
 }
 
 @BindingAdapter("imageGridClickHandler")

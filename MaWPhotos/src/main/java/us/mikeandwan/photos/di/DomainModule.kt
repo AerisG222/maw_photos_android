@@ -80,6 +80,19 @@ class DomainModule {
 
     @Provides
     @Singleton
+    fun provideSearchRepository(
+        api: PhotoApiClient,
+        searchPreferenceRepository: SearchPreferenceRepository,
+        searchHistoryDao: SearchHistoryDao
+    ): SearchRepository {
+        return SearchRepository(
+            api,
+            searchHistoryDao,
+            searchPreferenceRepository)
+    }
+
+    @Provides
+    @Singleton
     fun provideCategoryPreferenceRepository(categoryPreferenceDao: CategoryPreferenceDao): CategoryPreferenceRepository {
         return CategoryPreferenceRepository(categoryPreferenceDao)
     }
