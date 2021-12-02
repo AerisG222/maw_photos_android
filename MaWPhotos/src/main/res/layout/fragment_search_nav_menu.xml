@@ -39,7 +39,8 @@
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@+id/materialDivider"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintBottom_toTopOf="@id/divider2"
+            app:layout_constrainedHeight="true"
             app:searchTerms="@{ viewModel.searchTerms }"
             tools:itemCount="36" />
 
@@ -61,7 +62,8 @@
             android:background="#80FF0000"
             android:onClick="@{ () -> viewModel.clearHistory() }"
             android:text="@string/clear_search_history"
-            app:layout_constraintTop_toBottomOf="@id/spacer" />
+            app:layout_constraintTop_toBottomOf="@id/spacer"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
