@@ -48,42 +48,35 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{ viewModel.showSearch ? View.VISIBLE : View.GONE }"
-            android:layout_marginTop="@dimen/_8dp"
-            android:layout_marginStart="@dimen/_8dp"
-            android:layout_marginEnd="@dimen/_8dp">
+            android:visibility="@{ viewModel.showSearch ? View.VISIBLE : View.GONE }">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/queryEditTextLayout"
+            <EditText
+                android:id="@+id/editText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/frg_search_term"
-                app:layout_constraintEnd_toStartOf="@+id/button"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginEnd="@dimen/_8dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/queryEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autofillHints=".AUTOFILL_HINT_NOT_APPLICABLE"
-                    android:text="@{ viewModel.searchRequest.query }"
-                    android:inputType="textAutoCorrect" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:onClick="@{ () -> viewModel.search(queryEditText.getText().toString()) }"
-                app:icon="@drawable/ic_search"
-                app:iconGravity="textEnd"
-                app:iconPadding="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="@dimen/_8dp"
+                android:background="@drawable/rounded_edittext"
+                android:paddingStart="12dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="5dp"
+                android:text="@{ viewModel.searchRequest.query }"
+                android:inputType="textAutoCorrect"
+                android:autofillHints=".AUTOFILL_HINT_NOT_APPLICABLE"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_search"
+                android:onClick="@{ () -> viewModel.search(editText.getText().toString()) }"
+                app:layout_constraintBottom_toBottomOf="@+id/editText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/editText" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 </layout>

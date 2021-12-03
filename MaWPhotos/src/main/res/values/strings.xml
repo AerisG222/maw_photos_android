@@ -46,7 +46,4 @@
 
     <!-- search subnav -->
     <string name="clear_search_history">Clear History</string>
-
-    <!-- search gragment -->
-    <string name="frg_search_term">Query</string>
 </resources>
