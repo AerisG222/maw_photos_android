@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.SearchRepository
+import us.mikeandwan.photos.domain.models.SearchSource
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +22,8 @@ class SearchNavMenuViewModel @Inject constructor (
 
     fun onTermSelected(term: String) {
         viewModelScope.launch {
-            //navigationStateRepository.requestNavigateToYear(year)
+            navigationStateRepository.requestNavDrawerClose()
+            searchRepository.performSearch(term, SearchSource.SearchMenu)
         }
     }
 
