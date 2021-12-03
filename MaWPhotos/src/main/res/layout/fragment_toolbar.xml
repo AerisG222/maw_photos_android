@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="us.mikeandwan.photos.ui.controls.toolbar.ToolbarViewModel" />
+    </data>
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/top_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/app_icon_image"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="@{ viewModel.enableDrawer ? View.VISIBLE : View.GONE }"
+            android:onClick="@{ () -> viewModel.onAppIconClicked() }"
+            app:srcCompat="@drawable/ic_launch" />
+
+        <ImageView
+            android:id="@+id/app_icon_back"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="@{ viewModel.enableDrawer ? View.GONE : View.VISIBLE }"
+            android:onClick="@{ () -> viewModel.onBackClicked() }"
+            app:tint="?attr/colorOnSurface"
+            app:srcCompat="@drawable/ic_arrow_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{ viewModel.toolbarTitle }"
+            android:textColor="?attr/colorOnSurface"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+    </com.google.android.material.appbar.MaterialToolbar>
+</layout>

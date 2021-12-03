@@ -20,17 +20,26 @@ class MainViewModel @Inject constructor(
     val isAuthenticated = authService.isAuthorized
     val enableDrawer = navigationStateRepository.enableDrawer
     val shouldCloseDrawer = navigationStateRepository.closeNavDrawerSignal
-    val toolbarTitle = navigationStateRepository.toolbarTitle
+    val shouldOpenDrawer = navigationStateRepository.openNavDrawerSignal
+    val shouldNavigateBack = navigationStateRepository.navigateBackSignal
     val navigationRequests = navigationStateRepository.requestedNavigation
 
     fun drawerClosed() {
         navigationStateRepository.closeNavDrawerCompleted()
     }
 
+    fun drawerOpened() {
+        navigationStateRepository.openNavDrawerCompleted()
+    }
+
     fun destinationChanged(destinationId: Int) {
         viewModelScope.launch {
             navigationStateRepository.onDestinationChanged(destinationId)
         }
+    }
+
+    fun navigationBackCompleted() {
+        navigationStateRepository.navigateBackCompleted()
     }
 
     fun navigationRequestCompleted() {

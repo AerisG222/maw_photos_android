@@ -23,6 +23,12 @@ class NavigationStateRepository @Inject constructor(
     private val _closeNavDrawerSignal = MutableStateFlow(false)
     val closeNavDrawerSignal = _closeNavDrawerSignal.asStateFlow()
 
+    private val _openNavDrawerSignal = MutableStateFlow(false)
+    val openNavDrawerSignal = _openNavDrawerSignal.asStateFlow()
+
+    private val _navigateBackSignal = MutableStateFlow(false)
+    val navigateBackSignal = _navigateBackSignal.asStateFlow()
+
     private val _toolbarTitle = MutableStateFlow("")
     val toolbarTitle = _toolbarTitle.asStateFlow()
 
@@ -67,8 +73,24 @@ class NavigationStateRepository @Inject constructor(
         _closeNavDrawerSignal.value = true
     }
 
+    fun requestNavDrawerOpen() {
+        _openNavDrawerSignal.value = true
+    }
+
     fun closeNavDrawerCompleted() {
         _closeNavDrawerSignal.value = false
+    }
+
+    fun openNavDrawerCompleted() {
+        _openNavDrawerSignal.value = false
+    }
+
+    fun requestNavigateBack() {
+        _navigateBackSignal.value = true
+    }
+
+    fun navigateBackCompleted() {
+        _navigateBackSignal.value = false
     }
 
     suspend fun requestNavigateToYear(year: Int) {

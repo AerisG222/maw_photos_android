@@ -47,25 +47,10 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        initStateObservers()
-
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-        binding.appIconImage.setOnClickListener {
-            if(!binding.drawerLayout.isDrawerOpen(binding.navLayout)) {
-                binding.drawerLayout.openDrawer(binding.navLayout, true)
-            }
-        }
-
-        binding.appIconBack.setOnClickListener {
-            navController.navigateUp()
-        }
-
-        navController.addOnDestinationChangedListener { controller, destination, bundle ->
-            viewModel.destinationChanged(destination.id)
-        }
-
+        initStateObservers()
         initShareReceiver()
     }
 
@@ -82,6 +67,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initStateObservers() {
+        navController.addOnDestinationChangedListener { controller, destination, bundle ->
+            viewModel.destinationChanged(destination.id)
+        }
+
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // DEV: uncomment to force reauth
@@ -97,6 +86,22 @@ class MainActivity : AppCompatActivity() {
                     .onEach {
                         binding.drawerLayout.closeDrawer(binding.navLayout)
                         viewModel.drawerClosed()
+                    }
+                    .launchIn(this)
+
+                viewModel.shouldOpenDrawer
+                    .filter { it }
+                    .onEach {
+                        binding.drawerLayout.openDrawer(binding.navLayout)
+                        viewModel.drawerOpened()
+                    }
+                    .launchIn(this)
+
+                viewModel.shouldNavigateBack
+                    .filter { it }
+                    .onEach {
+                        navController.navigateUp()
+                        viewModel.navigationBackCompleted()
                     }
                     .launchIn(this)
 
