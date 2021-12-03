@@ -21,7 +21,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginEnd="16dp"
-            android:visibility="@{ viewModel.enableDrawer ? View.VISIBLE : View.GONE }"
+            android:visibility="@{ viewModel.showAppIcon ? View.VISIBLE : View.GONE }"
             android:onClick="@{ () -> viewModel.onAppIconClicked() }"
             app:srcCompat="@drawable/ic_launch" />
 
@@ -30,7 +30,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginEnd="16dp"
-            android:visibility="@{ viewModel.enableDrawer ? View.GONE : View.VISIBLE }"
+            android:visibility="@{ viewModel.showAppIcon ? View.GONE : View.VISIBLE }"
             android:onClick="@{ () -> viewModel.onBackClicked() }"
             app:tint="?attr/colorOnSurface"
             app:srcCompat="@drawable/ic_arrow_back" />
@@ -40,8 +40,50 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
+            android:visibility="@{ viewModel.showSearch ? View.GONE : View.VISIBLE}"
             android:text="@{ viewModel.toolbarTitle }"
             android:textColor="?attr/colorOnSurface"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{ viewModel.showSearch ? View.VISIBLE : View.GONE }"
+            android:layout_marginTop="@dimen/_8dp"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_marginEnd="@dimen/_8dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/queryEditTextLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/frg_search_term"
+                app:layout_constraintEnd_toStartOf="@+id/button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginEnd="@dimen/_8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/queryEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=".AUTOFILL_HINT_NOT_APPLICABLE"
+                    android:text="@{ viewModel.searchRequest.query }"
+                    android:inputType="textAutoCorrect" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:onClick="@{ () -> viewModel.search(queryEditText.getText().toString()) }"
+                app:icon="@drawable/ic_search"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 </layout>

@@ -13,8 +13,6 @@ import us.mikeandwan.photos.domain.SearchPreferenceRepository
 import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.domain.models.SearchRequest
-import us.mikeandwan.photos.domain.models.SearchSource
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import javax.inject.Inject
 
@@ -26,10 +24,6 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
     private val _requestNavigateToCategory = MutableStateFlow<Int?>(null)
     val requestNavigateToCategory = _requestNavigateToCategory.asStateFlow()
-
-    val searchRequest = searchRepository
-        .searchRequest
-        .stateIn(viewModelScope, SharingStarted.Eagerly, SearchRequest("", SearchSource.None))
 
     val searchResults = searchRepository
         .searchResults
@@ -52,11 +46,5 @@ class SearchViewModel @Inject constructor(
 
     fun onNavigateComplete() {
         _requestNavigateToCategory.value = null
-    }
-
-    fun search(query: String) {
-        viewModelScope.launch {
-            searchRepository.performSearch(query, SearchSource.SearchMenu)
-        }
     }
 }
