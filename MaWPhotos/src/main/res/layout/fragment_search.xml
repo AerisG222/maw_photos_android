@@ -11,10 +11,24 @@
             type="us.mikeandwan.photos.ui.screens.search.SearchViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/photoReceiverLayout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/backgroundImageView"
+            android:layout_width="@android:dimen/thumbnail_height"
+            android:layout_height="@android:dimen/thumbnail_width"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/fragment_search_background"
+            app:layout_constraintBottom_toBottomOf="@+id/fragmentPhotoGrid"
+            app:layout_constraintEnd_toEndOf="@+id/fragmentPhotoGrid"
+            app:layout_constraintStart_toStartOf="@+id/fragmentPhotoGrid"
+            app:layout_constraintTop_toTopOf="@+id/fragmentPhotoGrid"
+            app:tint="?attr/mawUploadWatermarkColor"
+            app:srcCompat="@drawable/ic_search" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentPhotoGrid"
@@ -25,5 +39,5 @@
             app:imageGridSearchResultList="@{ viewModel.searchResults }"
             app:imageGridClickHandler="@{ viewModel.onCategoryClicked }"/>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

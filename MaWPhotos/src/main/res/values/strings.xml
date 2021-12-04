@@ -46,4 +46,7 @@
 
     <!-- search subnav -->
     <string name="clear_search_history">Clear History</string>
+
+    <!-- search -->
+    <string name="fragment_search_background">Share Background</string>
 </resources>
