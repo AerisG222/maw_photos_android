@@ -46,10 +46,62 @@
             android:id="@+id/fragmentPhotoGrid"
             android:name="us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:imageGridThumbnailSize="@{ viewModel.gridItemThumbnailSize }"
+            android:layout_height="0dp"
+            app:imageGridClickHandler="@{ viewModel.onCategoryClicked }"
             app:imageGridSearchResultList="@{ viewModel.searchResults }"
-            app:imageGridClickHandler="@{ viewModel.onCategoryClicked }"/>
+            app:imageGridThumbnailSize="@{ viewModel.gridItemThumbnailSize }"
+            app:layout_constraintBottom_toTopOf="@+id/showMoreLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/showMoreLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{ viewModel.showResultToolbar ? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/loadMoreResultsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fragment_search_load_more"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/yearCategoryLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/resultsShownTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text='@{ Integer.toString(viewModel.searchResults.size)  }'
+                    tools:text="24" />
+
+                <TextView
+                    android:id="@+id/resultsShownSeparatorTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" / " />
+
+                <TextView
+                    android:id="@+id/totalResultsTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text='@{ Integer.toString(viewModel.totalFound) }'
+                    tools:text="156" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -40,6 +40,16 @@ class SearchViewModel @Inject constructor(
         .map { (request, results) -> !request.query.isNullOrEmpty() && results.isEmpty() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    val showResultToolbar = searchRepository
+        .searchRequest
+        .combine(searchRepository.searchResults) { request, results -> Pair(request, results) }
+        .map { (request, results) -> !request.query.isNullOrEmpty() && results.isNotEmpty() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    val totalFound = searchRepository
+        .totalFound
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+
     val onCategoryClicked = ImageGridRecyclerAdapter.ClickListener {
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategory(it.id)
