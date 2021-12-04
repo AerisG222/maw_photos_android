@@ -3,10 +3,7 @@ package us.mikeandwan.photos.ui.screens.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.SearchPreferenceRepository
@@ -36,6 +33,12 @@ class SearchViewModel @Inject constructor(
     val gridItemThumbnailSize = searchPreferenceRepository
         .getGridThumbnailSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
+
+    val showNoResults = searchRepository
+        .searchRequest
+        .combine(searchRepository.searchResults) { request, results -> Pair(request, results) }
+        .map { (request, results) -> !request.query.isNullOrEmpty() && results.isEmpty() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val onCategoryClicked = ImageGridRecyclerAdapter.ClickListener {
         viewModelScope.launch {
