@@ -42,7 +42,8 @@ class SearchViewModel @Inject constructor(
     val showNoResults = searchRepository
         .searchRequest
         .combine(searchRepository.searchResults) { request, results -> Pair(request, results) }
-        .map { (request, results) -> !request.query.isNullOrEmpty() && results.isEmpty() }
+        .combine(searchRepository.isSearching) { (request, results), isSearching -> Triple(request, results, isSearching)}
+        .map { (request, results, isSearching) -> !request.query.isNullOrEmpty() && results.isEmpty() && !isSearching }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val showResultToolbar = searchRepository

@@ -29,6 +29,9 @@ class SearchRepository @Inject constructor(
     private val _totalFound = MutableStateFlow(0)
     val totalFound = _totalFound.asStateFlow()
 
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching = _isSearching.asStateFlow()
+
     fun getSearchHistory() = searchHistoryDao
         .getSearchTerms()
         .map { history -> history.map { it.toDomainSearchHistory() }}
@@ -44,6 +47,7 @@ class SearchRepository @Inject constructor(
             return
         }
 
+        _isSearching.value = true
         _searchResults.value = emptyList()
         _searchRequest.value = SearchRequest(query, searchSource)
 
@@ -51,6 +55,8 @@ class SearchRepository @Inject constructor(
             addSearchHistory(query)
             executeSearch(query, 0)
         }
+
+        _isSearching.value = false
     }
 
     suspend fun continueSearch() {
