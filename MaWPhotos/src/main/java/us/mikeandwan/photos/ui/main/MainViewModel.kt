@@ -23,6 +23,7 @@ class MainViewModel @Inject constructor(
     val shouldOpenDrawer = navigationStateRepository.openNavDrawerSignal
     val shouldNavigateBack = navigationStateRepository.navigateBackSignal
     val navigationRequests = navigationStateRepository.requestedNavigation
+    val navigationArea = navigationStateRepository.navArea
 
     fun drawerClosed() {
         navigationStateRepository.closeNavDrawerCompleted()

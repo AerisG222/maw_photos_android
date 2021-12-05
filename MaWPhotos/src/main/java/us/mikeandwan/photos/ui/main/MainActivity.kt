@@ -115,6 +115,10 @@ class MainActivity : AppCompatActivity() {
                     .onEach { onNavigate(it) }
                     .launchIn(this)
 
+                viewModel.navigationArea
+                    .onEach { updateSubnav(it) }
+                    .launchIn(this)
+
                 viewModel.clearFileCache()
             }
         }
@@ -126,14 +130,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         navController.navigate(instruction.actionId!!)
-        updateSubnav(instruction)
 
         viewModel.requestNavDrawerClose()
         viewModel.navigationRequestCompleted()
     }
 
-    private fun updateSubnav(navigationInstruction: NavigationInstruction) {
-        val frag = when(navigationInstruction.targetNavigationArea) {
+    private fun updateSubnav(area: NavigationArea) {
+        val frag = when(area) {
             NavigationArea.Category -> YearsFragment::class.java
             NavigationArea.Random -> RandomMenuFragment::class.java
             NavigationArea.Search -> SearchNavMenuFragment::class.java
