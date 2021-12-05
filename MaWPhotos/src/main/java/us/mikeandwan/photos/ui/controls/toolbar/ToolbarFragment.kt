@@ -27,6 +27,20 @@ class ToolbarFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
+        binding.searchEditText.setOnEditorActionListener { v, actionId, evt ->
+            val query = v.text.toString()
+
+            if (query.isBlank()) {
+                // prevent soft keyboard from being dismissed
+                true
+            } else {
+                viewModel.search(query)
+
+                // dismiss soft keyboard
+                false
+            }
+        }
+
         return binding.root
     }
 }
