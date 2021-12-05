@@ -8,7 +8,8 @@ class MawPreferenceDataStore(
     private val categoryPreferenceRepository: CategoryPreferenceRepository,
     private val notificationPreferenceRepository: NotificationPreferenceRepository,
     private val photoPreferenceRepository: PhotoPreferenceRepository,
-    private val randomPreferenceRepository: RandomPreferenceRepository
+    private val randomPreferenceRepository: RandomPreferenceRepository,
+    private val searchPreferenceRepository: SearchPreferenceRepository
 ) : PreferenceDataStore() {
     override fun getBoolean(key: String?, defValue: Boolean): Boolean {
         return runBlocking {
@@ -29,6 +30,9 @@ class MawPreferenceDataStore(
                 "photo_slideshow_interval" -> photoPreferenceRepository.getSlideshowIntervalSeconds().first().toString()
                 "random_grid_thumbnail_size" -> randomPreferenceRepository.getPhotoGridItemSize().first().toString()
                 "random_slideshow_interval" -> randomPreferenceRepository.getSlideshowIntervalSeconds().first().toString()
+                "search_save_query_count" -> searchPreferenceRepository.getSearchesToSaveCount().first().toString()
+                "search_grid_thumbnail_size" -> searchPreferenceRepository.getSearchGridItemSize().first().toString()
+                "search_view_mode" -> searchPreferenceRepository.getSearchDisplayType().first().toString()
                 else -> throw IllegalArgumentException("Invalid string key: $key")
             }
         }
@@ -51,12 +55,15 @@ class MawPreferenceDataStore(
 
         runBlocking {
             when(key) {
-                "category_grid_thumbnail_size" -> categoryPreferenceRepository.setCategoryGridItemSize((enumValueOf(value)))
+                "category_grid_thumbnail_size" -> categoryPreferenceRepository.setCategoryGridItemSize(enumValueOf(value))
                 "category_view_mode" -> categoryPreferenceRepository.setCategoryDisplayType(enumValueOf(value))
-                "photo_grid_thumbnail_size" -> photoPreferenceRepository.setPhotoGridItemSize((enumValueOf(value)))
+                "photo_grid_thumbnail_size" -> photoPreferenceRepository.setPhotoGridItemSize(enumValueOf(value))
                 "photo_slideshow_interval" -> photoPreferenceRepository.setSlideshowIntervalSeconds(value.toInt())
-                "random_grid_thumbnail_size" -> randomPreferenceRepository.setPhotoGridItemSize((enumValueOf(value)))
+                "random_grid_thumbnail_size" -> randomPreferenceRepository.setPhotoGridItemSize(enumValueOf(value))
                 "random_slideshow_interval" -> randomPreferenceRepository.setSlideshowIntervalSeconds(value.toInt())
+                "search_save_query_count" -> searchPreferenceRepository.setSearchesToSaveCount(value.toInt())
+                "search_grid_thumbnail_size" -> searchPreferenceRepository.setSearchGridItemSize(enumValueOf(value))
+                "search_view_mode" -> searchPreferenceRepository.setSearchDisplayType(enumValueOf(value))
                 else -> throw IllegalArgumentException("Invalid string key: $key")
             }
         }

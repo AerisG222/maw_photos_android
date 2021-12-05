@@ -27,11 +27,11 @@ class SearchViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val displayType = searchPreferenceRepository
-        .getDisplayMode()
+        .getSearchDisplayType()
         .stateIn(viewModelScope, SharingStarted.Eagerly, CategoryDisplayType.Grid)
 
     val gridItemThumbnailSize = searchPreferenceRepository
-        .getGridThumbnailSize()
+        .getSearchGridItemSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
     val moreResultsAvailable = searchResults

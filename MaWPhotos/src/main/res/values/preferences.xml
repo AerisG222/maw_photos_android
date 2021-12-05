@@ -8,8 +8,8 @@
 
     <string name="pref_category_display_default_value">list</string>
     <string-array name="pref_category_display_names">
-        <item>Thumbnail Grid</item>
-        <item>Thumbnail and Name List</item>
+        <item>Grid</item>
+        <item>List</item>
     </string-array>
     <string-array name="pref_category_display_values">
         <item>Grid</item>
@@ -44,6 +44,7 @@
     <string name="pref_category_grid_thumbnail_size_default_value">Medium</string>
     <string name="pref_photo_grid_thumbnail_size_default_value">Medium</string>
     <string name="pref_random_grid_thumbnail_size_default_value">Medium</string>
+    <string name="pref_search_grid_thumbnail_size_default_value">Medium</string>
 
     <string-array name="pref_grid_thumbnail_sizes">
         <item>ExtraSmall</item>
@@ -59,4 +60,24 @@
     </string-array>
 
     <string name="pref_random_display_header">Random Display</string>
+
+    <string name="pref_search_display_header">Search Display</string>
+
+    <string-array name="pref_search_queries_to_remember">
+        <item>None</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string-array name="pref_search_queries_to_remember_values">
+        <item>0</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string name="pref_search_queries_to_remember_default_value">20</string>
+
+    <string name="pref_search_result_display_header">Search Result Display</string>
 </resources>

@@ -117,16 +117,24 @@ class DomainModule {
 
     @Provides
     @Singleton
+    fun provideSearchPreferenceRepository(searchPreferenceDao: SearchPreferenceDao): SearchPreferenceRepository {
+        return SearchPreferenceRepository(searchPreferenceDao)
+    }
+
+    @Provides
+    @Singleton
     fun providePreferenceDataStore(
         categoryPreferenceRepository: CategoryPreferenceRepository,
         notificationPreferenceRepository: NotificationPreferenceRepository,
         photoPreferenceRepository: PhotoPreferenceRepository,
-        randomPreferenceRepository: RandomPreferenceRepository
+        randomPreferenceRepository: RandomPreferenceRepository,
+        searchPreferenceRepository: SearchPreferenceRepository
     ): PreferenceDataStore {
         return MawPreferenceDataStore(
             categoryPreferenceRepository,
             notificationPreferenceRepository,
             photoPreferenceRepository,
-            randomPreferenceRepository)
+            randomPreferenceRepository,
+            searchPreferenceRepository)
     }
 }

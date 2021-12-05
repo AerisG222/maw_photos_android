@@ -15,15 +15,15 @@ class SearchPreferenceRepository @Inject constructor (
         .getSearchPreference(Constants.ID)
         .map { it.toDomainSearchPreference() }
 
-    fun getRecentSearchesToSaveCount() = dao
+    fun getSearchesToSaveCount() = dao
         .getSearchPreference(Constants.ID)
         .map { it.recentQueryCount }
 
-    fun getGridThumbnailSize() = dao
+    fun getSearchGridItemSize() = dao
         .getSearchPreference(Constants.ID)
         .map { it.gridThumbnailSize }
 
-    fun getDisplayMode() = dao
+    fun getSearchDisplayType() = dao
         .getSearchPreference(Constants.ID)
         .map { it.displayType }
 
@@ -31,11 +31,11 @@ class SearchPreferenceRepository @Inject constructor (
         setPreference { it.copy(recentQueryCountToSave = count) }
     }
 
-    suspend fun setDisplayMode(mode: CategoryDisplayType) {
+    suspend fun setSearchDisplayType(mode: CategoryDisplayType) {
         setPreference { it.copy(displayType = mode) }
     }
 
-    suspend fun setGridItemSize(size: GridThumbnailSize) {
+    suspend fun setSearchGridItemSize(size: GridThumbnailSize) {
         setPreference { it.copy(gridThumbnailSize = size) }
     }
 
