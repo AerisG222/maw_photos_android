@@ -34,6 +34,11 @@ class SearchViewModel @Inject constructor(
         .getGridThumbnailSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
+    val moreResultsAvailable = searchResults
+        .combine(searchRepository.totalFound) { results, totalFound -> Pair(results, totalFound)}
+        .map { (results, totalFound) -> results.size < totalFound }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     val showNoResults = searchRepository
         .searchRequest
         .combine(searchRepository.searchResults) { request, results -> Pair(request, results) }
@@ -54,6 +59,12 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategory(it.id)
             _requestNavigateToCategory.value = it.id
+        }
+    }
+
+    fun continueSearch() {
+        viewModelScope.launch {
+            searchRepository.continueSearch()
         }
     }
 

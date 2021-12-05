@@ -13,6 +13,7 @@ import us.mikeandwan.photos.domain.models.SearchResultCategory
 import us.mikeandwan.photos.domain.models.SearchSource
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.max
 
 class SearchRepository @Inject constructor(
     private val api: PhotoApiClient,
@@ -37,15 +38,41 @@ class SearchRepository @Inject constructor(
     }
 
     suspend fun performSearch(query: String, searchSource: SearchSource) {
+        val currentQuery = searchRequest.value.query
+
+        if(query.isBlank() || currentQuery.equals(query, true)) {
+            return
+        }
+
+        _searchResults.value = emptyList()
         _searchRequest.value = SearchRequest(query, searchSource)
 
         withContext(Dispatchers.IO) {
             addSearchHistory(query)
+            executeSearch(query, 0)
+        }
+    }
 
-            val results = api.searchCategories(query, 0)
+    suspend fun continueSearch() {
+        val query = searchRequest.value.query
+        val position = searchResults.value.size
 
-            _searchResults.value = results?.results?.map { it.toDomainSearchResult() } ?: emptyList()
-            _totalFound.value = results?.totalFound ?: 0
+        if(query.isBlank() || position < 0 || position >= totalFound.value) {
+            return
+        }
+
+        executeSearch(query, position)
+    }
+
+    private suspend fun executeSearch(query: String, startPosition: Int) {
+        val currentResults = searchResults.value
+
+        withContext(Dispatchers.IO) {
+            val results = api.searchCategories(query, startPosition)
+            val domainResults = results?.results?.map { it.toDomainSearchResult() } ?: emptyList()
+
+            _searchResults.value = currentResults + domainResults
+            _totalFound.value = max(results?.totalFound ?: 0, _searchResults.value.size)
         }
     }
 
