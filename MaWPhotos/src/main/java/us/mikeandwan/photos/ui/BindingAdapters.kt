@@ -7,8 +7,12 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.RecyclerView
 import io.noties.markwon.Markwon
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.domain.models.*
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.SearchHistory
+import us.mikeandwan.photos.domain.models.SearchResultCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListRecyclerAdapter
+import us.mikeandwan.photos.ui.controls.categorylist.CategoryWithYearVisibility
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
@@ -26,7 +30,7 @@ fun bindYearRecyclerView(recyclerView: RecyclerView, data: List<Int>?) {
 }
 
 @BindingAdapter("categoryList")
-fun bindCategoryListRecyclerView(recyclerView: RecyclerView, data: List<PhotoCategory>?) {
+fun bindCategoryListRecyclerView(recyclerView: RecyclerView, data: List<CategoryWithYearVisibility>?) {
     when(val adapter = recyclerView.adapter) {
         is CategoryListRecyclerAdapter -> adapter.submitList(data)
     }

@@ -3,6 +3,7 @@ package us.mikeandwan.photos.ui
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.SearchResultCategory
+import us.mikeandwan.photos.ui.controls.categorylist.CategoryWithYearVisibility
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
 
@@ -41,5 +42,12 @@ fun SearchResultCategory.toImageGridItem(): ImageGridItem {
         idOffset + this.id,
         this.teaserPhotoMdPath,
         this
+    )
+}
+
+fun PhotoCategory.toCategoryWithYearVisibility(showYear: Boolean): CategoryWithYearVisibility {
+    return CategoryWithYearVisibility(
+        this,
+        showYear
     )
 }

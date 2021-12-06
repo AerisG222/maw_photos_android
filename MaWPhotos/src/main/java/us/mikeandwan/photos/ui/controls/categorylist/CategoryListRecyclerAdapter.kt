@@ -9,7 +9,7 @@ import us.mikeandwan.photos.databinding.ViewHolderCategoryListItemBinding
 import us.mikeandwan.photos.domain.models.PhotoCategory
 
 class CategoryListRecyclerAdapter(private val clickListener: ClickListener)
-    : ListAdapter<PhotoCategory, CategoryListRecyclerAdapter.ViewHolder>(DiffCallback) {
+    : ListAdapter<CategoryWithYearVisibility, CategoryListRecyclerAdapter.ViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ViewHolderCategoryListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
@@ -17,26 +17,26 @@ class CategoryListRecyclerAdapter(private val clickListener: ClickListener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val category = getItem(position)
+        val categoryWithYearVisibility = getItem(position)
 
-        holder.bind(category, clickListener)
+        holder.bind(categoryWithYearVisibility, clickListener)
     }
 
-    companion object DiffCallback : DiffUtil.ItemCallback<PhotoCategory>() {
-        override fun areItemsTheSame(oldItem: PhotoCategory, newItem: PhotoCategory): Boolean {
+    companion object DiffCallback : DiffUtil.ItemCallback<CategoryWithYearVisibility>() {
+        override fun areItemsTheSame(oldItem: CategoryWithYearVisibility, newItem: CategoryWithYearVisibility): Boolean {
             return oldItem === newItem
         }
 
-        override fun areContentsTheSame(oldItem: PhotoCategory, newItem: PhotoCategory): Boolean {
-            return oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: CategoryWithYearVisibility, newItem: CategoryWithYearVisibility): Boolean {
+            return oldItem.category.id == newItem.category.id
         }
     }
 
     class ViewHolder(private var binding: ViewHolderCategoryListItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
-        fun bind(photoCategory: PhotoCategory, clickListener: ClickListener) {
-            binding.category = photoCategory
-            binding.root.setOnClickListener { clickListener.onClick(photoCategory) }
+        fun bind(categoryWithYearVisibility: CategoryWithYearVisibility, clickListener: ClickListener) {
+            binding.viewModel = categoryWithYearVisibility
+            binding.root.setOnClickListener { clickListener.onClick(categoryWithYearVisibility.category) }
             binding.executePendingBindings()
         }
     }
