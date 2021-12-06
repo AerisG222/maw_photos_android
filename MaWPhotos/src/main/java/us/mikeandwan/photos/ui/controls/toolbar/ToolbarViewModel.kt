@@ -3,9 +3,7 @@ package us.mikeandwan.photos.ui.controls.toolbar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.SearchRepository
@@ -21,6 +19,9 @@ class ToolbarViewModel @Inject constructor(
 ): ViewModel() {
     val showAppIcon = navigationStateRepository.enableDrawer
     val toolbarTitle = navigationStateRepository.toolbarTitle
+
+    private val _closeKeyboardSignal = MutableStateFlow(false)
+    val closeKeyboardSignal = _closeKeyboardSignal.asStateFlow()
 
     val showSearch = navigationStateRepository
         .navArea
@@ -40,8 +41,18 @@ class ToolbarViewModel @Inject constructor(
     }
 
     fun search(query: String) {
+        if(query.isBlank()) {
+            return
+        }
+
+        _closeKeyboardSignal.value = true
+
         viewModelScope.launch {
             searchRepository.performSearch(query, SearchSource.SearchMenu)
         }
+    }
+
+    fun closeKeyboardSignalHandled() {
+        _closeKeyboardSignal.value = false
     }
 }
