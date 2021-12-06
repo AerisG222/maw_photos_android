@@ -56,7 +56,10 @@ class PhotoApiClient @Inject constructor(
     }
 
     suspend fun searchCategories(query: String, start: Int = 0): SearchResults<SearchResultCategory>? {
-        return makeApiCall(::searchCategories.name, suspend { _photoApi.searchCategories(query, start) })
+        // limit searches to just photos for now
+        val search = "-video $query"
+
+        return makeApiCall(::searchCategories.name, suspend { _photoApi.searchCategories(search, start) })
     }
 
     // https://futurestud.io/tutorials/retrofit-2-how-to-upload-files-to-server
