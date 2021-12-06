@@ -3,8 +3,10 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.SearchHistory
 import us.mikeandwan.photos.database.SearchHistoryDao
@@ -87,5 +89,18 @@ class SearchRepository @Inject constructor(
             term,
             Calendar.getInstance()
         ))
+
+        cleanSearchHistory()
+    }
+
+    private suspend fun cleanSearchHistory() {
+        try {
+            val historyToKeep = searchPreferenceRepository.getSearchesToSaveCount().first()
+            val earliestDateToRemove = searchHistoryDao.getEarliestDateToRemove(historyToKeep)
+
+            searchHistoryDao.removeOldHistory(earliestDateToRemove)
+        } catch(t: Throwable) {
+            Timber.e(t, "Error trying to clean up search history")
+        }
     }
 }
