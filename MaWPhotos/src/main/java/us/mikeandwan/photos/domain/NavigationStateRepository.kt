@@ -116,6 +116,7 @@ class NavigationStateRepository @Inject constructor(
             NavigationArea.About -> requestNavigation(area, R.id.action_navigate_to_about)
             NavigationArea.Search -> requestNavigation(area, R.id.action_navigate_to_search)
             NavigationArea.Settings -> requestNavigation(area, R.id.action_navigate_to_settings)
+            NavigationArea.Login -> requestNavigation(area, null)
             else -> throw Exception("cannot navigate to area: $area")
         }
     }
@@ -130,6 +131,7 @@ class NavigationStateRepository @Inject constructor(
 
     fun setIsOnLoginScreen() {
         _navArea.value = NavigationArea.Login
+        requestNavigationCompleted()
     }
 
     private fun requestNavigation(destinationArea: NavigationArea, id: Int?) {

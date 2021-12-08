@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.MobileNavigationDirections
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.databinding.ActivityMainBinding
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.NavigationInstruction
@@ -73,11 +74,8 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // DEV: uncomment to force reauth
-                // viewModel.authService.clearAuthState()
-
-                viewModel.isAuthenticated
-                    .filter { !it }
+                viewModel.authStatus
+                    .filter { it is AuthStatus.Completed && !it.isAuthorized }
                     .onEach { goToLoginScreen() }
                     .launchIn(this)
 
@@ -111,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                     .launchIn(this)
 
                 viewModel.navigationRequests
-                    .filter { it.actionId != null }
+                    .filter { it.actionId != null || it.targetNavigationArea == NavigationArea.Login }
                     .onEach { onNavigate(it) }
                     .launchIn(this)
 
@@ -125,14 +123,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onNavigate(instruction: NavigationInstruction) {
-        if(instruction.popBackId != null) {
-            navController.popBackStack(instruction.popBackId, false)
-        }
-
-        navController.navigate(instruction.actionId!!)
-
-        viewModel.requestNavDrawerClose()
         viewModel.navigationRequestCompleted()
+
+        if(instruction.targetNavigationArea == NavigationArea.Login) {
+            goToLoginScreen()
+        } else {
+            if(instruction.popBackId != null) {
+                navController.popBackStack(instruction.popBackId, false)
+            }
+
+            navController.navigate(instruction.actionId!!)
+
+            viewModel.requestNavDrawerClose()
+        }
     }
 
     private fun updateSubnav(area: NavigationArea) {

@@ -17,7 +17,7 @@ class MainViewModel @Inject constructor(
     private val navigationStateRepository: NavigationStateRepository,
     private val fileStorageRepository: FileStorageRepository
 ) : ViewModel() {
-    val isAuthenticated = authService.isAuthorized
+    val authStatus = authService.authStatus
     val enableDrawer = navigationStateRepository.enableDrawer
     val shouldCloseDrawer = navigationStateRepository.closeNavDrawerSignal
     val shouldOpenDrawer = navigationStateRepository.openNavDrawerSignal

@@ -116,4 +116,9 @@
             app:entryValues="@array/pref_grid_thumbnail_sizes"
             app:defaultValue="@string/pref_search_grid_thumbnail_size_default_value" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/pref_advanced_display_header"
+        app:iconSpaceReserved="false">
+    </PreferenceCategory>
 </PreferenceScreen>

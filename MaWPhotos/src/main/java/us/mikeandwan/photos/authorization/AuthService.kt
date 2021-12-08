@@ -25,11 +25,19 @@ class AuthService(
     val authConfig: AuthorizationServiceConfiguration?
         get() { return _authConfig }
 
-    private val _isAuthorized = MutableStateFlow(authStateManager.current.isAuthorized)
-    val isAuthorized = _isAuthorized.asStateFlow()
+    private val _authStatus = MutableStateFlow<AuthStatus>(AuthStatus.Completed(authStateManager.current.isAuthorized))
+    val authStatus = _authStatus.asStateFlow()
+
+    fun beginAuthentication() {
+        _authStatus.value = AuthStatus.LoginInProcess()
+    }
 
     private fun updateAuthorizationState(isAuthorized: Boolean) {
-        _isAuthorized.value = isAuthorized
+        _authStatus.value = AuthStatus.Completed(isAuthorized)
+    }
+
+    fun logout() {
+        _authStatus.value = AuthStatus.Completed(false)
     }
 
     suspend fun clearAuthState() {
@@ -81,11 +89,8 @@ class AuthService(
 
         performTokenRequest(
             authorizationResponse.createTokenExchangeRequest()
-        ) { tokenResponse: TokenResponse?, authException: AuthorizationException? ->
-            handleCodeExchangeResponse(
-                tokenResponse,
-                authException
-            )
+        ) { tokenResponse, authException ->
+            handleCodeExchangeResponse(tokenResponse, authException)
         }
     }
 
@@ -102,11 +107,7 @@ class AuthService(
             return
         }
 
-        authorizationService.performTokenRequest(
-            request,
-            clientAuthentication,
-            callback
-        )
+        authorizationService.performTokenRequest(request, clientAuthentication, callback)
     }
 
     private fun handleCodeExchangeResponse(

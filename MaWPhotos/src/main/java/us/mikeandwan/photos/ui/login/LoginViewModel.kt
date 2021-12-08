@@ -12,14 +12,15 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     val authService: AuthService,
-    val navigationStateRepository: NavigationStateRepository
+    private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
     private var _doAuth = MutableStateFlow(false)
     val doAuth = _doAuth.asStateFlow()
 
-    val isAuthorized = authService.isAuthorized
+    val authStatus = authService.authStatus
 
     fun initiateAuthentication() {
+        authService.beginAuthentication()
         _doAuth.value = true
     }
 
