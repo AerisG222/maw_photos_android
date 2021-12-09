@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.screens.categories.CategoriesFragment">
 
@@ -16,8 +18,14 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentCategoryList"
+            android:name="us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:categoryChooserDisplayType="@{ viewModel.preferences.displayType }"
+            app:categoryChooserCategories="@{ viewModel.categories }"
+            app:categoryChooserCategorySelectedHandler="@{ viewModel.onCategorySelected }"
+            app:categoryChooserGridThumbnailSize="@{ viewModel.preferences.gridThumbnailSize }"
+            app:categoryChooserShowYearInList="@{ false }" />
 
     </FrameLayout>
 </layout>

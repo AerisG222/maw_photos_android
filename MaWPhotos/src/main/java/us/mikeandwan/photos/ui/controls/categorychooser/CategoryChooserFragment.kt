@@ -24,13 +24,15 @@ import us.mikeandwan.photos.ui.controls.categorylist.CategoryListFragment
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
-import us.mikeandwan.photos.ui.screens.categories.CategoriesFragment
 import us.mikeandwan.photos.ui.toImageGridItem
 
 @AndroidEntryPoint
 class CategoryChooserFragment: Fragment() {
     companion object {
         fun newInstance() = CategoryChooserFragment()
+
+        const val FRAG_GRID = "grid"
+        const val FRAG_LIST = "list"
     }
 
     private var _clickHandler: CategorySelectedListener? = null
@@ -103,7 +105,7 @@ class CategoryChooserFragment: Fragment() {
     }
 
     private fun showGrid(thumbnailSize: GridThumbnailSize, categories: List<PhotoCategory>) {
-        setChildFragment(ImageGridFragment::class.java, CategoriesFragment.FRAG_GRID)
+        setChildFragment(ImageGridFragment::class.java, FRAG_GRID)
 
         val frag = childFragmentManager.fragments.first() as ImageGridFragment
 
@@ -113,7 +115,7 @@ class CategoryChooserFragment: Fragment() {
     }
 
     private fun showList(showYearInList: Boolean, categories: List<PhotoCategory>) {
-        setChildFragment(CategoryListFragment::class.java, CategoriesFragment.FRAG_LIST)
+        setChildFragment(CategoryListFragment::class.java, FRAG_LIST)
 
         val frag = childFragmentManager.fragments.first() as CategoryListFragment
 
