@@ -53,4 +53,8 @@ class CategoryListFragment : Fragment() {
     fun setCategories(categories: List<PhotoCategory>) {
         viewModel.setCategories(categories)
     }
+
+    fun setShowYear(doShow: Boolean) {
+        viewModel.setShowYear(doShow)
+    }
 }

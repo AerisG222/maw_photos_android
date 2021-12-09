@@ -51,3 +51,14 @@ fun PhotoCategory.toCategoryWithYearVisibility(showYear: Boolean): CategoryWithY
         showYear
     )
 }
+
+fun SearchResultCategory.toDomainPhotoCategory(): PhotoCategory {
+    return PhotoCategory(
+        this.id,
+        this.year,
+        this.name,
+        this.teaserPhotoHeight,
+        this.teaserPhotoWidth,
+        this.teaserPhotoPath
+    )
+}

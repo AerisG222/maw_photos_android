@@ -7,10 +7,8 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.RecyclerView
 import io.noties.markwon.Markwon
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.domain.models.SearchHistory
-import us.mikeandwan.photos.domain.models.SearchResultCategory
+import us.mikeandwan.photos.domain.models.*
+import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryWithYearVisibility
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
@@ -108,4 +106,39 @@ fun bindMarkdownText(textView: TextView, markdown: String) {
     val markwon = Markwon.create(textView.context)
 
     markwon.setMarkdown(textView, markdown)
+}
+
+@BindingAdapter("categoryChooserDisplayType")
+fun bindCategoryChooserDisplayType(container: FragmentContainerView, displayType: CategoryDisplayType) {
+    val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()
+
+    categoryChooserFragment.setDisplayType(displayType)
+}
+
+@BindingAdapter("categoryChooserCategories")
+fun bindCategoryChooserCategories(container: FragmentContainerView, categories: List<PhotoCategory>) {
+    val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()
+
+    categoryChooserFragment.setCategories(categories)
+}
+
+@BindingAdapter("categoryChooserCategorySelectedHandler")
+fun bindCategoryChooserClickHandler(container: FragmentContainerView, handler: CategoryChooserFragment.CategorySelectedListener) {
+    val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()
+
+    categoryChooserFragment.setClickHandler(handler)
+}
+
+@BindingAdapter("categoryChooserGridThumbnailSize")
+fun bindCategoryChooserGridThumbnailSize(container: FragmentContainerView, size: GridThumbnailSize) {
+    val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()
+
+    categoryChooserFragment.setGridThumbnailSize(size)
+}
+
+@BindingAdapter("categoryChooserShowYearInList")
+fun bindCategoryChooserShowYearInList(container: FragmentContainerView, show: Boolean) {
+    val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()
+
+    categoryChooserFragment.setShowYearsInList(show)
 }

@@ -10,7 +10,9 @@ import us.mikeandwan.photos.domain.SearchPreferenceRepository
 import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
+import us.mikeandwan.photos.ui.toDomainPhotoCategory
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,9 +28,13 @@ class SearchViewModel @Inject constructor(
         .searchResults
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    val searchResultsAsCategories = searchResults
+        .map { results -> results.map { it.toDomainPhotoCategory() }}
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList<PhotoCategory>())
+
     val displayType = searchPreferenceRepository
         .getSearchDisplayType()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, CategoryDisplayType.Grid)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, CategoryDisplayType.Unspecified)
 
     val gridItemThumbnailSize = searchPreferenceRepository
         .getSearchGridItemSize()
@@ -56,7 +62,7 @@ class SearchViewModel @Inject constructor(
         .totalFound
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    val onCategoryClicked = ImageGridRecyclerAdapter.ClickListener {
+    val onCategoryClicked = CategoryChooserFragment.CategorySelectedListener {
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategory(it.id)
             _requestNavigateToCategory.value = it.id
