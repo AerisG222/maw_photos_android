@@ -24,6 +24,7 @@
             android:layout_height="@android:dimen/thumbnail_width"
             android:layout_marginStart="8dp"
             android:contentDescription="@string/fragment_search_background"
+            android:visibility="@{ viewModel.areResultsAvailable ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="@+id/fragmentCategoryChooser"
             app:layout_constraintEnd_toEndOf="@+id/fragmentCategoryChooser"
             app:layout_constraintStart_toStartOf="@+id/fragmentCategoryChooser"
@@ -61,7 +62,7 @@
             android:id="@+id/showMoreLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{ viewModel.showResultToolbar ? View.VISIBLE : View.GONE }"
+            android:visibility="@{ viewModel.areResultsAvailable ? View.VISIBLE : View.GONE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">

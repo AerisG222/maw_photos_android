@@ -52,7 +52,7 @@ class SearchViewModel @Inject constructor(
         .map { (request, results, isSearching) -> !request.query.isNullOrEmpty() && results.isEmpty() && !isSearching }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    val showResultToolbar = searchRepository
+    val areResultsAvailable = searchRepository
         .searchRequest
         .combine(searchRepository.searchResults) { request, results -> Pair(request, results) }
         .map { (request, results) -> !request.query.isNullOrEmpty() && results.isNotEmpty() }
