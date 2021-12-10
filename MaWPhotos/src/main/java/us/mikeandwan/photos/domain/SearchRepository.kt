@@ -45,13 +45,14 @@ class SearchRepository @Inject constructor(
     suspend fun performSearch(query: String, searchSource: SearchSource) {
         val currentQuery = searchRequest.value.query
 
+        _searchResults.value = emptyList()
+
         if(query.isBlank() || currentQuery.equals(query, true)) {
             return
         }
 
-        _isSearching.value = true
-        _searchResults.value = emptyList()
         _searchRequest.value = SearchRequest(query, searchSource)
+        _isSearching.value = true
 
         withContext(Dispatchers.IO) {
             addSearchHistory(query)

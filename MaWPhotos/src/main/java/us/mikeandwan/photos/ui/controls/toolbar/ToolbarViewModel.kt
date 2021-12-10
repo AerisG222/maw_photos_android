@@ -41,10 +41,6 @@ class ToolbarViewModel @Inject constructor(
     }
 
     fun search(query: String) {
-        if(query.isBlank()) {
-            return
-        }
-
         _closeKeyboardSignal.value = true
 
         viewModelScope.launch {

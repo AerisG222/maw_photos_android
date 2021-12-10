@@ -92,7 +92,7 @@ class CategoryChooserFragment: Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.displayInfo
-                    .filter { info -> info.categories.isNotEmpty() && info.displayType != CategoryDisplayType.Unspecified }
+                    .filter { info -> info.displayType != CategoryDisplayType.Unspecified }
                     .onEach { info ->
                         when(info.displayType) {
                             CategoryDisplayType.Grid -> showGrid(info.gridThumbnailSize, info.categories)
