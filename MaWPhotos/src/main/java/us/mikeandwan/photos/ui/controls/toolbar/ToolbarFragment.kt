@@ -42,7 +42,7 @@ class ToolbarFragment : Fragment() {
     }
 
     fun initStateObservers() {
-        binding.searchEditText.setOnEditorActionListener { v, actionId, evt ->
+        binding.searchEditText.setOnEditorActionListener { v, _, _ ->
             val query = v.text.toString()
 
             if (query.isBlank()) {

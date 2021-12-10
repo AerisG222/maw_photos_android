@@ -11,7 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -92,11 +91,11 @@ class CategoryChooserFragment: Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.displayInfo
-                    .filter { info -> info.displayType != CategoryDisplayType.Unspecified }
                     .onEach { info ->
                         when(info.displayType) {
                             CategoryDisplayType.Grid -> showGrid(info.gridThumbnailSize, info.categories)
                             CategoryDisplayType.List -> showList(info.showYearInList, info.categories)
+                            CategoryDisplayType.Unspecified -> {}
                         }
                     }
                     .launchIn(this)
