@@ -44,6 +44,9 @@ class PhotoExifFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        _2dp = resources.getDimension(R.dimen._2dp).toInt()
+        _4dp = resources.getDimension(R.dimen._4dp).toInt()
+        _8dp = resources.getDimension(R.dimen._8dp).toInt()
         alternatingRowColor = requireContext().getColorFromAttribute(R.attr.mawAlternateRowColor)
 
         initStateObservers()
