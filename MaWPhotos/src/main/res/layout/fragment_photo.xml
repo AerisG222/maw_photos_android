@@ -52,7 +52,9 @@
                     android:id="@+id/yearCategorySeparatorTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" / " />
+                    android:layout_marginStart="@dimen/_2dp"
+                    android:layout_marginEnd="@dimen/_2dp"
+                    android:text="@string/text_separator" />
 
                 <TextView
                     android:id="@+id/categoryTextView"
@@ -84,8 +86,10 @@
                     android:id="@+id/positionCountSeparatorTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_2dp"
+                    android:layout_marginEnd="@dimen/_2dp"
                     android:textColor="?attr/colorOnSurface"
-                    android:text=" / " />
+                    android:text="@string/text_separator" />
 
                 <TextView
                     android:id="@+id/photoCountTextView"
@@ -109,6 +113,7 @@
                 android:id="@+id/rotateLeftButton"
                 android:src="@drawable/ic_rotate_left"
                 android:onClick="@{ () -> viewModel.rotatePhoto(-1) }"
+                android:contentDescription="@string/rotate_left_icon_description"
                 style="@style/maw_photo_toolbar_button"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -117,6 +122,7 @@
                 android:id="@+id/rotateRightButton"
                 android:src="@drawable/ic_rotate_right"
                 android:onClick="@{ () -> viewModel.rotatePhoto(1) }"
+                android:contentDescription="@string/rotate_right_icon_description"
                 style="@style/maw_photo_toolbar_button"
                 app:layout_constraintStart_toEndOf="@id/rotateLeftButton"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -125,6 +131,7 @@
                 android:id="@+id/slideshowButton"
                 android:src="@{ viewModel.playSlideshow ? @drawable/ic_stop : @drawable/ic_play_arrow }"
                 android:onClick="@{ () -> viewModel.toggleSlideshow() }"
+                android:contentDescription="@string/toggle_slideshow_icon_description"
                 style="@style/maw_photo_toolbar_button"
                 app:layout_constraintStart_toEndOf="@id/rotateRightButton"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -133,6 +140,7 @@
                 android:id="@+id/share_button"
                 android:src="@drawable/ic_share"
                 android:onClick="@{ () -> viewModel.sharePhoto() }"
+                android:contentDescription="@string/share_photo_icon_description"
                 style="@style/maw_photo_toolbar_button"
                 app:layout_constraintStart_toEndOf="@id/slideshowButton"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -140,6 +148,7 @@
             <ImageView
                 android:id="@+id/info"
                 android:src="@drawable/ic_keyboard_double_arrow_up"
+                android:contentDescription="@string/view_photo_details_icon_description"
                 style="@style/maw_photo_toolbar_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />

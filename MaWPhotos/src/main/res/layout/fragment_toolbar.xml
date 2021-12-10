@@ -23,6 +23,7 @@
             android:layout_marginEnd="16dp"
             android:visibility="@{ viewModel.showAppIcon ? View.VISIBLE : View.GONE }"
             android:onClick="@{ () -> viewModel.onAppIconClicked() }"
+            android:contentDescription="@string/application_menu_icon_description"
             app:srcCompat="@drawable/ic_launch" />
 
         <ImageView
@@ -32,6 +33,7 @@
             android:layout_marginEnd="16dp"
             android:visibility="@{ viewModel.showAppIcon ? View.GONE : View.VISIBLE }"
             android:onClick="@{ () -> viewModel.onBackClicked() }"
+            android:contentDescription="@string/navigate_back_icon_description"
             app:tint="?attr/colorOnSurface"
             app:srcCompat="@drawable/ic_arrow_back" />
 
@@ -61,6 +63,7 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="5dp"
                 android:text="@{ viewModel.searchRequest.query }"
+                android:hint="@string/title_search"
                 android:inputType="textAutoCorrect"
                 android:imeOptions="actionSearch"
                 android:autofillHints=".AUTOFILL_HINT_NOT_APPLICABLE"
@@ -74,6 +77,7 @@
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_search"
                 android:onClick="@{ () -> viewModel.search(searchEditText.getText().toString()) }"
+                android:contentDescription="@string/execute_search_icon_description"
                 app:layout_constraintBottom_toBottomOf="@+id/searchEditText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/searchEditText" />

@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:padding="16dp"
-            android:text="Recent Searches"
+            android:text="@string/recent_searches"
             android:textColor="?attr/colorOnSurface"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="16dp" />
@@ -62,6 +62,7 @@
             android:background="#80FF0000"
             android:onClick="@{ () -> viewModel.clearHistory() }"
             android:text="@string/clear_search_history"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spacer"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="@dimen/_8dp" />

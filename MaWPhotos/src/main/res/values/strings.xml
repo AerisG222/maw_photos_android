@@ -17,6 +17,11 @@
     <string name="auth_client_id">maw_photos_android</string>
     <string name="auth_scheme_redirect_uri">us.mikeandwan.photos:/signin-oidc</string>
 
+    <!-- about -->
+    <string name="fragment_about_mikeandwan_us">mikeandwan.us</string>
+    <string name="fragment_about_photos">Photos</string>
+    <string name="logo_description">Logo</string>
+
     <!-- category list item -->
     <string name="li_category_thumbnail_description">Thumbnail</string>
 
@@ -45,10 +50,40 @@
     <string name="clear_random_photos">Clear Photos</string>
 
     <!-- search subnav -->
+    <string name="recent_searches">Recent Searches</string>
     <string name="clear_search_history">Clear History</string>
 
     <!-- search -->
     <string name="fragment_search_background">Share Background</string>
     <string name="fragment_search_no_results_found">No results found.</string>
     <string name="fragment_search_load_more">Show more</string>
+
+    <!-- toolbar -->
+    <string name="application_menu_icon_description">Application Menu Icon</string>
+    <string name="navigate_back_icon_description">Navigate Back Icon</string>
+    <string name="execute_search_icon_description">Execute Search Icon</string>
+
+    <!-- photo -->
+    <string name="rotate_left_icon_description">Rotate Left Icon</string>
+    <string name="rotate_right_icon_description">Rotate Right Icon</string>
+    <string name="toggle_slideshow_icon_description">Toggle Slideshow Icon</string>
+    <string name="share_photo_icon_description">Share Photo Icon</string>
+    <string name="view_photo_details_icon_description">View Photo Details Icon</string>
+
+    <!-- navigation rail -->
+    <string name="categories_icon_description">Categories Icon</string>
+    <string name="search_icon_description">Search Icon</string>
+    <string name="random_photos_icon_description">Random Photos Icon</string>
+    <string name="upload_queue_icon_description">Upload Queue Icon</string>
+    <string name="help_icon_description">Help Icon</string>
+    <string name="settings_icon_description">Settings Icon</string>
+
+    <!-- settings -->
+    <string name="fragment_settings_log_out">Log Out</string>
+
+    <!-- year menu -->
+    <string name="fragment_year_menu_choose_year">Choose Year</string>
+
+    <!-- general -->
+    <string name="text_separator">/</string>
 </resources>

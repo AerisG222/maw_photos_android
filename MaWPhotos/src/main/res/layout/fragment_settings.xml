@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_8dp"
                 android:layout_gravity="center_horizontal"
-                android:text="Log Out"
+                android:text="@string/fragment_settings_log_out"
                 android:onClick="@{ () -> viewModel.logout() }"
                 app:icon="@drawable/ic_logout"
                 style="?attr/materialButtonOutlinedStyle" />
