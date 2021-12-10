@@ -55,8 +55,11 @@ class SearchRepository @Inject constructor(
         _isSearching.value = true
 
         withContext(Dispatchers.IO) {
-            addSearchHistory(query)
             executeSearch(query, 0)
+
+            if(searchResults.value.isNotEmpty()) {
+                addSearchHistory(query)
+            }
         }
 
         _isSearching.value = false
