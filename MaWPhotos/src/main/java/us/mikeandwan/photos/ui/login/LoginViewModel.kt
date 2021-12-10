@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     val authService: AuthService,
-    private val navigationStateRepository: NavigationStateRepository
+    val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
     private var _doAuth = MutableStateFlow(false)
     val doAuth = _doAuth.asStateFlow()

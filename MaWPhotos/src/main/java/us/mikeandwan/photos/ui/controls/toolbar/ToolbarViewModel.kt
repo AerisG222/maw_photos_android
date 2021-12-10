@@ -44,7 +44,7 @@ class ToolbarViewModel @Inject constructor(
         _closeKeyboardSignal.value = true
 
         viewModelScope.launch {
-            searchRepository.performSearch(query, SearchSource.SearchMenu)
+            searchRepository.performSearch(query, SearchSource.QueryInterface)
         }
     }
 

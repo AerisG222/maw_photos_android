@@ -18,7 +18,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val activeIdRepository: ActiveIdRepository,
     private val searchRepository: SearchRepository,
-    private val searchPreferenceRepository: SearchPreferenceRepository
+    val searchPreferenceRepository: SearchPreferenceRepository
 ) : ViewModel() {
     private val _requestNavigateToCategory = MutableStateFlow<Int?>(null)
     val requestNavigateToCategory = _requestNavigateToCategory.asStateFlow()
@@ -48,13 +48,13 @@ class SearchViewModel @Inject constructor(
         .searchRequest
         .combine(searchRepository.searchResults) { request, results -> Pair(request, results) }
         .combine(searchRepository.isSearching) { (request, results), isSearching -> Triple(request, results, isSearching)}
-        .map { (request, results, isSearching) -> !request.query.isNullOrEmpty() && results.isEmpty() && !isSearching }
+        .map { (request, results, isSearching) -> request.query.isNotEmpty() && results.isEmpty() && !isSearching }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val areResultsAvailable = searchRepository
         .searchRequest
         .combine(searchRepository.searchResults) { request, results -> Pair(request, results) }
-        .map { (request, results) -> !request.query.isNullOrEmpty() && results.isNotEmpty() }
+        .map { (request, results) -> request.query.isNotEmpty() && results.isNotEmpty() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val totalFound = searchRepository

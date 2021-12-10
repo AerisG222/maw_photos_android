@@ -87,13 +87,6 @@ fun bindImageGridFileList(container: FragmentContainerView, fileList: List<File>
     imageGridFragment.setGridItems(fileList.mapIndexed { id, file -> ImageGridItem(id, file.path, file) })
 }
 
-@BindingAdapter("imageGridSearchResultList")
-fun bindImageGridSearchResultList(container: FragmentContainerView, results: List<SearchResultCategory>) {
-    val imageGridFragment = container.getFragment<ImageGridFragment>()
-
-    imageGridFragment.setGridItems(results.map { it.toImageGridItem() })
-}
-
 @BindingAdapter("imageGridClickHandler")
 fun bindImageGridClickHandler(container: FragmentContainerView, handler: ImageGridRecyclerAdapter.ClickListener) {
     val imageGridFragment = container.getFragment<ImageGridFragment>()
