@@ -69,11 +69,13 @@ class ImageGridFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                _screenWidth
-                    .combine(viewModel.requestedThumbnailSize) { screenWidth, thumbnailSize -> Pair(screenWidth, thumbnailSize) }
-                    .filter { (screenWidth, thumbnailSize) -> screenWidth > 0 && thumbnailSize != GridThumbnailSize.Unspecified }
-                    .onEach { (screenWidth, thumbnailSize) -> viewModel.setThumbnailSize(getThumbnailSize(screenWidth, thumbnailSize)) }
-                    .launchIn(this)
+                combine(
+                    _screenWidth,
+                    viewModel.requestedThumbnailSize
+                ) { screenWidth, thumbnailSize -> Pair(screenWidth, thumbnailSize) }
+                .filter { (screenWidth, thumbnailSize) -> screenWidth > 0 && thumbnailSize != GridThumbnailSize.Unspecified }
+                .onEach { (screenWidth, thumbnailSize) -> viewModel.setThumbnailSize(getThumbnailSize(screenWidth, thumbnailSize)) }
+                .launchIn(this)
             }
         }
     }

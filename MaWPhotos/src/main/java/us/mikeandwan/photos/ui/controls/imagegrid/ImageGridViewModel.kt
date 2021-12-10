@@ -10,8 +10,10 @@ class ImageGridViewModel: ViewModel() {
     private val _gridItems = MutableStateFlow(emptyList<ImageGridItem>())
     private val _thumbnailSize = MutableStateFlow(0)
 
-    val gridItemsWithSize = _gridItems
-        .combine(_thumbnailSize) { data, size -> Pair(data, size) }
+    val gridItemsWithSize = combine(
+            _gridItems,
+            _thumbnailSize
+        ) { data, size -> Pair(data, size) }
         .filter { (_, size) -> size > 0 }
         .map { (data, size) -> data.map { it.toImageGridItemWithSize(size) }}
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())

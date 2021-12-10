@@ -65,20 +65,22 @@ class RandomPhotoRepository @Inject constructor(
 
     init {
         scope.launch {
-            doFetch
-                .combine(slideshowDurationInMillis){ doFetch, interval -> Pair(doFetch, interval)}
-                .onEach { (doFetch, interval) ->
-                    if(doFetch) {
-                        if(fetchNextJob != null) {
-                            cancelFetchNext()
-                        }
-
-                        scheduleFetchNext(this, interval)
-                    } else {
+            combine(
+                doFetch,
+                slideshowDurationInMillis
+            ){ doFetch, interval -> Pair(doFetch, interval) }
+            .onEach { (doFetch, interval) ->
+                if(doFetch) {
+                    if(fetchNextJob != null) {
                         cancelFetchNext()
                     }
+
+                    scheduleFetchNext(this, interval)
+                } else {
+                    cancelFetchNext()
                 }
-                .launchIn(this)
+            }
+            .launchIn(this)
         }
     }
 }
