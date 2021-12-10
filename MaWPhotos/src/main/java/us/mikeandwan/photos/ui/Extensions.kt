@@ -32,19 +32,6 @@ fun ImageGridItem.toImageGridItemWithSize(size: Int): ImageGridItemWithSize {
     )
 }
 
-fun SearchResultCategory.toImageGridItem(): ImageGridItem {
-    val idOffset = when(this.multimediaType) {
-        "Videos" -> 1_000_000
-        else -> 0
-    }
-
-    return ImageGridItem(
-        idOffset + this.id,
-        this.teaserPhotoMdPath,
-        this
-    )
-}
-
 fun PhotoCategory.toCategoryWithYearVisibility(showYear: Boolean): CategoryWithYearVisibility {
     return CategoryWithYearVisibility(
         this,

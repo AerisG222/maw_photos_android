@@ -33,13 +33,6 @@ class CategoriesViewModel @Inject constructor (
         .getCategoryPreference()
         .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
 
-    // used for its side effect - do not delete
-    val updateTitlebar = activeIdRepository
-        .getActivePhotoCategoryYear()
-        .distinctUntilChanged()
-        .mapLatest { navigationStateRepository.overrideTitle(it.toString()) }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, "")
-
     val onCategorySelected = CategoryChooserFragment.CategorySelectedListener {
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategory(it.id)
@@ -49,5 +42,15 @@ class CategoriesViewModel @Inject constructor (
 
     fun onNavigateComplete() {
         _requestNavigateToCategory.value = null
+    }
+
+    init {
+        viewModelScope.launch {
+            activeIdRepository
+                .getActivePhotoCategoryYear()
+                .distinctUntilChanged()
+                .mapLatest { navigationStateRepository.overrideTitle(it.toString()) }
+                .launchIn(this)
+        }
     }
 }

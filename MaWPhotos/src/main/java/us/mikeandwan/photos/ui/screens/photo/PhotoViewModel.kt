@@ -60,19 +60,6 @@ class PhotoViewModel @Inject constructor (
     private val _sharePhoto = MutableStateFlow<Photo?>(null)
     val sharePhoto = _sharePhoto.asStateFlow()
 
-    // this is used for its side effects - do not delete
-    val slideshowTicker = combine(playSlideshow, _pauseSlideshow, photoListMediator.slideshowInterval) { play, pause, interval -> Triple(play, pause, interval) }
-        .mapLatest { (play, pause, interval) ->
-            while(true) {
-                delay(interval * 1000L)
-
-                if (play && !pause) {
-                    gotoNextPhoto()
-                }
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, Unit)
-
     fun rotatePhoto(direction: Int) {
         _rotatePhoto.value = direction
     }
@@ -132,6 +119,22 @@ class PhotoViewModel @Inject constructor (
             updateActivePhoto(idx + 1)
         } else {
             _playSlideshow.value = false
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            combine(playSlideshow, _pauseSlideshow, photoListMediator.slideshowInterval) { play, pause, interval -> Triple(play, pause, interval) }
+                .mapLatest { (play, pause, interval) ->
+                    while(true) {
+                        delay(interval * 1000L)
+
+                        if (play && !pause) {
+                            gotoNextPhoto()
+                        }
+                    }
+                }
+                .launchIn(this)
         }
     }
 }
