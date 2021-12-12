@@ -1,11 +1,9 @@
 package us.mikeandwan.photos.domain
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.SearchHistory
@@ -54,12 +52,10 @@ class SearchRepository @Inject constructor(
         _searchRequest.value = SearchRequest(query, searchSource)
         _isSearching.value = true
 
-        withContext(Dispatchers.IO) {
-            executeSearch(query, 0)
+        executeSearch(query, 0)
 
-            if(searchResults.value.isNotEmpty()) {
-                addSearchHistory(query)
-            }
+        if(searchResults.value.isNotEmpty()) {
+            addSearchHistory(query)
         }
 
         _isSearching.value = false
@@ -79,13 +75,11 @@ class SearchRepository @Inject constructor(
     private suspend fun executeSearch(query: String, startPosition: Int) {
         val currentResults = searchResults.value
 
-        withContext(Dispatchers.IO) {
-            val results = api.searchCategories(query, startPosition)
-            val domainResults = results?.results?.map { it.toDomainSearchResult() } ?: emptyList()
+        val results = api.searchCategories(query, startPosition)
+        val domainResults = results?.results?.map { it.toDomainSearchResult() } ?: emptyList()
 
-            _searchResults.value = currentResults + domainResults
-            _totalFound.value = max(results?.totalFound ?: 0, _searchResults.value.size)
-        }
+        _searchResults.value = currentResults + domainResults
+        _totalFound.value = max(results?.totalFound ?: 0, _searchResults.value.size)
     }
 
     private suspend fun addSearchHistory(term: String) {
