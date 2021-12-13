@@ -9,5 +9,6 @@
     <TextView
         android:id="@+id/searchTermTextView"
         android:text="@{ term }"
+        android:textColor="?attr/colorOnSurface"
         style="@style/maw_nav_drawer_secondary_menu_item_textview" />
 </layout>

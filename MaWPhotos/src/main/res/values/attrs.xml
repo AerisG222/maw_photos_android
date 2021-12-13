@@ -3,4 +3,5 @@
     <attr name="mawPhotoWidgetOverlayBackground" format="color" />
     <attr name="mawUploadWatermarkColor" format="color" />
     <attr name="mawAlternateRowColor" format="color" />
+    <attr name="mawSearchBoxBackgroundColor" format="color" />
 </resources>

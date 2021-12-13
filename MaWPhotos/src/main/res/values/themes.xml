@@ -26,8 +26,9 @@
         <item name="colorOnError">@color/white_50</item>
 
         <item name="mawPhotoWidgetOverlayBackground">@color/white_900_opaque</item>
-        <item name="mawUploadWatermarkColor">@color/black_300</item>
+        <item name="mawUploadWatermarkColor">@color/white_60</item>
         <item name="mawAlternateRowColor">@color/white_60</item>
+        <item name="mawSearchBoxBackgroundColor">@color/white_60</item>
     </style>
 
     <!--Base custom theme which will be shared between both light and dark theme variants-->

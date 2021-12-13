@@ -58,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_8dp"
                 android:background="@drawable/rounded_edittext"
+                android:backgroundTint="?attr/mawSearchBoxBackgroundColor"
                 android:paddingStart="12dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="12dp"

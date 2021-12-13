@@ -20,6 +20,7 @@
         <item name="mawPhotoWidgetOverlayBackground">@color/black_800_opaque</item>
         <item name="mawUploadWatermarkColor">@color/white_500</item>
         <item name="mawAlternateRowColor">@color/black_700</item>
+        <item name="mawSearchBoxBackgroundColor">@color/black_800</item>
 
         <!--
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
