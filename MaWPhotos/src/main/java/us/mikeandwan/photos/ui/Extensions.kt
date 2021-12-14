@@ -1,5 +1,7 @@
 package us.mikeandwan.photos.ui
 
+import us.mikeandwan.photos.api.ApiResult
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.SearchResultCategory
@@ -48,4 +50,12 @@ fun SearchResultCategory.toDomainPhotoCategory(): PhotoCategory {
         this.teaserPhotoWidth,
         this.teaserPhotoPath
     )
+}
+
+fun <T> ApiResult<T>.toExternalCallStatus(): ExternalCallStatus<T> {
+    return when(this) {
+        is ApiResult.Success -> ExternalCallStatus.Success(this.result)
+        is ApiResult.Empty -> ExternalCallStatus.Error("Unexpected result")
+        is ApiResult.Error -> ExternalCallStatus.Error(this.error, this.exception)
+    }
 }

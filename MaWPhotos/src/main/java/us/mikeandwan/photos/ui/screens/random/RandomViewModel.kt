@@ -3,10 +3,7 @@ package us.mikeandwan.photos.ui.screens.random
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.RandomPhotoRepository
@@ -62,6 +59,8 @@ class RandomViewModel @Inject constructor(
     }
 
     private suspend fun performInitialFetch() {
-        randomPhotoRepository.fetch(24)
+        randomPhotoRepository
+            .fetch(24)
+            .collect { }
     }
 }

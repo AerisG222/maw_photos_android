@@ -1,39 +1,62 @@
 package us.mikeandwan.photos.domain
 
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
-import us.mikeandwan.photos.domain.models.PhotoComment
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class PhotoRepository @Inject constructor (
     private val api: PhotoApiClient
 ){
     fun getExifData(photoId: Int) = flow {
-        val result = api.getExifData(photoId)
+        emit(ExternalCallStatus.Loading)
 
-        emit(result?.toDomainExifData())
+        when(val result = api.getExifData(photoId)) {
+            is ApiResult.Error -> emit(result.toExternalCallStatus())
+            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainExifData()))
+        }
     }
 
     fun getRating(photoId: Int) = flow {
-        val result = api.getRatings(photoId)
+        emit(ExternalCallStatus.Loading)
 
-        emit(result?.toDomainPhotoRating())
+        when(val result = api.getRatings(photoId)) {
+            is ApiResult.Error -> emit(result.toExternalCallStatus())
+            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainPhotoRating()))
+        }
     }
 
     fun getComments(photoId: Int) = flow {
-        val result = api.getComments(photoId)
+        emit(ExternalCallStatus.Loading)
 
-        emit(result?.items?.map { it -> it.toDomainPhotoComment() })
+        when(val result = api.getComments(photoId)) {
+            is ApiResult.Error -> emit(result.toExternalCallStatus())
+            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map { it -> it.toDomainPhotoComment() }))
+        }
     }
 
-    suspend fun addComment(photoId: Int, comment: String): List<PhotoComment> {
-        api.addComment(photoId, comment)
+    suspend fun addComment(photoId: Int, comment: String) = flow {
+        emit(ExternalCallStatus.Loading)
 
-        return getComments(photoId).first() ?: emptyList()
+        when(val result = api.addComment(photoId, comment)) {
+            is ApiResult.Error -> emit(result.toExternalCallStatus())
+            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map{ it -> it.toDomainPhotoComment() }))
+        }
     }
 
-    suspend fun setRating(photoId: Int, rating: Short): Float? {
-        return api.setRating(photoId, rating)
+    suspend fun setRating(photoId: Int, rating: Short) = flow {
+        emit(ExternalCallStatus.Loading)
+
+        when(val result = api.setRating(photoId, rating)) {
+            is ApiResult.Error -> emit(result.toExternalCallStatus())
+            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainPhotoRating()))
+        }
     }
 }

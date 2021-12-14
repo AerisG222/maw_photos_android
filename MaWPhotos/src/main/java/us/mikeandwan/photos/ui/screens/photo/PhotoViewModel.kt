@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,7 +17,6 @@ import us.mikeandwan.photos.domain.models.PhotoCategory
 import java.io.File
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 @HiltViewModel
 class PhotoViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,

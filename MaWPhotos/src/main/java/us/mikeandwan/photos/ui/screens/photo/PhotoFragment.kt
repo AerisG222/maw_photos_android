@@ -29,7 +29,6 @@ import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragme
 import us.mikeandwan.photos.utils.GlideApp
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class PhotoFragment : Fragment(), IHandleModalClose {
     companion object {

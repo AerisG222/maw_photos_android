@@ -2,9 +2,12 @@ package us.mikeandwan.photos.domain
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class RandomPhotoRepository @Inject constructor(
@@ -29,18 +32,24 @@ class RandomPhotoRepository @Inject constructor(
         _doFetch.value = doFetch
     }
 
-    suspend fun fetch(count: Int) {
-        val result = api.getRandomPhotos(count)
+    suspend fun fetch(count: Int) = flow {
+        emit(ExternalCallStatus.Loading)
 
-        if(result == null || result.items.isEmpty()) {
-            return
+        when(val result = api.getRandomPhotos(count)) {
+            is ApiResult.Error -> emit(result.toExternalCallStatus())
+            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Success -> {
+                var newPhotos = emptyList<Photo>()
+
+                if(result.result.items.isNotEmpty()) {
+                    newPhotos = result.result.items.map { it.toDomainPhoto() }
+
+                    _photos.value += newPhotos
+                }
+
+                emit(ExternalCallStatus.Success(newPhotos))
+            }
         }
-
-        val newPhotos = result.items.map { it.toDomainPhoto() }
-
-        val x = _photos.value + newPhotos
-
-        _photos.value = x
     }
 
     fun clear() {
@@ -52,7 +61,7 @@ class RandomPhotoRepository @Inject constructor(
             fetchNextJob = launch {
                 while(true) {
                     delay(interval)
-                    fetch(1)
+                    fetch(1).collect { }
                 }
             }
         }

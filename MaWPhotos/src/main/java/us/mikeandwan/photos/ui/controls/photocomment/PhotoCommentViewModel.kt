@@ -3,15 +3,14 @@ package us.mikeandwan.photos.ui.controls.photocomment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.PhotoRepository
 import us.mikeandwan.photos.domain.models.PhotoComment
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 @HiltViewModel
 class PhotoCommentViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
@@ -30,7 +29,12 @@ class PhotoCommentViewModel @Inject constructor (
         val photoId = activeIdRepository.getActivePhotoId().first()
 
         if(photoId != null && comment.isNotBlank()) {
-            _comments.value = photoRepository.addComment(photoId, comment)
+            photoRepository.addComment(photoId, comment)
+                .collect { result ->
+                    if(result is ExternalCallStatus.Success) {
+                        _comments.value = result.result
+                    }
+                }
         }
     }
 
@@ -40,7 +44,13 @@ class PhotoCommentViewModel @Inject constructor (
                 .getActivePhotoId()
                 .filter { it != null }
                 .flatMapLatest { photoRepository.getComments(it!!) }
-                .map { it ?: emptyList() }
+                .map {
+                    when(it) {
+                        is ExternalCallStatus.Loading -> emptyList()
+                        is ExternalCallStatus.Error -> emptyList()
+                        is ExternalCallStatus.Success -> it.result
+                    }
+                }
                 .onEach { _comments.value = it }
                 .launchIn(this)
         }

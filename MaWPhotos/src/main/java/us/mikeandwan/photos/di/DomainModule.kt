@@ -6,13 +6,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.domain.*
 import javax.inject.Singleton
 
-@ExperimentalCoroutinesApi
 @Module
 @InstallIn(SingletonComponent::class)
 class DomainModule {

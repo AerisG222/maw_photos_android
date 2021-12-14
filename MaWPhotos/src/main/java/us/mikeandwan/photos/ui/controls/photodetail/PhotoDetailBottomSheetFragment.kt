@@ -7,11 +7,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentPhotoDetailBottomSheetBinding
 
-@ExperimentalCoroutinesApi
 class PhotoDetailBottomSheetFragment : BottomSheetDialogFragment() {
     companion object {
         const val TAB_INDEX_RATING = 0

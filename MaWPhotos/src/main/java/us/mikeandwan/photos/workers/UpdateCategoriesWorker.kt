@@ -10,11 +10,14 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.ui.main.MainActivity
 import us.mikeandwan.photos.utils.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 
@@ -28,6 +31,11 @@ class UpdateCategoriesWorker @AssistedInject constructor(
 ): CoroutineWorker(appContext, params) {
     companion object {
         const val WORK_NAME = "WORK: update_categories"
+
+        const val STATUS_UNKNOWN = 0
+        const val STATUS_SUCCESS = 1
+        const val STATUS_FAILED = 2
+        const val STATUS_RETRY = 3
     }
 
     override suspend fun doWork(): Result {
@@ -35,26 +43,54 @@ class UpdateCategoriesWorker @AssistedInject constructor(
             return Result.success()
         }
 
-        val newCategories = photoCategoryRepository.getNewCategories().first()
+        var status = STATUS_UNKNOWN
 
-        if(newCategories.isNotEmpty()) {
-            showNotification(newCategories)
+        photoCategoryRepository
+            .getNewCategories()
+            .collect {
+                when(it) {
+                    is ExternalCallStatus.Loading -> { }
+                    is ExternalCallStatus.Success -> {
+                        status = STATUS_SUCCESS
+
+                        if (it.result.isNotEmpty()) {
+                            showSuccessNotification(it.result)
+                        }
+                    }
+                    is ExternalCallStatus.Error -> {
+                        if(runAttemptCount >= 3) {
+                            status = STATUS_FAILED
+                            showNotification("Error", "Unable to query for new categories at this time")
+                        } else {
+                            status = STATUS_RETRY
+                        }
+                    }
+                }
+            }
+
+        return when(status) {
+            STATUS_RETRY -> Result.retry()
+            STATUS_FAILED -> Result.failure()
+            else -> Result.success()
         }
-
-        return Result.success()
     }
 
-    private suspend fun showNotification(newCategories: List<PhotoCategory>) {
-        val i = Intent(Intent.ACTION_MAIN)
+    private suspend fun showSuccessNotification(newCategories: List<PhotoCategory>) {
         val pluralize = if (newCategories.size == 1) "category" else "categories"
         val contentText = "${newCategories.size} new $pluralize"
+
+        showNotification("New Photos Available", contentText)
+    }
+
+    private suspend fun showNotification(title: String, contentText: String) {
+        val i = Intent(applicationContext, MainActivity::class.java)
         val pendingIntentFlag = PendingIntentFlagHelper.getMutableFlag(PendingIntent.FLAG_UPDATE_CURRENT)
         val detailsIntent = PendingIntent.getActivity(applicationContext, 0, i, pendingIntentFlag)
 
         val builder =
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES)
                 .setSmallIcon(R.drawable.ic_status_notification)
-                .setContentTitle("New Photos Available")
+                .setContentTitle(title)
                 .setContentText(contentText)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(detailsIntent)

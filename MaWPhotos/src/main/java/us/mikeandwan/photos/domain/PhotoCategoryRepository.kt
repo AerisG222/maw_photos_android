@@ -2,10 +2,12 @@ package us.mikeandwan.photos.domain
 
 import androidx.room.withTransaction
 import kotlinx.coroutines.flow.*
+import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.*
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class PhotoCategoryRepository @Inject constructor(
@@ -22,15 +24,25 @@ class PhotoCategoryRepository @Inject constructor(
 
         if(data.first().isEmpty()) {
             emit(emptyList())
-            loadCategories(-1)
+            loadCategories(-1).collect { }
         }
 
         emitAll(data)
     }
 
-    fun getNewCategories() = pcDao
-        .getMostRecentCategory()
-        .map { if(it == null) loadCategories(-1) else loadCategories(it.id) }
+    suspend fun getNewCategories() = flow {
+        val category = pcDao
+            .getMostRecentCategory()
+            .first()
+
+        val categories = if (category == null) {
+            loadCategories(-1)
+        } else {
+            loadCategories(category.id)
+        }
+
+        emitAll(categories)
+    }
 
     fun getCategories() = pcDao
         .getCategoriesForActiveYear()
@@ -49,36 +61,50 @@ class PhotoCategoryRepository @Inject constructor(
         .map { cat -> cat!!.toDomainPhotoCategory() }
 
     fun getPhotos(categoryId: Int) = flow {
-        if(categoryId != _lastCategoryId) {
-            val result = api.getPhotos(categoryId)
+        if(categoryId == _lastCategoryId) {
+            emit(ExternalCallStatus.Success(_lastCategoryPhotos))
+        } else {
+            emit(ExternalCallStatus.Loading)
 
-            _lastCategoryPhotos = result?.items?.map { it.toDomainPhoto() } ?: emptyList()
+            when(val result = api.getPhotos(categoryId)) {
+                is ApiResult.Error -> emit(result.toExternalCallStatus())
+                is ApiResult.Empty -> emit(result.toExternalCallStatus())
+                is ApiResult.Success -> {
+                    _lastCategoryPhotos = result.result.items.map { it.toDomainPhoto() }
 
-            if(_lastCategoryPhotos.isNotEmpty()) {
-                _lastCategoryId = categoryId
+                    if (_lastCategoryPhotos.isNotEmpty()) {
+                        _lastCategoryId = categoryId
+                    }
+
+                    emit(ExternalCallStatus.Success(_lastCategoryPhotos))
+                }
             }
         }
-
-        emit(_lastCategoryPhotos)
     }
 
-    private suspend fun loadCategories(mostRecentCategory: Int): List<PhotoCategory> {
-        val categories = api.getRecentCategories(mostRecentCategory)
+    private suspend fun loadCategories(mostRecentCategory: Int) = flow {
+        emit(ExternalCallStatus.Loading)
 
-        if(categories == null || categories.count == 0L) {
-            return emptyList()
+        when(val result = api.getRecentCategories(mostRecentCategory)) {
+            is ApiResult.Error -> emit(result.toExternalCallStatus())
+            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Success -> {
+                val categories = result.result.items
+
+                if(categories.isEmpty()) {
+                    emit(ExternalCallStatus.Success(emptyList()))
+                } else {
+                    val dbCategories = categories.map { apiCat -> apiCat.toDatabasePhotoCategory() }
+                    val maxYear = dbCategories.maxOf { it.year }
+
+                    db.withTransaction {
+                        pcDao.upsert(*dbCategories.toTypedArray())
+                        idDao.setActiveId(ActiveId(ActiveIdType.PhotoCategoryYear, maxYear))
+                    }
+
+                    emit(ExternalCallStatus.Success(dbCategories.map { it.toDomainPhotoCategory() }))
+                }
+            }
         }
-
-        val dbCategories = categories.items
-            .map { apiCat -> apiCat.toDatabasePhotoCategory() }
-
-        val maxYear = dbCategories.maxOf { it.year }
-
-        db.withTransaction {
-            pcDao.upsert(*dbCategories.toTypedArray())
-            idDao.setActiveId(ActiveId(ActiveIdType.PhotoCategoryYear, maxYear))
-        }
-
-        return dbCategories.map { it.toDomainPhotoCategory() }
     }
 }

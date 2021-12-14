@@ -11,12 +11,14 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
+import us.mikeandwan.photos.ui.main.MainActivity
 import us.mikeandwan.photos.utils.NOTIFICATION_CHANNEL_ID_UPLOAD_FILES
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import java.io.File
@@ -74,7 +76,7 @@ class UploadWorker @AssistedInject constructor(
     }
 
     private suspend fun showNotification(wasSuccessful: Boolean) {
-        val i = Intent(Intent.ACTION_MAIN)
+        val i = Intent(applicationContext, MainActivity::class.java)
         val pendingIntentFlag = PendingIntentFlagHelper.getMutableFlag(PendingIntent.FLAG_UPDATE_CURRENT)
         val detailsIntent = PendingIntent.getActivity(applicationContext, 0, i, pendingIntentFlag)
 

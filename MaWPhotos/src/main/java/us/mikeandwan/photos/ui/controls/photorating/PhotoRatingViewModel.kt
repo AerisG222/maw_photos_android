@@ -3,14 +3,13 @@ package us.mikeandwan.photos.ui.controls.photorating
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.PhotoRepository
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 @HiltViewModel
 class PhotoRatingViewModel @Inject constructor (
     private val activeIdRepository: ActiveIdRepository,
@@ -28,10 +27,11 @@ class PhotoRatingViewModel @Inject constructor (
         if(photoId != null) {
             val newAverageRating = photoRepository.setRating(photoId, rating)
 
-            if(newAverageRating == null) {
-                _averageRating.value = 0f
-            } else {
-                _averageRating.value = newAverageRating
+            viewModelScope.launch {
+                newAverageRating
+                    .filter { it is ExternalCallStatus.Success }
+                    .map { it as ExternalCallStatus.Success }
+                    .collect { _averageRating.value = it.result.averageRating }
             }
         }
     }
@@ -42,9 +42,11 @@ class PhotoRatingViewModel @Inject constructor (
                 .getActivePhotoId()
                 .filter { it != null }
                 .flatMapLatest { photoRepository.getRating(it!!) }
+                .filter { it is ExternalCallStatus.Success }
+                .map { it as ExternalCallStatus.Success }
                 .onEach {
-                    _userRating.value = it!!.userRating
-                    _averageRating.value = it.averageRating
+                    _userRating.value = it.result.userRating
+                    _averageRating.value = it.result.averageRating
                 }
                 .launchIn(this)
         }

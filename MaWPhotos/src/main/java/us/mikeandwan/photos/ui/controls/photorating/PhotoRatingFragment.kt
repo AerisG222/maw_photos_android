@@ -11,13 +11,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentPhotoRatingBinding
 import kotlin.math.roundToInt
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class PhotoRatingFragment : Fragment() {
     companion object {

@@ -1,11 +1,10 @@
 package us.mikeandwan.photos.domain
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.NavigationArea
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 class PhotoListMediator @Inject constructor (
     activeIdRepository: ActiveIdRepository,
     navigationStateRepository: NavigationStateRepository,
@@ -30,6 +29,12 @@ class PhotoListMediator @Inject constructor (
         .filter { it != null }
         .distinctUntilChanged()
         .flatMapLatest { photoCategoryRepository.getPhotos(it!!) }
+        .map { result ->
+            when(result) {
+                is ExternalCallStatus.Success -> result.result
+                else -> emptyList()
+            }
+        }
 
     private val categorySlideshowInterval = navArea
         .filter { it == NavigationArea.Category }

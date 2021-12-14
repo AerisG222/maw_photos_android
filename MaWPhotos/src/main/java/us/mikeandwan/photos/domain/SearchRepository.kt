@@ -1,16 +1,16 @@
 package us.mikeandwan.photos.domain
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.SearchHistory
 import us.mikeandwan.photos.database.SearchHistoryDao
 import us.mikeandwan.photos.domain.models.SearchRequest
 import us.mikeandwan.photos.domain.models.SearchResultCategory
 import us.mikeandwan.photos.domain.models.SearchSource
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.ui.toExternalCallStatus
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
@@ -40,46 +40,54 @@ class SearchRepository @Inject constructor(
         searchHistoryDao.clearHistory()
     }
 
-    suspend fun performSearch(query: String, searchSource: SearchSource) {
+    suspend fun performSearch(query: String, searchSource: SearchSource) = flow {
         val currentQuery = searchRequest.value.query
 
         _searchResults.value = emptyList()
 
-        if(query.isBlank() || currentQuery.equals(query, true)) {
-            return
+        if(query.isNotBlank() && !currentQuery.equals(query, true)) {
+            _searchRequest.value = SearchRequest(query, searchSource)
+            _isSearching.value = true
+
+            executeSearch(query, 0)
+                .collect { emit(it) }
+
+            if (searchResults.value.isNotEmpty()) {
+                addSearchHistory(query)
+            }
+
+            _isSearching.value = false
         }
-
-        _searchRequest.value = SearchRequest(query, searchSource)
-        _isSearching.value = true
-
-        executeSearch(query, 0)
-
-        if(searchResults.value.isNotEmpty()) {
-            addSearchHistory(query)
-        }
-
-        _isSearching.value = false
     }
 
-    suspend fun continueSearch() {
+    suspend fun continueSearch() = flow {
         val query = searchRequest.value.query
         val position = searchResults.value.size
 
-        if(query.isBlank() || position < 0 || position >= totalFound.value) {
-            return
+        if(query.isNotBlank() && position >= 0 && position <= totalFound.value) {
+            executeSearch(query, position)
+                .collect{ emit(it) }
         }
-
-        executeSearch(query, position)
     }
 
-    private suspend fun executeSearch(query: String, startPosition: Int) {
+    private suspend fun executeSearch(query: String, startPosition: Int) = flow {
         val currentResults = searchResults.value
 
-        val results = api.searchCategories(query, startPosition)
-        val domainResults = results?.results?.map { it.toDomainSearchResult() } ?: emptyList()
+        emit(ExternalCallStatus.Loading)
 
-        _searchResults.value = currentResults + domainResults
-        _totalFound.value = max(results?.totalFound ?: 0, _searchResults.value.size)
+        when(val result = api.searchCategories(query, startPosition)) {
+            is ApiResult.Error -> emit(result.toExternalCallStatus())
+            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Success -> {
+                val searchResults = result.result.results
+                val domainResults = searchResults.map { it.toDomainSearchResult() }
+
+                _searchResults.value = currentResults + domainResults
+                _totalFound.value = max(result.result.totalFound, _searchResults.value.size)
+
+                emit(domainResults)
+            }
+        }
     }
 
     private suspend fun addSearchHistory(term: String) {

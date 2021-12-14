@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentYearMenuBinding
 
-
 @AndroidEntryPoint
 class YearsFragment : Fragment() {
     companion object {

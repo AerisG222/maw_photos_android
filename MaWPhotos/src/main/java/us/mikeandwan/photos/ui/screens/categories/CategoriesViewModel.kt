@@ -3,7 +3,6 @@ package us.mikeandwan.photos.ui.screens.categories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
@@ -14,7 +13,6 @@ import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 @HiltViewModel
 class CategoriesViewModel @Inject constructor (
     photoCategoryRepository: PhotoCategoryRepository,

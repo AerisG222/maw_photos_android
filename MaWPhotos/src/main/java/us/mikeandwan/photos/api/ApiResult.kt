@@ -4,23 +4,29 @@ import retrofit2.Response
 import java.io.IOException
 import java.util.*
 
-class ApiResult<T>(response: Response<T>?) {
-    var result: T? = null
-    lateinit var error: String
-    var isSuccess = false
+sealed class ApiResult<out T> {
+    data class Error(val error: String, val exception: Throwable? = null): ApiResult<Nothing>()
+    object Empty: ApiResult<Nothing>()
+    data class Success<out T>(val result: T): ApiResult<T>()
 
-    init {
-        if (response == null) {
-            isSuccess = false
-            error = "Response was null.  Unable to extract result from API call."
-        } else {
+    companion object {
+        fun <T> build(response: Response<T>?): ApiResult<T> {
+            if (response == null) {
+                return Error("Response was null.  Unable to extract result from API call.")
+            }
+
             if (response.isSuccessful) {
-                isSuccess = true
-                result = response.body()
+                var result = response.body()
+
+                return if(result == null) {
+                    Empty
+                } else {
+                    Success<T>(result)
+                }
             } else {
-                isSuccess = false
                 val body = response.errorBody()
                 var message = response.message()
+
                 if (body != null) {
                     message = try {
                         body.string()
@@ -28,12 +34,15 @@ class ApiResult<T>(response: Response<T>?) {
                         response.message()
                     }
                 }
-                error = String.format(
+
+                val error = String.format(
                     Locale.ENGLISH,
                     "api error response: %d | %s",
                     response.code(),
                     message
                 )
+
+                return Error(error)
             }
         }
     }

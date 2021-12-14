@@ -12,16 +12,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentPhotoExifBinding
 import us.mikeandwan.photos.domain.models.PhotoExifData
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.utils.getColorFromAttribute
 
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class PhotoExifFragment : Fragment() {
     companion object {
@@ -58,9 +59,9 @@ class PhotoExifFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.exifData
-                    .onEach {
-                        displayExifData(it)
-                    }
+                    .filter { it is ExternalCallStatus.Success }
+                    .map { it as ExternalCallStatus.Success }
+                    .onEach { displayExifData(it.result) }
                     .launchIn(this)
             }
         }
