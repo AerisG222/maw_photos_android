@@ -16,7 +16,7 @@ sealed class ApiResult<out T> {
             }
 
             if (response.isSuccessful) {
-                var result = response.body()
+                val result = response.body()
 
                 return if(result == null) {
                     Empty

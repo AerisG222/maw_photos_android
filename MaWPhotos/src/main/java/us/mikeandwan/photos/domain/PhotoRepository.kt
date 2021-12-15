@@ -36,7 +36,7 @@ class PhotoRepository @Inject constructor (
         when(val result = api.getComments(photoId)) {
             is ApiResult.Error -> emit(result.toExternalCallStatus())
             is ApiResult.Empty -> emit(result.toExternalCallStatus())
-            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map { it -> it.toDomainPhotoComment() }))
+            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map { it.toDomainPhotoComment() }))
         }
     }
 
@@ -46,7 +46,7 @@ class PhotoRepository @Inject constructor (
         when(val result = api.addComment(photoId, comment)) {
             is ApiResult.Error -> emit(result.toExternalCallStatus())
             is ApiResult.Empty -> emit(result.toExternalCallStatus())
-            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map{ it -> it.toDomainPhotoComment() }))
+            is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map{ it.toDomainPhotoComment() }))
         }
     }
 
