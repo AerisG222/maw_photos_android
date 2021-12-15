@@ -28,7 +28,7 @@ class CategoryListRecyclerAdapter(private val clickListener: ClickListener)
             // however, when debugging the other method was not called which resulted in the recycler to reset the scroll position
             // to the top after loading more search results (new items added to list).  interestingly, this does not happen with the
             // imagegrid recycler (it does call the areContentsTheSame and does not cause a scroll update)
-            //return oldItem === newItem
+            // return oldItem === newItem
 
             return oldItem.category.id == newItem.category.id
         }
