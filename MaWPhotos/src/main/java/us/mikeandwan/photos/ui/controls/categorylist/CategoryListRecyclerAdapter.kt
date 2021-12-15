@@ -24,7 +24,13 @@ class CategoryListRecyclerAdapter(private val clickListener: ClickListener)
 
     companion object DiffCallback : DiffUtil.ItemCallback<CategoryWithYearVisibility>() {
         override fun areItemsTheSame(oldItem: CategoryWithYearVisibility, newItem: CategoryWithYearVisibility): Boolean {
-            return oldItem === newItem
+            // odd, per docs, would have expected below check here, and then the areContentsTheSame to identify same records
+            // however, when debugging the other method was not called which resulted in the recycler to reset the scroll position
+            // to the top after loading more search results (new items added to list).  interestingly, this does not happen with the
+            // imagegrid recycler (it does call the areContentsTheSame and does not cause a scroll update)
+            //return oldItem === newItem
+
+            return oldItem.category.id == newItem.category.id
         }
 
         override fun areContentsTheSame(oldItem: CategoryWithYearVisibility, newItem: CategoryWithYearVisibility): Boolean {
