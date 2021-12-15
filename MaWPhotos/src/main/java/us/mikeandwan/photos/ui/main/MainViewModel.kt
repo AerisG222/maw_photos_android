@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.authorization.AuthService
+import us.mikeandwan.photos.domain.ErrorRepository
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import java.io.File
@@ -15,7 +16,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     authService: AuthService,
     private val navigationStateRepository: NavigationStateRepository,
-    private val fileStorageRepository: FileStorageRepository
+    private val fileStorageRepository: FileStorageRepository,
+    private val errorRepository: ErrorRepository
 ) : ViewModel() {
     val authStatus = authService.authStatus
     val enableDrawer = navigationStateRepository.enableDrawer
@@ -24,6 +26,7 @@ class MainViewModel @Inject constructor(
     val shouldNavigateBack = navigationStateRepository.navigateBackSignal
     val navigationRequests = navigationStateRepository.requestedNavigation
     val navigationArea = navigationStateRepository.navArea
+    val displayError = errorRepository.error
 
     fun drawerClosed() {
         navigationStateRepository.closeNavDrawerCompleted()
@@ -49,6 +52,10 @@ class MainViewModel @Inject constructor(
 
     fun requestNavDrawerClose() {
         navigationStateRepository.requestNavDrawerClose()
+    }
+
+    fun errorDisplayed() {
+        errorRepository.errorDisplayed()
     }
 
     suspend fun clearFileCache() {

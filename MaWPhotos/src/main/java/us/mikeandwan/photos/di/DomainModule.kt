@@ -22,22 +22,30 @@ class DomainModule {
 
     @Provides
     @Singleton
+    fun provideErrorRepository(): ErrorRepository {
+        return ErrorRepository()
+    }
+
+    @Provides
+    @Singleton
     fun providePhotoCategoryRepository(
         api: PhotoApiClient,
         db: MawDatabase,
         photoCategoryDao: PhotoCategoryDao,
-        activeIdDao: ActiveIdDao
+        activeIdDao: ActiveIdDao,
+        errorRepository: ErrorRepository
     ): PhotoCategoryRepository {
-        return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao)
+        return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao, errorRepository)
     }
 
     @Provides
     @Singleton
     fun provideRandomPhotoRepository(
         api: PhotoApiClient,
-        randomPreferenceRepository: RandomPreferenceRepository
+        randomPreferenceRepository: RandomPreferenceRepository,
+        errorRepository: ErrorRepository
     ): RandomPhotoRepository {
-        return RandomPhotoRepository(api, randomPreferenceRepository)
+        return RandomPhotoRepository(api, randomPreferenceRepository,errorRepository)
     }
 
     @Provides
@@ -81,12 +89,14 @@ class DomainModule {
     fun provideSearchRepository(
         api: PhotoApiClient,
         searchPreferenceRepository: SearchPreferenceRepository,
-        searchHistoryDao: SearchHistoryDao
+        searchHistoryDao: SearchHistoryDao,
+        errorRepository: ErrorRepository
     ): SearchRepository {
         return SearchRepository(
             api,
             searchHistoryDao,
-            searchPreferenceRepository)
+            searchPreferenceRepository,
+            errorRepository)
     }
 
     @Provides

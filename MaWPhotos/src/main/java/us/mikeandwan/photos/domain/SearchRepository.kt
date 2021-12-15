@@ -6,10 +6,10 @@ import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.database.SearchHistory
 import us.mikeandwan.photos.database.SearchHistoryDao
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.SearchRequest
 import us.mikeandwan.photos.domain.models.SearchResultCategory
 import us.mikeandwan.photos.domain.models.SearchSource
-import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.ui.toExternalCallStatus
 import java.util.*
 import javax.inject.Inject
@@ -18,7 +18,8 @@ import kotlin.math.max
 class SearchRepository @Inject constructor(
     private val api: PhotoApiClient,
     private val searchHistoryDao: SearchHistoryDao,
-    private val searchPreferenceRepository: SearchPreferenceRepository
+    private val searchPreferenceRepository: SearchPreferenceRepository,
+    private val errorRepository: ErrorRepository
 ) {
     private val _searchRequest = MutableStateFlow(SearchRequest("", SearchSource.None))
     val searchRequest = _searchRequest.asStateFlow()
@@ -76,8 +77,14 @@ class SearchRepository @Inject constructor(
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.searchCategories(query, startPosition)) {
-            is ApiResult.Error -> emit(result.toExternalCallStatus())
-            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Error -> {
+                errorRepository.showError("Unable to search at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
+            is ApiResult.Empty -> {
+                errorRepository.showError("Unable to search at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
             is ApiResult.Success -> {
                 val searchResults = result.result.results
                 val domainResults = searchResults.map { it.toDomainSearchResult() }

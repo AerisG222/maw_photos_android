@@ -14,7 +14,8 @@ class PhotoCategoryRepository @Inject constructor(
     private val api: PhotoApiClient,
     private val db: MawDatabase,
     private val pcDao: PhotoCategoryDao,
-    private val idDao: ActiveIdDao
+    private val idDao: ActiveIdDao,
+    private val errorRepository: ErrorRepository
 ) {
     private var _lastCategoryId = -1
     private var _lastCategoryPhotos = emptyList<Photo>()
@@ -24,7 +25,12 @@ class PhotoCategoryRepository @Inject constructor(
 
         if(data.first().isEmpty()) {
             emit(emptyList())
-            loadCategories(-1).collect { }
+            loadCategories(-1)
+                .collect {
+                    if(it is ExternalCallStatus.Error ) {
+                        errorRepository.showError("Unable to load categories at this time.  Please try again later.")
+                    }
+                }
         }
 
         emitAll(data)
@@ -67,8 +73,14 @@ class PhotoCategoryRepository @Inject constructor(
             emit(ExternalCallStatus.Loading)
 
             when(val result = api.getPhotos(categoryId)) {
-                is ApiResult.Error -> emit(result.toExternalCallStatus())
-                is ApiResult.Empty -> emit(result.toExternalCallStatus())
+                is ApiResult.Error -> {
+                    errorRepository.showError("Unable to retrieve photos.  Please try again later.")
+                    emit(result.toExternalCallStatus())
+                }
+                is ApiResult.Empty -> {
+                    errorRepository.showError("Unable to retrieve photos.  Please try again later.")
+                    emit(result.toExternalCallStatus())
+                }
                 is ApiResult.Success -> {
                     _lastCategoryPhotos = result.result.items.map { it.toDomainPhoto() }
 

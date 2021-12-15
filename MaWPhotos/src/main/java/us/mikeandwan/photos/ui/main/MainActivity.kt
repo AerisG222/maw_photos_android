@@ -13,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.work.*
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -23,6 +24,7 @@ import us.mikeandwan.photos.MobileNavigationDirections
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.databinding.ActivityMainBinding
+import us.mikeandwan.photos.domain.models.ErrorMessage
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.NavigationInstruction
 import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenuFragment
@@ -117,9 +119,23 @@ class MainActivity : AppCompatActivity() {
                     .onEach { updateSubnav(it) }
                     .launchIn(this)
 
+                viewModel.displayError
+                    .filter { it is ErrorMessage.Display }
+                    .map { it as ErrorMessage.Display }
+                    .onEach { showError(it.message) }
+                    .launchIn(this)
+
                 viewModel.clearFileCache()
             }
         }
+    }
+
+    private fun showError(message: String) {
+        viewModel.errorDisplayed()
+
+        val snackbar = Snackbar.make(this, binding.root, message, Snackbar.LENGTH_SHORT)
+
+        snackbar.show()
     }
 
     private fun onNavigate(instruction: NavigationInstruction) {

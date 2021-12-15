@@ -4,15 +4,16 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
-import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class RandomPhotoRepository @Inject constructor(
     private val api: PhotoApiClient,
-    randomPreferenceRepository: RandomPreferenceRepository
+    randomPreferenceRepository: RandomPreferenceRepository,
+    private val errorRepository: ErrorRepository
 ) {
     private var scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var fetchNextJob: Job? = null
@@ -36,8 +37,14 @@ class RandomPhotoRepository @Inject constructor(
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getRandomPhotos(count)) {
-            is ApiResult.Error -> emit(result.toExternalCallStatus())
-            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Error -> {
+                errorRepository.showError("Unable to fetch random photos at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
+            is ApiResult.Empty -> {
+                errorRepository.showError("Unable to fetch random photos at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
             is ApiResult.Success -> {
                 var newPhotos = emptyList<Photo>()
 

@@ -8,14 +8,21 @@ import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class PhotoRepository @Inject constructor (
-    private val api: PhotoApiClient
+    private val api: PhotoApiClient,
+    private val errorRepository: ErrorRepository
 ){
     fun getExifData(photoId: Int) = flow {
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getExifData(photoId)) {
-            is ApiResult.Error -> emit(result.toExternalCallStatus())
-            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Error -> {
+                errorRepository.showError("Unable to load EXIF data at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
+            is ApiResult.Empty -> {
+                errorRepository.showError("Unable to load EXIF data at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainExifData()))
         }
     }
@@ -24,8 +31,14 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getRatings(photoId)) {
-            is ApiResult.Error -> emit(result.toExternalCallStatus())
-            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Error -> {
+                errorRepository.showError("Unable to load ratings at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
+            is ApiResult.Empty -> {
+                errorRepository.showError("Unable to load ratings at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainPhotoRating()))
         }
     }
@@ -34,8 +47,14 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getComments(photoId)) {
-            is ApiResult.Error -> emit(result.toExternalCallStatus())
-            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Error -> {
+                errorRepository.showError("Unable to load comments at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
+            is ApiResult.Empty -> {
+                errorRepository.showError("Unable to load comments at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map { it.toDomainPhotoComment() }))
         }
     }
@@ -44,8 +63,14 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.addComment(photoId, comment)) {
-            is ApiResult.Error -> emit(result.toExternalCallStatus())
-            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Error -> {
+                errorRepository.showError("Unable to add comments at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
+            is ApiResult.Empty -> {
+                errorRepository.showError("Unable to add comments at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map{ it.toDomainPhotoComment() }))
         }
     }
@@ -54,8 +79,14 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.setRating(photoId, rating)) {
-            is ApiResult.Error -> emit(result.toExternalCallStatus())
-            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Error -> {
+                errorRepository.showError("Unable to add ratings at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
+            is ApiResult.Empty -> {
+                errorRepository.showError("Unable to add ratings at this time.  Please try again later.")
+                emit(result.toExternalCallStatus())
+            }
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainPhotoRating()))
         }
     }
