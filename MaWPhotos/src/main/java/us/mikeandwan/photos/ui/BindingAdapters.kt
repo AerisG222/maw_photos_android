@@ -53,7 +53,7 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
         GlideApp.with(imgView.context)
             .load(imgUrl)
             .centerCrop()
-            .placeholder(R.drawable.loading_animation)
+            .placeholder(R.drawable.ic_placeholder)
             .error(R.drawable.ic_broken_image)
             .into(imgView)
     }

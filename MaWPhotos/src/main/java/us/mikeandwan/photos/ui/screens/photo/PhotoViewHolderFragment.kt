@@ -25,7 +25,7 @@ class PhotoViewHolderFragment : Fragment() {
 
                 GlideApp.with(photoView.context)
                     .load(getString(PHOTO_URL))
-                    .placeholder(R.drawable.loading_animation)
+                    .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_broken_image)
                     .into(photoView)
             }
