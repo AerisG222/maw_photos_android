@@ -6,6 +6,7 @@ gradle.properties
 
 # Built application files
 **/build/*
+MaWPhotos/production
 
 # Crashlytics configuations
 com_crashlytics_export_strings.xml
