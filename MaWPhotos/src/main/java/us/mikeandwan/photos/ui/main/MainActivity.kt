@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.authStatus
-                    .filter { it is AuthStatus.Completed && !it.isAuthorized }
+                    .filter { it is AuthStatus.RequiresAuthorization }
                     .onEach { goToLoginScreen() }
                     .launchIn(this)
 

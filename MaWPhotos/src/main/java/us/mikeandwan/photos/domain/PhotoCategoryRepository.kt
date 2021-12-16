@@ -4,6 +4,7 @@ import androidx.room.withTransaction
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
@@ -15,8 +16,14 @@ class PhotoCategoryRepository @Inject constructor(
     private val db: MawDatabase,
     private val pcDao: PhotoCategoryDao,
     private val idDao: ActiveIdDao,
-    private val errorRepository: ErrorRepository
+    private val errorRepository: ErrorRepository,
+    private val authService: AuthService
 ) {
+    companion object {
+        const val ERR_MSG_LOAD_CATEGORIES = "Unable to load categories at this time.  Please try again later."
+        const val ERR_MSG_LOAD_PHOTOS = "Unable to load photos.  Please try again later."
+    }
+
     private var _lastCategoryId = -1
     private var _lastCategoryPhotos = emptyList<Photo>()
 
@@ -25,12 +32,8 @@ class PhotoCategoryRepository @Inject constructor(
 
         if(data.first().isEmpty()) {
             emit(emptyList())
-            loadCategories(-1)
-                .collect {
-                    if(it is ExternalCallStatus.Error ) {
-                        errorRepository.showError("Unable to load categories at this time.  Please try again later.")
-                    }
-                }
+            loadCategories(-1, ERR_MSG_LOAD_CATEGORIES)
+                .collect { }
         }
 
         emitAll(data)
@@ -41,10 +44,12 @@ class PhotoCategoryRepository @Inject constructor(
             .getMostRecentCategory()
             .first()
 
+        // do not show error messages as snackbar for this method as it is called only from
+        // the update categories worker - which will create an error notification on failure
         val categories = if (category == null) {
-            loadCategories(-1)
+            loadCategories(-1, null)
         } else {
-            loadCategories(category.id)
+            loadCategories(category.id, null)
         }
 
         emitAll(categories)
@@ -73,14 +78,8 @@ class PhotoCategoryRepository @Inject constructor(
             emit(ExternalCallStatus.Loading)
 
             when(val result = api.getPhotos(categoryId)) {
-                is ApiResult.Error -> {
-                    errorRepository.showError("Unable to retrieve photos.  Please try again later.")
-                    emit(result.toExternalCallStatus())
-                }
-                is ApiResult.Empty -> {
-                    errorRepository.showError("Unable to retrieve photos.  Please try again later.")
-                    emit(result.toExternalCallStatus())
-                }
+                is ApiResult.Error -> emit(handleError(result, ERR_MSG_LOAD_PHOTOS))
+                is ApiResult.Empty -> emit(handleEmpty(result, ERR_MSG_LOAD_PHOTOS))
                 is ApiResult.Success -> {
                     _lastCategoryPhotos = result.result.items.map { it.toDomainPhoto() }
 
@@ -94,12 +93,12 @@ class PhotoCategoryRepository @Inject constructor(
         }
     }
 
-    private suspend fun loadCategories(mostRecentCategory: Int) = flow {
+    private suspend fun loadCategories(mostRecentCategory: Int, errorMessage: String?) = flow {
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getRecentCategories(mostRecentCategory)) {
-            is ApiResult.Error -> emit(result.toExternalCallStatus())
-            is ApiResult.Empty -> emit(result.toExternalCallStatus())
+            is ApiResult.Error -> emit(handleError(result, errorMessage))
+            is ApiResult.Empty -> emit(handleEmpty(result, errorMessage))
             is ApiResult.Success -> {
                 val categories = result.result.items
 
@@ -118,5 +117,25 @@ class PhotoCategoryRepository @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun handleError(error: ApiResult.Error, message: String?): ExternalCallStatus<Nothing> {
+        if(error.isUnauthorized()) {
+            authService.logout()
+        } else {
+            if(!message.isNullOrBlank()) {
+                errorRepository.showError(message)
+            }
+        }
+
+        return error.toExternalCallStatus()
+    }
+
+    private fun handleEmpty(empty: ApiResult.Empty, message: String?): ExternalCallStatus<Nothing> {
+        if(!message.isNullOrBlank()) {
+            errorRepository.showError(message)
+        }
+
+        return empty.toExternalCallStatus()
     }
 }

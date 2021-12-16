@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.database.SearchHistory
 import us.mikeandwan.photos.database.SearchHistoryDao
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
@@ -19,8 +20,13 @@ class SearchRepository @Inject constructor(
     private val api: PhotoApiClient,
     private val searchHistoryDao: SearchHistoryDao,
     private val searchPreferenceRepository: SearchPreferenceRepository,
-    private val errorRepository: ErrorRepository
+    private val errorRepository: ErrorRepository,
+    private val authService: AuthService
 ) {
+    companion object {
+        const val ERR_MSG_SEARCH = "Unable to search at this time.  Please try again later."
+    }
+
     private val _searchRequest = MutableStateFlow(SearchRequest("", SearchSource.None))
     val searchRequest = _searchRequest.asStateFlow()
 
@@ -78,11 +84,16 @@ class SearchRepository @Inject constructor(
 
         when(val result = api.searchCategories(query, startPosition)) {
             is ApiResult.Error -> {
-                errorRepository.showError("Unable to search at this time.  Please try again later.")
+                if(result.isUnauthorized()) {
+                    authService.logout()
+                } else {
+                    errorRepository.showError(ERR_MSG_SEARCH)
+                }
+
                 emit(result.toExternalCallStatus())
             }
             is ApiResult.Empty -> {
-                errorRepository.showError("Unable to search at this time.  Please try again later.")
+                errorRepository.showError(ERR_MSG_SEARCH)
                 emit(result.toExternalCallStatus())
             }
             is ApiResult.Success -> {

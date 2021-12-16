@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.domain.*
 import javax.inject.Singleton
@@ -33,9 +34,10 @@ class DomainModule {
         db: MawDatabase,
         photoCategoryDao: PhotoCategoryDao,
         activeIdDao: ActiveIdDao,
-        errorRepository: ErrorRepository
+        errorRepository: ErrorRepository,
+        authService: AuthService
     ): PhotoCategoryRepository {
-        return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao, errorRepository)
+        return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao, errorRepository, authService)
     }
 
     @Provides
@@ -43,9 +45,10 @@ class DomainModule {
     fun provideRandomPhotoRepository(
         api: PhotoApiClient,
         randomPreferenceRepository: RandomPreferenceRepository,
-        errorRepository: ErrorRepository
+        errorRepository: ErrorRepository,
+        authService: AuthService
     ): RandomPhotoRepository {
-        return RandomPhotoRepository(api, randomPreferenceRepository,errorRepository)
+        return RandomPhotoRepository(api, randomPreferenceRepository, errorRepository, authService)
     }
 
     @Provides
@@ -90,13 +93,15 @@ class DomainModule {
         api: PhotoApiClient,
         searchPreferenceRepository: SearchPreferenceRepository,
         searchHistoryDao: SearchHistoryDao,
-        errorRepository: ErrorRepository
+        errorRepository: ErrorRepository,
+        authService: AuthService
     ): SearchRepository {
         return SearchRepository(
             api,
             searchHistoryDao,
             searchPreferenceRepository,
-            errorRepository)
+            errorRepository,
+            authService)
     }
 
     @Provides

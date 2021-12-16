@@ -62,11 +62,12 @@ class LoginActivity : AppCompatActivity() {
                     .launchIn(this)
 
                 viewModel.authStatus
-                    .filter { it is AuthStatus.Completed }
+                    .filter { it !is AuthStatus.LoginInProcess }
                     .onEach {
-                        when(it.isAuthorized) {
-                            true -> goToNextScreen()
-                            false -> viewModel.initiateAuthentication()
+                        when(it) {
+                            is AuthStatus.LoginInProcess -> {}
+                            is AuthStatus.Authorized -> goToNextScreen()
+                            is AuthStatus.RequiresAuthorization -> viewModel.initiateAuthentication()
                         }
                     }
                     .launchIn(this)

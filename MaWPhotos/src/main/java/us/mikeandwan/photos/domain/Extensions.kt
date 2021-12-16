@@ -2,6 +2,7 @@ package us.mikeandwan.photos.domain
 
 import us.mikeandwan.photos.Constants
 import us.mikeandwan.photos.domain.models.*
+import java.net.HttpURLConnection
 
 fun us.mikeandwan.photos.database.PhotoCategory.toDomainPhotoCategory(): PhotoCategory {
     return PhotoCategory(
@@ -196,4 +197,8 @@ fun us.mikeandwan.photos.api.SearchResultCategory.toDomainSearchResult(): Search
         "${ Constants.WWW_BASE_URL}${this.teaserPhotoPath.replace("/xs/", "/md/")}",
         this.score
     )
+}
+
+fun us.mikeandwan.photos.api.ApiResult.Error.isUnauthorized(): Boolean {
+    return this.errorCode == HttpURLConnection.HTTP_UNAUTHORIZED
 }

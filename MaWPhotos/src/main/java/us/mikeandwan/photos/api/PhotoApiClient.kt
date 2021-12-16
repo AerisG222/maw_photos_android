@@ -92,7 +92,7 @@ class PhotoApiClient @Inject constructor(
         } catch (t: Throwable) {
             Timber.e(t)
 
-            return ApiResult.Error("$name failed: ${t.message}", t)
+            return ApiResult.Error("$name failed: ${t.message}", null, t)
         }
     }
 

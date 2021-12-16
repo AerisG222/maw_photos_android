@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
@@ -13,7 +14,8 @@ import javax.inject.Inject
 class RandomPhotoRepository @Inject constructor(
     private val api: PhotoApiClient,
     randomPreferenceRepository: RandomPreferenceRepository,
-    private val errorRepository: ErrorRepository
+    private val errorRepository: ErrorRepository,
+    private val authService: AuthService
 ) {
     private var scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var fetchNextJob: Job? = null
@@ -38,7 +40,12 @@ class RandomPhotoRepository @Inject constructor(
 
         when(val result = api.getRandomPhotos(count)) {
             is ApiResult.Error -> {
-                errorRepository.showError("Unable to fetch random photos at this time.  Please try again later.")
+                if(result.isUnauthorized()) {
+                    authService.logout()
+                } else {
+                    errorRepository.showError("Unable to fetch random photos at this time.  Please try again later.")
+                }
+
                 emit(result.toExternalCallStatus())
             }
             is ApiResult.Empty -> {

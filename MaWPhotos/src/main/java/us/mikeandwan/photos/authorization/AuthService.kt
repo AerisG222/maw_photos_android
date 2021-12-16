@@ -25,19 +25,19 @@ class AuthService(
     val authConfig: AuthorizationServiceConfiguration?
         get() { return _authConfig }
 
-    private val _authStatus = MutableStateFlow<AuthStatus>(AuthStatus.Completed(authStateManager.current.isAuthorized))
+    private val _authStatus = MutableStateFlow(if(authStateManager.current.isAuthorized) AuthStatus.Authorized else AuthStatus.RequiresAuthorization)
     val authStatus = _authStatus.asStateFlow()
 
     fun beginAuthentication() {
-        _authStatus.value = AuthStatus.LoginInProcess()
+        _authStatus.value = AuthStatus.LoginInProcess
     }
 
     private fun updateAuthorizationState(isAuthorized: Boolean) {
-        _authStatus.value = AuthStatus.Completed(isAuthorized)
+        _authStatus.value = if(isAuthorized) AuthStatus.Authorized else AuthStatus.RequiresAuthorization
     }
 
     fun logout() {
-        _authStatus.value = AuthStatus.Completed(false)
+        _authStatus.value = AuthStatus.RequiresAuthorization
     }
 
     suspend fun clearAuthState() {
