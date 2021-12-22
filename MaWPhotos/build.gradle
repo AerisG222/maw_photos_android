@@ -144,7 +144,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.5.0-beta01'
 
     // appauth
-    implementation 'net.openid:appauth:0.11.0'
+    implementation 'net.openid:appauth:0.11.1'
 
     // okhttp
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.2"))

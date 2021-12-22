@@ -48,12 +48,6 @@
             android:screenOrientation="fullSensor">
         </activity>
 
-        <!-- https://github.com/openid/AppAuth-Android/issues/769#issuecomment-994361163 -->
-        <activity
-            android:name="net.openid.appauth.AuthorizationManagementActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout">
-        </activity>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="us.mikeandwan.photos.fileprovider"
