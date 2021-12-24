@@ -11,7 +11,10 @@ class AboutViewModel @Inject constructor() : ViewModel() {
 
     var history = """
 ### 7.0
-- NEW VERSION IN PROGRESS
+- Major update rewritten in Kotlin
+- Improved UI leveraging sidebar for navigation
+- Introduction of search feature
+- Leveraged new libraries and updated others
 
 ### 6.2
 - sdk + library updates
