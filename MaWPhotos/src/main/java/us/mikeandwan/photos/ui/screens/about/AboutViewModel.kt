@@ -12,9 +12,10 @@ class AboutViewModel @Inject constructor() : ViewModel() {
     var history = """
 ### 7.0
 - Major update rewritten in Kotlin
-- Improved UI leveraging sidebar for navigation
-- Introduction of search feature
-- Leveraged new libraries and updated others
+- Improved UI to be more consistent with photos web app
+- Added new search feature
+- Support both light and dark themes
+- Use new / updated dependencies
 
 ### 6.2
 - sdk + library updates
