@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.database.*
+import us.mikeandwan.photos.database.migrations.MawDatabaseCreateCallback
 import javax.inject.Singleton
 
 @Module
@@ -18,7 +19,7 @@ class DatabaseModule {
         return Room.databaseBuilder(
             application,
             MawDatabase::class.java,
-            "maw"
+            "us.mikeandwan.photos"
         )
             .fallbackToDestructiveMigration()
             .addCallback(MawDatabaseCreateCallback())

@@ -16,7 +16,7 @@ import androidx.room.TypeConverters
         SearchHistory::class,
         SearchPreference::class
     ],
-    version = 5
+    version = 1
 )
 @TypeConverters(
     Converters::class

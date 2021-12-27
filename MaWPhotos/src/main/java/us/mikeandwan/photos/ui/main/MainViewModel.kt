@@ -59,6 +59,7 @@ class MainViewModel @Inject constructor(
     }
 
     suspend fun clearFileCache() {
+        fileStorageRepository.clearLegacyDatabase()
         fileStorageRepository.clearShareCache()
         fileStorageRepository.clearLegacyFiles()
     }

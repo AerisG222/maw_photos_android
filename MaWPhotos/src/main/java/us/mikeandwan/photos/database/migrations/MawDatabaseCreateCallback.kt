@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.database
+package us.mikeandwan.photos.database.migrations
 
 import androidx.room.RoomDatabase.Callback
 import androidx.sqlite.db.SupportSQLiteDatabase

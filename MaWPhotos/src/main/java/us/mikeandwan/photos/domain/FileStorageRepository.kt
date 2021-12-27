@@ -7,9 +7,10 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.webkit.MimeTypeMap
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileFilter
 import javax.inject.Inject
@@ -69,6 +70,12 @@ class FileStorageRepository @Inject constructor(
             _context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                 ?.walkBottomUp()
                 ?.forEach { it.delete() }
+        }
+    }
+
+    suspend fun clearLegacyDatabase() {
+        withContext(Dispatchers.IO) {
+            _context.deleteDatabase("maw")
         }
     }
 
