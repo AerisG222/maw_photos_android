@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.domain
 
 import androidx.room.withTransaction
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
@@ -120,6 +121,10 @@ class PhotoCategoryRepository @Inject constructor(
     }
 
     private fun handleError(error: ApiResult.Error, message: String?): ExternalCallStatus<Nothing> {
+        if(error.exception is CancellationException) {
+            return error.toExternalCallStatus()
+        }
+
         if(error.isUnauthorized()) {
             authService.logout()
         } else {
