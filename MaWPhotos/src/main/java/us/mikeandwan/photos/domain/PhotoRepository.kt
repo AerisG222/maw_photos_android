@@ -51,7 +51,7 @@ class PhotoRepository @Inject constructor (
         }
     }
 
-    suspend fun addComment(photoId: Int, comment: String) = flow {
+    fun addComment(photoId: Int, comment: String) = flow {
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.addComment(photoId, comment)) {
@@ -61,7 +61,7 @@ class PhotoRepository @Inject constructor (
         }
     }
 
-    suspend fun setRating(photoId: Int, rating: Short) = flow {
+    fun setRating(photoId: Int, rating: Short) = flow {
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.setRating(photoId, rating)) {

@@ -47,7 +47,7 @@ class SearchRepository @Inject constructor(
         searchHistoryDao.clearHistory()
     }
 
-    suspend fun performSearch(query: String, searchSource: SearchSource) = flow {
+    fun performSearch(query: String, searchSource: SearchSource) = flow {
         val currentQuery = searchRequest.value.query
 
         _searchResults.value = emptyList()
@@ -67,7 +67,7 @@ class SearchRepository @Inject constructor(
         }
     }
 
-    suspend fun continueSearch() = flow {
+    fun continueSearch() = flow {
         val query = searchRequest.value.query
         val position = searchResults.value.size
 
@@ -77,7 +77,7 @@ class SearchRepository @Inject constructor(
         }
     }
 
-    private suspend fun executeSearch(query: String, startPosition: Int) = flow {
+    private fun executeSearch(query: String, startPosition: Int) = flow {
         val currentResults = searchResults.value
 
         emit(ExternalCallStatus.Loading)

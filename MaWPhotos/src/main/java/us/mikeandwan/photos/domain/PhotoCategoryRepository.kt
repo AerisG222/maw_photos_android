@@ -39,7 +39,7 @@ class PhotoCategoryRepository @Inject constructor(
         emitAll(data)
     }
 
-    suspend fun getNewCategories() = flow {
+    fun getNewCategories() = flow {
         val category = pcDao
             .getMostRecentCategory()
             .first()
@@ -93,7 +93,7 @@ class PhotoCategoryRepository @Inject constructor(
         }
     }
 
-    private suspend fun loadCategories(mostRecentCategory: Int, errorMessage: String?) = flow {
+    private fun loadCategories(mostRecentCategory: Int, errorMessage: String?) = flow {
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getRecentCategories(mostRecentCategory)) {

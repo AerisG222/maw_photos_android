@@ -35,7 +35,7 @@ class RandomPhotoRepository @Inject constructor(
         _doFetch.value = doFetch
     }
 
-    suspend fun fetch(count: Int) = flow {
+    fun fetch(count: Int) = flow {
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getRandomPhotos(count)) {
