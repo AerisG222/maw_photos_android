@@ -4,14 +4,12 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
-import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.database.SearchHistory
 import us.mikeandwan.photos.database.SearchHistoryDao
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.SearchRequest
 import us.mikeandwan.photos.domain.models.SearchResultCategory
 import us.mikeandwan.photos.domain.models.SearchSource
-import us.mikeandwan.photos.ui.toExternalCallStatus
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
@@ -20,8 +18,7 @@ class SearchRepository @Inject constructor(
     private val api: PhotoApiClient,
     private val searchHistoryDao: SearchHistoryDao,
     private val searchPreferenceRepository: SearchPreferenceRepository,
-    private val errorRepository: ErrorRepository,
-    private val authService: AuthService
+    private val apiErrorHandler: ApiErrorHandler
 ) {
     companion object {
         const val ERR_MSG_SEARCH = "Unable to search at this time.  Please try again later."
@@ -83,19 +80,8 @@ class SearchRepository @Inject constructor(
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.searchCategories(query, startPosition)) {
-            is ApiResult.Error -> {
-                if(result.isUnauthorized()) {
-                    authService.logout()
-                } else {
-                    errorRepository.showError(ERR_MSG_SEARCH)
-                }
-
-                emit(result.toExternalCallStatus())
-            }
-            is ApiResult.Empty -> {
-                errorRepository.showError(ERR_MSG_SEARCH)
-                emit(result.toExternalCallStatus())
-            }
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_SEARCH))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_SEARCH))
             is ApiResult.Success -> {
                 val searchResults = result.result.results
                 val domainResults = searchResults.map { it.toDomainSearchResult() }

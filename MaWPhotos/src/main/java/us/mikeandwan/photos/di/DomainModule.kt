@@ -29,15 +29,23 @@ class DomainModule {
 
     @Provides
     @Singleton
+    fun provideApiErrorHandler(
+        authService: AuthService,
+        errorRepository: ErrorRepository
+    ): ApiErrorHandler {
+        return ApiErrorHandler(authService, errorRepository)
+    }
+
+    @Provides
+    @Singleton
     fun providePhotoCategoryRepository(
         api: PhotoApiClient,
         db: MawDatabase,
         photoCategoryDao: PhotoCategoryDao,
         activeIdDao: ActiveIdDao,
-        errorRepository: ErrorRepository,
-        authService: AuthService
+        apiErrorHandler: ApiErrorHandler
     ): PhotoCategoryRepository {
-        return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao, errorRepository, authService)
+        return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao, apiErrorHandler)
     }
 
     @Provides
@@ -45,10 +53,9 @@ class DomainModule {
     fun provideRandomPhotoRepository(
         api: PhotoApiClient,
         randomPreferenceRepository: RandomPreferenceRepository,
-        errorRepository: ErrorRepository,
-        authService: AuthService
+        apiErrorHandler: ApiErrorHandler
     ): RandomPhotoRepository {
-        return RandomPhotoRepository(api, randomPreferenceRepository, errorRepository, authService)
+        return RandomPhotoRepository(api, randomPreferenceRepository, apiErrorHandler)
     }
 
     @Provides
@@ -93,15 +100,13 @@ class DomainModule {
         api: PhotoApiClient,
         searchPreferenceRepository: SearchPreferenceRepository,
         searchHistoryDao: SearchHistoryDao,
-        errorRepository: ErrorRepository,
-        authService: AuthService
+        apiErrorHandler: ApiErrorHandler
     ): SearchRepository {
         return SearchRepository(
             api,
             searchHistoryDao,
             searchPreferenceRepository,
-            errorRepository,
-            authService)
+            apiErrorHandler)
     }
 
     @Provides

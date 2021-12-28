@@ -3,15 +3,12 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.flow.flow
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
-import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
-import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class PhotoRepository @Inject constructor (
     private val api: PhotoApiClient,
-    private val errorRepository: ErrorRepository,
-    private val authService: AuthService
+    private val apiErrorHandler: ApiErrorHandler
 ){
     companion object {
         const val ERR_MSG_LOAD_EXIF = "Unable to load EXIF data at this time.  Please try again later."
@@ -25,8 +22,8 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getExifData(photoId)) {
-            is ApiResult.Error -> emit(handleError(result, ERR_MSG_LOAD_EXIF))
-            is ApiResult.Empty -> emit(handleEmpty(result, ERR_MSG_LOAD_EXIF))
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_LOAD_EXIF))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_LOAD_EXIF))
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainExifData()))
         }
     }
@@ -35,8 +32,8 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getRatings(photoId)) {
-            is ApiResult.Error -> emit(handleError(result, ERR_MSG_LOAD_RATINGS))
-            is ApiResult.Empty -> emit(handleEmpty(result, ERR_MSG_LOAD_RATINGS))
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_LOAD_RATINGS))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_LOAD_RATINGS))
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainPhotoRating()))
         }
     }
@@ -45,8 +42,8 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getComments(photoId)) {
-            is ApiResult.Error -> emit(handleError(result, ERR_MSG_LOAD_COMMENTS))
-            is ApiResult.Empty -> emit(handleEmpty(result, ERR_MSG_LOAD_COMMENTS))
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_LOAD_COMMENTS))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_LOAD_COMMENTS))
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map { it.toDomainPhotoComment() }))
         }
     }
@@ -55,8 +52,8 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.addComment(photoId, comment)) {
-            is ApiResult.Error -> emit(handleError(result, ERR_MSG_ADD_COMMENTS))
-            is ApiResult.Empty -> emit(handleEmpty(result, ERR_MSG_ADD_COMMENTS))
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_ADD_COMMENTS))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_ADD_COMMENTS))
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.items.map{ it.toDomainPhotoComment() }))
         }
     }
@@ -65,25 +62,9 @@ class PhotoRepository @Inject constructor (
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.setRating(photoId, rating)) {
-            is ApiResult.Error -> emit(handleError(result, ERR_MSG_SET_RATING))
-            is ApiResult.Empty -> emit(handleEmpty(result, ERR_MSG_SET_RATING))
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_SET_RATING))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_SET_RATING))
             is ApiResult.Success -> emit(ExternalCallStatus.Success(result.result.toDomainPhotoRating()))
         }
-    }
-
-    private fun handleError(error: ApiResult.Error, message: String): ExternalCallStatus<Nothing> {
-        if(error.isUnauthorized()) {
-            authService.logout()
-        } else {
-            errorRepository.showError(message)
-        }
-
-        return error.toExternalCallStatus()
-    }
-
-    private fun handleEmpty(empty: ApiResult.Empty, message: String): ExternalCallStatus<Nothing> {
-        errorRepository.showError(message)
-
-        return empty.toExternalCallStatus()
     }
 }

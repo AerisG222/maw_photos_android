@@ -4,19 +4,20 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
-import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
-import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class RandomPhotoRepository @Inject constructor(
     private val api: PhotoApiClient,
     randomPreferenceRepository: RandomPreferenceRepository,
-    private val errorRepository: ErrorRepository,
-    private val authService: AuthService
+    private val apiErrorHandler: ApiErrorHandler
 ) {
+    companion object {
+        const val ERR_MSG_FETCH = "Unable to fetch random photos at this time.  Please try again later."
+    }
+
     private var scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var fetchNextJob: Job? = null
 
@@ -39,19 +40,8 @@ class RandomPhotoRepository @Inject constructor(
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getRandomPhotos(count)) {
-            is ApiResult.Error -> {
-                if(result.isUnauthorized()) {
-                    authService.logout()
-                } else {
-                    errorRepository.showError("Unable to fetch random photos at this time.  Please try again later.")
-                }
-
-                emit(result.toExternalCallStatus())
-            }
-            is ApiResult.Empty -> {
-                errorRepository.showError("Unable to fetch random photos at this time.  Please try again later.")
-                emit(result.toExternalCallStatus())
-            }
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_FETCH))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_FETCH))
             is ApiResult.Success -> {
                 var newPhotos = emptyList<Photo>()
 

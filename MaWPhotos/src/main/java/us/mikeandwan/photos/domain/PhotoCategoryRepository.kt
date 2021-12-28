@@ -1,15 +1,12 @@
 package us.mikeandwan.photos.domain
 
 import androidx.room.withTransaction
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
-import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class PhotoCategoryRepository @Inject constructor(
@@ -17,8 +14,7 @@ class PhotoCategoryRepository @Inject constructor(
     private val db: MawDatabase,
     private val pcDao: PhotoCategoryDao,
     private val idDao: ActiveIdDao,
-    private val errorRepository: ErrorRepository,
-    private val authService: AuthService
+    private val apiErrorHandler: ApiErrorHandler
 ) {
     companion object {
         const val ERR_MSG_LOAD_CATEGORIES = "Unable to load categories at this time.  Please try again later."
@@ -79,8 +75,8 @@ class PhotoCategoryRepository @Inject constructor(
             emit(ExternalCallStatus.Loading)
 
             when(val result = api.getPhotos(categoryId)) {
-                is ApiResult.Error -> emit(handleError(result, ERR_MSG_LOAD_PHOTOS))
-                is ApiResult.Empty -> emit(handleEmpty(result, ERR_MSG_LOAD_PHOTOS))
+                is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_LOAD_PHOTOS))
+                is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_LOAD_PHOTOS))
                 is ApiResult.Success -> {
                     _lastCategoryPhotos = result.result.items.map { it.toDomainPhoto() }
 
@@ -98,8 +94,8 @@ class PhotoCategoryRepository @Inject constructor(
         emit(ExternalCallStatus.Loading)
 
         when(val result = api.getRecentCategories(mostRecentCategory)) {
-            is ApiResult.Error -> emit(handleError(result, errorMessage))
-            is ApiResult.Empty -> emit(handleEmpty(result, errorMessage))
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, errorMessage))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, errorMessage))
             is ApiResult.Success -> {
                 val categories = result.result.items
 
@@ -118,29 +114,5 @@ class PhotoCategoryRepository @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun handleError(error: ApiResult.Error, message: String?): ExternalCallStatus<Nothing> {
-        if(error.exception is CancellationException) {
-            return error.toExternalCallStatus()
-        }
-
-        if(error.isUnauthorized()) {
-            authService.logout()
-        } else {
-            if(!message.isNullOrBlank()) {
-                errorRepository.showError(message)
-            }
-        }
-
-        return error.toExternalCallStatus()
-    }
-
-    private fun handleEmpty(empty: ApiResult.Empty, message: String?): ExternalCallStatus<Nothing> {
-        if(!message.isNullOrBlank()) {
-            errorRepository.showError(message)
-        }
-
-        return empty.toExternalCallStatus()
     }
 }
