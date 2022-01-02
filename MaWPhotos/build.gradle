@@ -14,7 +14,7 @@ android {
         applicationId "us.mikeandwan.pictures"
         minSdkVersion 29
         targetSdkVersion 31
-        versionCode 49
+        versionCode 50
         versionName "7.0"
 
         javaCompileOptions {
