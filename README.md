@@ -24,6 +24,35 @@ so the application itself will trust this certificate.
     - Paste this into res/raw/debug_cas (that is configured via android:networkSecurityConfig in the
       main application manifest)
 
+## Updated DNS Instructions
+
+Please see the original notes about DNS below.  Those were not fully working, so streamlining the
+details for DNS in the follow bullets.  These are ugly, but allowed me to finally get the
+emulator working locally against the dev site.
+
+- start dev dns server (dnsmasq)
+  - `./start_dev_dns.sh`
+- start dev emulator
+  - `./start_dev_emulator.sh`
+- make sure you started the dev sites 
+  - `systemctl --user start pod-dev-www-pod.service`
+  - `start_dev_services.sh`
+- verify you can access dev site via chrome in emulator by going to https://10.0.2.2:5021 (should bring up www site)
+- try to see if dns resolution works by going to https://dev.www.mikeandwan.us:5021 (this likely will not work)
+- manually configure network settings
+  - go to `Settings > Network & internet > Internet (Android wifi)`
+  - click gear next to Android wifi
+  - click pencil icon / edit in upper right
+  - change IP Settings from 'DHCP' to 'Static', and specify the following:
+    - IP Address: 192.168.10.10
+    - Gateway: 10.0.2.2
+    - Network Prefix Length: 16
+    - DNS1: 10.0.2.2
+
+With the above steps, this seems to work pretty reliably, though I don't understand at this point why 
+simply setting the dns server on the emulator command line is not sufficient to get this to work anymore.
+
+## Original DNS Instructions
 The second step is to adjust the DNS configuration so that the emulator can find the dev sites on
 your local pc.  By default, the Android emulator will use your local DNS server to access the
 internet, but unfortunately does not reference the local hosts file.  As such, one quick way to get

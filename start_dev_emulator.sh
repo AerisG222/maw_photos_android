@@ -2,9 +2,11 @@
 SDK=/home/mmorano/Android/Sdk
 EMU="${SDK}/emulator/emulator"
 ADB="${SDK}/platform-tools/adb"
+#DNS_SERVER_IP=$(hostname -I | cut -d ' ' -f 1)
+DNS_SERVER_IP=127.0.0.1
 
-echo '*** Starting Emulator ***'
-$EMU -avd Pixel_4a_API_30 -no-snapshot -dns-server 127.0.0.1 &
+echo "*** Starting Emulator with DNS server: ${DNS_SERVER_IP} ***"
+$EMU -avd Pixel_5_API_31 -no-snapshot -dns-server "${DNS_SERVER_IP}" &
 
 echo '*** Wait for Emulator to Start ***'
 sleep 20
