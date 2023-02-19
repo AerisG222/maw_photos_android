@@ -2,6 +2,7 @@ package us.mikeandwan.photos.ui.main
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -175,7 +176,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleSendSingle(intent: Intent) {
-        val mediaUri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+        val mediaUri = if (Build.VERSION.SDK_INT >= 33) {
+            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+        }
 
         if(mediaUri != null) {
             enqueueUpload(mediaUri)
@@ -183,7 +189,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleSendMultiple(intent: Intent) {
-        val mediaUris = intent.getParcelableArrayListExtra<Uri?>(Intent.EXTRA_STREAM)
+        val mediaUris = if (Build.VERSION.SDK_INT >= 33) {
+            intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableArrayListExtra<Uri?>(Intent.EXTRA_STREAM)
+        }
 
         if(mediaUris != null) {
             enqueueUpload(*mediaUris.toTypedArray())
