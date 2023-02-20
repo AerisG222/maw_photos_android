@@ -15,8 +15,8 @@ android {
         applicationId "us.mikeandwan.pictures"
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 51
-        versionName "7.0"
+        versionCode 52
+        versionName "7.1"
 
         kapt {
             arguments {

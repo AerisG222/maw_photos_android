@@ -1,3 +1,8 @@
+## v7.1
+### 02/19/2023
+- Update libraries
+- Increase size of nav buttons and text to reduce touch errors
+
 ## v7.0
 ### 12/31/2021
 - Major update rewritten in Kotlin
