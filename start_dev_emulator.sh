@@ -9,7 +9,7 @@ echo "*** Starting Emulator with DNS server: ${DNS_SERVER_IP} ***"
 $EMU -avd Pixel_6_API_33 -no-snapshot -dns-server "${DNS_SERVER_IP}" &
 
 echo '*** Wait for Emulator to Start ***'
-sleep 20
+sleep 60
 
 echo '*** Certificate Authority ***'
 echo '  - copying public cert to emulator'
