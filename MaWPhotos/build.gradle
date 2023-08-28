@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion '33.0.0'
+    compileSdk 33
+    buildToolsVersion = '33.0.1'
     namespace 'us.mikeandwan.photos'
 
     defaultConfig {
         applicationId "us.mikeandwan.pictures"
-        minSdkVersion 29
+        minSdkVersion 31
         targetSdkVersion 33
         versionCode 52
         versionName "7.1"
