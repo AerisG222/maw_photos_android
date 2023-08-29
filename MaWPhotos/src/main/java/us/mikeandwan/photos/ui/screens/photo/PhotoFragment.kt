@@ -13,20 +13,22 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
 import com.github.chrisbanes.photoview.PhotoView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import us.mikeandwan.photos.databinding.FragmentPhotoBinding
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.ZoomOutPageTransformer
 import us.mikeandwan.photos.ui.controls.photodetail.IHandleModalClose
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheetFragment
-import us.mikeandwan.photos.utils.GlideApp
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 
 @AndroidEntryPoint
@@ -143,7 +145,7 @@ class PhotoFragment : Fragment(), IHandleModalClose {
     private suspend fun getPhotoToShare(photo: Photo): Drawable {
         return withContext(Dispatchers.IO) {
             // reuse glide to try to pull the cached image
-            GlideApp.with(requireActivity())
+            Glide.with(requireActivity())
                 .load(photo.mdUrl)
                 .submit()
                 .get()

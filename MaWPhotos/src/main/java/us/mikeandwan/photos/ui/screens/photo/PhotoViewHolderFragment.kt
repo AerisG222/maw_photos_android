@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.github.chrisbanes.photoview.PhotoView
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.utils.GlideApp
 
 class PhotoViewHolderFragment : Fragment() {
     override fun onCreateView(
@@ -23,7 +23,7 @@ class PhotoViewHolderFragment : Fragment() {
             it.containsKey(PHOTO_URL) }?.apply {
                 val photoView = view.findViewById(R.id.photoView) as PhotoView
 
-                GlideApp.with(photoView.context)
+                Glide.with(photoView.context)
                     .load(getString(PHOTO_URL))
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_broken_image)

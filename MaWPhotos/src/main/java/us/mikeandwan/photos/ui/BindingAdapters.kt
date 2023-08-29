@@ -5,6 +5,7 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import io.noties.markwon.Markwon
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.*
@@ -17,7 +18,6 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.searchnavmenu.SearchTermListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListRecyclerAdapter
-import us.mikeandwan.photos.utils.GlideApp
 import java.io.File
 
 
@@ -50,7 +50,7 @@ fun bindImageGridRecyclerView(recyclerView: RecyclerView, gridItems: List<ImageG
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {
     imgUrl?.let {
-        GlideApp.with(imgView.context)
+        Glide.with(imgView.context)
             .load(imgUrl)
             .centerCrop()
             .placeholder(R.drawable.ic_placeholder)
