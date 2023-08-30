@@ -45,18 +45,16 @@ android {
 
     kotlin {
         jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_11.toString()))
+            languageVersion = JavaLanguageVersion.of(JavaVersion.VERSION_17.toString())
         }
     }
 
     signingConfigs {
-        maw {
-            if (new File(RELEASE_STORE_FILE).exists()) {
-                storeFile file(RELEASE_STORE_FILE)
-                storePassword RELEASE_STORE_PASSWORD
-                keyAlias RELEASE_KEY_ALIAS
-                keyPassword RELEASE_KEY_PASSWORD
-            }
+        release {
+            storeFile = file(RELEASE_STORE_FILE)
+            storePassword = RELEASE_STORE_PASSWORD
+            keyAlias = RELEASE_KEY_ALIAS
+            keyPassword = RELEASE_KEY_PASSWORD
         }
     }
 
@@ -86,7 +84,7 @@ android {
                     "proguard-jackson.pro",
                     "proguard-maw.pro"
 
-            signingConfig = signingConfigs.maw
+            signingConfig = signingConfigs.release
         }
     }
 
