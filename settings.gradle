@@ -1,1 +1,1 @@
-include ':MaWPhotos'
+include(":MaWPhotos")
