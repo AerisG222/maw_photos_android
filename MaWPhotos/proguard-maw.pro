@@ -1,4 +1,6 @@
--keep class us.mikeandwan.photos.models.** {
+-printusage build/proguard-usage.txt
+
+-keep class us.mikeandwan.photos.** {
     *;
 }
 
