@@ -11,6 +11,14 @@ class MawPreferenceDataStore(
     private val randomPreferenceRepository: RandomPreferenceRepository,
     private val searchPreferenceRepository: SearchPreferenceRepository
 ) : PreferenceDataStore() {
+    fun getShowNotifications(): Boolean {
+        return getBoolean("notifications_new_message", false)
+    }
+
+    fun setShowNotifications(doShow: Boolean) {
+        putBoolean("notifications_new_message", doShow)
+    }
+
     override fun getBoolean(key: String?, defValue: Boolean): Boolean {
         return runBlocking {
             when (key) {
