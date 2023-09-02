@@ -1,7 +1,7 @@
 ## v7.2
-### 08/31/2023
+### 09/02/2023
 - Update libraries
-- Add new permission for notifications on newer versions of Android
+- Request notification permission on newer versions of Android
 
 ## v7.1
 ### 02/19/2023
