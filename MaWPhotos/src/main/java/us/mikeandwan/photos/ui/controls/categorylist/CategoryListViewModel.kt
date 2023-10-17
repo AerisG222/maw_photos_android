@@ -12,8 +12,8 @@ class CategoryListViewModel: ViewModel() {
     val categories = _categories.asStateFlow()
 
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(false, null))
-    val refreshStatus = _refreshStatus.asStateFlow();
-    
+    val refreshStatus = _refreshStatus.asStateFlow()
+
     private val _showYear = MutableStateFlow(false)
 
     fun setCategories(items: List<PhotoCategory>) {

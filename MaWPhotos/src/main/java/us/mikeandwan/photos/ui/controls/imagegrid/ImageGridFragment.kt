@@ -31,7 +31,7 @@ class ImageGridFragment : Fragment() {
     private val _clickHandlerForwarder = ImageGridRecyclerAdapter.ClickListener { _clickHandler?.onClick(it) }
     private var _clickHandler: ImageGridRecyclerAdapter.ClickListener? = null
     private val _refreshHandlerForwarder = SwipeRefreshLayout.OnRefreshListener { _refreshHandler?.onRefresh() }
-    private var _refreshHandler: SwipeRefreshLayout.OnRefreshListener? = null;
+    private var _refreshHandler: SwipeRefreshLayout.OnRefreshListener? = null
     private var _listener: ViewTreeObserver.OnGlobalLayoutListener? = null
     private lateinit var binding: FragmentImageGridBinding
     val viewModel by viewModels<ImageGridViewModel>()

@@ -30,7 +30,7 @@ class CategoryListFragment : Fragment() {
     private val _clickHandlerForwarder = CategoryListRecyclerAdapter.ClickListener { _clickHandler?.onClick(it) }
     private var _clickHandler: CategoryListRecyclerAdapter.ClickListener? = null
     private val _refreshHandlerForwarder = OnRefreshListener { _refreshHandler?.onRefresh() }
-    private var _refreshHandler: OnRefreshListener? = null;
+    private var _refreshHandler: OnRefreshListener? = null
     private lateinit var binding: FragmentCategoryListBinding
     val viewModel by viewModels<CategoryListViewModel>()
 
@@ -66,7 +66,7 @@ class CategoryListFragment : Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.refreshStatus
                     .onEach {
-                        binding.container.isRefreshing = it.isRefreshing;
+                        binding.container.isRefreshing = it.isRefreshing
                     }
                     .launchIn(this)
             }
@@ -78,7 +78,7 @@ class CategoryListFragment : Fragment() {
     }
 
     fun setRefreshHandler(handler: OnRefreshListener) {
-        _refreshHandler = handler;
+        _refreshHandler = handler
 
         binding.container.isEnabled = true
     }
