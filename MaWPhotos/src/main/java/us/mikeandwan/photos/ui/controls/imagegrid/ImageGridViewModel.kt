@@ -3,12 +3,16 @@ package us.mikeandwan.photos.ui.controls.imagegrid
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
+import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.ui.toImageGridItemWithSize
 
 class ImageGridViewModel: ViewModel() {
     private val _gridItems = MutableStateFlow(emptyList<ImageGridItem>())
     private val _thumbnailSize = MutableStateFlow(0)
+
+    private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(false, null))
+    val refreshStatus = _refreshStatus.asStateFlow()
 
     val gridItemsWithSize = combine(
             _gridItems,
@@ -31,5 +35,9 @@ class ImageGridViewModel: ViewModel() {
 
     fun setRequestedThumbnailSize(thumbnailSize: GridThumbnailSize) {
         _requestedThumbnailSize.value = thumbnailSize
+    }
+
+    fun setRefreshStatus(refreshStatus: CategoryRefreshStatus) {
+        _refreshStatus.value = refreshStatus
     }
 }

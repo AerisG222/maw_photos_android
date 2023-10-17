@@ -5,12 +5,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
+import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
 
 class CategoryChooserViewModel: ViewModel() {
     private val _displayInfo = MutableStateFlow(CATEGORY_DISPLAY_INFO_DEFAULT)
     val displayInfo = _displayInfo.asStateFlow()
+
+    private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(false, null))
+    val refreshStatus = _refreshStatus.asStateFlow()
 
     fun setDisplayType(type: CategoryDisplayType) {
         _displayInfo.update { it.copy(displayType = type) }
@@ -26,5 +30,9 @@ class CategoryChooserViewModel: ViewModel() {
 
     fun setShowYearsInList(doShow: Boolean) {
         _displayInfo.update { it.copy(showYearInList = doShow) }
+    }
+
+    fun setRefreshStatus(status: CategoryRefreshStatus) {
+        _refreshStatus.value = status
     }
 }

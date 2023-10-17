@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentCategoryChooserBinding
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
+import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListFragment
@@ -35,6 +37,7 @@ class CategoryChooserFragment: Fragment() {
     }
 
     private var _clickHandler: CategorySelectedListener? = null
+    private var _refreshHandler: RefreshCategoriesListener? = null
     private lateinit var binding: FragmentCategoryChooserBinding
     val viewModel by viewModels<CategoryChooserViewModel>()
 
@@ -44,6 +47,10 @@ class CategoryChooserFragment: Fragment() {
 
     private val onListItemClicked = CategoryListRecyclerAdapter.ClickListener {
         onSelectCategory(it)
+    }
+
+    private val onRefreshCategories = OnRefreshListener {
+        onRefreshCategories()
     }
 
     override fun onCreateView(
@@ -79,6 +86,14 @@ class CategoryChooserFragment: Fragment() {
         _clickHandler = handler
     }
 
+    fun setRefreshHandler(handler: RefreshCategoriesListener) {
+        _refreshHandler = handler
+    }
+
+    fun setRefreshStatus(status: CategoryRefreshStatus) {
+        viewModel.setRefreshStatus(status)
+    }
+
     fun setGridThumbnailSize(size: GridThumbnailSize) {
         viewModel.setGridThumbnailSize(size)
     }
@@ -99,6 +114,15 @@ class CategoryChooserFragment: Fragment() {
                         }
                     }
                     .launchIn(this)
+
+                viewModel.refreshStatus
+                    .onEach {
+                        when(val frag = childFragmentManager.fragments.first()) {
+                            is ImageGridFragment -> frag.setRefreshStatus(it)
+                            is CategoryListFragment -> frag.setRefreshStatus(it)
+                        }
+                    }
+                    .launchIn(this)
             }
         }
     }
@@ -111,6 +135,7 @@ class CategoryChooserFragment: Fragment() {
         frag.setThumbnailSize(thumbnailSize)
         frag.setClickHandler(onGridItemClicked)
         frag.setGridItems(categories.map{ it.toImageGridItem() })
+        frag.setRefreshHandler(onRefreshCategories)
     }
 
     private fun showList(showYearInList: Boolean, categories: List<PhotoCategory>) {
@@ -121,6 +146,7 @@ class CategoryChooserFragment: Fragment() {
         frag.setShowYear(showYearInList)
         frag.setClickHandler(onListItemClicked)
         frag.setCategories(categories)
+        frag.setRefreshHandler(onRefreshCategories)
     }
 
     private fun <T: Fragment> setChildFragment(fragmentClass: Class<T>, tag: String) {
@@ -160,7 +186,15 @@ class CategoryChooserFragment: Fragment() {
         _clickHandler?.onClick(category)
     }
 
+    private fun onRefreshCategories() {
+        _refreshHandler?.onRefresh()
+    }
+
     class CategorySelectedListener(val clickListener: (item: PhotoCategory) -> Unit) {
         fun onClick(item: PhotoCategory) = clickListener(item)
+    }
+
+    class RefreshCategoriesListener(val refreshListener: () -> Unit) {
+        fun onRefresh() = refreshListener()
     }
 }

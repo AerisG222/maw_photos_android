@@ -122,6 +122,20 @@ fun bindCategoryChooserClickHandler(container: FragmentContainerView, handler: C
     categoryChooserFragment.setClickHandler(handler)
 }
 
+@BindingAdapter("categoryChooserRefreshCategoriesHandler")
+fun bindCategoryChooserRefreshHandler(container: FragmentContainerView, handler: CategoryChooserFragment.RefreshCategoriesListener) {
+    val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()
+
+    categoryChooserFragment.setRefreshHandler(handler)
+}
+
+@BindingAdapter("categoryChooserRefreshStatus")
+fun bindCategoryChooserRefreshStatus(container: FragmentContainerView, status: CategoryRefreshStatus) {
+    val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()
+
+    categoryChooserFragment.setRefreshStatus(status)
+}
+
 @BindingAdapter("categoryChooserGridThumbnailSize")
 fun bindCategoryChooserGridThumbnailSize(container: FragmentContainerView, size: GridThumbnailSize) {
     val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()

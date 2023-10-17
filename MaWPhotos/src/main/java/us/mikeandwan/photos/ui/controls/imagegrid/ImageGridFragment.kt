@@ -11,12 +11,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.flexbox.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentImageGridBinding
+import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 @AndroidEntryPoint
@@ -28,6 +30,8 @@ class ImageGridFragment : Fragment() {
     private val _screenWidth = MutableStateFlow(-1)
     private val _clickHandlerForwarder = ImageGridRecyclerAdapter.ClickListener { _clickHandler?.onClick(it) }
     private var _clickHandler: ImageGridRecyclerAdapter.ClickListener? = null
+    private val _refreshHandlerForwarder = SwipeRefreshLayout.OnRefreshListener { _refreshHandler?.onRefresh() }
+    private var _refreshHandler: SwipeRefreshLayout.OnRefreshListener? = null;
     private var _listener: ViewTreeObserver.OnGlobalLayoutListener? = null
     private lateinit var binding: FragmentImageGridBinding
     val viewModel by viewModels<ImageGridViewModel>()
@@ -60,6 +64,9 @@ class ImageGridFragment : Fragment() {
 
         binding.imageGridRecyclerView.adapter = adapter
 
+        binding.container.isEnabled = false
+        binding.container.setOnRefreshListener(_refreshHandlerForwarder)
+
         initStateObservers()
         listenForWidth()
 
@@ -76,6 +83,13 @@ class ImageGridFragment : Fragment() {
                 .filter { (screenWidth, thumbnailSize) -> screenWidth > 0 && thumbnailSize != GridThumbnailSize.Unspecified }
                 .onEach { (screenWidth, thumbnailSize) -> viewModel.setThumbnailSize(getThumbnailSize(screenWidth, thumbnailSize)) }
                 .launchIn(this)
+
+                viewModel.refreshStatus
+                    .onEach {
+                        binding.container.isRefreshing = it.isRefreshing
+                    }
+                    .launchIn(this)
+
             }
         }
     }
@@ -88,6 +102,16 @@ class ImageGridFragment : Fragment() {
         }
 
         binding.container.viewTreeObserver.addOnGlobalLayoutListener(_listener)
+    }
+
+    fun setRefreshStatus(refreshStatus: CategoryRefreshStatus) {
+        viewModel.setRefreshStatus(refreshStatus)
+    }
+
+    fun setRefreshHandler(handler: SwipeRefreshLayout.OnRefreshListener) {
+        _refreshHandler = handler
+
+        binding.container.isEnabled = true
     }
 
     fun setClickHandler(handler: ImageGridRecyclerAdapter.ClickListener) {

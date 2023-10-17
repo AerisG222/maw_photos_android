@@ -11,7 +11,7 @@
             type="us.mikeandwan.photos.ui.controls.imagegrid.ImageGridViewModel" />
     </data>
 
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -23,6 +23,6 @@
             app:imageGridItemList="@{ viewModel.gridItemsWithSize }"
             tools:listitem="@layout/view_holder_image_grid_item" />
 
-    </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </layout>

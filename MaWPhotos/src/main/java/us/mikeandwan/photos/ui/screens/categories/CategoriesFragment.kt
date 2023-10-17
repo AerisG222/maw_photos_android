@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -46,6 +47,16 @@ class CategoriesFragment : Fragment() {
                 viewModel.requestNavigateToCategory
                     .filter { it != null }
                     .onEach { navigateToCategory(it!!) }
+                    .launchIn(this)
+
+                viewModel.refreshStatus
+                    .onEach {
+                        if(it.message != null) {
+                            val snackbar = Snackbar.make(binding.container.context, binding.root, it.message, Snackbar.LENGTH_SHORT)
+
+                            snackbar.show()
+                        }
+                    }
                     .launchIn(this)
             }
         }

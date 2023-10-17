@@ -24,8 +24,10 @@
             app:categoryChooserDisplayType="@{ viewModel.preferences.displayType }"
             app:categoryChooserCategories="@{ viewModel.categories }"
             app:categoryChooserCategorySelectedHandler="@{ viewModel.onCategorySelected }"
+            app:categoryChooserRefreshCategoriesHandler="@{ viewModel.onRefreshCategories }"
             app:categoryChooserGridThumbnailSize="@{ viewModel.preferences.gridThumbnailSize }"
-            app:categoryChooserShowYearInList="@{ false }" />
+            app:categoryChooserShowYearInList="@{ false }"
+            app:categoryChooserRefreshStatus="@{ viewModel.refreshStatus }"/>
 
     </FrameLayout>
 </layout>
