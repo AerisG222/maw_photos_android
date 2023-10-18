@@ -1,3 +1,8 @@
+## v7.3
+### 10/18/2023
+- Add swipe to refresh gesture to try and load any new categories
+- Update libraries
+
 ## v7.2
 ### 09/02/2023
 - Update libraries
