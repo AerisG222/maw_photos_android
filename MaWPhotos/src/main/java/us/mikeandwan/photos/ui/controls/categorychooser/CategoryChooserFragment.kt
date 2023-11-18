@@ -117,9 +117,11 @@ class CategoryChooserFragment: Fragment() {
 
                 viewModel.refreshStatus
                     .onEach {
-                        when(val frag = childFragmentManager.fragments.first()) {
-                            is ImageGridFragment -> frag.setRefreshStatus(it)
-                            is CategoryListFragment -> frag.setRefreshStatus(it)
+                        if(!childFragmentManager.fragments.isEmpty()) {
+                            when(val frag = childFragmentManager.fragments.first()) {
+                                is ImageGridFragment -> frag.setRefreshStatus(it)
+                                is CategoryListFragment -> frag.setRefreshStatus(it)
+                            }
                         }
                     }
                     .launchIn(this)
