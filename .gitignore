@@ -1,7 +1,7 @@
 # https://gist.github.com/iainconnor/8605514
 
 **/.svn/*
-**/gradle/*
+gradle/wrapper
 
 # Built application files
 **/build/*
