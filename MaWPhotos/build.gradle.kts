@@ -23,8 +23,8 @@ android {
         applicationId = "us.mikeandwan.pictures"
         minSdk = 31
         targetSdk = 34
-        versionCode = 55
-        versionName = "7.3"
+        versionCode = 56
+        versionName = "7.4"
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
