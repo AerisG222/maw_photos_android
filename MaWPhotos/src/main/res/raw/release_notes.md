@@ -1,3 +1,8 @@
+## v7.4
+### 11/20/2023
+- Fix crash when navigating to search screen
+- Migrate build scripts from groovy to kotlin
+
 ## v7.3
 ### 10/18/2023
 - Add swipe to refresh gesture to try and load any new categories
