@@ -32,6 +32,10 @@ class CategoryChooserViewModel: ViewModel() {
         _displayInfo.update { it.copy(showYearInList = doShow) }
     }
 
+    fun setEnableRefresh(enable: Boolean) {
+        _displayInfo.update { it.copy(enableRefresh = enable) }
+    }
+
     fun setRefreshStatus(status: CategoryRefreshStatus) {
         _refreshStatus.value = status
     }

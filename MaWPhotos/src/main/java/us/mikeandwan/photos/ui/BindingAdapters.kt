@@ -149,3 +149,10 @@ fun bindCategoryChooserShowYearInList(container: FragmentContainerView, show: Bo
 
     categoryChooserFragment.setShowYearsInList(show)
 }
+
+@BindingAdapter("categoryChooserEnableRefresh")
+fun bindCategoryChooserEnableRefresh(container: FragmentContainerView, enable: Boolean) {
+    val categoryChooserFragment = container.getFragment<CategoryChooserFragment>()
+
+    categoryChooserFragment.setEnableRefresh(enable)
+}

@@ -27,7 +27,8 @@
             app:categoryChooserRefreshCategoriesHandler="@{ viewModel.onRefreshCategories }"
             app:categoryChooserGridThumbnailSize="@{ viewModel.preferences.gridThumbnailSize }"
             app:categoryChooserShowYearInList="@{ false }"
-            app:categoryChooserRefreshStatus="@{ viewModel.refreshStatus }"/>
+            app:categoryChooserRefreshStatus="@{ viewModel.refreshStatus }"
+            app:categoryChooserEnableRefresh="@{ true }" />
 
     </FrameLayout>
 </layout>

@@ -50,7 +50,7 @@ class CategoryChooserFragment: Fragment() {
     }
 
     private val onRefreshCategories = OnRefreshListener {
-        onRefreshCategories()
+        _refreshHandler?.onRefresh()
     }
 
     override fun onCreateView(
@@ -94,6 +94,10 @@ class CategoryChooserFragment: Fragment() {
         viewModel.setRefreshStatus(status)
     }
 
+    fun setEnableRefresh(enable: Boolean) {
+        viewModel.setEnableRefresh(enable)
+    }
+
     fun setGridThumbnailSize(size: GridThumbnailSize) {
         viewModel.setGridThumbnailSize(size)
     }
@@ -108,8 +112,8 @@ class CategoryChooserFragment: Fragment() {
                 viewModel.displayInfo
                     .onEach { info ->
                         when(info.displayType) {
-                            CategoryDisplayType.Grid -> showGrid(info.gridThumbnailSize, info.categories)
-                            CategoryDisplayType.List -> showList(info.showYearInList, info.categories)
+                            CategoryDisplayType.Grid -> showGrid(info.gridThumbnailSize, info.categories, info.enableRefresh)
+                            CategoryDisplayType.List -> showList(info.showYearInList, info.categories, info.enableRefresh)
                             CategoryDisplayType.Unspecified -> {}
                         }
                     }
@@ -129,7 +133,7 @@ class CategoryChooserFragment: Fragment() {
         }
     }
 
-    private fun showGrid(thumbnailSize: GridThumbnailSize, categories: List<PhotoCategory>) {
+    private fun showGrid(thumbnailSize: GridThumbnailSize, categories: List<PhotoCategory>, enableRefresh: Boolean) {
         setChildFragment(ImageGridFragment::class.java, FRAG_GRID)
 
         val frag = childFragmentManager.fragments.first() as ImageGridFragment
@@ -137,10 +141,15 @@ class CategoryChooserFragment: Fragment() {
         frag.setThumbnailSize(thumbnailSize)
         frag.setClickHandler(onGridItemClicked)
         frag.setGridItems(categories.map{ it.toImageGridItem() })
-        frag.setRefreshHandler(onRefreshCategories)
+
+        if(enableRefresh) {
+            frag.setRefreshHandler(onRefreshCategories)
+        } else {
+            frag.setRefreshHandler(null)
+        }
     }
 
-    private fun showList(showYearInList: Boolean, categories: List<PhotoCategory>) {
+    private fun showList(showYearInList: Boolean, categories: List<PhotoCategory>, enableRefresh: Boolean) {
         setChildFragment(CategoryListFragment::class.java, FRAG_LIST)
 
         val frag = childFragmentManager.fragments.first() as CategoryListFragment
@@ -148,7 +157,12 @@ class CategoryChooserFragment: Fragment() {
         frag.setShowYear(showYearInList)
         frag.setClickHandler(onListItemClicked)
         frag.setCategories(categories)
-        frag.setRefreshHandler(onRefreshCategories)
+
+        if(enableRefresh) {
+            frag.setRefreshHandler(onRefreshCategories)
+        } else {
+            frag.setRefreshHandler(null)
+        }
     }
 
     private fun <T: Fragment> setChildFragment(fragmentClass: Class<T>, tag: String) {
@@ -186,10 +200,6 @@ class CategoryChooserFragment: Fragment() {
 
     private fun onSelectCategory(category: PhotoCategory) {
         _clickHandler?.onClick(category)
-    }
-
-    private fun onRefreshCategories() {
-        _refreshHandler?.onRefresh()
     }
 
     class CategorySelectedListener(val clickListener: (item: PhotoCategory) -> Unit) {

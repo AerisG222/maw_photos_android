@@ -77,10 +77,10 @@ class CategoryListFragment : Fragment() {
         viewModel.setRefreshStatus(refreshStatus)
     }
 
-    fun setRefreshHandler(handler: OnRefreshListener) {
+    fun setRefreshHandler(handler: OnRefreshListener?) {
         _refreshHandler = handler
 
-        binding.container.isEnabled = true
+        binding.container.isEnabled = handler != null
     }
 
     fun setClickHandler(handler: CategoryListRecyclerAdapter.ClickListener) {

@@ -108,10 +108,10 @@ class ImageGridFragment : Fragment() {
         viewModel.setRefreshStatus(refreshStatus)
     }
 
-    fun setRefreshHandler(handler: SwipeRefreshLayout.OnRefreshListener) {
+    fun setRefreshHandler(handler: SwipeRefreshLayout.OnRefreshListener?) {
         _refreshHandler = handler
 
-        binding.container.isEnabled = true
+        binding.container.isEnabled = handler != null
     }
 
     fun setClickHandler(handler: ImageGridRecyclerAdapter.ClickListener) {
