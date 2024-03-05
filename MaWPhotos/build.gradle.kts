@@ -61,7 +61,7 @@ android {
         }
     }
 
-    flavorDimensions("dev_or_prod")
+    flavorDimensions += listOf("dev_or_prod")
 
     productFlavors {
         create("development") {
