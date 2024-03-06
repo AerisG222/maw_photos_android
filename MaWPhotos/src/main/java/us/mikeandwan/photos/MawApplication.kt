@@ -26,8 +26,8 @@ class MawApplication : Application(), Configuration.Provider {
         schedulePeriodicRefresh()
     }
 
-    override fun getWorkManagerConfiguration() =
-        Configuration.Builder()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
 

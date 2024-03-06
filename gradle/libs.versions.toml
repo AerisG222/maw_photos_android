@@ -2,38 +2,36 @@
 agp = "8.3.0"
 org-jetbrains-kotlin-android = "1.8.10"
 core-ktx = "1.12.0"
-coroutines = "1.7.3"
-annotation = "1.7.0"
+coroutines = "1.8.0"
+annotation = "1.7.1"
 appauth = "0.11.1"
 appcompat = "1.6.1"
 flexbox = "3.0.0"
 fragment = "1.6.2"
 layout = "2.1.4"
 glide = "4.16.0"
-gradle = "8.1.4"
-hilt = "2.48.1"
-hilt-compiler = "1.1.0"
-hilt-work = "1.1.0"
+hilt = "2.51"
+hilt-compiler = "1.2.0"
+hilt-work = "1.2.0"
 junit = "4.13.2"
 kapt = "1.9.20"
-kotlin = "1.9.10"
 ksp = "1.9.20-1.0.14"
-lifecycle = "2.6.2"
+lifecycle = "2.7.0"
 markdown = "4.6.2"
-material = "1.10.0"
-navigation = "2.7.5"
+material = "1.11.0"
+navigation = "2.7.7"
 photoview = "2.3.0"
 preference = "1.2.1"
 recyclerview = "1.3.2"
 retrofit = "2.9.0"
-room = "2.6.0"
+room = "2.6.1"
 swiperefresh = "1.2.0-alpha01"
 test-ext = "1.1.5"
 test-espresso = "3.5.1"
 timber = "5.0.1"
-work = "2.8.1"
+work = "2.9.0"
 viewpager2 = "1.0.0"
-okhttp = "4.10.0"
+okhttp = "4.12.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -82,8 +80,6 @@ com-android-application = { id = "com.android.application", version.ref = "agp" 
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
 org-jetbrains-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-gradle = { id = "com.android.tools.build:gradle", version.ref = "gradle" }
-gradle-kotlin = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 navigation = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 
