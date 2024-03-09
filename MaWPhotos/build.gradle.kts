@@ -151,6 +151,11 @@ dependencies {
     // material
     implementation(libs.material)
 
+    // media3
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.okhttp)
+    implementation(libs.media3.ui)
+
     // appauth
     implementation(libs.appauth)
 
