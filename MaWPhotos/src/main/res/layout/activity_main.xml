@@ -72,10 +72,9 @@
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentSubnav"
                 android:name="us.mikeandwan.photos.ui.controls.yearnavmenu.YearsFragment"
-                android:layout_width="0dp"
+                android:layout_width="200dp"
                 android:layout_height="match_parent"
-                android:paddingEnd="@dimen/_8dp"
-                android:layout_weight="1" />
+                android:paddingEnd="@dimen/_8dp" />
 
         </LinearLayout>
     </androidx.drawerlayout.widget.DrawerLayout>

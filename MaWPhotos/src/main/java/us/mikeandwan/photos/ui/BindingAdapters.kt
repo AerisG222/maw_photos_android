@@ -17,15 +17,7 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.searchnavmenu.SearchTermListRecyclerAdapter
-import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListRecyclerAdapter
 import java.io.File
-
-
-@BindingAdapter("yearListData")
-fun bindYearRecyclerView(recyclerView: RecyclerView, data: List<Int>?) {
-    val adapter = recyclerView.adapter as YearListRecyclerAdapter
-    adapter.submitList(data)
-}
 
 @BindingAdapter("categoryList")
 fun bindCategoryListRecyclerView(recyclerView: RecyclerView, data: List<CategoryWithYearVisibility>?) {

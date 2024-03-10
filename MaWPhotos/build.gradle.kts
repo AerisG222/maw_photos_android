@@ -35,9 +35,20 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        compose = true
+        dataBinding = true
+        viewBinding = true
+        buildConfig = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 
     kotlinOptions {
@@ -98,18 +109,16 @@ android {
         }
     }
 
-    buildFeatures {
-        dataBinding = true
-        viewBinding = true
-        buildConfig = true
-    }
-
     lint {
         abortOnError = false
     }
 }
 
 dependencies {
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
     // core
     implementation(libs.core.ktx)
     implementation(libs.coroutines.core)
@@ -118,11 +127,14 @@ dependencies {
     // jetpack
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.compose.material)
     implementation(libs.androidx.layout)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.lifecycle.compose)
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.preference)
