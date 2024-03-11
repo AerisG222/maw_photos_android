@@ -16,7 +16,6 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
-import us.mikeandwan.photos.ui.controls.searchnavmenu.SearchTermListRecyclerAdapter
 import java.io.File
 
 @BindingAdapter("categoryList")
@@ -24,12 +23,6 @@ fun bindCategoryListRecyclerView(recyclerView: RecyclerView, data: List<Category
     when(val adapter = recyclerView.adapter) {
         is CategoryListRecyclerAdapter -> adapter.submitList(data)
     }
-}
-
-@BindingAdapter("searchTerms")
-fun bindSearchTermRecyclerView(recyclerView: RecyclerView, data: List<SearchHistory>?) {
-    val adapter = recyclerView.adapter as SearchTermListRecyclerAdapter
-    adapter.submitList(data?.map{ it.term })
 }
 
 @BindingAdapter("imageGridItemList")
