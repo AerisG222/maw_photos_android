@@ -23,6 +23,7 @@ fun YearListMenu(
     viewModel: YearsViewModel = viewModel()
 ) {
     val yearsState = viewModel.years.collectAsState()
+    val activeYear = viewModel.activeYear.collectAsState()
 
     LazyColumn(Modifier
         .fillMaxSize()
@@ -40,8 +41,13 @@ fun YearListMenu(
             }
             HorizontalDivider()
         }
-        itemsIndexed(yearsState.value) { index, d ->
-            YearListItem(d)
+        itemsIndexed(yearsState.value) { index, year ->
+            YearListItem(
+                year,
+                year == activeYear.value,
+                { x -> viewModel.onYearSelected(x) }
+            )
+
             if (index != yearsState.value.size - 1) {
                 HorizontalDivider()
             }
