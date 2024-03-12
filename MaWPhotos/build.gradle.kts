@@ -146,6 +146,9 @@ dependencies {
     kapt(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
 
+    // coil
+    implementation(libs.coil)
+
     // flexbox
     implementation(libs.flexbox)
 
