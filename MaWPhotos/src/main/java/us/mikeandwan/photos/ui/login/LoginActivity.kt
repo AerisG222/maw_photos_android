@@ -3,9 +3,9 @@ package us.mikeandwan.photos.ui.login
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,26 +17,23 @@ import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ResponseTypeValues
-import us.mikeandwan.photos.R
 import us.mikeandwan.photos.authorization.AuthStatus
-import us.mikeandwan.photos.databinding.ActivityLoginBinding
 import us.mikeandwan.photos.ui.main.MainActivity
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 
 @AndroidEntryPoint
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class LoginActivity : ComponentActivity() {
+    private val viewModel: LoginViewModel by viewModels()
     private lateinit var authService: AuthorizationService
-    private val viewModel by viewModels<LoginViewModel>()
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
-
         authService = AuthorizationService(this)
+
+        setContent {
+            LoginScreen(viewModel)
+        }
 
         // try to handle the login result in case we are returning from the auth site
         viewModel.completeAuthorization(intent)
