@@ -24,7 +24,7 @@ fun SearchListMenu(
 ) {
     val termsState = viewModel.searchTerms.collectAsState()
 
-    LazyColumn() {
+    LazyColumn {
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),

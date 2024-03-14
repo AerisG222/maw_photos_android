@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.locks.ReentrantLock
 
 // based on: https://github.com/openid/AppAuth-Android/blob/master/app/java/net/openid/appauthdemo/AuthStateManager.java
-class AuthStateManager constructor(
+class AuthStateManager(
     private val authorizationDao: AuthorizationDao
 ) {
     private val _lock: ReentrantLock = ReentrantLock()
