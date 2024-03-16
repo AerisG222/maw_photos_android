@@ -21,8 +21,8 @@ import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.ui.CategoryClickListener
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListFragment
-import us.mikeandwan.photos.ui.controls.categorylist.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.ui.toImageGridItem
@@ -45,7 +45,7 @@ class CategoryChooserFragment: Fragment() {
         onSelectCategory(it.data as PhotoCategory)
     }
 
-    private val onListItemClicked = CategoryListRecyclerAdapter.ClickListener {
+    private val onListItemClicked = CategoryClickListener {
         onSelectCategory(it)
     }
 

@@ -10,20 +10,12 @@ import io.noties.markwon.Markwon
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.*
 import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
-import us.mikeandwan.photos.ui.controls.categorylist.CategoryListRecyclerAdapter
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryWithYearVisibility
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import java.io.File
-
-@BindingAdapter("categoryList")
-fun bindCategoryListRecyclerView(recyclerView: RecyclerView, data: List<CategoryWithYearVisibility>?) {
-    when(val adapter = recyclerView.adapter) {
-        is CategoryListRecyclerAdapter -> adapter.submitList(data)
-    }
-}
 
 @BindingAdapter("imageGridItemList")
 fun bindImageGridRecyclerView(recyclerView: RecyclerView, gridItems: List<ImageGridItemWithSize>?) {
