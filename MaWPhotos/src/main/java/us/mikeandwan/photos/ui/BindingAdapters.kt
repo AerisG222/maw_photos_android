@@ -4,25 +4,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentContainerView
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.noties.markwon.Markwon
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.*
 import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
-import us.mikeandwan.photos.ui.controls.categorylist.CategoryWithYearVisibility
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import java.io.File
-
-@BindingAdapter("imageGridItemList")
-fun bindImageGridRecyclerView(recyclerView: RecyclerView, gridItems: List<ImageGridItemWithSize>?) {
-    when(val adapter = recyclerView.adapter) {
-        is ImageGridRecyclerAdapter -> adapter.submitList(gridItems)
-    }
-}
 
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {
@@ -62,13 +51,6 @@ fun bindImageGridFileList(container: FragmentContainerView, fileList: List<File>
     val imageGridFragment = container.getFragment<ImageGridFragment>()
 
     imageGridFragment.setGridItems(fileList.mapIndexed { id, file -> ImageGridItem(id, file.path, file) })
-}
-
-@BindingAdapter("imageGridClickHandler")
-fun bindImageGridClickHandler(container: FragmentContainerView, handler: ImageGridRecyclerAdapter.ClickListener) {
-    val imageGridFragment = container.getFragment<ImageGridFragment>()
-
-    imageGridFragment.setClickHandler(handler)
 }
 
 @BindingAdapter("markdownText")

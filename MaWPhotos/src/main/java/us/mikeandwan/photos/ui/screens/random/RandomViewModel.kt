@@ -9,7 +9,7 @@ import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
+import us.mikeandwan.photos.ui.ImageGridClickListener
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +29,7 @@ class RandomViewModel @Inject constructor(
         .getPhotoGridItemSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
-    val onPhotoClicked = ImageGridRecyclerAdapter.ClickListener {
+    val onPhotoClicked = ImageGridClickListener {
         viewModelScope.launch {
             activeIdRepository.setActivePhoto(it.id)
             _requestNavigateToPhoto.value = it.id

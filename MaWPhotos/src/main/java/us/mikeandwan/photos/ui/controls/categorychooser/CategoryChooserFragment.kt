@@ -22,9 +22,9 @@ import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.CategoryClickListener
+import us.mikeandwan.photos.ui.ImageGridClickListener
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridRecyclerAdapter
 import us.mikeandwan.photos.ui.toImageGridItem
 
 @AndroidEntryPoint
@@ -41,7 +41,7 @@ class CategoryChooserFragment: Fragment() {
     private lateinit var binding: FragmentCategoryChooserBinding
     val viewModel by viewModels<CategoryChooserViewModel>()
 
-    private val onGridItemClicked = ImageGridRecyclerAdapter.ClickListener {
+    private val onGridItemClicked = ImageGridClickListener {
         onSelectCategory(it.data as PhotoCategory)
     }
 
