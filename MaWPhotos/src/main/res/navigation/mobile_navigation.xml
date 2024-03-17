@@ -27,8 +27,7 @@
     <fragment
         android:id="@+id/navigation_category"
         android:name="us.mikeandwan.photos.ui.screens.category.CategoryFragment"
-        android:label="fragment_category"
-        tools:layout="@layout/fragment_category">
+        android:label="fragment_category">
         <argument
             android:name="categoryId"
             app:argType="integer" />
