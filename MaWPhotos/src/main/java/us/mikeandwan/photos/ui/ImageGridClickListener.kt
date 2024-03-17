@@ -1,7 +1,7 @@
 package us.mikeandwan.photos.ui
 
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
+import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 
-class ImageGridClickListener(val clickListener: (item: ImageGridItemWithSize) -> Unit) {
-    fun onClick(item: ImageGridItemWithSize) = clickListener(item)
+class ImageGridClickListener(val clickListener: (item: ImageGridItem) -> Unit) {
+    fun onClick(item: ImageGridItem) = clickListener(item)
 }

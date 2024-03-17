@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
-import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.ui.ImageGridClickListener
@@ -70,33 +69,10 @@ class ImageGridFragment : Fragment() {
     }
 
     fun setThumbnailSize(thumbnailSize: GridThumbnailSize) {
-        viewModel.setRequestedThumbnailSize(thumbnailSize)
+        viewModel.setThumbnailSize(thumbnailSize)
     }
 
     fun setGridItems(data: List<ImageGridItem>) {
         viewModel.setGridItems(data)
-    }
-
-    private fun getThumbnailSize(screenWidth: Int, thumbnailSize: GridThumbnailSize): Int {
-        if(thumbnailSize == GridThumbnailSize.Unspecified) {
-            return 0
-        }
-
-        val thumbSize = getThumbnailSizeInDps(thumbnailSize)
-        val cols = maxOf(1, screenWidth / thumbSize)
-        val totalInteriorMargins = (cols - 1) * resources.getDimension(R.dimen._2dp)
-        val remainingSpaceForImages = screenWidth - totalInteriorMargins
-
-        return (remainingSpaceForImages / cols).toInt()
-    }
-
-    private fun getThumbnailSizeInDps(thumbnailSize: GridThumbnailSize): Int {
-        return when(thumbnailSize) {
-            GridThumbnailSize.ExtraSmall -> resources.getDimension(R.dimen.image_grid_thumbnail_size_extra_small).toInt()
-            GridThumbnailSize.Small -> resources.getDimension(R.dimen.image_grid_thumbnail_size_small).toInt()
-            GridThumbnailSize.Medium -> resources.getDimension(R.dimen.image_grid_thumbnail_size_medium).toInt()
-            GridThumbnailSize.Large -> resources.getDimension(R.dimen.image_grid_thumbnail_size_large).toInt()
-            GridThumbnailSize.Unspecified -> 0
-        }
     }
 }

@@ -7,7 +7,6 @@ import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.SearchResultCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryWithYearVisibility
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItemWithSize
 
 fun Photo.toImageGridItem(): ImageGridItem {
     return ImageGridItem(
@@ -22,15 +21,6 @@ fun PhotoCategory.toImageGridItem(): ImageGridItem {
         this.id,
         this.teaserUrl.replace("/xs/", "/md/"),
         this
-    )
-}
-
-fun ImageGridItem.toImageGridItemWithSize(size: Int): ImageGridItemWithSize {
-    return ImageGridItemWithSize(
-        this.id,
-        this.url,
-        size,
-        this.data
     )
 }
 
