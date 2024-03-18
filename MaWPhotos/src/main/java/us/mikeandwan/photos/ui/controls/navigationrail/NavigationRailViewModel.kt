@@ -10,7 +10,7 @@ import javax.inject.Inject
 class NavigationRailViewModel @Inject constructor(
     private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
-    val navArea = navigationStateRepository.navArea;
+    val navArea = navigationStateRepository.navArea
 
     fun requestNavigateToArea(area: NavigationArea) {
         navigationStateRepository.requestNavigateToArea(area)
