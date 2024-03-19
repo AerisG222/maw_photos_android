@@ -20,8 +20,8 @@ class ToolbarViewModel @Inject constructor(
     val showAppIcon = navigationStateRepository.enableDrawer
     val toolbarTitle = navigationStateRepository.toolbarTitle
 
-    private val _closeKeyboardSignal = MutableStateFlow(false)
-    val closeKeyboardSignal = _closeKeyboardSignal.asStateFlow()
+    private val _searchTerm = MutableStateFlow("")
+    val searchTerm = _searchTerm.asStateFlow()
 
     val showSearch = navigationStateRepository
         .navArea
@@ -40,17 +40,15 @@ class ToolbarViewModel @Inject constructor(
         navigationStateRepository.requestNavigateBack()
     }
 
-    fun search(query: String) {
-        _closeKeyboardSignal.value = true
-
+    fun search() {
         viewModelScope.launch {
             searchRepository
-                .performSearch(query, SearchSource.QueryInterface)
+                .performSearch(searchTerm.value, SearchSource.QueryInterface)
                 .collect { }
         }
     }
 
-    fun closeKeyboardSignalHandled() {
-        _closeKeyboardSignal.value = false
+    fun setSearchTerm(term: String) {
+        _searchTerm.value = term
     }
 }
