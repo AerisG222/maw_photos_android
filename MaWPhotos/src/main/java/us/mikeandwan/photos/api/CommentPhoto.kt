@@ -1,8 +1,9 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CommentPhoto(
-    @JsonProperty("photoId") val photoId: Int,
-    @JsonProperty("comment") val comment: String
+    val photoId: Int,
+    val comment: String
 )

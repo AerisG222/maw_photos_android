@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.navigation)
+    alias(libs.plugins.org.jetbrains.kotlin.serialization)
 }
 
 import java.util.Properties
@@ -183,8 +184,9 @@ dependencies {
     implementation(libs.okhttp)
 
     // retrofit
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)
-    implementation(libs.retrofit.jackson)
+    implementation(libs.retrofit.kotlinx.serialization)
 
     // glide
     implementation(libs.glide)

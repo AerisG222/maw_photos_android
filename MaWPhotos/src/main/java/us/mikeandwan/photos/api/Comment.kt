@@ -1,10 +1,12 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Contextual
 import java.util.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Comment(
-    @JsonProperty("entryDate") val entryDate: Date,
-    @JsonProperty("commentText") val commentText: String,
-    @JsonProperty("username") val username: String
+    @Contextual val entryDate: Date,
+    val commentText: String,
+    val username: String
 )

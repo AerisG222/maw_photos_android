@@ -1,9 +1,11 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Category(
-    @JsonProperty("id") val id: Int,
-    @JsonProperty("year") val year: Int,
-    @JsonProperty("name") val name: String,
-    @JsonProperty("teaserImage") val teaserImage: MultimediaAsset)
+    val id: Int,
+    val year: Int,
+    val name: String,
+    val teaserImage: MultimediaAsset
+)

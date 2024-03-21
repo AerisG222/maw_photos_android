@@ -1,10 +1,11 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MultimediaAsset(
-    @JsonProperty("height") val height: Int,
-    @JsonProperty("width") val width: Int,
-    @JsonProperty("url") val url: String,
-    @JsonProperty("size") val size: Long
+    val height: Int,
+    val width: Int,
+    val url: String,
+    val size: Long
 )

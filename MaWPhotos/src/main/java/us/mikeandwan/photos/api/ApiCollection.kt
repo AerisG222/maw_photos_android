@@ -1,8 +1,9 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
-class ApiCollection<T> {
-    @JsonProperty("count") var count: Long = 0
-    @JsonProperty("items") var items: List<T> = ArrayList()
-}
+@Serializable
+data class ApiCollection<T>(
+    val count: Long = 0,
+    val items: List<T> = ArrayList()
+)

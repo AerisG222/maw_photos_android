@@ -1,11 +1,12 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FileOperationResult(
-    @JsonProperty("operation") val operation: String,
-    @JsonProperty("relativePathSpecified") val relativePathSpecified: String,
-    @JsonProperty("uploadedFile") val uploadedFile: UploadedFile?,
-    @JsonProperty("wasSuccessful") val wasSuccessful: Boolean,
-    @JsonProperty("error") val error: String? = null,
+    val operation: String,
+    val relativePathSpecified: String,
+    val uploadedFile: UploadedFile?,
+    val wasSuccessful: Boolean,
+    val error: String? = null,
 )

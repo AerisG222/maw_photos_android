@@ -1,9 +1,10 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FileLocation (
-    @JsonProperty("username") val username: String,
-    @JsonProperty("filename") val filename: String,
-    @JsonProperty("relativePath") val relativePath: String,
+    val username: String,
+    val filename: String,
+    val relativePath: String,
 )

@@ -1,9 +1,10 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
+@Serializable
 class SearchResults<T> {
-    @JsonProperty("results") var results: List<T> = ArrayList()
-    @JsonProperty("totalFound") var totalFound: Int = 0
-    @JsonProperty("startIndex") var startIndex: Int = 0
+    var results: List<T> = ArrayList()
+    var totalFound: Int = 0
+    var startIndex: Int = 0
 }

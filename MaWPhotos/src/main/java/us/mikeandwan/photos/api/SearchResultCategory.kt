@@ -1,18 +1,19 @@
 package us.mikeandwan.photos.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SearchResultCategory(
-    @JsonProperty("solrId") val solrId: String,
-    @JsonProperty("id") val id: Int,
-    @JsonProperty("year") val year: Int,
-    @JsonProperty("name") val name: String,
-    @JsonProperty("multimediaType") val multimediaType: String,
-    @JsonProperty("teaserPhotoHeight") val teaserPhotoHeight: Int,
-    @JsonProperty("teaserPhotoWidth") val teaserPhotoWidth: Int,
-    @JsonProperty("teaserPhotoPath") val teaserPhotoPath: String,
-    @JsonProperty("teaserPhotoSqHeight") val teaserPhotoSqHeight: Int,
-    @JsonProperty("teaserPhotoSqWidth") val teaserPhotoSqWidth: Int,
-    @JsonProperty("teaserPhotoSqPath") val teaserPhotoSqPath: String,
-    @JsonProperty("score") val score: Double
+    val solrId: String,
+    val id: Int,
+    val year: Int,
+    val name: String,
+    val multimediaType: String,
+    val teaserPhotoHeight: Int,
+    val teaserPhotoWidth: Int,
+    val teaserPhotoPath: String,
+    val teaserPhotoSqHeight: Int,
+    val teaserPhotoSqWidth: Int,
+    val teaserPhotoSqPath: String,
+    val score: Double
 )
