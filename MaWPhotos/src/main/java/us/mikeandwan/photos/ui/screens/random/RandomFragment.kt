@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.databinding.FragmentRandomBinding
+import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 
 @AndroidEntryPoint
 class RandomFragment : Fragment() {
@@ -42,6 +43,9 @@ class RandomFragment : Fragment() {
 
     override fun onResume() {
         viewModel.onResume()
+
+        val grid = binding.fragmentPhotoGrid.getFragment<ImageGridFragment>()
+        grid.setClickHandler(viewModel.onPhotoClicked)
 
         super.onResume()
     }
