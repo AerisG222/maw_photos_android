@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridViewModel
+import us.mikeandwan.photos.ui.theme.AppTheme
 import us.mikeandwan.photos.ui.toImageGridItem
 
 @AndroidEntryPoint
@@ -36,7 +37,9 @@ class CategoryFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                ImageGrid(imageGridViewModel, viewModel.onPhotoClicked)
+                AppTheme {
+                    ImageGrid(imageGridViewModel, viewModel.onPhotoClicked)
+                }
             }
         }
     }
