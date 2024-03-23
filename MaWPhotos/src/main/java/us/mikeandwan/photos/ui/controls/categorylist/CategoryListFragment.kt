@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.CategoryClickListener
+import us.mikeandwan.photos.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class CategoryListFragment : Fragment() {
@@ -28,7 +29,9 @@ class CategoryListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                CategoryList(viewModel, _clickHandler)
+                AppTheme {
+                    CategoryList(viewModel, _clickHandler)
+                }
             }
         }
     }

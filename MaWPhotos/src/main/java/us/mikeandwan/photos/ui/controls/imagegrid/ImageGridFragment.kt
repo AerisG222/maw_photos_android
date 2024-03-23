@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.ui.ImageGridClickListener
+import us.mikeandwan.photos.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class ImageGridFragment : Fragment() {
@@ -28,7 +29,9 @@ class ImageGridFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                ImageGrid(viewModel, _clickHandler)
+                AppTheme {
+                    ImageGrid(viewModel, _clickHandler)
+                }
             }
         }
     }

@@ -19,6 +19,7 @@ import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ResponseTypeValues
 import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.ui.main.MainActivity
+import us.mikeandwan.photos.ui.theme.AppTheme
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 
 @AndroidEntryPoint
@@ -32,7 +33,9 @@ class LoginActivity : ComponentActivity() {
         authService = AuthorizationService(this)
 
         setContent {
-            LoginScreen(viewModel)
+            AppTheme {
+                LoginScreen(viewModel)
+            }
         }
 
         // try to handle the login result in case we are returning from the auth site

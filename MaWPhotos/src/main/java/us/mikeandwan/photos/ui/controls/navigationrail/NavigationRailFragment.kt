@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
+import us.mikeandwan.photos.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class NavigationRailFragment : Fragment() {
@@ -19,7 +20,9 @@ class NavigationRailFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                NavigationRail()
+                AppTheme {
+                    NavigationRail()
+                }
             }
         }
     }

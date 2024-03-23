@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class AboutFragment : Fragment() {
@@ -31,7 +32,9 @@ class AboutFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                AboutScreen(viewModel)
+                AppTheme {
+                    AboutScreen(viewModel)
+                }
             }
         }
     }
