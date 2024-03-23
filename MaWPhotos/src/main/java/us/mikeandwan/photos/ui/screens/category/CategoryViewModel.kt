@@ -10,7 +10,7 @@ import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.PhotoPreferenceRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
-import us.mikeandwan.photos.ui.ImageGridClickListener
+import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +36,7 @@ class CategoryViewModel @Inject constructor (
         .getPhotoGridItemSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Unspecified)
 
-    val onPhotoClicked = ImageGridClickListener {
+    val onPhotoClicked: (ImageGridItem) -> Unit = { it: ImageGridItem ->
         viewModelScope.launch {
             activeIdRepository.setActivePhoto(it.id)
             _requestNavigateToPhoto.value = it.id

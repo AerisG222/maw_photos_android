@@ -10,13 +10,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.ui.ImageGridClickListener
 
 @Composable
 fun ImageGridImage(
     item: ImageGridItem,
     size: Dp,
-    onSelectImage: ImageGridClickListener?,
+    onSelectImage: (ImageGridItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     AsyncImage(
@@ -28,7 +27,7 @@ fun ImageGridImage(
         modifier = modifier
             .height(size)
             .clickable {
-                onSelectImage?.onClick(item)
+                onSelectImage(item)
             }
     )
 }

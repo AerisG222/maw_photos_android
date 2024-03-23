@@ -12,14 +12,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.ui.ImageGridClickListener
 import us.mikeandwan.photos.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class ImageGridFragment : Fragment() {
-    private var _clickHandler: ImageGridClickListener? = null
+    private var _clickHandler: ((ImageGridItem) -> Unit)? = null
     private var _refreshHandler: SwipeRefreshLayout.OnRefreshListener? = null
     val viewModel by viewModels<ImageGridViewModel>()
+
+    private val _handleClick: (ImageGridItem) -> Unit = { it: ImageGridItem ->
+        _clickHandler?.invoke(it)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +33,7 @@ class ImageGridFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    ImageGrid(viewModel, _clickHandler)
+                    ImageGridScreen(viewModel, _handleClick)
                 }
             }
         }
@@ -58,7 +61,7 @@ class ImageGridFragment : Fragment() {
 //        binding.container.isEnabled = handler != null
     }
 
-    fun setClickHandler(handler: ImageGridClickListener) {
+    fun setClickHandler(handler: (ImageGridItem) -> Unit) {
         _clickHandler = handler
     }
 
