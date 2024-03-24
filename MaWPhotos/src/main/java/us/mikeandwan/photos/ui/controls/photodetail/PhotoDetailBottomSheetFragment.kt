@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.tabs.TabLayoutMediator
-import us.mikeandwan.photos.R
 import us.mikeandwan.photos.databinding.FragmentPhotoDetailBottomSheetBinding
+import us.mikeandwan.photos.ui.theme.AppTheme
 
 class PhotoDetailBottomSheetFragment : BottomSheetDialogFragment() {
     companion object {
@@ -26,18 +26,14 @@ class PhotoDetailBottomSheetFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPhotoDetailBottomSheetBinding.inflate(inflater)
-        binding.pager.adapter = PhotoDetailPagerAdapter(this)
-
-        TabLayoutMediator(binding.tablayout, binding.pager) { tab, position ->
-            when(position) {
-                TAB_INDEX_EXIF -> tab.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_tune)
-                TAB_INDEX_COMMENTS -> tab.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_comment_white)
-                TAB_INDEX_RATING -> tab.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_star)
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    PhotoDetailBottomSheet()
+                }
             }
-        }.attach()
-
-        return binding.root
+        }
     }
 
     fun setModalCloseHandler(handler: IHandleModalClose) {
