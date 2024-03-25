@@ -196,6 +196,9 @@ dependencies {
     // photoview
     implementation(libs.photoview)
 
+    // rating bar
+    implementation(libs.compose.ratingbar)
+
     // timber
     implementation(libs.timber)
 
