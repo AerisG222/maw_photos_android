@@ -1,7 +1,7 @@
 package us.mikeandwan.photos.api
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import us.mikeandwan.photos.api.serializers.DateSerializer
 import java.util.*
 
 @Serializable
@@ -10,7 +10,8 @@ data class ExifData(
     val bitsPerSample: Short?,
     val compression: String?,
     val contrast: String?,
-    @Contextual val createDate: Date?,
+    @Serializable(with = DateSerializer::class)
+    val createDate: Date?,
     val digitalZoomRatio: Double?,
     val exposureCompensation: String?,
     val exposureMode: String?,
@@ -23,7 +24,8 @@ data class ExifData(
     val gainControl: String?,
     val gpsAltitude: Double?,
     val gpsAltitudeRef: String?,
-    @Contextual val gpsDateStamp: Date?,
+    @Serializable(with = DateSerializer::class)
+    val gpsDateStamp: Date?,
     val gpsDirection: Double?,
     val gpsDirectionRef: String?,
     val gpsLatitude: Double?,
