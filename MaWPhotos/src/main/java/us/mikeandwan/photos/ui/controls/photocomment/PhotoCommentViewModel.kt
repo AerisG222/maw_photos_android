@@ -19,10 +19,17 @@ class PhotoCommentViewModel @Inject constructor (
     private val _comments = MutableStateFlow(emptyList<PhotoComment>())
     val comments = _comments.asStateFlow()
 
-    fun addComments(comment: String) {
+    private val _newComment = MutableStateFlow("")
+    val newComment = _newComment.asStateFlow()
+
+    fun addComment() {
         viewModelScope.launch {
-            addCommentsInternal(comment)
+            addCommentsInternal(newComment.value)
         }
+    }
+
+    fun setNewComment(text: String) {
+        _newComment.value = text
     }
 
     private suspend fun addCommentsInternal(comment: String) {
