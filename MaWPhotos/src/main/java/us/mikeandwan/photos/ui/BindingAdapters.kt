@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.ui
 
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentContainerView
@@ -10,13 +9,6 @@ import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import java.io.File
-
-@BindingAdapter("tint")
-fun bindTint(imgView: ImageView, color: Int?) {
-    color?.let {
-        imgView.setColorFilter(color)
-    }
-}
 
 @BindingAdapter("imageGridThumbnailSize")
 fun bindImageGridThumbnailSize(container: FragmentContainerView, thumbnailSize: GridThumbnailSize) {
@@ -37,13 +29,6 @@ fun bindImageGridFileList(container: FragmentContainerView, fileList: List<File>
     val imageGridFragment = container.getFragment<ImageGridFragment>()
 
     imageGridFragment.setGridItems(fileList.mapIndexed { id, file -> ImageGridItem(id, file.path, file) })
-}
-
-@BindingAdapter("markdownText")
-fun bindMarkdownText(textView: TextView, markdown: String) {
-    val markwon = Markwon.create(textView.context)
-
-    markwon.setMarkdown(textView, markdown)
 }
 
 @BindingAdapter("categoryChooserDisplayType")
