@@ -188,11 +188,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization)
 
-    // glide
-    implementation(libs.glide)
-    implementation(libs.glide.okhttp)
-    ksp(libs.glide.compiler)
-
     // photoview
     implementation(libs.photoview)
 

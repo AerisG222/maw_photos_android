@@ -4,26 +4,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentContainerView
-import com.bumptech.glide.Glide
 import io.noties.markwon.Markwon
-import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.*
 import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import java.io.File
-
-@BindingAdapter("imageUrl")
-fun bindImage(imgView: ImageView, imgUrl: String?) {
-    imgUrl?.let {
-        Glide.with(imgView.context)
-            .load(imgUrl)
-            .centerCrop()
-            .placeholder(R.drawable.ic_placeholder)
-            .error(R.drawable.ic_broken_image)
-            .into(imgView)
-    }
-}
 
 @BindingAdapter("tint")
 fun bindTint(imgView: ImageView, color: Int?) {
