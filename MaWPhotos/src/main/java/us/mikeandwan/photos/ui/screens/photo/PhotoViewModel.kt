@@ -58,6 +58,9 @@ class PhotoViewModel @Inject constructor (
     private val _sharePhoto = MutableStateFlow<Photo?>(null)
     val sharePhoto = _sharePhoto.asStateFlow()
 
+    private val _showDetails = MutableStateFlow(false)
+    val showDetails = _showDetails.asStateFlow()
+
     fun rotatePhoto(direction: Int) {
         _rotatePhoto.value = direction
     }
@@ -96,6 +99,10 @@ class PhotoViewModel @Inject constructor (
 
     suspend fun savePhotoToShare(drawable: Drawable, originalFilename: String): File {
         return fileStorageRepository.savePhotoToShare(drawable, originalFilename)
+    }
+
+    fun toggleDetails() {
+        _showDetails.update { !it }
     }
 
     fun toggleSlideshow() {
