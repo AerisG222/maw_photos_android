@@ -146,7 +146,6 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.room)
     implementation(libs.androidx.swiperefresh)
-    implementation(libs.androidx.viewpager)
     implementation(libs.androidx.work)
     kapt(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
