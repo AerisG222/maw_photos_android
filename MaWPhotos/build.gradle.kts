@@ -153,9 +153,6 @@ dependencies {
     // coil
     implementation(libs.coil)
 
-    // flexbox
-    implementation(libs.flexbox)
-
     // hilt
     implementation(libs.hilt)
     kapt(libs.hilt.android.compiler)
