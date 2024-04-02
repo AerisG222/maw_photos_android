@@ -14,19 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import us.mikeandwan.photos.ui.CategoryClickListener
+import us.mikeandwan.photos.domain.models.PhotoCategory
 
 @Composable
 fun CategoryListItem(
     item: CategoryWithYearVisibility,
-    onSelectCategory: CategoryClickListener?,
+    onSelectCategory: (PhotoCategory) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier
             .fillMaxWidth()
             .clickable {
-                onSelectCategory?.onClick(item.category)
+                onSelectCategory(item.category)
             }
     ) {
         AsyncImage(

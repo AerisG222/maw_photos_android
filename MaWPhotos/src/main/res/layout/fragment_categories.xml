@@ -16,19 +16,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentCategoryList"
-            android:name="us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:categoryChooserDisplayType="@{ viewModel.preferences.displayType }"
-            app:categoryChooserCategories="@{ viewModel.categories }"
-            app:categoryChooserCategorySelectedHandler="@{ viewModel.onCategorySelected }"
-            app:categoryChooserRefreshCategoriesHandler="@{ viewModel.onRefreshCategories }"
-            app:categoryChooserGridThumbnailSize="@{ viewModel.preferences.gridThumbnailSize }"
-            app:categoryChooserShowYearInList="@{ false }"
-            app:categoryChooserRefreshStatus="@{ viewModel.refreshStatus }"
-            app:categoryChooserEnableRefresh="@{ true }" />
-
     </FrameLayout>
 </layout>

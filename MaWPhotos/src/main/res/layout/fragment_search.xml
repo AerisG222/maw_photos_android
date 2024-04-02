@@ -12,103 +12,10 @@
             type="us.mikeandwan.photos.ui.screens.search.SearchViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photoReceiverLayout"
-        android:orientation="vertical"
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/backgroundImageView"
-            android:layout_width="@android:dimen/thumbnail_height"
-            android:layout_height="@android:dimen/thumbnail_width"
-            android:layout_marginStart="8dp"
-            android:contentDescription="@string/fragment_search_background"
-            android:visibility="@{ viewModel.areResultsAvailable ? View.GONE : View.VISIBLE}"
-            app:layout_constraintBottom_toBottomOf="@+id/fragmentCategoryChooser"
-            app:layout_constraintEnd_toEndOf="@+id/fragmentCategoryChooser"
-            app:layout_constraintStart_toStartOf="@+id/fragmentCategoryChooser"
-            app:layout_constraintTop_toTopOf="@+id/fragmentCategoryChooser"
-            app:tint="?attr/mawUploadWatermarkColor"
-            app:srcCompat="@drawable/ic_search" />
-
-        <TextView
-            android:id="@+id/noResultsTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/_8dp"
-            android:text="@string/fragment_search_no_results_found"
-            android:visibility="@{ viewModel.showNoResults ? View.VISIBLE : View.GONE }"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentCategoryChooser"
-            android:name="us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/showMoreLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:categoryChooserDisplayType="@{ viewModel.displayType }"
-            app:categoryChooserCategories="@{ viewModel.searchResultsAsCategories }"
-            app:categoryChooserCategorySelectedHandler="@{ viewModel.onCategoryClicked }"
-            app:categoryChooserGridThumbnailSize="@{ viewModel.gridItemThumbnailSize }"
-            app:categoryChooserShowYearInList="@{ true }"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/showMoreLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="@{ viewModel.areResultsAvailable ? View.VISIBLE : View.GONE }"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <Button
-                android:id="@+id/loadMoreResultsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fragment_search_load_more"
-                android:onClick="@{ () -> viewModel.continueSearch() }"
-                android:enabled="@{ viewModel.moreResultsAvailable }"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <LinearLayout
-                android:id="@+id/yearCategoryLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <TextView
-                    android:id="@+id/resultsShownTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text='@{ Integer.toString(viewModel.searchResults.size)  }'
-                    tools:text="24" />
-
-                <TextView
-                    android:id="@+id/resultsShownSeparatorTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_2dp"
-                    android:layout_marginEnd="@dimen/_2dp"
-                    android:text="@string/text_separator" />
-
-                <TextView
-                    android:id="@+id/totalResultsTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text='@{ Integer.toString(viewModel.totalFound) }'
-                    tools:text="156" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

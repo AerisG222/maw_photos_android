@@ -10,7 +10,7 @@ import us.mikeandwan.photos.domain.SearchPreferenceRepository
 import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.toDomainPhotoCategory
 import javax.inject.Inject
 
@@ -65,7 +65,7 @@ class SearchViewModel @Inject constructor(
         .totalFound
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    val onCategoryClicked = CategoryChooserFragment.CategorySelectedListener {
+    val onCategoryClicked: (PhotoCategory) -> Unit = {
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategory(it.id)
             _requestNavigateToCategory.value = it.id

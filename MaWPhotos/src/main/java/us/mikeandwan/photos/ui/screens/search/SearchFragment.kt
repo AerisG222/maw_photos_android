@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -15,15 +17,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.databinding.FragmentSearchBinding
+import us.mikeandwan.photos.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
-    companion object {
-        fun newInstance() = SearchFragment()
-    }
-
-    private lateinit var binding: FragmentSearchBinding
     val viewModel by viewModels<SearchViewModel>()
 
     override fun onCreateView(
@@ -31,13 +28,16 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSearchBinding.inflate(inflater)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
         initStateObservers()
 
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    SearchScreen(viewModel = viewModel)
+                }
+            }
+        }
     }
 
     private fun initStateObservers() {

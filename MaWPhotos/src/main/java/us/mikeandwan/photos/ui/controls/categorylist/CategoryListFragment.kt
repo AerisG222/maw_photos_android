@@ -12,12 +12,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import dagger.hilt.android.AndroidEntryPoint
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.PhotoCategory
-import us.mikeandwan.photos.ui.CategoryClickListener
 import us.mikeandwan.photos.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class CategoryListFragment : Fragment() {
-    private var _clickHandler: CategoryClickListener? = null
+    private var _clickHandler: (PhotoCategory) -> Unit = { }
     private var _refreshHandler: OnRefreshListener? = null
     val viewModel by viewModels<CategoryListViewModel>()
 
@@ -58,7 +57,7 @@ class CategoryListFragment : Fragment() {
 //        binding.container.isEnabled = handler != null
     }
 
-    fun setClickHandler(handler: CategoryClickListener) {
+    fun setClickHandler(handler: (PhotoCategory) -> Unit) {
         _clickHandler = handler
     }
 

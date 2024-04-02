@@ -7,12 +7,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import us.mikeandwan.photos.ui.CategoryClickListener
+import us.mikeandwan.photos.domain.models.PhotoCategory
 
 @Composable
 fun CategoryList(
     viewModel: CategoryListViewModel,
-    clickListener: CategoryClickListener?
+    onSelectListItem: (PhotoCategory) -> Unit
 ) {
     val categories = viewModel.categories.collectAsState()
 
@@ -20,7 +20,7 @@ fun CategoryList(
         itemsIndexed(categories.value) { index, category ->
             CategoryListItem(
                 category,
-                clickListener
+                onSelectListItem
             )
 
             if (index != categories.value.size - 1) {

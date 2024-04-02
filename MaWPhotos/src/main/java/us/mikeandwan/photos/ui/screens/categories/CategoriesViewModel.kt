@@ -14,7 +14,7 @@ import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
-import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,7 +38,7 @@ class CategoriesViewModel @Inject constructor (
         .getCategoryPreference()
         .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
 
-    val onCategorySelected = CategoryChooserFragment.CategorySelectedListener {
+    val onCategorySelected: (PhotoCategory) -> Unit =  {
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategory(it.id)
             _requestNavigateToCategory.value = it.id
@@ -48,7 +48,7 @@ class CategoriesViewModel @Inject constructor (
     // TODO: 1 did not work on emulator, 10 did work, lets make it 20 to be safe - FUGLY!
     private val HACK_DELAY = 20L
 
-    val onRefreshCategories = CategoryChooserFragment.RefreshCategoriesListener {
+    val onRefreshCategories: () -> Unit = {
         viewModelScope.launch {
             photoCategoryRepository
                 .getNewCategories()
