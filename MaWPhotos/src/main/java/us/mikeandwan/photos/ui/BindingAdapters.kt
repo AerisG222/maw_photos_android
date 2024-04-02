@@ -1,9 +1,7 @@
 package us.mikeandwan.photos.ui
 
-import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentContainerView
-import io.noties.markwon.Markwon
 import us.mikeandwan.photos.domain.models.*
 import us.mikeandwan.photos.ui.controls.categorychooser.CategoryChooserFragment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment

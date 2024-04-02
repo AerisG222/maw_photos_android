@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import us.mikeandwan.photos.R
 
 @Composable
@@ -80,8 +81,8 @@ fun AboutScreen(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(
-                text = history.value,
+            MarkdownText(
+                markdown = history.value,
             )
         }
     }
