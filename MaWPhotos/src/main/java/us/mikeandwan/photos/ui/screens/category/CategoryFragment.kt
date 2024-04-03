@@ -17,15 +17,11 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridScreen
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridViewModel
 import us.mikeandwan.photos.ui.theme.AppTheme
-import us.mikeandwan.photos.ui.toImageGridItem
 
 @AndroidEntryPoint
 class CategoryFragment : Fragment() {
     val viewModel by viewModels<CategoryViewModel>()
-    private val imageGridViewModel = ImageGridViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +34,7 @@ class CategoryFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    ImageGridScreen(imageGridViewModel, viewModel.onPhotoClicked)
+                    CategoryScreen(viewModel)
                 }
             }
         }
@@ -47,14 +43,6 @@ class CategoryFragment : Fragment() {
     private fun initStateObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.photos
-                    .onEach { photos -> imageGridViewModel.setGridItems(photos.map { photo -> photo.toImageGridItem() }) }
-                    .launchIn(this)
-
-                viewModel.gridItemThumbnailSize
-                    .onEach { size -> imageGridViewModel.setThumbnailSize(size) }
-                    .launchIn(this)
-
                 viewModel.requestNavigateToPhoto
                     .filter { it != null }
                     .onEach { navigateToPhoto(it!!) }
