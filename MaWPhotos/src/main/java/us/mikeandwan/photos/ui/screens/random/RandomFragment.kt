@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -15,16 +17,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.databinding.FragmentRandomBinding
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridFragment
+import us.mikeandwan.photos.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class RandomFragment : Fragment() {
-    companion object {
-        fun newInstance() = RandomFragment()
-    }
-
-    private lateinit var binding: FragmentRandomBinding
     val viewModel by viewModels<RandomViewModel>()
 
     override fun onCreateView(
@@ -32,20 +28,20 @@ class RandomFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentRandomBinding.inflate(inflater)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
         initStateObservers()
 
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    RandomScreen(viewModel)
+                }
+            }
+        }
     }
 
     override fun onResume() {
         viewModel.onResume()
-
-        val grid = binding.fragmentPhotoGrid.getFragment<ImageGridFragment>()
-        grid.setClickHandler(viewModel.onPhotoClicked)
 
         super.onResume()
     }
