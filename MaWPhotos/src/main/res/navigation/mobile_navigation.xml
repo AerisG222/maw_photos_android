@@ -13,8 +13,7 @@
     <fragment
         android:id="@+id/navigation_categories"
         android:name="us.mikeandwan.photos.ui.screens.categories.CategoriesFragment"
-        android:label="@string/title_categories"
-        tools:layout="@layout/fragment_categories">
+        android:label="@string/title_categories">
         <action
             android:id="@+id/action_navigation_categories_to_navigation_category"
             app:destination="@id/navigation_category"
@@ -66,8 +65,7 @@
     <fragment
         android:id="@+id/navigation_search"
         android:name="us.mikeandwan.photos.ui.screens.search.SearchFragment"
-        android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" >
+        android:label="@string/title_search" >
         <action
             android:id="@+id/action_navigation_search_to_navigation_category"
             app:destination="@id/navigation_category" />
