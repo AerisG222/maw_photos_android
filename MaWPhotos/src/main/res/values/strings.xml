@@ -86,5 +86,18 @@
 
     <!-- general -->
     <string name="text_separator">/</string>
+
+    <!-- preferences -->
+    <string name="pref_notifications_header">Notifications</string>
+    <string name="pref_notifications_new_message_title">New Photo Notifications</string>
+    <string name="pref_notifications_vibrate">Vibrate</string>
     <string name="grid_thumbnail_size">Grid Thumbnail Size</string>
+    <string name="pref_category_display_header">Category List Display</string>
+    <string name="pref_photo_display_header">Photo Display</string>
+    <string name="pref_photo_display_slideshow_interval">Slideshow Interval</string>
+    <string name="pref_random_display_header">Random Display</string>
+    <string name="pref_search_display_header">Search Display</string>
+    <string name="pref_search_query_count_to_remember">Query Count to Remember</string>
+    <string name="pref_search_result_display_header">Search Result Display</string>
+    <string name="pref_advanced_display_header">Advanced</string>
 </resources>

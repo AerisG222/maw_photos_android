@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.di
 
 import android.app.Application
-import androidx.preference.PreferenceDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -137,22 +136,5 @@ class DomainModule {
     @Singleton
     fun provideSearchPreferenceRepository(searchPreferenceDao: SearchPreferenceDao): SearchPreferenceRepository {
         return SearchPreferenceRepository(searchPreferenceDao)
-    }
-
-    @Provides
-    @Singleton
-    fun providePreferenceDataStore(
-        categoryPreferenceRepository: CategoryPreferenceRepository,
-        notificationPreferenceRepository: NotificationPreferenceRepository,
-        photoPreferenceRepository: PhotoPreferenceRepository,
-        randomPreferenceRepository: RandomPreferenceRepository,
-        searchPreferenceRepository: SearchPreferenceRepository
-    ): PreferenceDataStore {
-        return MawPreferenceDataStore(
-            categoryPreferenceRepository,
-            notificationPreferenceRepository,
-            photoPreferenceRepository,
-            randomPreferenceRepository,
-            searchPreferenceRepository)
     }
 }

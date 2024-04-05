@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import kotlin.math.exp
 
 @Composable
 fun SettingsScreen(
@@ -178,7 +177,7 @@ fun SettingsScreen(
         Heading(stringId = R.string.pref_search_display_header)
         MenuPreference(
             expanded = searchQueryCountMenuExpanded,
-            labelStringId = R.string.pref_search_queries_to_remember_default_value,
+            labelStringId = R.string.pref_search_query_count_to_remember,
             options = listOf("5", "10", "20", "30", "50"),
             selectedValue = searchQueryCount.value.toString(),
             onRequestOpen = { searchQueryCountMenuExpanded = true },
