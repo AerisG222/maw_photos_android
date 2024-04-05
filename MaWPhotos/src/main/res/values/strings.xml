@@ -86,4 +86,5 @@
 
     <!-- general -->
     <string name="text_separator">/</string>
+    <string name="grid_thumbnail_size">Grid Thumbnail Size</string>
 </resources>
