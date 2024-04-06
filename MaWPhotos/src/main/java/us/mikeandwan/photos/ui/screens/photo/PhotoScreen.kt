@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheet
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -30,6 +31,7 @@ fun PhotoScreen(
     val showPositionAndCount = viewModel.showPosition.collectAsState()
     val showYearAndCategory = viewModel.showYearAndCategory.collectAsState()
     val isSlideshowPlaying = viewModel.playSlideshow.collectAsState()
+    val showDetails = viewModel.showDetails.collectAsState()
 
     HorizontalPager(
         state = pagerState,
@@ -86,5 +88,11 @@ fun PhotoScreen(
                 onViewDetails = { viewModel.toggleDetails() }
             )
         }
+    }
+
+    if(showDetails.value) {
+        PhotoDetailBottomSheet(
+            onDismissRequest = { viewModel.toggleDetails() }
+        )
     }
 }

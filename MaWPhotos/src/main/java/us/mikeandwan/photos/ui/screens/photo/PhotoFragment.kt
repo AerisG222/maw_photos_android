@@ -25,12 +25,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.ui.controls.photodetail.IHandleModalClose
 import us.mikeandwan.photos.ui.theme.AppTheme
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 
 @AndroidEntryPoint
-class PhotoFragment : Fragment(), IHandleModalClose {
+class PhotoFragment : Fragment() {
     companion object {
         fun newInstance() = PhotoFragment()
     }
@@ -52,10 +51,6 @@ class PhotoFragment : Fragment(), IHandleModalClose {
                 }
             }
         }
-    }
-
-    override fun handleModalClose() {
-        viewModel.unpauseSlideshow()
     }
 
     private fun initStateObservers() {

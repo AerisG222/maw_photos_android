@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PhotoDetailBottomSheet() {
-    ModalBottomSheet(onDismissRequest = { /*TODO*/ }) {
+fun PhotoDetailBottomSheet(
+    onDismissRequest: () -> Unit
+) {
+    ModalBottomSheet(onDismissRequest = { onDismissRequest() }) {
         PhotoDetailTabs()
     }
 }
