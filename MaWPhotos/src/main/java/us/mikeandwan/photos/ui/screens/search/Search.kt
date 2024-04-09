@@ -8,13 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
+import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryListViewModel
@@ -22,16 +28,44 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridScreen
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridViewModel
 import us.mikeandwan.photos.ui.toImageGridItem
 
+const val SearchRoute = "search"
+
+fun NavGraphBuilder.searchScreen(
+    onNavigateToCategory: (PhotoCategory) -> Unit
+) {
+    composable(SearchRoute) {
+        val vm: SearchViewModel = hiltViewModel()
+
+        val results by vm.searchResultsAsCategories.collectAsStateWithLifecycle()
+        val totalFound by vm.totalFound.collectAsStateWithLifecycle()
+        val displayType by vm.displayType.collectAsStateWithLifecycle()
+        val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
+
+        SearchScreen(
+            results,
+            totalFound,
+            displayType,
+            thumbSize,
+            onNavigateToCategory = onNavigateToCategory,
+            continueSearch = { vm.continueSearch() }
+        )
+    }
+}
+
+fun NavController.navigateToSearch() {
+    this.navigate(SearchRoute)
+}
+
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel
+    results: List<PhotoCategory>,
+    totalFound: Int,
+    displayType: CategoryDisplayType,
+    thumbSize: GridThumbnailSize,
+    onNavigateToCategory: (PhotoCategory) -> Unit,
+    continueSearch: () -> Unit
 ) {
-    val results = viewModel.searchResultsAsCategories.collectAsState()
-    val totalFound = viewModel.totalFound.collectAsState()
-    val displayType = viewModel.displayType.collectAsState()
-    val thumbSize = viewModel.gridItemThumbnailSize.collectAsState()
-
-    if(results.value.isEmpty()) {
+    if(results.isEmpty()) {
         AsyncImage(
             model = R.drawable.ic_search,
             contentDescription = stringResource(id = R.string.search_icon_description),
@@ -46,27 +80,27 @@ fun SearchScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        when(displayType.value) {
+        when(displayType) {
             CategoryDisplayType.Grid -> {
                 val vm = ImageGridViewModel()
-                vm.setGridItems(results.value.map { it.toImageGridItem() })
-                vm.setThumbnailSize(thumbSize.value)
+                vm.setGridItems(results.map { it.toImageGridItem() })
+                vm.setThumbnailSize(thumbSize)
 
                 ImageGridScreen(
                     viewModel = vm,
                     onSelectGridItem = {
-                        viewModel.onCategoryClicked(it.data as PhotoCategory)
+                        onNavigateToCategory(it.data as PhotoCategory)
                     }
                 )
             }
 
             CategoryDisplayType.List -> {
                 val vm = CategoryListViewModel()
-                vm.setCategories(results.value)
+                vm.setCategories(results)
 
                 CategoryList(
                     viewModel = vm,
-                    onSelectListItem = viewModel.onCategoryClicked
+                    onSelectListItem = onNavigateToCategory
                 )
             }
 
@@ -74,17 +108,17 @@ fun SearchScreen(
         }
     }
 
-    if(results.value.isNotEmpty()) {
+    if(results.isNotEmpty()) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = { viewModel.continueSearch() }) {
+            Button(onClick = { continueSearch() }) {
                 Text(text = stringResource(id = R.string.fragment_search_load_more))
             }
         }
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = results.value.size.toString())
+            Text(text = results.size.toString())
             Text(text = "/")
-            Text(text = totalFound.value.toString())
+            Text(text = totalFound.toString())
         }
     }
 }

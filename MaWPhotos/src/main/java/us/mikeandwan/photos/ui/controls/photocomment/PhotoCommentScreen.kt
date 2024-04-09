@@ -14,13 +14,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.ui.theme.AppTheme
 
 @Composable
 fun PhotoCommentScreen(
-    viewModel: PhotoCommentViewModel = viewModel()
+    viewModel: PhotoCommentViewModel = hiltViewModel()
 ) {
     val comments = viewModel.comments.collectAsState()
     val newComment = viewModel.newComment.collectAsState()

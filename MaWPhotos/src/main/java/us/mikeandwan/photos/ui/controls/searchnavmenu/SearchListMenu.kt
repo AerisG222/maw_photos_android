@@ -15,12 +15,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import us.mikeandwan.photos.R
 
 @Composable
 fun SearchListMenu(
-    viewModel: SearchNavMenuViewModel = viewModel()
+    viewModel: SearchNavMenuViewModel = hiltViewModel()
 ) {
     val termsState = viewModel.searchTerms.collectAsState()
 

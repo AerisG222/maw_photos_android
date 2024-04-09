@@ -17,14 +17,14 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
 
 @Composable
 fun NavigationRail(
-    viewModel: NavigationRailViewModel = viewModel()
+    viewModel: NavigationRailViewModel = hiltViewModel()
 ) {
     val activeArea = viewModel.navArea.collectAsState()
 

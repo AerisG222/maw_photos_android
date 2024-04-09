@@ -3,30 +3,46 @@ package us.mikeandwan.photos.ui.screens.upload
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
-import androidx.lifecycle.viewmodel.compose.viewModel
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
+import java.io.File
+
+const val UploadRoute = "upload"
+
+fun NavGraphBuilder.uploadScreen() {
+    composable(UploadRoute) {
+        val vm: UploadViewModel = hiltViewModel()
+
+        val files by vm.filesToUpload.collectAsStateWithLifecycle()
+
+        UploadScreen(
+            files
+        )
+    }
+}
 
 @Composable
 fun UploadScreen(
-    viewModel: UploadViewModel = viewModel()
+    files: List<File>
 ) {
-    val photos = viewModel.filesToUpload.collectAsState()
-
     AsyncImage(
         model = R.drawable.ic_share,
         contentDescription = stringResource(id = R.string.share_photo_icon_description)
     )
 
     ImageGrid(
-        gridItems = photos.value.mapIndexed { id, file -> ImageGridItem(id, file.path, file) },
+        gridItems = files.mapIndexed { id, file -> ImageGridItem(id, file.path, file) },
         thumbnailSize = GridThumbnailSize.Medium,
         onSelectGridItem = { }
     )

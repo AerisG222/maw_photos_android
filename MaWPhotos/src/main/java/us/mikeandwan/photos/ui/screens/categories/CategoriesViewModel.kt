@@ -14,18 +14,17 @@ import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
-import us.mikeandwan.photos.domain.models.PhotoCategory
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor (
     photoCategoryRepository: PhotoCategoryRepository,
     categoryPreferenceRepository: CategoryPreferenceRepository,
-    private val activeIdRepository: ActiveIdRepository,
-    private val navigationStateRepository: NavigationStateRepository
+    val activeIdRepository: ActiveIdRepository,
+    val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
-    private val _requestNavigateToCategory = MutableStateFlow<Int?>(null)
-    val requestNavigateToCategory = _requestNavigateToCategory.asStateFlow()
+    //private val _requestNavigateToCategory = MutableStateFlow<Int?>(null)
+    //val requestNavigateToCategory = _requestNavigateToCategory.asStateFlow()
 
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(false, null))
     val refreshStatus = _refreshStatus.asStateFlow()
@@ -38,12 +37,12 @@ class CategoriesViewModel @Inject constructor (
         .getCategoryPreference()
         .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
 
-    val onCategorySelected: (PhotoCategory) -> Unit =  {
-        viewModelScope.launch {
-            activeIdRepository.setActivePhotoCategory(it.id)
-            _requestNavigateToCategory.value = it.id
-        }
-    }
+//    val onCategorySelected: (PhotoCategory) -> Unit =  {
+//        viewModelScope.launch {
+//            activeIdRepository.setActivePhotoCategory(it.id)
+//            _requestNavigateToCategory.value = it.id
+//        }
+//    }
 
     // TODO: 1 did not work on emulator, 10 did work, lets make it 20 to be safe - FUGLY!
     private val HACK_DELAY = 20L
@@ -85,9 +84,9 @@ class CategoriesViewModel @Inject constructor (
         }
     }
 
-    fun onNavigateComplete() {
-        _requestNavigateToCategory.value = null
-    }
+//    fun onNavigateComplete() {
+//        _requestNavigateToCategory.value = null
+//    }
 
     init {
         viewModelScope.launch {

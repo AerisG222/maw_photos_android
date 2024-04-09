@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.toolbar
+package us.mikeandwan.photos.ui.controls.topbar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +13,7 @@ import us.mikeandwan.photos.domain.models.SearchSource
 import javax.inject.Inject
 
 @HiltViewModel
-class ToolbarViewModel @Inject constructor(
+class TopBarViewModel @Inject constructor(
     private val navigationStateRepository: NavigationStateRepository,
     private val searchRepository: SearchRepository,
 ): ViewModel() {

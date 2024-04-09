@@ -10,24 +10,49 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import us.mikeandwan.photos.R
 
+const val AboutRoute = "about"
+
+fun NavGraphBuilder.aboutScreen() {
+    composable(AboutRoute) {
+        val vm: AboutViewModel = hiltViewModel()
+
+        val history by vm.history.collectAsStateWithLifecycle()
+
+        AboutScreen(
+            vm.version,
+            history
+        )
+    }
+}
+
+fun NavController.navigateToAbout() {
+    this.navigate(AboutRoute)
+}
+
 @Composable
 fun AboutScreen(
-    viewModel: AboutViewModel
+    version: String,
+    history: String
 ) {
     val tangerine = FontFamily(Font(R.font.tangerine))
-    val history = viewModel.history.collectAsState()
 
     Column {
         Row(
@@ -71,7 +96,7 @@ fun AboutScreen(
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = viewModel.version
+                text = version
             )
         }
 
@@ -82,8 +107,17 @@ fun AboutScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             MarkdownText(
-                markdown = history.value,
+                markdown = history,
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun AboutScreenPreview() {
+    AboutScreen(
+        version = "v2.0",
+        history = "hi"
+    )
 }

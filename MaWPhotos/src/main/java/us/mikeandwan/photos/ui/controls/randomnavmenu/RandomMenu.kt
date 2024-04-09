@@ -13,12 +13,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import us.mikeandwan.photos.R
 
 @Composable
 fun RandomMenu(
-    viewModel: RandomMenuViewModel = viewModel()
+    viewModel: RandomMenuViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier.fillMaxSize()

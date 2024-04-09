@@ -1,10 +1,8 @@
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
-    alias(libs.plugins.org.jetbrains.kotlin.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.navigation)
     alias(libs.plugins.org.jetbrains.kotlin.serialization)
 }
 
@@ -38,8 +36,6 @@ android {
 
     buildFeatures {
         compose = true
-        dataBinding = true
-        viewBinding = true
         buildConfig = true
     }
 
@@ -131,23 +127,16 @@ dependencies {
     // jetpack
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
-    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.layout)
-    implementation(libs.androidx.fragment)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.lifecycle.compose)
-    implementation(libs.androidx.navigation)
-    implementation(libs.androidx.navigation.ui)
-    implementation(libs.androidx.preference)
-    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room)
     implementation(libs.androidx.swiperefresh)
     implementation(libs.androidx.work)
-    kapt(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
 
     // coil
@@ -155,11 +144,10 @@ dependencies {
 
     // hilt
     implementation(libs.hilt)
-    kapt(libs.hilt.android.compiler)
+    implementation(libs.hilt.navigation)
+    ksp(libs.hilt.android.compiler)
     androidTestImplementation(libs.hilt.testing)
-    kaptAndroidTest(libs.hilt.compiler.kapt)
     testImplementation(libs.hilt.testing)
-    kaptTest(libs.hilt.compiler.kapt)
 
     // markdown
     implementation(libs.markdown)
@@ -197,10 +185,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.test.espresso)
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 hilt {

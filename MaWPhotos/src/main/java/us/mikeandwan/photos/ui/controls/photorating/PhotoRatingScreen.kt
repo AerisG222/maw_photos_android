@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.smarttoolfactory.ratingbar.RatingBar
 import com.smarttoolfactory.ratingbar.model.GestureStrategy
 import com.smarttoolfactory.ratingbar.model.RateChangeStrategy
@@ -26,7 +26,7 @@ import us.mikeandwan.photos.ui.theme.AppTheme
 
 @Composable
 fun PhotoRatingScreen(
-    viewModel: PhotoRatingViewModel = viewModel()
+    viewModel: PhotoRatingViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
     val userRating = viewModel.userRating.collectAsState()
