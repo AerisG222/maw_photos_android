@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <attr name="mawPhotoWidgetOverlayBackground" format="color" />
-    <attr name="mawUploadWatermarkColor" format="color" />
-    <attr name="mawAlternateRowColor" format="color" />
-    <attr name="mawSearchBoxBackgroundColor" format="color" />
-</resources>
