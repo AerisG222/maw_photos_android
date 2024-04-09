@@ -27,6 +27,7 @@ import us.mikeandwan.photos.R
 @Composable
 fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
+    onExpandNavMenu: () -> Unit,
     viewModel: TopBarViewModel = hiltViewModel()
 ) {
     val showAppIcon = viewModel.showAppIcon.collectAsState()
@@ -57,9 +58,7 @@ fun TopBar(
                         .height(56.dp)
                         .width(56.dp)
                         .padding(8.dp)
-                        .clickable {
-                            viewModel.onAppIconClicked()
-                        }
+                        .clickable { onExpandNavMenu() }
                 )
             } else {
                 AsyncImage(

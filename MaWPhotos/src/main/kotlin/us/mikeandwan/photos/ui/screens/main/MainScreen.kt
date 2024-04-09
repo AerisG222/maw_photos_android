@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.screens.main
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -8,13 +9,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigationrail.NavigationRail
 import us.mikeandwan.photos.ui.controls.topbar.TopBar
@@ -39,21 +43,42 @@ import us.mikeandwan.photos.ui.screens.upload.uploadScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
+    val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val snackbarHostState = remember { SnackbarHostState() }
     val navController = rememberNavController()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     ModalNavigationDrawer(
+        drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
                 NavigationRail(
                     activeArea = NavigationArea.Category,
-                    navigateToCategories = { navController.navigateToCategories() },
-                    navigateToRandom = { navController.navigateToRandom() },
-                    navigateToSearch = { navController.navigateToSearch() },
-                    navigateToSettings = { navController.navigateToSettings() },
-                    navigateToUpload = { navController.navigateToUpload() },
-                    navigateToAbout = { navController.navigateToAbout() }
+                    navigateToCategories = {
+                        navController.navigateToCategories()
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    navigateToRandom = {
+                        navController.navigateToRandom()
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    navigateToSearch = {
+                        navController.navigateToSearch()
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    navigateToSettings = {
+                        navController.navigateToSettings()
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    navigateToUpload = {
+                        navController.navigateToUpload()
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    navigateToAbout = {
+                        navController.navigateToAbout()
+                        coroutineScope.launch { drawerState.close() }
+                    }
                 )
             }
         }
@@ -61,7 +86,10 @@ fun MainScreen() {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                TopBar(scrollBehavior)
+                TopBar(
+                    scrollBehavior,
+                    onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
+                )
             },
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
