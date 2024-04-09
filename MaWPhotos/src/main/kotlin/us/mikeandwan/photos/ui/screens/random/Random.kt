@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
@@ -30,6 +31,10 @@ fun NavGraphBuilder.randomScreen(
             onPhotoClicked = { onNavigateToPhoto(it.id) }
         )
     }
+}
+
+fun NavController.navigateToRandom() {
+    this.navigate(RandomRoute)
 }
 
 @Composable

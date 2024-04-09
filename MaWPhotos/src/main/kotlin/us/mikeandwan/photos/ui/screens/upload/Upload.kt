@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
@@ -30,6 +31,10 @@ fun NavGraphBuilder.uploadScreen() {
             files
         )
     }
+}
+
+fun NavController.navigateToUpload() {
+    this.navigate(UploadRoute)
 }
 
 @Composable
