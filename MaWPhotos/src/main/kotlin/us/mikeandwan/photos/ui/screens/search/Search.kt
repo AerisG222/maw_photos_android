@@ -23,8 +23,7 @@ import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridScreen
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridViewModel
+import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.toImageGridItem
 
 const val SearchRoute = "search"
@@ -81,15 +80,10 @@ fun SearchScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         when(displayType) {
             CategoryDisplayType.Grid -> {
-                val vm = ImageGridViewModel()
-                vm.setGridItems(results.map { it.toImageGridItem() })
-                vm.setThumbnailSize(thumbSize)
-
-                ImageGridScreen(
-                    viewModel = vm,
-                    onSelectGridItem = {
-                        onNavigateToCategory(it.data as PhotoCategory)
-                    }
+                ImageGrid(
+                    gridItems = results.map { it.toImageGridItem() },
+                    thumbnailSize = thumbSize,
+                    onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
                 )
             }
 

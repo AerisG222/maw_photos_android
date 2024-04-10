@@ -11,8 +11,7 @@ import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.CategoryPreference
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridScreen
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridViewModel
+import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.toImageGridItem
 
 const val CategoriesRoute = "categories"
@@ -46,15 +45,10 @@ fun CategoriesScreen(
 ) {
     when(preferences.displayType) {
         CategoryDisplayType.Grid -> {
-            val vm = ImageGridViewModel()
-            vm.setGridItems(categories.map{ it.toImageGridItem() })
-            vm.setThumbnailSize(preferences.gridThumbnailSize)
-
-            ImageGridScreen(
-                viewModel = vm,
-                onSelectGridItem = {
-                    onNavigateToCategory(it.data as PhotoCategory)
-                }
+            ImageGrid(
+                gridItems = categories.map{ it.toImageGridItem() },
+                thumbnailSize = preferences.gridThumbnailSize,
+                onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
             )
         }
         CategoryDisplayType.List -> {
