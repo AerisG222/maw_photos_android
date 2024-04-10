@@ -93,9 +93,7 @@ android {
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-jackson.pro",
-                "proguard-maw.pro",
-                "proguard-retrofit2.pro"
+                "proguard-maw.pro"
             )
         }
     }
