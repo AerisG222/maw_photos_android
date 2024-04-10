@@ -5,25 +5,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import us.mikeandwan.photos.domain.models.PhotoCategory
 
 @Composable
 fun CategoryList(
-    viewModel: CategoryListViewModel,
-    onSelectListItem: (PhotoCategory) -> Unit
+    categories: List<PhotoCategory>,
+    showYear: Boolean,
+    onSelectCategory: (PhotoCategory) -> Unit
 ) {
-    val categories = viewModel.categories.collectAsState()
-
     LazyColumn(Modifier.fillMaxSize()) {
-        itemsIndexed(categories.value) { index, category ->
+        itemsIndexed(categories) { index, category ->
             CategoryListItem(
                 category,
-                onSelectListItem
+                showYear,
+                onSelectCategory
             )
 
-            if (index != categories.value.size - 1) {
+            if (index != categories.size - 1) {
                 HorizontalDivider()
             }
         }

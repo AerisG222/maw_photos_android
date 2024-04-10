@@ -18,20 +18,19 @@ import us.mikeandwan.photos.domain.models.PhotoCategory
 
 @Composable
 fun CategoryListItem(
-    item: CategoryWithYearVisibility,
+    category: PhotoCategory,
+    showYear: Boolean,
     onSelectCategory: (PhotoCategory) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier
             .fillMaxWidth()
-            .clickable {
-                onSelectCategory(item.category)
-            }
+            .clickable { onSelectCategory(category) }
     ) {
         AsyncImage(
-            model = item.category.teaserUrl,
-            contentDescription = item.category.name,
+            model = category.teaserUrl,
+            contentDescription = category.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(60.dp)
@@ -39,10 +38,10 @@ fun CategoryListItem(
                 .padding(2.dp)
         )
 
-        if(item.doShowYear) {
+        if(showYear) {
             Text(
                 style = MaterialTheme.typography.titleMedium,
-                text = item.category.year.toString(),
+                text = category.year.toString(),
                 modifier = Modifier
                     .padding(8.dp)
                     .align(Alignment.CenterVertically)
@@ -51,7 +50,7 @@ fun CategoryListItem(
 
         Text(
             style = MaterialTheme.typography.titleMedium,
-            text = item.category.name,
+            text = category.name,
             modifier = Modifier
                 .padding(8.dp)
                 .align(Alignment.CenterVertically)

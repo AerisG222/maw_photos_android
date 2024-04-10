@@ -23,7 +23,6 @@ import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
-import us.mikeandwan.photos.ui.controls.categorylist.CategoryListViewModel
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridScreen
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridViewModel
 import us.mikeandwan.photos.ui.toImageGridItem
@@ -95,12 +94,10 @@ fun SearchScreen(
             }
 
             CategoryDisplayType.List -> {
-                val vm = CategoryListViewModel()
-                vm.setCategories(results)
-
                 CategoryList(
-                    viewModel = vm,
-                    onSelectListItem = onNavigateToCategory
+                    categories = results,
+                    showYear = true,
+                    onSelectCategory = onNavigateToCategory
                 )
             }
 

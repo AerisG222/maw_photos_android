@@ -5,7 +5,6 @@ import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.SearchResultCategory
-import us.mikeandwan.photos.ui.controls.categorylist.CategoryWithYearVisibility
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 
 fun Photo.toImageGridItem(): ImageGridItem {
@@ -21,13 +20,6 @@ fun PhotoCategory.toImageGridItem(): ImageGridItem {
         this.id,
         this.teaserUrl.replace("/xs/", "/md/"),
         this
-    )
-}
-
-fun PhotoCategory.toCategoryWithYearVisibility(showYear: Boolean): CategoryWithYearVisibility {
-    return CategoryWithYearVisibility(
-        this,
-        showYear
     )
 }
 
