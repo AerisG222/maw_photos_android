@@ -6,7 +6,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
@@ -20,8 +23,16 @@ private const val categoryIdArg = "categoryId"
 fun NavGraphBuilder.categoryScreen(
     onNavigateToPhoto: (Int) -> Unit
 ) {
-    composable("$CategoryRoute/{$categoryIdArg}") {
+    composable(
+        route = "$CategoryRoute/{$categoryIdArg}",
+        arguments = listOf(
+            navArgument(categoryIdArg) { type = NavType.IntType }
+        )
+    ) { backStackEntry ->
         val vm: CategoryViewModel = hiltViewModel()
+
+        val categoryId = backStackEntry.arguments?.getInt(categoryIdArg) ?: 0
+        vm.loadCategory(categoryId)
 
         val photos by vm.photos.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
@@ -40,15 +51,13 @@ fun NavController.navigateToCategory(categoryId: Int) {
 
 @Composable
 fun CategoryScreen(
-    photos: List<Photo>,
+    photos: List<ImageGridItem>,
     thumbSize: GridThumbnailSize,
     onPhotoClicked: (ImageGridItem) -> Unit
 ) {
-    val gridItems = photos.map { it.toImageGridItem() }
-
     AppTheme {
         ImageGrid(
-            gridItems = gridItems,
+            gridItems = photos,
             thumbnailSize = thumbSize,
             onSelectGridItem = onPhotoClicked
         )
