@@ -1,7 +1,15 @@
 package us.mikeandwan.photos.ui.screens.categories
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -28,7 +36,8 @@ fun NavGraphBuilder.categoriesScreen(
         CategoriesScreen(
             categories = categories,
             preferences = preferences,
-            onNavigateToCategory = onNavigateToCategory
+            onNavigateToCategory = onNavigateToCategory,
+            onRefresh = { vm.onRefreshCategories() }
         )
     }
 }
@@ -37,31 +46,48 @@ fun NavController.navigateToCategories() {
     this.navigate(CategoriesRoute)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreen(
     preferences: CategoryPreference,
     categories: List<PhotoCategory>,
-    onNavigateToCategory: (PhotoCategory) -> Unit
+    onNavigateToCategory: (PhotoCategory) -> Unit,
+    onRefresh: suspend () -> Unit
 ) {
-    when(preferences.displayType) {
-        CategoryDisplayType.Grid -> {
-            ImageGrid(
-                gridItems = categories.map{ it.toImageGridItem() },
-                thumbnailSize = preferences.gridThumbnailSize,
-                onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
-            )
+    val state = rememberPullToRefreshState()
+
+    if(state.isRefreshing) {
+        LaunchedEffect(true) {
+            onRefresh()
+            state.endRefresh()
         }
-        CategoryDisplayType.List -> {
-            CategoryList(
-                categories = categories,
-                showYear = false,
-                onSelectCategory = { onNavigateToCategory(it) }
-            )
+    }
+
+    Box(Modifier.nestedScroll(state.nestedScrollConnection)) {
+        when(preferences.displayType) {
+            CategoryDisplayType.Grid -> {
+                ImageGrid(
+                    gridItems = categories.map{ it.toImageGridItem() },
+                    thumbnailSize = preferences.gridThumbnailSize,
+                    onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
+                )
+            }
+            CategoryDisplayType.List -> {
+                CategoryList(
+                    categories = categories,
+                    showYear = false,
+                    onSelectCategory = { onNavigateToCategory(it) }
+                )
+            }
+            else -> { }
         }
-        else -> { }
+
+        PullToRefreshContainer(
+            modifier = Modifier.align(Alignment.TopCenter),
+            state = state,
+        )
     }
 }
-
 
 //                viewModel.refreshStatus
 //                    .onEach {

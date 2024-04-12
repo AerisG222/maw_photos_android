@@ -23,9 +23,6 @@ class CategoriesViewModel @Inject constructor (
     val activeIdRepository: ActiveIdRepository,
     val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
-    //private val _requestNavigateToCategory = MutableStateFlow<Int?>(null)
-    //val requestNavigateToCategory = _requestNavigateToCategory.asStateFlow()
-
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(false, null))
     val refreshStatus = _refreshStatus.asStateFlow()
 
@@ -36,13 +33,6 @@ class CategoriesViewModel @Inject constructor (
     val preferences = categoryPreferenceRepository
         .getCategoryPreference()
         .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
-
-//    val onCategorySelected: (PhotoCategory) -> Unit =  {
-//        viewModelScope.launch {
-//            activeIdRepository.setActivePhotoCategory(it.id)
-//            _requestNavigateToCategory.value = it.id
-//        }
-//    }
 
     // TODO: 1 did not work on emulator, 10 did work, lets make it 20 to be safe - FUGLY!
     private val HACK_DELAY = 20L
@@ -83,10 +73,6 @@ class CategoriesViewModel @Inject constructor (
                 .launchIn(this)
         }
     }
-
-//    fun onNavigateComplete() {
-//        _requestNavigateToCategory.value = null
-//    }
 
     init {
         viewModelScope.launch {
