@@ -1,10 +1,9 @@
-package us.mikeandwan.photos.ui.login
+package us.mikeandwan.photos.ui.screens.login
 
-import android.content.Intent
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.NavigationStateRepository
 import javax.inject.Inject
@@ -14,22 +13,12 @@ class LoginViewModel @Inject constructor(
     val authService: AuthService,
     val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
-    private var _doAuth = MutableStateFlow(false)
-    val doAuth = _doAuth.asStateFlow()
-
     val authStatus = authService.authStatus
 
     fun initiateAuthentication() {
-        authService.beginAuthentication()
-        _doAuth.value = true
-    }
-
-    fun initiateAuthenticationHandled() {
-        _doAuth.value = false
-    }
-
-    fun completeAuthorization(intent: Intent) {
-        authService.completeAuthorization(intent)
+        viewModelScope.launch {
+            authService.beginAuthentication()
+        }
     }
 
     init {

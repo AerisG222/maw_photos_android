@@ -3,13 +3,10 @@ package us.mikeandwan.photos.ui.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-
 import dagger.hilt.android.AndroidEntryPoint
-
 import us.mikeandwan.photos.ui.screens.main.MainScreen
 import us.mikeandwan.photos.ui.theme.AppTheme
 
-@Suppress("UNUSED_ANONYMOUS_PARAMETER")
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,19 +18,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-//
-//    private fun initShareReceiver() {
-//        val intent = intent
-//        val action = intent.action
-//
-//        if (action != null) {
-//            when (action) {
-//                Intent.ACTION_SEND -> handleSendSingle(intent)
-//                Intent.ACTION_SEND_MULTIPLE -> handleSendMultiple(intent)
-//            }
-//        }
-//    }
-//
+
 //    private fun initStateObservers() {
 //        navController.addOnDestinationChangedListener { controller, destination, bundle ->
 //            viewModel.destinationChanged(destination.id)
@@ -127,81 +112,15 @@ class MainActivity : ComponentActivity() {
 //            else -> null
 //        } ?: return
 //
-////        supportFragmentManager.commit {
-////            setReorderingAllowed(true)
-////            replace(R.id.fragmentSubnav, frag, null)
-////        }
+//        supportFragmentManager.commit {
+//            setReorderingAllowed(true)
+//            replace(R.id.fragmentSubnav, frag, null)
+//        }
 //    }
 //
 //    private fun goToLoginScreen() {
 //        val intent = Intent(this, LoginActivity::class.java)
 //        startActivity(intent)
 //        finish()
-//    }
-//
-//    private fun handleSendSingle(intent: Intent) {
-//        val mediaUri = if (Build.VERSION.SDK_INT >= 33) {
-//            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-//        } else {
-//            @Suppress("DEPRECATION")
-//            intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
-//        }
-//
-//        if(mediaUri != null) {
-//            enqueueUpload(mediaUri)
-//        }
-//    }
-//
-//    private fun handleSendMultiple(intent: Intent) {
-//        val mediaUris = if (Build.VERSION.SDK_INT >= 33) {
-//            intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
-//        } else {
-//            @Suppress("DEPRECATION")
-//            intent.getParcelableArrayListExtra<Uri?>(Intent.EXTRA_STREAM)
-//        }
-//
-//        if(mediaUris != null) {
-//            enqueueUpload(*mediaUris.toTypedArray())
-//        }
-//    }
-//
-//    private fun enqueueUpload(vararg mediaUri: Uri) {
-//        lifecycleScope.launch {
-//            mediaUri.forEach {
-//                val file = viewModel.saveUploadFile(it)
-//
-//                if (file != null) {
-//                    val constraints = Constraints.Builder()
-//                        .setRequiredNetworkType(NetworkType.UNMETERED)
-//                        .build()
-//
-//                    val data = workDataOf(
-//                        UploadWorker.KEY_FILENAME to file.path
-//                    )
-//
-//                    val work = OneTimeWorkRequestBuilder<UploadWorker>()
-//                        .setBackoffCriteria(
-//                            BackoffPolicy.EXPONENTIAL,
-//                            1,
-//                            TimeUnit.MINUTES
-//                        )
-//                        .setConstraints(constraints)
-//                        .setInputData(data)
-//                        .build()
-//
-//                    val workManager = WorkManager.getInstance(applicationContext)
-//
-//                    workManager.enqueueUniqueWork(
-//                        "upload ${file.path}",
-//                        ExistingWorkPolicy.REPLACE,
-//                        work
-//                    )
-//                }
-//            }
-//
-//            val action = MobileNavigationDirections.actionNavigateToUpload()
-//
-//            navController.navigate(action)
-//        }
 //    }
 }

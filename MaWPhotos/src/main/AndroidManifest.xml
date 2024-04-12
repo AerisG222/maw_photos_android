@@ -40,13 +40,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="us.mikeandwan.photos.ui.login.LoginActivity"
-            android:exported="true"
-            android:noHistory="true"
-            android:screenOrientation="fullSensor">
-        </activity>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="us.mikeandwan.photos.fileprovider"

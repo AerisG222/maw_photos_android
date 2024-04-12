@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.authorization
 
 import android.app.Application
+import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,7 +9,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.openid.appauth.*
 import timber.log.Timber
 import us.mikeandwan.photos.Constants
+import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.ui.main.MainActivity
+import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
@@ -28,8 +32,39 @@ class AuthService(
     private val _authStatus = MutableStateFlow(if(authStateManager.current.isAuthorized) AuthStatus.Authorized else AuthStatus.RequiresAuthorization)
     val authStatus = _authStatus.asStateFlow()
 
-    fun beginAuthentication() {
+    suspend fun beginAuthentication() {
         _authStatus.value = AuthStatus.LoginInProcess
+
+        clearAuthState()
+
+        val request = buildAuthorizationRequest()
+
+        authorizationService.performAuthorizationRequest(
+            request,
+            PendingIntent.getActivity(
+                MawApplication.instance,
+                0,
+                Intent(MawApplication.instance, MainActivity::class.java),
+                PendingIntentFlagHelper.getMutableFlag(0)
+            ),
+            PendingIntent.getActivity(
+                MawApplication.instance,
+                0,
+                Intent(MawApplication.instance, MainActivity::class.java),
+                PendingIntentFlagHelper.getMutableFlag(0)
+            )
+        )
+    }
+
+    private fun buildAuthorizationRequest(): AuthorizationRequest {
+        return AuthorizationRequest.Builder(
+            authConfig!!,
+            authClientId,
+            ResponseTypeValues.CODE,
+            authSchemeRedirectUri
+        )
+            .setScope("openid offline_access profile email role maw_api")
+            .build()
     }
 
     private fun updateAuthorizationState(isAuthorized: Boolean) {

@@ -143,7 +143,6 @@ class SettingsViewModel @Inject constructor (
     fun logout() {
         viewModelScope.launch {
             authService.logout()
-            navigationStateRepository.requestNavigateToArea(NavigationArea.Login)
         }
     }
 }
