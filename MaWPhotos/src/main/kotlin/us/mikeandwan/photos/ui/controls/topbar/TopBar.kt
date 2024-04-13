@@ -36,6 +36,7 @@ fun TopBar(
     val searchTerm = viewModel.searchTerm.collectAsState()
 
     TopAppBar(
+        scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,
