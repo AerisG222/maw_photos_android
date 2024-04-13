@@ -150,9 +150,6 @@ dependencies {
     // markdown
     implementation(libs.markdown)
 
-    // material
-    implementation(libs.material)
-
     // media3
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.okhttp)
