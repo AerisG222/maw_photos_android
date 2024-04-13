@@ -24,7 +24,6 @@ photoview = "2.3.0"
 ratingbar = "2.1.1"
 retrofit = "2.11.0"
 room = "2.6.1"
-swiperefresh = "1.2.0-alpha01"
 test-ext = "1.1.5"
 test-espresso = "3.5.1"
 timber = "5.0.1"
@@ -49,7 +48,6 @@ androidx-lifecycle-compose = { group = "androidx.lifecycle", name = "lifecycle-r
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-room = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-androidx-swiperefresh = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefresh" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit", version.ref = "test-ext" }
 androidx-test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "test-espresso" }
 androidx-work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }

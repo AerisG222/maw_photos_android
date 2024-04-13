@@ -133,7 +133,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room)
-    implementation(libs.androidx.swiperefresh)
     implementation(libs.androidx.work)
     ksp(libs.androidx.room.compiler)
 
