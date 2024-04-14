@@ -47,6 +47,10 @@ fun NavGraphBuilder.aboutScreen(
     }
 }
 
+fun NavController.buildAboutRoute(): String {
+    return AboutRoute
+}
+
 fun NavController.navigateToAbout() {
     this.navigate(AboutRoute)
 }

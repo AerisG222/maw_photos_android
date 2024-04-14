@@ -8,8 +8,20 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class PhotoCategoryDao {
+    @Query("SELECT MAX(year) FROM photo_category")
+    abstract fun getMostRecentYear(): Flow<Int?>
+
     @Query("SELECT DISTINCT year FROM photo_category ORDER BY year DESC")
     abstract fun getYears(): Flow<List<Int>>
+
+    @Query("""
+        SELECT pc.*
+          FROM photo_category pc
+         WHERE pc.year = :year
+         ORDER BY pc.id DESC
+    """
+    )
+    abstract fun getCategoriesForYear(year: Int): Flow<List<PhotoCategory>>
 
     @Query("""
         SELECT pc.*

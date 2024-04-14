@@ -36,6 +36,8 @@ class PhotoCategoryRepository @Inject constructor(
         emitAll(data)
     }
 
+    fun getMostRecentYear() = pcDao.getMostRecentYear()
+
     fun getNewCategories() = flow {
         val category = pcDao
             .getMostRecentCategory()
@@ -51,6 +53,12 @@ class PhotoCategoryRepository @Inject constructor(
 
         emitAll(categories)
     }
+
+    fun getCategories(year: Int) = pcDao
+        .getCategoriesForYear(year)
+        .map { dbList ->
+            dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
+        }
 
     fun getCategories() = pcDao
         .getCategoriesForActiveYear()

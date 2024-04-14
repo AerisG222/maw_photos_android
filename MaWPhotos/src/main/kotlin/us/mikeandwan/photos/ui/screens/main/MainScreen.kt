@@ -30,14 +30,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigationrail.NavigationRail
 import us.mikeandwan.photos.ui.controls.topbar.TopBar
 import us.mikeandwan.photos.ui.screens.about.aboutScreen
+import us.mikeandwan.photos.ui.screens.about.buildAboutRoute
 import us.mikeandwan.photos.ui.screens.about.navigateToAbout
-import us.mikeandwan.photos.ui.screens.categories.CategoriesRoute
+import us.mikeandwan.photos.ui.screens.categories.buildCategoriesRoute
 import us.mikeandwan.photos.ui.screens.categories.categoriesScreen
 import us.mikeandwan.photos.ui.screens.categories.navigateToCategories
 import us.mikeandwan.photos.ui.screens.category.categoryScreen
@@ -64,12 +67,13 @@ fun MainScreen() {
     val snackbarHostState = remember { SnackbarHostState() }
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val (hasSetDefaultRoute, setHasSetDefaultRoute) = remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val activity = context.findActivity()
 
     val navArea by navController.currentBackStackEntryFlow.map {
-        if(it.destination.route == "login") NavigationArea.Login
+        if (it.destination.route == "login") NavigationArea.Login
         else NavigationArea.Category
     }.collectAsStateWithLifecycle(initialValue = NavigationArea.Category)
 
@@ -87,93 +91,108 @@ fun MainScreen() {
         setTopBarTitle(title)
     }
 
-    ModalNavigationDrawer(
-        gesturesEnabled = navArea != NavigationArea.Login,
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                NavigationRail(
-                    activeArea = NavigationArea.Category,
-                    navigateToCategories = {
-                        navController.navigateToCategories()
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    navigateToRandom = {
-                        navController.navigateToRandom()
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    navigateToSearch = {
-                        navController.navigateToSearch()
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    navigateToSettings = {
-                        navController.navigateToSettings()
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    navigateToUpload = {
-                        navController.navigateToUpload()
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    navigateToAbout = {
-                        navController.navigateToAbout()
-                        coroutineScope.launch { drawerState.close() }
-                    }
-                )
+    val defaultRoute by vm.mostRecentYear
+        .filter { !hasSetDefaultRoute }
+        .map {
+            when(it) {
+                null -> navController.buildAboutRoute()
+                else -> navController.buildCategoriesRoute(it)
             }
         }
-    ) {
-        Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                if(topBarDoShow) {
-                    TopBar(
-                        scrollBehavior,
-                        title = topBarTitle,
-                        showAppIcon = topBarShowAppIcon,
-                        onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
-                        onBackClicked = { navController.popBackStack() },
+        .onEach {
+            setHasSetDefaultRoute(true)
+        }
+        .collectAsStateWithLifecycle(initialValue = navController.buildAboutRoute())
+
+    if (hasSetDefaultRoute) {
+        ModalNavigationDrawer(
+            gesturesEnabled = navArea != NavigationArea.Login,
+            drawerState = drawerState,
+            drawerContent = {
+                ModalDrawerSheet {
+                    NavigationRail(
+                        activeArea = NavigationArea.Category,
+                        navigateToCategories = {
+                            navController.navigateToCategories()
+                            coroutineScope.launch { drawerState.close() }
+                        },
+                        navigateToRandom = {
+                            navController.navigateToRandom()
+                            coroutineScope.launch { drawerState.close() }
+                        },
+                        navigateToSearch = {
+                            navController.navigateToSearch()
+                            coroutineScope.launch { drawerState.close() }
+                        },
+                        navigateToSettings = {
+                            navController.navigateToSettings()
+                            coroutineScope.launch { drawerState.close() }
+                        },
+                        navigateToUpload = {
+                            navController.navigateToUpload()
+                            coroutineScope.launch { drawerState.close() }
+                        },
+                        navigateToAbout = {
+                            navController.navigateToAbout()
+                            coroutineScope.launch { drawerState.close() }
+                        }
                     )
                 }
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-        ) { innerPadding ->
-            NavHost(
-                modifier = Modifier.padding(innerPadding),
-                navController = navController,
-                startDestination = CategoriesRoute
-            ) {
-                loginScreen(
-                    updateTopBar = ::updateTopBar
-                )
-                aboutScreen(
-                    updateTopBar = ::updateTopBar
-                )
-                categoriesScreen(
-                    updateTopBar = ::updateTopBar,
-                    onNavigateToCategory = { navController.navigateToCategory(it.id) }
-                )
-                categoryScreen(
-                    updateTopBar = ::updateTopBar,
-                    onNavigateToPhoto = { navController.navigateToPhoto(it) }
-                )
-                photoScreen()
-                randomScreen(
-                    updateTopBar = ::updateTopBar,
-                    onNavigateToPhoto = { navController.navigateToPhoto(it) }
-                )
-                searchScreen(
-                    updateTopBar = ::updateTopBar,
-                    onNavigateToCategory = { navController.navigateToCategory(it.id) }
-                )
-                settingsScreen(
-                    updateTopBar = ::updateTopBar,
-                    onNavigateToLogin = { navController.navigateToLogin() }
-                )
-                uploadScreen(
-                    updateTopBar = ::updateTopBar
-                )
+            }
+        ) {
+            Scaffold(
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                topBar = {
+                    if (topBarDoShow) {
+                        TopBar(
+                            scrollBehavior,
+                            title = topBarTitle,
+                            showAppIcon = topBarShowAppIcon,
+                            onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
+                            onBackClicked = { navController.popBackStack() },
+                        )
+                    }
+                },
+                snackbarHost = {
+                    SnackbarHost(hostState = snackbarHostState)
+                },
+            ) { innerPadding ->
+                NavHost(
+                    modifier = Modifier.padding(innerPadding),
+                    navController = navController,
+                    startDestination = defaultRoute
+                ) {
+                    loginScreen(
+                        updateTopBar = ::updateTopBar
+                    )
+                    aboutScreen(
+                        updateTopBar = ::updateTopBar
+                    )
+                    categoriesScreen(
+                        updateTopBar = ::updateTopBar,
+                        onNavigateToCategory = { navController.navigateToCategory(it.id) }
+                    )
+                    categoryScreen(
+                        updateTopBar = ::updateTopBar,
+                        onNavigateToPhoto = { navController.navigateToPhoto(it) }
+                    )
+                    photoScreen()
+                    randomScreen(
+                        updateTopBar = ::updateTopBar,
+                        onNavigateToPhoto = { navController.navigateToPhoto(it) }
+                    )
+                    searchScreen(
+                        updateTopBar = ::updateTopBar,
+                        onNavigateToCategory = { navController.navigateToCategory(it.id) }
+                    )
+                    settingsScreen(
+                        updateTopBar = ::updateTopBar,
+                        onNavigateToLogin = { navController.navigateToLogin() }
+                    )
+                    uploadScreen(
+                        updateTopBar = ::updateTopBar
+                    )
+                }
             }
         }
     }

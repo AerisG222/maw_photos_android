@@ -7,9 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.CategoryPreferenceRepository
-import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
@@ -18,10 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor (
-    photoCategoryRepository: PhotoCategoryRepository,
-    categoryPreferenceRepository: CategoryPreferenceRepository,
-    val activeIdRepository: ActiveIdRepository,
-    val navigationStateRepository: NavigationStateRepository
+    private val photoCategoryRepository: PhotoCategoryRepository,
+    categoryPreferenceRepository: CategoryPreferenceRepository
 ): ViewModel() {
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(false, null))
     val refreshStatus = _refreshStatus.asStateFlow()
@@ -74,13 +70,10 @@ class CategoriesViewModel @Inject constructor (
         }
     }
 
-    init {
+    fun loadCategories(year: Int) {
         viewModelScope.launch {
-            activeIdRepository
-                .getActivePhotoCategoryYear()
-                .distinctUntilChanged()
-                .mapLatest { navigationStateRepository.overrideTitle(it.toString()) }
-                .launchIn(this)
+            photoCategoryRepository
+                .getCategories(year)
         }
     }
 }

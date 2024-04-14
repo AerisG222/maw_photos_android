@@ -32,6 +32,8 @@ class MainViewModel @Inject constructor(
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val fileStorageRepository: FileStorageRepository,
 ): ViewModel() {
+    val mostRecentYear = photoCategoryRepository.getMostRecentYear()
+
     fun handleAuthorizeCallback(intent: Intent) {
         authService.completeAuthorization(intent)
     }
@@ -118,6 +120,8 @@ class MainViewModel @Inject constructor(
                     Timber.i("User authorized - fetching categories")
                     photoCategoryRepository.getYears().collect {}
                 }
+
+            photoCategoryRepository.getNewCategories()
         }
     }
 }

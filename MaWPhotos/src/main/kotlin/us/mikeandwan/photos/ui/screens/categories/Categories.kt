@@ -14,7 +14,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.CategoryPreference
 import us.mikeandwan.photos.domain.models.PhotoCategory
@@ -23,13 +25,23 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.toImageGridItem
 
 const val CategoriesRoute = "categories"
+private const val yearArg = "year"
 
 fun NavGraphBuilder.categoriesScreen(
     onNavigateToCategory: (PhotoCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit
 ) {
-    composable(CategoriesRoute) {
+    composable(
+        route = "$CategoriesRoute/{$yearArg}",
+        arguments = listOf(
+            navArgument(yearArg) { type = NavType.IntType }
+        )
+    ) { backStackEntry ->
         val vm: CategoriesViewModel = hiltViewModel()
+        val year = backStackEntry.arguments?.getInt(yearArg) ?: 0
+
+        vm.loadCategories(year)
+
         val categories by vm.categories.collectAsStateWithLifecycle()
         val preferences by vm.preferences.collectAsStateWithLifecycle()
 
@@ -43,6 +55,10 @@ fun NavGraphBuilder.categoriesScreen(
             onRefresh = { vm.onRefreshCategories() }
         )
     }
+}
+
+fun NavController.buildCategoriesRoute(year: Int): String {
+    return "${CategoriesRoute}/${year}"
 }
 
 fun NavController.navigateToCategories() {
