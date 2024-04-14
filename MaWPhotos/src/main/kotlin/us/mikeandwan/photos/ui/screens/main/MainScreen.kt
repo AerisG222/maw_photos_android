@@ -18,15 +18,18 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigationrail.NavigationRail
@@ -64,11 +67,17 @@ fun MainScreen() {
     val context = LocalContext.current
     val activity = context.findActivity()
 
+    val navArea by navController.currentBackStackEntryFlow.map {
+        if(it.destination.route == "login") NavigationArea.Login
+        else NavigationArea.Category
+    }.collectAsStateWithLifecycle(initialValue = NavigationArea.Category)
+
     LaunchedEffect(Unit) {
         handleIntent(activity?.intent ?: Intent(), vm, navController)
     }
 
     ModalNavigationDrawer(
+        gesturesEnabled = navArea != NavigationArea.Login,
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
@@ -105,10 +114,12 @@ fun MainScreen() {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                TopBar(
-                    scrollBehavior,
-                    onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
-                )
+                if(navArea != NavigationArea.Login) {
+                    TopBar(
+                        scrollBehavior,
+                        onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
+                    )
+                }
             },
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
