@@ -9,19 +9,25 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.theme.AppTheme
-import us.mikeandwan.photos.ui.toImageGridItem
 
 const val CategoryRoute = "category"
 private const val categoryIdArg = "categoryId"
 
+fun buildTitle(category: PhotoCategory?): String {
+    return when(category) {
+        null -> ""
+        else -> category.name
+    }
+}
+
 fun NavGraphBuilder.categoryScreen(
-    onNavigateToPhoto: (Int) -> Unit
+    onNavigateToPhoto: (Int) -> Unit,
+    updateTopBar : (Boolean, Boolean, String) -> Unit
 ) {
     composable(
         route = "$CategoryRoute/{$categoryIdArg}",
@@ -30,12 +36,15 @@ fun NavGraphBuilder.categoryScreen(
         )
     ) { backStackEntry ->
         val vm: CategoryViewModel = hiltViewModel()
-
         val categoryId = backStackEntry.arguments?.getInt(categoryIdArg) ?: 0
         vm.loadCategory(categoryId)
+        vm.loadPhotos(categoryId)
 
+        val category by vm.category.collectAsStateWithLifecycle()
         val photos by vm.photos.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
+
+        updateTopBar(true, true, buildTitle(category))
 
         CategoryScreen(
             photos,

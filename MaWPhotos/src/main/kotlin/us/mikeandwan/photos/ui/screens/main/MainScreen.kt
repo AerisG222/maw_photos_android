@@ -19,6 +19,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -72,8 +73,18 @@ fun MainScreen() {
         else NavigationArea.Category
     }.collectAsStateWithLifecycle(initialValue = NavigationArea.Category)
 
+    val (topBarDoShow, setTopBarDoShow) = remember { mutableStateOf(true) }
+    val (topBarTitle, setTopBarTitle) = remember { mutableStateOf("") }
+    val (topBarShowAppIcon, setTopBarShowAppIcon) = remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         handleIntent(activity?.intent ?: Intent(), vm, navController)
+    }
+
+    fun updateTopBar(show: Boolean, showAppIcon: Boolean, title: String) {
+        setTopBarDoShow(show)
+        setTopBarShowAppIcon(showAppIcon)
+        setTopBarTitle(title)
     }
 
     ModalNavigationDrawer(
@@ -114,10 +125,13 @@ fun MainScreen() {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                if(navArea != NavigationArea.Login) {
+                if(topBarDoShow) {
                     TopBar(
                         scrollBehavior,
+                        title = topBarTitle,
+                        showAppIcon = topBarShowAppIcon,
                         onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
+                        onBackClicked = { navController.popBackStack() },
                     )
                 }
             },
@@ -130,25 +144,36 @@ fun MainScreen() {
                 navController = navController,
                 startDestination = CategoriesRoute
             ) {
-                loginScreen()
-                aboutScreen()
+                loginScreen(
+                    updateTopBar = ::updateTopBar
+                )
+                aboutScreen(
+                    updateTopBar = ::updateTopBar
+                )
                 categoriesScreen(
+                    updateTopBar = ::updateTopBar,
                     onNavigateToCategory = { navController.navigateToCategory(it.id) }
                 )
                 categoryScreen(
+                    updateTopBar = ::updateTopBar,
                     onNavigateToPhoto = { navController.navigateToPhoto(it) }
                 )
                 photoScreen()
                 randomScreen(
+                    updateTopBar = ::updateTopBar,
                     onNavigateToPhoto = { navController.navigateToPhoto(it) }
                 )
                 searchScreen(
+                    updateTopBar = ::updateTopBar,
                     onNavigateToCategory = { navController.navigateToCategory(it.id) }
                 )
                 settingsScreen(
+                    updateTopBar = ::updateTopBar,
                     onNavigateToLogin = { navController.navigateToLogin() }
                 )
-                uploadScreen()
+                uploadScreen(
+                    updateTopBar = ::updateTopBar
+                )
             }
         }
     }

@@ -29,7 +29,8 @@ import us.mikeandwan.photos.ui.toImageGridItem
 const val SearchRoute = "search"
 
 fun NavGraphBuilder.searchScreen(
-    onNavigateToCategory: (PhotoCategory) -> Unit
+    onNavigateToCategory: (PhotoCategory) -> Unit,
+    updateTopBar : (Boolean, Boolean, String) -> Unit
 ) {
     composable(SearchRoute) {
         val vm: SearchViewModel = hiltViewModel()
@@ -38,6 +39,8 @@ fun NavGraphBuilder.searchScreen(
         val totalFound by vm.totalFound.collectAsStateWithLifecycle()
         val displayType by vm.displayType.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
+
+        updateTopBar(true, true, "Search")
 
         SearchScreen(
             results,

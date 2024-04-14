@@ -9,6 +9,7 @@ import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.PhotoPreferenceRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.toImageGridItem
 import javax.inject.Inject
@@ -18,6 +19,9 @@ class CategoryViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
     photoPreferenceRepository: PhotoPreferenceRepository
 ) : ViewModel() {
+    private val _category = MutableStateFlow<PhotoCategory?>(null)
+    val category = _category.asStateFlow()
+
     private val _photos = MutableStateFlow<List<ImageGridItem>>(emptyList())
     val photos = _photos.asStateFlow()
 
@@ -26,6 +30,14 @@ class CategoryViewModel @Inject constructor (
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Unspecified)
 
     fun loadCategory(categoryId: Int) {
+        viewModelScope.launch {
+            photoCategoryRepository
+                .getCategory(categoryId)
+                .collect { _category.value = it }
+        }
+    }
+
+    fun loadPhotos(categoryId: Int) {
         viewModelScope.launch {
             photoCategoryRepository
                 .getPhotos(categoryId)

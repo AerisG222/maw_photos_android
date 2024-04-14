@@ -31,11 +31,14 @@ import us.mikeandwan.photos.R
 
 const val AboutRoute = "about"
 
-fun NavGraphBuilder.aboutScreen() {
+fun NavGraphBuilder.aboutScreen(
+    updateTopBar : (Boolean, Boolean, String) -> Unit
+) {
     composable(AboutRoute) {
         val vm: AboutViewModel = hiltViewModel()
-
         val history by vm.history.collectAsStateWithLifecycle()
+
+        updateTopBar(true, false, "About")
 
         AboutScreen(
             vm.version,

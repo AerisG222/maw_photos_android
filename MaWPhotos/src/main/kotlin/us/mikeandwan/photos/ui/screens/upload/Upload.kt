@@ -21,11 +21,14 @@ import java.io.File
 
 const val UploadRoute = "upload"
 
-fun NavGraphBuilder.uploadScreen() {
+fun NavGraphBuilder.uploadScreen(
+    updateTopBar : (Boolean, Boolean, String) -> Unit
+) {
     composable(UploadRoute) {
         val vm: UploadViewModel = hiltViewModel()
-
         val files by vm.filesToUpload.collectAsStateWithLifecycle()
+
+        updateTopBar(true, false, "Upload")
 
         UploadScreen(
             files

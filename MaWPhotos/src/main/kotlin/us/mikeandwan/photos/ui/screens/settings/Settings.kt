@@ -26,7 +26,8 @@ import us.mikeandwan.photos.domain.models.GridThumbnailSize
 const val SettingsRoute = "settings"
 
 fun NavGraphBuilder.settingsScreen(
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    updateTopBar : (Boolean, Boolean, String) -> Unit
 ) {
     composable(SettingsRoute) {
         val viewModel: SettingsViewModel = hiltViewModel()
@@ -46,6 +47,8 @@ fun NavGraphBuilder.settingsScreen(
         val searchQueryCount by viewModel.searchQueryCount.collectAsStateWithLifecycle()
         val searchDisplayType by viewModel.searchDisplayType.collectAsStateWithLifecycle()
         val searchThumbnailSize by viewModel.searchThumbnailSize.collectAsStateWithLifecycle()
+
+        updateTopBar(true, false, "Settings")
 
         SettingsScreen(
             notificationDoNotify,

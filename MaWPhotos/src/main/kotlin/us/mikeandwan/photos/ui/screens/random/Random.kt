@@ -17,13 +17,16 @@ import us.mikeandwan.photos.ui.toImageGridItem
 const val RandomRoute = "random"
 
 fun NavGraphBuilder.randomScreen(
-    onNavigateToPhoto: (Int) -> Unit
+    onNavigateToPhoto: (Int) -> Unit,
+    updateTopBar : (Boolean, Boolean, String) -> Unit
 ) {
     composable(RandomRoute) {
         val vm: RandomViewModel = hiltViewModel()
 
         val photos by vm.photos.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
+
+        updateTopBar(true, true, "Random")
 
         RandomScreen(
             photos,

@@ -11,7 +11,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
@@ -19,7 +18,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 
@@ -27,14 +25,11 @@ import us.mikeandwan.photos.R
 @Composable
 fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
+    showAppIcon: Boolean,
+    title: String,
     onExpandNavMenu: () -> Unit,
-    viewModel: TopBarViewModel = hiltViewModel()
+    onBackClicked: () -> Unit
 ) {
-    val showAppIcon = viewModel.showAppIcon.collectAsState()
-    val toolbarTitle = viewModel.toolbarTitle.collectAsState()
-    val showSearch = viewModel.showSearch.collectAsState()
-    val searchTerm = viewModel.searchTerm.collectAsState()
-
     TopAppBar(
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
@@ -43,19 +38,18 @@ fun TopBar(
         ),
         title = {
             Text(
-                text = toolbarTitle.value,
+                text = title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         },
         navigationIcon = {
-            if(showAppIcon.value) {
+            if(showAppIcon) {
                 AsyncImage(
                     model = R.drawable.ic_launch,
                     contentDescription = stringResource(R.string.application_menu_icon_description),
                     alignment = Alignment.Center,
                     modifier = Modifier
-                        //.align(Alignment.CenterVertically)
                         .height(56.dp)
                         .width(56.dp)
                         .padding(8.dp)
@@ -68,25 +62,13 @@ fun TopBar(
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary, blendMode = BlendMode.Modulate),
                     alignment = Alignment.Center,
                     modifier = Modifier
-                        //.align(Alignment.CenterVertically)
                         .height(56.dp)
                         .width(56.dp)
                         .padding(8.dp)
-                        .clickable {
-                            viewModel.onBackClicked()
-                        }
+                        .clickable { onBackClicked() }
                 )
             }
-        },
-//                    actions = {
-//                        IconButton(onClick = { /* do something */ }) {
-//                            Icon(
-//                                imageVector = Icons.Filled.Menu,
-//                                contentDescription = "Localized description"
-//                            )
-//                        }
-//                    },
-        //scrollBehavior = scrollBehavior,
+        }
     )
 
 //    Row(modifier = Modifier

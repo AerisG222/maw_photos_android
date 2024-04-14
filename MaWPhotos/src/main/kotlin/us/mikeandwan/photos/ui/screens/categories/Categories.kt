@@ -25,13 +25,16 @@ import us.mikeandwan.photos.ui.toImageGridItem
 const val CategoriesRoute = "categories"
 
 fun NavGraphBuilder.categoriesScreen(
-    onNavigateToCategory: (PhotoCategory) -> Unit
+    onNavigateToCategory: (PhotoCategory) -> Unit,
+    updateTopBar : (Boolean, Boolean, String) -> Unit
 ) {
     composable(CategoriesRoute) {
         val vm: CategoriesViewModel = hiltViewModel()
-
         val categories by vm.categories.collectAsStateWithLifecycle()
         val preferences by vm.preferences.collectAsStateWithLifecycle()
+
+        // todo: make year dynamic based on route details
+        updateTopBar(true, true, "2024")
 
         CategoriesScreen(
             categories = categories,

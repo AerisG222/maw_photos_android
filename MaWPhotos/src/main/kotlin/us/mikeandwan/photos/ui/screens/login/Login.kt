@@ -30,12 +30,13 @@ import us.mikeandwan.photos.authorization.AuthStatus
 const val LoginRoute = "login"
 
 fun NavGraphBuilder.loginScreen(
-
+    updateTopBar : (Boolean, Boolean, String) -> Unit
 ) {
     composable(LoginRoute) {
         val vm: LoginViewModel = hiltViewModel()
-
         val authStatus by vm.authStatus.collectAsStateWithLifecycle()
+
+        updateTopBar(false, true, "Login")
 
         LoginScreen(
             authStatus,
