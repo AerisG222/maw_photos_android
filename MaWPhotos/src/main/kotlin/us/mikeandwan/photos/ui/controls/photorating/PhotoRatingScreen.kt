@@ -22,7 +22,6 @@ import com.smarttoolfactory.ratingbar.model.RateChangeStrategy
 import com.smarttoolfactory.ratingbar.model.RatingInterval
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.ui.theme.AppTheme
 
 @Composable
 fun PhotoRatingScreen(
@@ -32,49 +31,47 @@ fun PhotoRatingScreen(
     val userRating = viewModel.userRating.collectAsState()
     val avgRating = viewModel.averageRating.collectAsState()
 
-    AppTheme {
-        Column(modifier = Modifier.fillMaxHeight()) {
-            Row(modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.frg_rating_your_rating))
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                RatingBar(
-                    itemSize = 32.dp,
-                    space = 2.dp,
-                    rating = userRating.value.toFloat(),
-                    imageVectorEmpty = ImageVector.vectorResource(R.drawable.ic_baseline_star_outline),
-                    imageVectorFilled = ImageVector.vectorResource(R.drawable.ic_star),
-                    tintEmpty = MaterialTheme.colorScheme.onPrimary,
-                    tintFilled = MaterialTheme.colorScheme.primary,
-                    rateChangeStrategy = RateChangeStrategy.InstantChange,
-                    ratingInterval = RatingInterval.Full,
-                ) { rating ->
-                    coroutineScope.launch {
-                        viewModel.setRating(rating.toInt().toShort())
-                    }
+    Column(modifier = Modifier.fillMaxHeight()) {
+        Row(modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .fillMaxWidth()
+        ) {
+            Text(text = stringResource(id = R.string.frg_rating_your_rating))
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            RatingBar(
+                itemSize = 32.dp,
+                space = 2.dp,
+                rating = userRating.value.toFloat(),
+                imageVectorEmpty = ImageVector.vectorResource(R.drawable.ic_baseline_star_outline),
+                imageVectorFilled = ImageVector.vectorResource(R.drawable.ic_star),
+                tintEmpty = MaterialTheme.colorScheme.onPrimary,
+                tintFilled = MaterialTheme.colorScheme.primary,
+                rateChangeStrategy = RateChangeStrategy.InstantChange,
+                ratingInterval = RatingInterval.Full,
+            ) { rating ->
+                coroutineScope.launch {
+                    viewModel.setRating(rating.toInt().toShort())
                 }
             }
+        }
 
-            Row(modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .fillMaxWidth()
+        Row(modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .fillMaxWidth()
+        ) {
+            Text(text = stringResource(id = R.string.frg_rating_avg_rating))
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            RatingBar(
+                rating = avgRating.value,
+                imageVectorEmpty = ImageVector.vectorResource(R.drawable.ic_baseline_star_outline),
+                imageVectorFilled = ImageVector.vectorResource(R.drawable.ic_star),
+                tintEmpty = MaterialTheme.colorScheme.onPrimary,
+                tintFilled = MaterialTheme.colorScheme.primary,
+                gestureStrategy = GestureStrategy.None
             ) {
-                Text(text = stringResource(id = R.string.frg_rating_avg_rating))
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                RatingBar(
-                    rating = avgRating.value,
-                    imageVectorEmpty = ImageVector.vectorResource(R.drawable.ic_baseline_star_outline),
-                    imageVectorFilled = ImageVector.vectorResource(R.drawable.ic_star),
-                    tintEmpty = MaterialTheme.colorScheme.onPrimary,
-                    tintFilled = MaterialTheme.colorScheme.primary,
-                    gestureStrategy = GestureStrategy.None
-                ) {
 
-                }
             }
         }
     }

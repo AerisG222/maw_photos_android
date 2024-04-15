@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.screens.photo
+package us.mikeandwan.photos.ui.controls.photopager
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -12,63 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheet
 
-const val PhotoRoute = "photo"
-private const val photoIdArg = "photoId"
-
-fun NavGraphBuilder.photoScreen(
-
-) {
-    composable("${PhotoRoute}/{$photoIdArg}") {
-        val vm: PhotoViewModel = hiltViewModel()
-
-        val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
-        val category by vm.activeCategory.collectAsStateWithLifecycle()
-        val photos by vm.photos.collectAsStateWithLifecycle()
-        val showPositionAndCount by vm.showPosition.collectAsStateWithLifecycle()
-        val showYearAndCategory by vm.showYearAndCategory.collectAsStateWithLifecycle()
-        val isSlideshowPlaying by vm.playSlideshow.collectAsStateWithLifecycle()
-        val showDetails by vm.showDetails.collectAsStateWithLifecycle()
-
-        PhotoScreen(
-            activePhotoIndex,
-            category,
-            photos,
-            showPositionAndCount,
-            showYearAndCategory,
-            isSlideshowPlaying,
-            showDetails,
-            vm::navigateToYear,
-            vm::navigateToCategory,
-            rotateLeft = { vm.rotatePhoto(-1) },
-            rotateRight = { vm.rotatePhoto(1) },
-            vm::toggleSlideshow,
-            vm::sharePhoto,
-            vm::toggleDetails
-        )
-    }
-}
-
-fun NavController.navigateToPhoto(photoId: Int) {
-    this.navigate("$PhotoRoute/{$photoIdArg}")
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PhotoScreen(
+fun PhotoPager(
     activePhotoIndex: Int,
     category: PhotoCategory?,
     photos: List<Photo>,
@@ -149,8 +103,6 @@ fun PhotoScreen(
         )
     }
 }
-
-
 
 
 //private suspend fun sharePhoto(photo: Photo) {

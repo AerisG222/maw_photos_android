@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.ui.theme.AppTheme
 
 @Composable
 fun PhotoCommentScreen(
@@ -25,38 +24,36 @@ fun PhotoCommentScreen(
     val comments = viewModel.comments.collectAsState()
     val newComment = viewModel.newComment.collectAsState()
 
-    AppTheme {
-        Column(modifier = Modifier.fillMaxHeight()) {
-            CommentTable(comments = comments.value)
+    Column(modifier = Modifier.fillMaxHeight()) {
+        CommentTable(comments = comments.value)
 
-            Row(modifier = Modifier
-                .padding(8.dp, 8.dp)
-                .fillMaxWidth()
-            ) {
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = newComment.value,
-                    singleLine = false,
-                    minLines = 3,
-                    maxLines = 3,
-                    onValueChange = {
-                        viewModel.setNewComment(it)
-                    }
-                )
-            }
-
-            Row(modifier = Modifier
-                .padding(0.dp, 0.dp, 0.dp, 8.dp)
-                .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = { viewModel.addComment() },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.frg_comment_add_comment)
-                    )
+        Row(modifier = Modifier
+            .padding(8.dp, 8.dp)
+            .fillMaxWidth()
+        ) {
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = newComment.value,
+                singleLine = false,
+                minLines = 3,
+                maxLines = 3,
+                onValueChange = {
+                    viewModel.setNewComment(it)
                 }
+            )
+        }
+
+        Row(modifier = Modifier
+            .padding(0.dp, 0.dp, 0.dp, 8.dp)
+            .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = { viewModel.addComment() },
+            ) {
+                Text(
+                    text = stringResource(id = R.string.frg_comment_add_comment)
+                )
             }
         }
     }

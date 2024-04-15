@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.screens.photo
+package us.mikeandwan.photos.ui.controls.photopager
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

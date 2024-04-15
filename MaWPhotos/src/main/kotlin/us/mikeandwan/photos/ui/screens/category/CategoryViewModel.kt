@@ -9,8 +9,8 @@ import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.PhotoPreferenceRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.toImageGridItem
 import javax.inject.Inject
 
@@ -22,8 +22,19 @@ class CategoryViewModel @Inject constructor (
     private val _category = MutableStateFlow<PhotoCategory?>(null)
     val category = _category.asStateFlow()
 
-    private val _photos = MutableStateFlow<List<ImageGridItem>>(emptyList())
+    private val _photos = MutableStateFlow<List<Photo>>(emptyList())
     val photos = _photos.asStateFlow()
+
+    val gridItems = photos
+        .map { photos -> photos.map { it.toImageGridItem() } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    private val _activePhotoId = MutableStateFlow<Int>(-1)
+    val activePhotoId = _activePhotoId.asStateFlow()
+
+    val activePhotoIndex = photos.combine(activePhotoId) { photos, activePhotoId ->
+        photos.indexOfFirst { it.id == activePhotoId }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, -1)
 
     val gridItemThumbnailSize = photoPreferenceRepository
         .getPhotoGridItemSize()
@@ -44,8 +55,11 @@ class CategoryViewModel @Inject constructor (
                 .filter { it is ExternalCallStatus.Success }
                 .map { it as ExternalCallStatus.Success }
                 .map { it.result }
-                .map { photos -> photos.map { it.toImageGridItem() } }
                 .collect { _photos.value = it }
         }
+    }
+
+    fun setActivePhotoId(photoId: Int) {
+        _activePhotoId.value = photoId
     }
 }

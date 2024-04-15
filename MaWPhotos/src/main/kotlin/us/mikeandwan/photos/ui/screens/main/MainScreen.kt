@@ -48,8 +48,6 @@ import us.mikeandwan.photos.ui.screens.category.categoryScreen
 import us.mikeandwan.photos.ui.screens.category.navigateToCategory
 import us.mikeandwan.photos.ui.screens.login.loginScreen
 import us.mikeandwan.photos.ui.screens.login.navigateToLogin
-import us.mikeandwan.photos.ui.screens.photo.navigateToPhoto
-import us.mikeandwan.photos.ui.screens.photo.photoScreen
 import us.mikeandwan.photos.ui.screens.random.navigateToRandom
 import us.mikeandwan.photos.ui.screens.random.randomScreen
 import us.mikeandwan.photos.ui.screens.search.navigateToSearch
@@ -189,12 +187,10 @@ fun MainScreen() {
                     )
                     categoryScreen(
                         updateTopBar = ::updateTopBar,
-                        onNavigateToPhoto = { navController.navigateToPhoto(it) }
                     )
-                    photoScreen()
                     randomScreen(
                         updateTopBar = ::updateTopBar,
-                        onNavigateToPhoto = { navController.navigateToPhoto(it) }
+                        onNavigateToPhoto = { navController.navigateToCategory(it) }
                     )
                     searchScreen(
                         updateTopBar = ::updateTopBar,
