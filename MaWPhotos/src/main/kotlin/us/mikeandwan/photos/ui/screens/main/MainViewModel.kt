@@ -34,6 +34,8 @@ class MainViewModel @Inject constructor(
 ): ViewModel() {
     val mostRecentYear = photoCategoryRepository.getMostRecentYear()
 
+    val years = photoCategoryRepository.getYears()
+    
     fun handleAuthorizeCallback(intent: Intent) {
         authService.completeAuthorization(intent)
     }

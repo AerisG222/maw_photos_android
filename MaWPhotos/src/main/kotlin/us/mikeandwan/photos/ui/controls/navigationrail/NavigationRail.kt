@@ -26,6 +26,8 @@ import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListMenu
 @Composable
 fun NavigationRail(
     activeArea: NavigationArea,
+    years: List<Int>,
+    activeYear: Int,
     navigateToCategories: () -> Unit,
     navigateToCategoriesByYear: (Int) -> Unit,
     navigateToSearch: () -> Unit,
@@ -138,7 +140,11 @@ fun NavigationRail(
         }
 
         Column(modifier = Modifier.fillMaxSize()) {
-            YearListMenu(onYearSelected = { year -> navigateToCategoriesByYear(year) })
+            YearListMenu(
+                years = years,
+                activeYear = activeYear,
+                onYearSelected = { year -> navigateToCategoriesByYear(year) }
+            )
         }
     }
 }

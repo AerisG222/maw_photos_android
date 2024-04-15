@@ -19,6 +19,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -69,6 +70,8 @@ fun MainScreen() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val (hasSetDefaultRoute, setHasSetDefaultRoute) = remember { mutableStateOf(false) }
 
+    val years = vm.years.collectAsStateWithLifecycle(initialValue = emptyList())
+
     val context = LocalContext.current
     val activity = context.findActivity()
 
@@ -80,6 +83,7 @@ fun MainScreen() {
     val (topBarDoShow, setTopBarDoShow) = remember { mutableStateOf(true) }
     val (topBarTitle, setTopBarTitle) = remember { mutableStateOf("") }
     val (topBarShowAppIcon, setTopBarShowAppIcon) = remember { mutableStateOf(false) }
+    val (activeYear, setActiveYear) = remember { mutableIntStateOf(years.value.firstOrNull() ?: 0) }
 
     LaunchedEffect(Unit) {
         handleIntent(activity?.intent ?: Intent(), vm, navController)
@@ -116,11 +120,14 @@ fun MainScreen() {
                 ModalDrawerSheet {
                     NavigationRail(
                         activeArea = NavigationArea.Category,
+                        years = years.value,
+                        activeYear = activeYear,
                         navigateToCategories = {
                             navController.navigateToCategories(mostRecentYear!!)
                             coroutineScope.launch { drawerState.close() }
                         },
                         navigateToCategoriesByYear = {
+                            setActiveYear(it)
                             navController.navigateToCategories(it)
                             coroutineScope.launch { drawerState.close() }
                         },
