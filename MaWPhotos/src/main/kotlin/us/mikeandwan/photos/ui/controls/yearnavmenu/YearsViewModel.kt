@@ -6,9 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ActiveIdRepository
-import us.mikeandwan.photos.domain.NavigationStateRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import javax.inject.Inject
 
@@ -16,7 +14,6 @@ import javax.inject.Inject
 class YearsViewModel @Inject constructor (
     photoCategoryRepository: PhotoCategoryRepository,
     activeIdRepository: ActiveIdRepository,
-    private val navigationStateRepository: NavigationStateRepository
 ): ViewModel() {
     val years = photoCategoryRepository
         .getYears()
@@ -27,9 +24,4 @@ class YearsViewModel @Inject constructor (
         .getActivePhotoCategoryYear()
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    fun onYearSelected(year: Int) {
-        viewModelScope.launch {
-            navigationStateRepository.requestNavigateToYear(year)
-        }
-    }
 }

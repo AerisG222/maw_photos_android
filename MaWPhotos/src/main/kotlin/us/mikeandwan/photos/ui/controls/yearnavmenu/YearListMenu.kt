@@ -8,11 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun YearListMenu(
-    viewModel: YearsViewModel = hiltViewModel()
+    viewModel: YearsViewModel = hiltViewModel(),
+    onYearSelected: (Int) -> Unit
 ) {
     val yearsState = viewModel.years.collectAsState()
     val activeYear = viewModel.activeYear.collectAsState()
@@ -22,7 +22,7 @@ fun YearListMenu(
             YearListItem(
                 year,
                 year == activeYear.value,
-                { x -> viewModel.onYearSelected(x) }
+                { x -> onYearSelected(x) }
             )
 
             if (index != yearsState.value.size - 1) {

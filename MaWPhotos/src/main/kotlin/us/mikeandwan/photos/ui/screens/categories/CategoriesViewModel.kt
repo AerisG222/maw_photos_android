@@ -12,6 +12,7 @@ import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.domain.models.PhotoCategory
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,9 +23,8 @@ class CategoriesViewModel @Inject constructor (
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(false, null))
     val refreshStatus = _refreshStatus.asStateFlow()
 
-    val categories = photoCategoryRepository
-        .getCategories()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
+    val categories = _categories.asStateFlow()
 
     val preferences = categoryPreferenceRepository
         .getCategoryPreference()
@@ -46,7 +46,7 @@ class CategoriesViewModel @Inject constructor (
                             delay(HACK_DELAY)
                         }
                         is ExternalCallStatus.Success -> {
-                            var msg = when(it.result.count()) {
+                            val msg = when(it.result.count()) {
                                 0 -> "No new categories available"
                                 1 -> "One new category loaded"
                                 else -> "${it.result.count()} categories loaded"
@@ -74,6 +74,7 @@ class CategoriesViewModel @Inject constructor (
         viewModelScope.launch {
             photoCategoryRepository
                 .getCategories(year)
+                .collect { cats -> _categories.value = cats }
         }
     }
 }

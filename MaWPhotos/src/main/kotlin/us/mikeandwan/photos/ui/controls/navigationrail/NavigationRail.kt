@@ -27,6 +27,7 @@ import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListMenu
 fun NavigationRail(
     activeArea: NavigationArea,
     navigateToCategories: () -> Unit,
+    navigateToCategoriesByYear: (Int) -> Unit,
     navigateToSearch: () -> Unit,
     navigateToRandom: () -> Unit,
     navigateToUpload: () -> Unit,
@@ -137,7 +138,7 @@ fun NavigationRail(
         }
 
         Column(modifier = Modifier.fillMaxSize()) {
-            YearListMenu()
+            YearListMenu(onYearSelected = { year -> navigateToCategoriesByYear(year) })
         }
     }
 }

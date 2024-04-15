@@ -91,6 +91,10 @@ fun MainScreen() {
         setTopBarTitle(title)
     }
 
+    val mostRecentYear by vm.mostRecentYear
+        .filter { it != null }
+        .collectAsStateWithLifecycle(initialValue = 2024)
+
     val defaultRoute by vm.mostRecentYear
         .filter { !hasSetDefaultRoute }
         .map {
@@ -113,7 +117,11 @@ fun MainScreen() {
                     NavigationRail(
                         activeArea = NavigationArea.Category,
                         navigateToCategories = {
-                            navController.navigateToCategories()
+                            navController.navigateToCategories(mostRecentYear!!)
+                            coroutineScope.launch { drawerState.close() }
+                        },
+                        navigateToCategoriesByYear = {
+                            navController.navigateToCategories(it)
                             coroutineScope.launch { drawerState.close() }
                         },
                         navigateToRandom = {

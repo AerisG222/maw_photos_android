@@ -40,13 +40,14 @@ fun NavGraphBuilder.categoriesScreen(
         val vm: CategoriesViewModel = hiltViewModel()
         val year = backStackEntry.arguments?.getInt(yearArg) ?: 0
 
-        vm.loadCategories(year)
+        LaunchedEffect(year) {
+            vm.loadCategories(year)
+        }
 
         val categories by vm.categories.collectAsStateWithLifecycle()
         val preferences by vm.preferences.collectAsStateWithLifecycle()
 
-        // todo: make year dynamic based on route details
-        updateTopBar(true, true, "2024")
+        updateTopBar(true, true, year.toString())
 
         CategoriesScreen(
             categories = categories,
@@ -61,8 +62,10 @@ fun NavController.buildCategoriesRoute(year: Int): String {
     return "${CategoriesRoute}/${year}"
 }
 
-fun NavController.navigateToCategories() {
-    this.navigate(CategoriesRoute)
+fun NavController.navigateToCategories(year: Int) {
+    navigate(buildCategoriesRoute(year)) {
+        launchSingleTop = true
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

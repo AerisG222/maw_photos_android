@@ -60,17 +60,6 @@ class PhotoCategoryRepository @Inject constructor(
             dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
         }
 
-    fun getCategories() = pcDao
-        .getCategoriesForActiveYear()
-        .map { dbList ->
-            dbList.map { dbCat -> dbCat.toDomainPhotoCategory() }
-        }
-
-    fun getCategory() = pcDao
-        .getActiveCategory()
-        .filter { it != null }
-        .map { cat -> cat!!.toDomainPhotoCategory() }
-
     fun getCategory(id: Int) = pcDao
         .getCategory(id)
         .filter { it != null }
