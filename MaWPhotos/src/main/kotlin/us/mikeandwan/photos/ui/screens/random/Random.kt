@@ -11,7 +11,6 @@ import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
-import us.mikeandwan.photos.ui.theme.AppTheme
 import us.mikeandwan.photos.ui.toImageGridItem
 
 const val RandomRoute = "random"
@@ -48,13 +47,11 @@ fun RandomScreen(
 ) {
     val gridItems = photos.map { it.toImageGridItem() }
 
-    AppTheme {
-        ImageGrid(
-            gridItems,
-            thumbSize,
-            onSelectGridItem = onPhotoClicked
-        )
-    }
+    ImageGrid(
+        gridItems,
+        thumbSize,
+        onSelectGridItem = onPhotoClicked
+    )
 }
 
 

@@ -13,7 +13,6 @@ import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
-import us.mikeandwan.photos.ui.theme.AppTheme
 
 const val CategoryRoute = "category"
 private const val categoryIdArg = "categoryId"
@@ -64,11 +63,9 @@ fun CategoryScreen(
     thumbSize: GridThumbnailSize,
     onPhotoClicked: (ImageGridItem) -> Unit
 ) {
-    AppTheme {
-        ImageGrid(
-            gridItems = photos,
-            thumbnailSize = thumbSize,
-            onSelectGridItem = onPhotoClicked
-        )
-    }
+    ImageGrid(
+        gridItems = photos,
+        thumbnailSize = thumbSize,
+        onSelectGridItem = onPhotoClicked
+    )
 }
