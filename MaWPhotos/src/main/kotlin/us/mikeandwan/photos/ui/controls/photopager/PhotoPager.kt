@@ -47,7 +47,7 @@ fun PhotoPager(
         userScrollEnabled = true,
         pageContent = {
             AsyncImage(
-                model = photos[it],
+                model = photos[it].mdUrl,
                 contentDescription = "",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
