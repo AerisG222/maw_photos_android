@@ -166,14 +166,14 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization)
 
-    // photoview
-    implementation(libs.photoview)
-
     // rating bar
     implementation(libs.compose.ratingbar)
 
     // timber
     implementation(libs.timber)
+
+    // zoomable
+    implementation(libs.zoomable)
 
     // testing
     testImplementation(libs.junit)

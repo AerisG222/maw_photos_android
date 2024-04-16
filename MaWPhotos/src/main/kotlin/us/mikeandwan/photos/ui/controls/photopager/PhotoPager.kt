@@ -16,6 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import net.engawapg.lib.zoomable.ScrollGesturePropagation
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheet
@@ -39,10 +42,10 @@ fun PhotoPager(
     toggleDetails: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { photos.size })
+    val zoomState = rememberZoomState()
 
     HorizontalPager(
         state = pagerState,
-        beyondBoundsPageCount = 2,
         contentPadding = PaddingValues(0.dp),
         userScrollEnabled = true,
         pageContent = {
@@ -52,6 +55,10 @@ fun PhotoPager(
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxSize()
+                    .zoomable(
+                        zoomState,
+                        scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
+                    )
             )
         },
         modifier = Modifier
