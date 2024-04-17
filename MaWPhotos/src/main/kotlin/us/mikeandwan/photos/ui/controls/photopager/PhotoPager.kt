@@ -43,7 +43,10 @@ fun PhotoPager(
     sharePhoto: () -> Unit,
     toggleDetails: () -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = { photos.size })
+    val pagerState = rememberPagerState(
+        pageCount = { photos.size },
+        initialPage = activePhotoIndex
+    )
     val zoomState = rememberZoomState()
 
     HorizontalPager(
