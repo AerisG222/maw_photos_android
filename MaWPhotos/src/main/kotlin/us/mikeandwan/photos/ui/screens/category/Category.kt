@@ -94,7 +94,7 @@ fun CategoryScreen(
             activePhotoIndex = activePhotoIndex,
             category = category,
             photos = photos,
-            showPositionAndCount = false,
+            showPositionAndCount = true,
             showYearAndCategory = false,
             isSlideshowPlaying = false,
             showDetails = false,

@@ -103,7 +103,10 @@ fun PhotoPager(
             .fillMaxSize()
     ) {
         if(showYearAndCategory || showPositionAndCount) {
-            Row(modifier = Modifier.fillMaxWidth()) {
+            val ha = if(showYearAndCategory) Arrangement.SpaceBetween else Arrangement.End
+
+            Row(horizontalArrangement = ha,
+                modifier = Modifier.fillMaxWidth()) {
                 if(showYearAndCategory && category != null) {
                     OverlayYearName(
                         category = category,
