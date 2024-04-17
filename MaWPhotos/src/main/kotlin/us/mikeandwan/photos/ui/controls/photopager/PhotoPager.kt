@@ -62,10 +62,9 @@ fun PhotoPager(
                         scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
                     )
                     .graphicsLayer {
-                        val pageOffset = (
-                                (pagerState.currentPage - index) + pagerState
-                                    .currentPageOffsetFraction
-                                )
+                        val pageOffset =
+                            (pagerState.currentPage - index) +
+                            pagerState.currentPageOffsetFraction
 
                         alpha = lerp(
                             start = 0.4f,
