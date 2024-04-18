@@ -13,7 +13,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import us.mikeandwan.photos.MawApplication
@@ -21,6 +23,8 @@ import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.SearchRepository
+import us.mikeandwan.photos.domain.models.SearchSource
 import us.mikeandwan.photos.workers.UploadWorker
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -31,11 +35,28 @@ class MainViewModel @Inject constructor(
     val authService: AuthService,
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val fileStorageRepository: FileStorageRepository,
+    private val searchRepository: SearchRepository,
 ): ViewModel() {
     val mostRecentYear = photoCategoryRepository.getMostRecentYear()
 
     val years = photoCategoryRepository.getYears()
-    
+
+    val recentSearchTerms = searchRepository
+        .getSearchHistory()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    fun onTermSelected(term: String) {
+        viewModelScope.launch {
+            searchRepository.performSearch(term, SearchSource.SearchMenu)
+        }
+    }
+
+    fun clearSearchHistory() {
+        viewModelScope.launch {
+            searchRepository.clearHistory()
+        }
+    }
+
     fun handleAuthorizeCallback(intent: Intent) {
         authService.completeAuthorization(intent)
     }

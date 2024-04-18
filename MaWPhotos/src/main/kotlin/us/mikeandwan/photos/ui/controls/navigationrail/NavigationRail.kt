@@ -21,12 +21,17 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.domain.models.SearchHistory
+import us.mikeandwan.photos.ui.controls.searchnavmenu.SearchListMenu
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListMenu
 
 @Composable
 fun NavigationRail(
     activeArea: NavigationArea,
     years: List<Int>,
+    recentSearchTerms: List<SearchHistory>,
+    navigateToSearchWithTerm: (String) -> Unit,
+    onClearSearchHistory: () -> Unit,
     activeYear: Int,
     navigateToCategories: () -> Unit,
     navigateToCategoriesByYear: (Int) -> Unit,
@@ -140,11 +145,21 @@ fun NavigationRail(
         }
 
         Column(modifier = Modifier.fillMaxSize()) {
-            YearListMenu(
-                years = years,
-                activeYear = activeYear,
-                onYearSelected = { year -> navigateToCategoriesByYear(year) }
-            )
+            if(activeArea == NavigationArea.Category) {
+                YearListMenu(
+                    years = years,
+                    activeYear = activeYear,
+                    onYearSelected = { year -> navigateToCategoriesByYear(year) }
+                )
+            }
+
+            if(activeArea == NavigationArea.Search) {
+                SearchListMenu(
+                    recentSearchTerms = recentSearchTerms,
+                    onTermSelected = { term -> navigateToSearchWithTerm(term) },
+                    onClearSearchHistory = { onClearSearchHistory() }
+                )
+            }
         }
     }
 }

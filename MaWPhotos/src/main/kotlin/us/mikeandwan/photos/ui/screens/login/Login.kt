@@ -26,17 +26,20 @@ import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.authorization.AuthStatus
+import us.mikeandwan.photos.domain.models.NavigationArea
 
 const val LoginRoute = "login"
 
 fun NavGraphBuilder.loginScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit
+    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    setNavArea: (NavigationArea) -> Unit
 ) {
     composable(LoginRoute) {
         val vm: LoginViewModel = hiltViewModel()
         val authStatus by vm.authStatus.collectAsStateWithLifecycle()
 
         updateTopBar(false, true, "Login")
+        setNavArea(NavigationArea.Login)
 
         LoginScreen(
             authStatus,

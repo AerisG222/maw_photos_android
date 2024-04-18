@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import java.io.File
@@ -22,13 +23,15 @@ import java.io.File
 const val UploadRoute = "upload"
 
 fun NavGraphBuilder.uploadScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit
+    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    setNavArea: (NavigationArea) -> Unit
 ) {
     composable(UploadRoute) {
         val vm: UploadViewModel = hiltViewModel()
         val files by vm.filesToUpload.collectAsStateWithLifecycle()
 
         updateTopBar(true, false, "Upload")
+        setNavArea(NavigationArea.Upload)
 
         UploadScreen(
             files

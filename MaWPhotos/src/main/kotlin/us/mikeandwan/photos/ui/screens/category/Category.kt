@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
@@ -29,7 +30,8 @@ fun buildTitle(category: PhotoCategory?): String {
 }
 
 fun NavGraphBuilder.categoryScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit
+    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    setNavArea: (NavigationArea) -> Unit
 ) {
     composable(
         route = "$CategoryRoute/{$categoryIdArg}",
@@ -54,6 +56,7 @@ fun NavGraphBuilder.categoryScreen(
         val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
 
         updateTopBar(true, true, buildTitle(category))
+        setNavArea(NavigationArea.Category)
 
         if(category != null) {
             CategoryScreen(

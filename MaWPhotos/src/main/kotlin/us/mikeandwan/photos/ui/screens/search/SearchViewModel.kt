@@ -11,6 +11,7 @@ import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.SearchSource
 import us.mikeandwan.photos.ui.toDomainPhotoCategory
 import javax.inject.Inject
 
@@ -20,9 +21,6 @@ class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     val searchPreferenceRepository: SearchPreferenceRepository
 ) : ViewModel() {
-    private val _requestNavigateToCategory = MutableStateFlow<Int?>(null)
-    val requestNavigateToCategory = _requestNavigateToCategory.asStateFlow()
-
     val searchResults = searchRepository
         .searchResults
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -68,19 +66,25 @@ class SearchViewModel @Inject constructor(
     val onCategoryClicked: (PhotoCategory) -> Unit = {
         viewModelScope.launch {
             activeIdRepository.setActivePhotoCategory(it.id)
-            _requestNavigateToCategory.value = it.id
+            //_requestNavigateToCategory.value = it.id
         }
     }
 
+    fun search(term: String) {
+        viewModelScope.launch {
+            searchRepository
+                .performSearch(
+                    query = term,
+                    searchSource = SearchSource.SearchMenu
+                )
+                .collect { }
+        }
+    }
     fun continueSearch() {
         viewModelScope.launch {
             searchRepository
                 .continueSearch()
                 .collect { }
         }
-    }
-
-    fun onNavigateComplete() {
-        _requestNavigateToCategory.value = null
     }
 }

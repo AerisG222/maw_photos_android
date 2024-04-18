@@ -22,12 +22,14 @@ import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.NavigationArea
 
 const val SettingsRoute = "settings"
 
 fun NavGraphBuilder.settingsScreen(
     onNavigateToLogin: () -> Unit,
-    updateTopBar : (Boolean, Boolean, String) -> Unit
+    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    setNavArea: (NavigationArea) -> Unit
 ) {
     composable(SettingsRoute) {
         val viewModel: SettingsViewModel = hiltViewModel()
@@ -49,6 +51,7 @@ fun NavGraphBuilder.settingsScreen(
         val searchThumbnailSize by viewModel.searchThumbnailSize.collectAsStateWithLifecycle()
 
         updateTopBar(true, false, "Settings")
+        setNavArea(NavigationArea.Settings)
 
         SettingsScreen(
             notificationDoNotify,

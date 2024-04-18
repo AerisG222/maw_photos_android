@@ -28,27 +28,26 @@ import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.models.NavigationArea
 
 const val AboutRoute = "about"
 
 fun NavGraphBuilder.aboutScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit
+    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    setNavArea: (NavigationArea) -> Unit
 ) {
     composable(AboutRoute) {
         val vm: AboutViewModel = hiltViewModel()
         val history by vm.history.collectAsStateWithLifecycle()
 
         updateTopBar(true, false, "About")
+        setNavArea(NavigationArea.About)
 
         AboutScreen(
             vm.version,
             history
         )
     }
-}
-
-fun NavController.buildAboutRoute(): String {
-    return AboutRoute
 }
 
 fun NavController.navigateToAbout() {

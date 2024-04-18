@@ -32,7 +32,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigationrail.NavigationRail
@@ -66,20 +65,17 @@ fun MainScreen() {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    val years = vm.years.collectAsStateWithLifecycle(initialValue = emptyList())
+    val years by vm.years.collectAsStateWithLifecycle(initialValue = emptyList())
+    val recentSearchTerms by vm.recentSearchTerms.collectAsStateWithLifecycle(initialValue = emptyList())
 
     val context = LocalContext.current
     val activity = context.findActivity()
 
-    val navArea by navController.currentBackStackEntryFlow.map {
-        if (it.destination.route == "login") NavigationArea.Login
-        else NavigationArea.Category
-    }.collectAsStateWithLifecycle(initialValue = NavigationArea.Category)
-
+    val (navArea, setNavArea) = remember { mutableStateOf(NavigationArea.Category) }
     val (topBarDoShow, setTopBarDoShow) = remember { mutableStateOf(true) }
     val (topBarTitle, setTopBarTitle) = remember { mutableStateOf("") }
     val (topBarShowAppIcon, setTopBarShowAppIcon) = remember { mutableStateOf(false) }
-    val (activeYear, setActiveYear) = remember { mutableIntStateOf(years.value.firstOrNull() ?: 0) }
+    val (activeYear, setActiveYear) = remember { mutableIntStateOf(years.firstOrNull() ?: 0) }
 
     LaunchedEffect(Unit) {
         handleIntent(activity?.intent ?: Intent(), vm, navController)
@@ -101,9 +97,10 @@ fun MainScreen() {
         drawerContent = {
             ModalDrawerSheet {
                 NavigationRail(
-                    activeArea = NavigationArea.Category,
-                    years = years.value,
+                    activeArea = navArea,
+                    years = years,
                     activeYear = activeYear,
+                    recentSearchTerms = recentSearchTerms,
                     navigateToCategories = {
                         navController.navigateToCategories(mostRecentYear!!)
                         coroutineScope.launch { drawerState.close() }
@@ -120,6 +117,13 @@ fun MainScreen() {
                     navigateToSearch = {
                         navController.navigateToSearch()
                         coroutineScope.launch { drawerState.close() }
+                    },
+                    navigateToSearchWithTerm = {
+                        navController.navigateToSearch(it)
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    onClearSearchHistory = {
+                        vm.clearSearchHistory()
                     },
                     navigateToSettings = {
                         navController.navigateToSettings()
@@ -167,32 +171,40 @@ fun MainScreen() {
                     }
                 )
                 loginScreen(
-                    updateTopBar = ::updateTopBar
+                    updateTopBar = ::updateTopBar,
+                    setNavArea = { setNavArea(it) }
                 )
                 aboutScreen(
-                    updateTopBar = ::updateTopBar
+                    updateTopBar = ::updateTopBar,
+                    setNavArea = { setNavArea(it) }
                 )
                 categoriesScreen(
                     updateTopBar = ::updateTopBar,
+                    setNavArea = { setNavArea(it) },
                     onNavigateToCategory = { navController.navigateToCategory(it.id) }
                 )
                 categoryScreen(
                     updateTopBar = ::updateTopBar,
+                    setNavArea = { setNavArea(it) },
                 )
                 randomScreen(
                     updateTopBar = ::updateTopBar,
-                    onNavigateToPhoto = { navController.navigateToCategory(it) }
+                    onNavigateToPhoto = { navController.navigateToCategory(it) },
+                    setNavArea = { setNavArea(it) },
                 )
                 searchScreen(
                     updateTopBar = ::updateTopBar,
-                    onNavigateToCategory = { navController.navigateToCategory(it.id) }
+                    onNavigateToCategory = { navController.navigateToCategory(it.id) },
+                    setNavArea = { setNavArea(it) },
                 )
                 settingsScreen(
                     updateTopBar = ::updateTopBar,
-                    onNavigateToLogin = { navController.navigateToLogin() }
+                    onNavigateToLogin = { navController.navigateToLogin() },
+                    setNavArea = { setNavArea(it) },
                 )
                 uploadScreen(
-                    updateTopBar = ::updateTopBar
+                    updateTopBar = ::updateTopBar,
+                    setNavArea = { setNavArea(it) },
                 )
             }
         }

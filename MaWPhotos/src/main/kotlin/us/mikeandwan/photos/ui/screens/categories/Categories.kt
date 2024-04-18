@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.CategoryPreference
+import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
@@ -29,7 +30,8 @@ private const val yearArg = "year"
 
 fun NavGraphBuilder.categoriesScreen(
     onNavigateToCategory: (PhotoCategory) -> Unit,
-    updateTopBar : (Boolean, Boolean, String) -> Unit
+    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    setNavArea: (NavigationArea) -> Unit
 ) {
     composable(
         route = "$CategoriesRoute/{$yearArg}",
@@ -48,6 +50,7 @@ fun NavGraphBuilder.categoriesScreen(
         val preferences by vm.preferences.collectAsStateWithLifecycle()
 
         updateTopBar(true, true, year.toString())
+        setNavArea(NavigationArea.Category)
 
         CategoriesScreen(
             categories = categories,

@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
@@ -17,7 +18,8 @@ const val RandomRoute = "random"
 
 fun NavGraphBuilder.randomScreen(
     onNavigateToPhoto: (Int) -> Unit,
-    updateTopBar : (Boolean, Boolean, String) -> Unit
+    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    setNavArea: (NavigationArea) -> Unit
 ) {
     composable(RandomRoute) {
         val vm: RandomViewModel = hiltViewModel()
@@ -26,6 +28,7 @@ fun NavGraphBuilder.randomScreen(
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
 
         updateTopBar(true, true, "Random")
+        setNavArea(NavigationArea.Random)
 
         RandomScreen(
             photos,
