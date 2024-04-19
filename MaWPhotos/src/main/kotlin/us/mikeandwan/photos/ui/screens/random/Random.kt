@@ -65,16 +65,3 @@ fun RandomScreen(
         onSelectGridItem = onPhotoClicked
     )
 }
-
-
-//override fun onResume() {
-//    viewModel.onResume()
-//
-//    super.onResume()
-//}
-//
-//override fun onPause() {
-//    viewModel.onPause()
-//
-//    super.onPause()
-//}

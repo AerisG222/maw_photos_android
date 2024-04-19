@@ -5,16 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.domain.ActiveIdRepository
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import javax.inject.Inject
 
 @HiltViewModel
 class RandomViewModel @Inject constructor(
-    private val activeIdRepository: ActiveIdRepository,
     private val randomPhotoRepository: RandomPhotoRepository,
     randomPreferenceRepository: RandomPreferenceRepository
 ) : ViewModel() {
@@ -25,12 +22,6 @@ class RandomViewModel @Inject constructor(
     val gridItemThumbnailSize = randomPreferenceRepository
         .getPhotoGridItemSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
-
-    val onPhotoClicked: (ImageGridItem) -> Unit = { it: ImageGridItem ->
-        viewModelScope.launch {
-            activeIdRepository.setActivePhoto(it.id)
-        }
-    }
 
     fun onResume() {
         randomPhotoRepository.setDoFetch(true)
