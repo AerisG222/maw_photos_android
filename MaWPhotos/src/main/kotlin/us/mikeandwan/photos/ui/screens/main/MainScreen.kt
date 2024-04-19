@@ -101,6 +101,14 @@ fun MainScreen() {
                     years = years,
                     activeYear = activeYear,
                     recentSearchTerms = recentSearchTerms,
+                    fetchRandomPhotos = {
+                        vm.fetchRandomPhotos(it)
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    clearRandomPhotos = {
+                        vm.clearRandomPhotos()
+                        coroutineScope.launch { drawerState.close() }
+                    },
                     navigateToCategories = {
                         navController.navigateToCategories(mostRecentYear!!)
                         coroutineScope.launch { drawerState.close() }

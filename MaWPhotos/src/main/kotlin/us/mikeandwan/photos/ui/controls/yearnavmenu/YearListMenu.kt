@@ -1,11 +1,13 @@
 package us.mikeandwan.photos.ui.controls.yearnavmenu
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun YearListMenu(
@@ -13,6 +15,8 @@ fun YearListMenu(
     activeYear: Int,
     onYearSelected: (Int) -> Unit
 ) {
+    val yearDividerModifier = Modifier.padding(16.dp, 0.dp)
+
     LazyColumn(Modifier.fillMaxSize()) {
         itemsIndexed(years) { index, year ->
             YearListItem(
@@ -22,7 +26,7 @@ fun YearListMenu(
             )
 
             if (index != years.size - 1) {
-                HorizontalDivider()
+                HorizontalDivider(modifier = yearDividerModifier)
             }
         }
     }

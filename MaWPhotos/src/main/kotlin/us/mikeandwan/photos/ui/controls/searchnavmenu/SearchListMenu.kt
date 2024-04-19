@@ -26,6 +26,8 @@ fun SearchListMenu(
     onTermSelected: (String) -> Unit,
     onClearSearchHistory: () -> Unit
 ) {
+    val termDividerModifier = Modifier.padding(16.dp, 0.dp)
+
     Column(modifier = Modifier.fillMaxSize()) {
         if(recentSearchTerms.isEmpty()) {
             Row(
@@ -48,14 +50,14 @@ fun SearchListMenu(
                     )
 
                     if (index != recentSearchTerms.size - 1) {
-                        HorizontalDivider()
+                        HorizontalDivider(modifier = termDividerModifier)
                     }
                 }
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            HorizontalDivider(modifier = Modifier.padding(0.dp, 24.dp, 0.dp, 8.dp))
+            HorizontalDivider(modifier = Modifier.padding(16.dp, 24.dp, 16.dp, 8.dp))
 
             OutlinedButton(
                 onClick = { onClearSearchHistory() },

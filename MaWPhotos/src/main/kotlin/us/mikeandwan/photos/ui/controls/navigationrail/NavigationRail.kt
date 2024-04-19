@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.SearchHistory
+import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenu
 import us.mikeandwan.photos.ui.controls.searchnavmenu.SearchListMenu
 import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListMenu
 
@@ -32,6 +33,8 @@ fun NavigationRail(
     recentSearchTerms: List<SearchHistory>,
     navigateToSearchWithTerm: (String) -> Unit,
     onClearSearchHistory: () -> Unit,
+    fetchRandomPhotos: (Int) -> Unit,
+    clearRandomPhotos: () -> Unit,
     activeYear: Int,
     navigateToCategories: () -> Unit,
     navigateToCategoriesByYear: (Int) -> Unit,
@@ -145,20 +148,28 @@ fun NavigationRail(
         }
 
         Column(modifier = Modifier.fillMaxSize()) {
-            if(activeArea == NavigationArea.Category) {
-                YearListMenu(
-                    years = years,
-                    activeYear = activeYear,
-                    onYearSelected = { year -> navigateToCategoriesByYear(year) }
-                )
-            }
-
-            if(activeArea == NavigationArea.Search) {
-                SearchListMenu(
-                    recentSearchTerms = recentSearchTerms,
-                    onTermSelected = { term -> navigateToSearchWithTerm(term) },
-                    onClearSearchHistory = { onClearSearchHistory() }
-                )
+            when(activeArea) {
+                NavigationArea.Category -> {
+                    YearListMenu(
+                        years = years,
+                        activeYear = activeYear,
+                        onYearSelected = { year -> navigateToCategoriesByYear(year) }
+                    )
+                }
+                NavigationArea.Random -> {
+                    RandomMenu(
+                        fetchRandomPhotos = fetchRandomPhotos,
+                        clearRandomPhotos = clearRandomPhotos
+                    )
+                }
+                NavigationArea.Search -> {
+                    SearchListMenu(
+                        recentSearchTerms = recentSearchTerms,
+                        onTermSelected = { term -> navigateToSearchWithTerm(term) },
+                        onClearSearchHistory = { onClearSearchHistory() }
+                    )
+                }
+                else -> { }
             }
         }
     }

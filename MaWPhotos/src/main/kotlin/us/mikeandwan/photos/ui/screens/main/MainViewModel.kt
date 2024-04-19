@@ -23,6 +23,7 @@ import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.SearchSource
 import us.mikeandwan.photos.workers.UploadWorker
@@ -36,6 +37,7 @@ class MainViewModel @Inject constructor(
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val fileStorageRepository: FileStorageRepository,
     private val searchRepository: SearchRepository,
+    private val randomPhotoRepository: RandomPhotoRepository,
 ): ViewModel() {
     val mostRecentYear = photoCategoryRepository.getMostRecentYear()
 
@@ -55,6 +57,18 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             searchRepository.clearHistory()
         }
+    }
+
+    fun fetchRandomPhotos(count: Int) {
+        viewModelScope.launch {
+            randomPhotoRepository
+                .fetch(count)
+                .collect { }
+        }
+    }
+
+    fun clearRandomPhotos() {
+        randomPhotoRepository.clear()
     }
 
     fun handleAuthorizeCallback(intent: Intent) {
