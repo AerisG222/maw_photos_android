@@ -26,7 +26,7 @@ fun CommentTable(
     val bgHead = Color.DarkGray
     val bgRow = Color.Gray
 
-    LazyColumn() {
+    LazyColumn {
         itemsIndexed(comments) { index, comment ->
             Row(modifier = Modifier
                 .fillMaxWidth()

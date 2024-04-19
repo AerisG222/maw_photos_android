@@ -82,7 +82,7 @@ fun LoginScreen(
             )
         }
 
-        Column() {
+        Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
