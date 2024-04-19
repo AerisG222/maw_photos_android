@@ -18,9 +18,6 @@ class RandomViewModel @Inject constructor(
     private val randomPhotoRepository: RandomPhotoRepository,
     randomPreferenceRepository: RandomPreferenceRepository
 ) : ViewModel() {
-    private val _requestNavigateToPhoto = MutableStateFlow<Int?>(null)
-    val requestNavigateToPhoto = _requestNavigateToPhoto.asStateFlow()
-
     val photos = randomPhotoRepository
         .photos
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -32,12 +29,7 @@ class RandomViewModel @Inject constructor(
     val onPhotoClicked: (ImageGridItem) -> Unit = { it: ImageGridItem ->
         viewModelScope.launch {
             activeIdRepository.setActivePhoto(it.id)
-            _requestNavigateToPhoto.value = it.id
         }
-    }
-
-    fun onNavigateComplete() {
-        _requestNavigateToPhoto.value = null
     }
 
     fun onResume() {

@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.screens.random
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,6 +30,14 @@ fun NavGraphBuilder.randomScreen(
 
         updateTopBar(true, true, "Random")
         setNavArea(NavigationArea.Random)
+
+        DisposableEffect(Unit) {
+            vm.onResume()
+
+            onDispose {
+                vm.onPause()
+            }
+        }
 
         RandomScreen(
             photos,
