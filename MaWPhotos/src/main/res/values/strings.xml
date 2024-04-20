@@ -55,7 +55,7 @@
 
     <!-- search -->
     <string name="fragment_search_background">Share Background</string>
-    <string name="fragment_search_no_results_found">No results found.</string>
+    <string name="fragment_search_no_results_found">No results</string>
     <string name="fragment_search_load_more">Show more</string>
 
     <!-- toolbar -->

@@ -1,5 +1,7 @@
 package us.mikeandwan.photos.ui.screens.search
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -102,44 +105,71 @@ fun SearchScreen(
                 .fillMaxSize()
         )
 
-        Text(
-            text = stringResource(id = R.string.fragment_search_no_results_found)
-        )
-    }
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        when(displayType) {
-            CategoryDisplayType.Grid -> {
-                ImageGrid(
-                    gridItems = results.map { it.toImageGridItem() },
-                    thumbnailSize = thumbSize,
-                    onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
-                )
-            }
-
-            CategoryDisplayType.List -> {
-                CategoryList(
-                    categories = results,
-                    showYear = true,
-                    onSelectCategory = onNavigateToCategory
-                )
-            }
-
-            else -> {}
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(id = R.string.fragment_search_no_results_found),
+            )
         }
     }
 
-    if(results.isNotEmpty()) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = { continueSearch() }) {
-                Text(text = stringResource(id = R.string.fragment_search_load_more))
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+        ) {
+            when (displayType) {
+                CategoryDisplayType.Grid -> {
+                    ImageGrid(
+                        gridItems = results.map { it.toImageGridItem() },
+                        thumbnailSize = thumbSize,
+                        onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
+                    )
+                }
+
+                CategoryDisplayType.List -> {
+                    CategoryList(
+                        categories = results,
+                        showYear = true,
+                        onSelectCategory = onNavigateToCategory
+                    )
+                }
+
+                else -> {}
             }
         }
 
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = results.size.toString())
-            Text(text = "/")
-            Text(text = totalFound.toString())
+        if (results.isNotEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(onClick = { continueSearch() }) {
+                        Text(text = stringResource(id = R.string.fragment_search_load_more))
+                    }
+
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(text = results.size.toString())
+                        Text(text = "/")
+                        Text(text = totalFound.toString())
+                    }
+                }
+            }
         }
     }
 }
