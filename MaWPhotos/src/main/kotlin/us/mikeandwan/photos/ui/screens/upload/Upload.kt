@@ -1,12 +1,12 @@
 package us.mikeandwan.photos.ui.screens.upload
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -30,7 +30,7 @@ fun NavGraphBuilder.uploadScreen(
         val vm: UploadViewModel = hiltViewModel()
         val files by vm.filesToUpload.collectAsStateWithLifecycle()
 
-        updateTopBar(true, false, "Upload")
+        updateTopBar(true, false, "Upload Queue")
         setNavArea(NavigationArea.Upload)
 
         UploadScreen(
@@ -47,19 +47,21 @@ fun NavController.navigateToUpload() {
 fun UploadScreen(
     files: List<File>
 ) {
-    AsyncImage(
-        model = R.drawable.ic_share,
-        contentDescription = stringResource(id = R.string.share_photo_icon_description)
-    )
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        AsyncImage(
+            model = R.drawable.ic_share,
+            contentDescription = stringResource(id = R.string.share_photo_icon_description)
+        )
+    }
 
-    ImageGrid(
-        gridItems = files.mapIndexed { id, file -> ImageGridItem(id, file.path, file) },
-        thumbnailSize = GridThumbnailSize.Medium,
-        onSelectGridItem = { }
-    )
-
-    Text(
-        modifier = Modifier.padding(8.dp),
-        text = stringResource(id = R.string.upload_queue_icon_description)
-    )
+    Box {
+        ImageGrid(
+            gridItems = files.mapIndexed { id, file -> ImageGridItem(id, file.path, file) },
+            thumbnailSize = GridThumbnailSize.Medium,
+            onSelectGridItem = { }
+        )
+    }
 }
