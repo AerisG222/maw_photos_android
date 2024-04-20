@@ -40,7 +40,7 @@ fun MenuPreferenceCard(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp, 16.dp, 16.dp, 8.dp)
+                .padding(16.dp)
         ) {
             Column {
                 Text(
@@ -52,18 +52,18 @@ fun MenuPreferenceCard(
                         .padding(bottom = 16.dp)
                 )
 
-                LazyColumn {
+                LazyColumn(Modifier.height(280.dp)) {
                     itemsIndexed(options) { index, option ->
-                        val isSelected = option == selectedValue
+                        val bgColor = when(option == selectedValue) {
+                            true -> MaterialTheme.colorScheme.primaryContainer
+                            else -> MaterialTheme.colorScheme.background
+                        }
 
                         Row(modifier = Modifier
                             .fillMaxWidth()
-                            .background(color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background)
+                            .background(color = bgColor)
                             .padding(8.dp)
-                            .clickable {
-
-                                onSelect(option)
-                            }
+                            .clickable { onSelect(option) }
                         ) {
                             Text(text = option)
                         }
