@@ -81,7 +81,7 @@ fun NavController.navigateToSearch() {
 }
 
 fun NavController.navigateToSearch(searchTerm: String) {
-    navigate("$SearchRoute/$searchTerm")
+    navigate("$SearchRoute?term=$searchTerm")
 }
 
 @Composable

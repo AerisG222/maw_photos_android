@@ -155,10 +155,13 @@ fun MainScreen() {
                 if (topBarDoShow) {
                     TopBar(
                         scrollBehavior,
+                        initialSearchTerm = "",
+                        showSearch = navArea == NavigationArea.Search,
                         title = topBarTitle,
                         showAppIcon = topBarShowAppIcon,
                         onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
                         onBackClicked = { navController.popBackStack() },
+                        onSearch = { navController.navigateToSearch(it) },
                     )
                 }
             },

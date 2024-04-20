@@ -27,9 +27,14 @@ fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     showAppIcon: Boolean,
     title: String,
+    initialSearchTerm: String,
+    showSearch: Boolean,
     onExpandNavMenu: () -> Unit,
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    onSearch: (String) -> Unit
 ) {
+
+
     TopAppBar(
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
@@ -37,11 +42,18 @@ fun TopBar(
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
-            Text(
-                text = title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            if(showSearch) {
+                SearchBar(
+                    initialSearchTerm = initialSearchTerm,
+                    onSearch = onSearch
+                )
+            } else {
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         },
         navigationIcon = {
             if(showAppIcon) {
@@ -75,31 +87,7 @@ fun TopBar(
 //        .fillMaxWidth()
 //    ) {
 //        if(showSearch.value) {
-//            TextField(
-//                value = searchTerm.value,
-//                singleLine = true,
-//                onValueChange = {
-//                    viewModel.setSearchTerm(it)
-//                },
-//                modifier = Modifier
-//                    .align(Alignment.CenterVertically)
-//                    .padding(12.dp, 0.dp)
-//            )
 //
-//            AsyncImage(
-//                model = R.drawable.ic_search,
-//                contentDescription = stringResource(R.string.search_icon_description),
-//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary, blendMode = BlendMode.Modulate),
-//                alignment = Alignment.Center,
-//                modifier = Modifier
-//                    .align(Alignment.CenterVertically)
-//                    .height(56.dp)
-//                    .width(56.dp)
-//                    .padding(0.dp, 0.dp, 16.dp, 0.dp)
-//                    .clickable {
-//                        viewModel.search()
-//                    }
-//            )
 //        } else {
 //            Text(
 //                text = toolbarTitle.value,
