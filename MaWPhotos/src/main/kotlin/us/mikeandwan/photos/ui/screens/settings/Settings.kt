@@ -1,15 +1,20 @@
 package us.mikeandwan.photos.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -118,17 +123,13 @@ fun SettingsScreen(
     val thumbnailSizeList = listOf("ExtraSmall", "Small", "Medium", "Large")
     val slideshowIntervalList = listOf("1s", "2s", "3s", "4s", "5s", "10s", "15s", "20s", "30s")
 
-    var categoryDisplayTypeMenuExpanded by remember { mutableStateOf(false) }
-    var categoryGridItemSizeMenuExpanded by remember { mutableStateOf(false) }
-    var photoSlideshowMenuExpanded by remember { mutableStateOf(false) }
-    var photoGridItemSizeMenuExpanded by remember { mutableStateOf(false) }
-    var randomSlideshowMenuExpanded by remember { mutableStateOf(false) }
-    var randomGridItemSizeMenuExpanded by remember { mutableStateOf(false) }
-    var searchQueryCountMenuExpanded by remember { mutableStateOf(false) }
-    var searchDisplayTypeMenuExpanded by remember { mutableStateOf(false) }
-    var searchGridItemSizeMenuExpanded by remember { mutableStateOf(false) }
+    val dividerModifier = Modifier.padding(8.dp, 8.dp, 8.dp, 24.dp)
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
         // --- NOTIFICATIONS ----
         Heading(stringId = R.string.pref_notifications_header)
         SwitchPreference(
@@ -141,128 +142,116 @@ fun SettingsScreen(
             isChecked = notificationDoVibrate,
             onChange = { setNotificationDoVibrate(it) }
         )
+        HorizontalDivider(modifier = dividerModifier)
 
         // --- CATEGORY LIST ----
         Heading(stringId = R.string.pref_category_display_header)
         MenuPreference(
-            expanded = categoryDisplayTypeMenuExpanded,
             labelStringId = R.string.pref_category_display_header,
             options = displayTypeList,
             selectedValue = categoryDisplayType.toString(),
-            onRequestOpen = { categoryDisplayTypeMenuExpanded = true },
             onSelect = {
-                categoryDisplayTypeMenuExpanded = false
                 setCategoryDisplayType(enumValueOf(it))
             }
         )
         MenuPreference(
-            expanded = categoryGridItemSizeMenuExpanded,
             labelStringId = R.string.grid_thumbnail_size,
             options = thumbnailSizeList,
             selectedValue = categoryThumbnailSize.toString(),
-            onRequestOpen = { categoryGridItemSizeMenuExpanded = true },
             onSelect = {
-                categoryGridItemSizeMenuExpanded = false
                 setCategoryThumbnailSize(enumValueOf(it))
             }
         )
+        HorizontalDivider(modifier = dividerModifier)
 
         // --- CATEGORY / PHOTO ----
         Heading(stringId = R.string.pref_photo_display_header)
         MenuPreference(
-            expanded = photoSlideshowMenuExpanded,
             labelStringId = R.string.pref_photo_display_slideshow_interval,
             options = slideshowIntervalList,
             selectedValue = "${photoSlideshowInterval}s",
-            onRequestOpen = { photoSlideshowMenuExpanded = true },
             onSelect = {
-                photoSlideshowMenuExpanded = false
                 setPhotoSlideshowInterval(it.substring(0, -1).toInt())
             }
         )
         MenuPreference(
-            expanded = photoGridItemSizeMenuExpanded,
             labelStringId = R.string.grid_thumbnail_size,
             options = thumbnailSizeList,
             selectedValue = photoThumbnailSize.toString(),
-            onRequestOpen = { photoGridItemSizeMenuExpanded = true },
             onSelect = {
-                photoGridItemSizeMenuExpanded = false
                 setPhotoThumbnailSize(enumValueOf(it))
             }
         )
+        HorizontalDivider(modifier = dividerModifier)
 
         // --- RANDOM ----
         Heading(stringId = R.string.pref_random_display_header)
         MenuPreference(
-            expanded = randomSlideshowMenuExpanded,
             labelStringId = R.string.pref_photo_display_slideshow_interval,
             options = slideshowIntervalList,
             selectedValue = "${randomSlideshowInterval}s",
-            onRequestOpen = { randomSlideshowMenuExpanded = true },
             onSelect = {
-                randomSlideshowMenuExpanded = false
                 setRandomSlideshowInterval(it.substring(0, -1).toInt())
             }
         )
         MenuPreference(
-            expanded = randomGridItemSizeMenuExpanded,
             labelStringId = R.string.grid_thumbnail_size,
             options = thumbnailSizeList,
             selectedValue = randomThumbnailSize.toString(),
-            onRequestOpen = { randomGridItemSizeMenuExpanded = true },
             onSelect = {
-                randomGridItemSizeMenuExpanded = false
                 setRandomThumbnailSize(enumValueOf(it))
             }
         )
+        HorizontalDivider(modifier = dividerModifier)
 
         // --- SEARCH ----
         Heading(stringId = R.string.pref_search_display_header)
         MenuPreference(
-            expanded = searchQueryCountMenuExpanded,
             labelStringId = R.string.pref_search_query_count_to_remember,
             options = listOf("5", "10", "20", "30", "50"),
             selectedValue = searchQueryCount.toString(),
-            onRequestOpen = { searchQueryCountMenuExpanded = true },
             onSelect = {
-                searchQueryCountMenuExpanded = false
                 setSearchQueryCount(it.toInt())
             }
         )
         MenuPreference(
-            expanded = searchDisplayTypeMenuExpanded,
             labelStringId = R.string.pref_category_display_header,
             options = displayTypeList,
             selectedValue = searchDisplayType.toString(),
-            onRequestOpen = { searchDisplayTypeMenuExpanded = true },
             onSelect = {
-                searchDisplayTypeMenuExpanded = false
                 setSearchDisplayType(enumValueOf(it))
             }
         )
         MenuPreference(
-            expanded = searchGridItemSizeMenuExpanded,
             labelStringId = R.string.grid_thumbnail_size,
             options = thumbnailSizeList,
             selectedValue = searchThumbnailSize.toString(),
-            onRequestOpen = { searchGridItemSizeMenuExpanded = true },
             onSelect = {
-                searchGridItemSizeMenuExpanded = false
                 setSearchThumbnailSize(enumValueOf(it))
             }
         )
+        HorizontalDivider(modifier = dividerModifier)
 
         // --- ADVANCED ----
         Heading(stringId = R.string.pref_advanced_display_header)
-        Button(onClick = logout) {
-            AsyncImage(
-                model = R.drawable.ic_logout,
-                contentDescription = stringResource(id = R.string.fragment_settings_log_out),
-                modifier = Modifier.padding(8.dp)
-            )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+        ) {
+            OutlinedButton(onClick = logout) {
+                AsyncImage(
+                    model = R.drawable.ic_logout,
+                    contentDescription = stringResource(id = R.string.fragment_settings_log_out),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .height(24.dp)
+                        .width(24.dp)
+                )
 
-            Text(text = stringResource(id = R.string.fragment_settings_log_out))
+                Text(text = stringResource(id = R.string.fragment_settings_log_out))
+            }
         }
     }
 }
