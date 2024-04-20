@@ -123,7 +123,7 @@ fun SettingsScreen(
     val thumbnailSizeList = listOf("ExtraSmall", "Small", "Medium", "Large")
     val slideshowIntervalList = listOf("1s", "2s", "3s", "4s", "5s", "10s", "15s", "20s", "30s")
 
-    val dividerModifier = Modifier.padding(8.dp, 8.dp, 8.dp, 24.dp)
+    val dividerModifier = Modifier.padding(0.dp, 8.dp, 0.dp, 24.dp)
 
     Column(
         modifier = Modifier
