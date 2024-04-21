@@ -15,16 +15,19 @@ import androidx.work.workDataOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.authorization.AuthStatus
+import us.mikeandwan.photos.domain.ErrorRepository
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.SearchRepository
+import us.mikeandwan.photos.domain.models.ErrorMessage
 import us.mikeandwan.photos.domain.models.SearchSource
 import us.mikeandwan.photos.workers.UploadWorker
 import java.io.File
@@ -38,10 +41,15 @@ class MainViewModel @Inject constructor(
     private val fileStorageRepository: FileStorageRepository,
     private val searchRepository: SearchRepository,
     private val randomPhotoRepository: RandomPhotoRepository,
+    errorRepository: ErrorRepository
 ): ViewModel() {
     val mostRecentYear = photoCategoryRepository.getMostRecentYear()
 
     val years = photoCategoryRepository.getYears()
+
+    val errorsToDisplay = errorRepository.error
+        .filter { it is ErrorMessage.Display }
+        .map { it as ErrorMessage.Display }
 
     val recentSearchTerms = searchRepository
         .getSearchHistory()
@@ -159,6 +167,8 @@ class MainViewModel @Inject constructor(
                 }
 
             photoCategoryRepository.getNewCategories()
+
+            clearFileCache()
         }
     }
 }

@@ -81,6 +81,12 @@ fun MainScreen() {
         handleIntent(activity?.intent ?: Intent(), vm, navController)
     }
 
+    LaunchedEffect(Unit) {
+        vm.errorsToDisplay.collect {
+            snackbarHostState.showSnackbar(it.message)
+        }
+    }
+
     fun updateTopBar(show: Boolean, showAppIcon: Boolean, title: String) {
         setTopBarDoShow(show)
         setTopBarShowAppIcon(showAppIcon)
