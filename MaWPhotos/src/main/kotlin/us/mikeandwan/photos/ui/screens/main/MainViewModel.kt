@@ -28,7 +28,6 @@ import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.ErrorMessage
-import us.mikeandwan.photos.domain.models.SearchSource
 import us.mikeandwan.photos.workers.UploadWorker
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -54,12 +53,6 @@ class MainViewModel @Inject constructor(
     val recentSearchTerms = searchRepository
         .getSearchHistory()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-    fun onTermSelected(term: String) {
-        viewModelScope.launch {
-            searchRepository.performSearch(term, SearchSource.SearchMenu)
-        }
-    }
 
     fun clearSearchHistory() {
         viewModelScope.launch {
