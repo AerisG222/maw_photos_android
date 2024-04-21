@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun YearListItem(
@@ -15,16 +16,23 @@ fun YearListItem(
     onYearSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val weight = when(isActive) {
+        true -> FontWeight.Bold
+        false -> FontWeight.Normal
+    }
+
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
         TextButton(
             onClick = { onYearSelected(year) },
-            modifier = modifier.fillMaxWidth(),
-            enabled = !isActive
+            modifier = modifier.fillMaxWidth()
         ) {
-            Text(text = year.toString())
+            Text(
+                text = year.toString(),
+                fontWeight = weight
+            )
         }
     }
 }
