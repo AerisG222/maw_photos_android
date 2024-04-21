@@ -24,7 +24,7 @@ fun Heading (
         Text(
             text = stringResource(id = stringId),
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.secondary
         )
     }
 }

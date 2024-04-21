@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.screens.settings
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,12 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -123,7 +128,7 @@ fun SettingsScreen(
     val thumbnailSizeList = listOf("ExtraSmall", "Small", "Medium", "Large")
     val slideshowIntervalList = listOf("1s", "2s", "3s", "4s", "5s", "10s", "15s", "20s", "30s")
 
-    val dividerModifier = Modifier.padding(0.dp, 8.dp, 0.dp, 24.dp)
+    val dividerModifier = Modifier.padding(0.dp, 24.dp, 0.dp, 0.dp)
 
     Column(
         modifier = Modifier
@@ -240,17 +245,33 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
-            OutlinedButton(onClick = logout) {
+            OutlinedButton(
+                onClick = logout,
+                colors = ButtonColors(
+                    MaterialTheme.colorScheme.surface,
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.surface,
+                    MaterialTheme.colorScheme.onSurface
+                ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+            ) {
                 AsyncImage(
                     model = R.drawable.ic_logout,
                     contentDescription = stringResource(id = R.string.fragment_settings_log_out),
+                    colorFilter = ColorFilter.tint(
+                        color = MaterialTheme.colorScheme.primary,
+                        blendMode = BlendMode.Modulate
+                    ),
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(4.dp, 4.dp, 12.dp, 4.dp)
                         .height(24.dp)
                         .width(24.dp)
                 )
 
-                Text(text = stringResource(id = R.string.fragment_settings_log_out))
+                Text(
+                    text = stringResource(id = R.string.fragment_settings_log_out),
+                    modifier = Modifier.padding(0.dp, 4.dp, 4.dp, 4.dp)
+                )
             }
         }
     }
