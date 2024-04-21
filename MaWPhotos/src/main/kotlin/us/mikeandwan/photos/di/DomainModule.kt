@@ -59,15 +59,6 @@ class DomainModule {
 
     @Provides
     @Singleton
-    fun provideNavigationStateRepository(
-        activeIdRepository: ActiveIdRepository,
-        photoCategoryRepository: PhotoCategoryRepository
-    ): NavigationStateRepository {
-        return NavigationStateRepository(activeIdRepository, photoCategoryRepository)
-    }
-
-    @Provides
-    @Singleton
     fun provideFileStorageRepository(
         application: Application
     ): FileStorageRepository {
