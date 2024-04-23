@@ -12,7 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -37,8 +42,6 @@ fun PhotoPager(
     showDetails: Boolean,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit,
-    rotateLeft: () -> Unit,
-    rotateRight: () -> Unit,
     toggleSlideshow: () -> Unit,
     sharePhoto: () -> Unit,
     toggleDetails: () -> Unit
@@ -48,54 +51,78 @@ fun PhotoPager(
         initialPage = activePhotoIndex
     )
     val zoomState = rememberZoomState()
+    val rotationDictionary = remember { HashMap<Int,Float>() }
+    val (activeRotation, setActiveRotation) = remember { mutableFloatStateOf(0f) }
+
+    fun getRotationForPage(page: Int): Float {
+        return when(rotationDictionary.containsKey(page)) {
+            true -> rotationDictionary[page]!!
+            false -> 0f
+        }
+    }
+
+    fun updateRotation(deg: Float) {
+        val page = pagerState.currentPage
+        val currRotation = getRotationForPage(page)
+        val newRotation = currRotation + deg
+
+        rotationDictionary[page] = newRotation
+        setActiveRotation(newRotation)
+    }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            setActiveRotation(getRotationForPage(page))
+        }
+    }
 
     HorizontalPager(
         state = pagerState,
         contentPadding = PaddingValues(0.dp),
         userScrollEnabled = true,
-        pageContent = { index ->
-            AsyncImage(
-                model = photos[index].mdUrl,
-                contentDescription = "",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .zoomable(
-                        zoomState,
-                        scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
-                    )
-                    .graphicsLayer {
-                        val pageOffset =
-                            (pagerState.currentPage - index) +
-                            pagerState.currentPageOffsetFraction
-
-                        alpha = lerp(
-                            start = 0.4f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                        )
-
-                        cameraDistance = 8 * density
-                        rotationY = lerp(
-                            start = 0f,
-                            stop = 40f,
-                            fraction = pageOffset.coerceIn(-1f, 1f),
-                        )
-
-                        lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                        ).also { scale ->
-                            scaleX = scale
-                            scaleY = scale
-                        }
-                    }
-            )
-        },
         modifier = Modifier
             .fillMaxSize()
-    )
+    ) { index ->
+        AsyncImage(
+            model = photos[index].mdUrl,
+            contentDescription = "",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .fillMaxSize()
+                .zoomable(
+                    zoomState,
+                    scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
+                )
+                .graphicsLayer {
+                    val pageOffset =
+                        (pagerState.currentPage - index) +
+                            pagerState.currentPageOffsetFraction
+
+                    alpha = lerp(
+                        start = 0.4f,
+                        stop = 1f,
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                    )
+
+                    cameraDistance = 8 * density
+                    rotationY = lerp(
+                        start = 0f,
+                        stop = 40f,
+                        fraction = pageOffset.coerceIn(-1f, 1f),
+                    )
+
+                    lerp(
+                        start = 0.5f,
+                        stop = 1f,
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                    ).also { scale ->
+                        scaleX = scale
+                        scaleY = scale
+                    }
+                }
+                .rotate(activeRotation)
+        )
+    }
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -130,8 +157,8 @@ fun PhotoPager(
         ) {
             ButtonBar(
                 isSlideshowPlaying = isSlideshowPlaying,
-                onRotateLeft = rotateLeft,
-                onRotateRight = rotateRight,
+                onRotateLeft = { updateRotation(-90f) },
+                onRotateRight = { updateRotation(90f) },
                 onToggleSlideshow = toggleSlideshow,
                 onShare = sharePhoto,
                 onViewDetails = toggleDetails
@@ -145,6 +172,8 @@ fun PhotoPager(
         )
     }
 }
+
+
 
 
 //private suspend fun sharePhoto(photo: Photo) {

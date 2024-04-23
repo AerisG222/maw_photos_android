@@ -103,8 +103,6 @@ fun CategoryScreen(
             showDetails = false,
             navigateToYear = { },
             navigateToCategory = { },
-            rotateLeft = { },
-            rotateRight = { },
             toggleSlideshow = { },
             sharePhoto = { },
             toggleDetails = { }
