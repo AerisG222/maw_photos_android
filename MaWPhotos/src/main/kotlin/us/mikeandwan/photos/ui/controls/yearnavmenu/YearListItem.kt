@@ -1,13 +1,16 @@
 package us.mikeandwan.photos.ui.controls.yearnavmenu
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun YearListItem(
@@ -16,14 +19,22 @@ fun YearListItem(
     onYearSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val weight = when(isActive) {
-        true -> FontWeight.Bold
-        false -> FontWeight.Normal
+    // https://stackoverflow.com/a/75062699
+    val bgColor = when(isActive) {
+        true -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+    }
+
+    val textColor = when(isActive) {
+        true -> MaterialTheme.colorScheme.onPrimary
+        else -> MaterialTheme.colorScheme.onSurface
     }
 
     Row(
-        modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .background(color = bgColor)
+            .fillMaxWidth()
     ) {
         TextButton(
             onClick = { onYearSelected(year) },
@@ -31,7 +42,7 @@ fun YearListItem(
         ) {
             Text(
                 text = year.toString(),
-                fontWeight = weight
+                color = textColor
             )
         }
     }
