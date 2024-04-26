@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.ui.screens.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,17 +54,29 @@ fun MenuPreferenceCard(
                 LazyColumn(Modifier.height(280.dp)) {
                     itemsIndexed(options) { index, option ->
                         val bgColor = when(option == selectedValue) {
-                            true -> MaterialTheme.colorScheme.primaryContainer
+                            true -> MaterialTheme.colorScheme.primary
                             else -> MaterialTheme.colorScheme.background
+                        }
+
+                        val textColor = when(option == selectedValue) {
+                            true -> MaterialTheme.colorScheme.onPrimary
+                            else -> MaterialTheme.colorScheme.onBackground
                         }
 
                         Row(modifier = Modifier
                             .fillMaxWidth()
                             .background(color = bgColor)
                             .padding(8.dp)
-                            .clickable { onSelect(option) }
                         ) {
-                            Text(text = option)
+                            TextButton(
+                                onClick = { onSelect(option) },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = option,
+                                    color = textColor
+                                )
+                            }
                         }
 
                         if (index != options.size - 1) {
