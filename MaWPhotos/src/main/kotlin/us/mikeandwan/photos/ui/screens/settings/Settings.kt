@@ -176,7 +176,7 @@ fun SettingsScreen(
             options = slideshowIntervalList,
             selectedValue = "${photoSlideshowInterval}s",
             onSelect = {
-                setPhotoSlideshowInterval(it.substring(0, -1).toInt())
+                setPhotoSlideshowInterval(it.substring(0, it.length - 1).toInt())
             }
         )
         MenuPreference(
@@ -196,7 +196,7 @@ fun SettingsScreen(
             options = slideshowIntervalList,
             selectedValue = "${randomSlideshowInterval}s",
             onSelect = {
-                setRandomSlideshowInterval(it.substring(0, -1).toInt())
+                setRandomSlideshowInterval(it.substring(0, it.length - 1).toInt())
             }
         )
         MenuPreference(
