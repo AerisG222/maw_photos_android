@@ -27,6 +27,7 @@ import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.ui.controls.logo.Logo
 
 const val LoginRoute = "login"
 
@@ -84,6 +85,15 @@ fun LoginScreen(
 
         Column {
             Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 0.dp, 0.dp, 32.dp)
+            ) {
+                Logo()
+            }
+
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -103,15 +113,6 @@ fun LoginScreen(
                     fontFamily = tangerine,
                 )
             }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(id = R.string.activity_login_instructions),
-            )
         }
 
         Row(

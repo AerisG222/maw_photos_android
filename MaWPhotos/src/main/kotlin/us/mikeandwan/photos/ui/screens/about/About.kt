@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,10 +23,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import coil.compose.AsyncImage
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.ui.controls.logo.Logo
 
 const val AboutRoute = "about"
 
@@ -71,11 +69,7 @@ fun AboutScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            AsyncImage(
-                model = R.drawable.ic_launch,
-                contentDescription = stringResource(id = R.string.logo_description),
-                modifier = Modifier.size(96.dp)
-            )
+            Logo()
         }
 
         Row(
