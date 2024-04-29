@@ -203,6 +203,7 @@ fun MainScreen() {
                 categoryScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
+                    navigateToPhoto = { categoryId, photoId -> navController.navigateToCategory(categoryId, photoId) }
                 )
                 randomScreen(
                     updateTopBar = ::updateTopBar,

@@ -31,10 +31,11 @@ fun buildTitle(category: PhotoCategory?): String {
 
 fun NavGraphBuilder.categoryScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
-    setNavArea: (NavigationArea) -> Unit
+    setNavArea: (NavigationArea) -> Unit,
+    navigateToPhoto: (categoryId: Int, photoId: Int) -> Unit
 ) {
     composable(
-        route = "$CategoryRoute/{$categoryIdArg}",
+        route = "$CategoryRoute/{$categoryIdArg}?photoId={$photoIdArg}",
         arguments = listOf(
             navArgument(categoryIdArg) { type = NavType.IntType },
             navArgument(photoIdArg) { type = NavType.IntType; defaultValue = -1 }
@@ -42,6 +43,11 @@ fun NavGraphBuilder.categoryScreen(
     ) { backStackEntry ->
         val vm: CategoryViewModel = hiltViewModel()
         val categoryId = backStackEntry.arguments?.getInt(categoryIdArg) ?: -1
+        val photoId = backStackEntry.arguments?.getInt(photoIdArg) ?: -1
+
+        if(photoId > 0) {
+            vm.setActivePhotoId(photoId)
+        }
 
         LaunchedEffect(categoryId) {
             vm.loadCategory(categoryId)
@@ -66,14 +72,18 @@ fun NavGraphBuilder.categoryScreen(
                 photos,
                 activePhotoId,
                 activePhotoIndex,
-                onPhotoClicked = { vm.setActivePhotoId(it.id) }
+                onPhotoClicked = { navigateToPhoto(categoryId, it.id) }
             )
         }
     }
 }
 
-fun NavController.navigateToCategory(categoryId: Int) {
-    this.navigate("$CategoryRoute/$categoryId")
+fun NavController.navigateToCategory(categoryId: Int, photoId: Int? = null) {
+    if(photoId == null) {
+        this.navigate("$CategoryRoute/$categoryId")
+    } else {
+        this.navigate("$CategoryRoute/$categoryId?$photoIdArg=$photoId")
+    }
 }
 
 @Composable

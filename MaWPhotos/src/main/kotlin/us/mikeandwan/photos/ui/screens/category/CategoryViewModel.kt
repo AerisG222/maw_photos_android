@@ -41,6 +41,10 @@ class CategoryViewModel @Inject constructor (
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Unspecified)
 
     fun loadCategory(categoryId: Int) {
+        if(category.value?.id == categoryId) {
+            return
+        }
+
         viewModelScope.launch {
             photoCategoryRepository
                 .getCategory(categoryId)
@@ -49,6 +53,10 @@ class CategoryViewModel @Inject constructor (
     }
 
     fun loadPhotos(categoryId: Int) {
+        if(category.value?.id == categoryId) {
+            return
+        }
+
         viewModelScope.launch {
             photoCategoryRepository
                 .getPhotos(categoryId)
