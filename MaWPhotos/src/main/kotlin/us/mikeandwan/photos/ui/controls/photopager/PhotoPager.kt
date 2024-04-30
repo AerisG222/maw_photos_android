@@ -42,6 +42,7 @@ fun PhotoPager(
     showDetails: Boolean,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit,
+    updateCurrentPhoto: (photoId: Int) -> Unit,
     toggleSlideshow: () -> Unit,
     sharePhoto: () -> Unit,
     toggleDetails: () -> Unit
@@ -73,6 +74,7 @@ fun PhotoPager(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             setActiveRotation(getRotationForPage(page))
+            updateCurrentPhoto(photos[page].id)
         }
     }
 

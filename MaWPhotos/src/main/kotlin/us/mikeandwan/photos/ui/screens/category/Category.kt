@@ -45,13 +45,17 @@ fun NavGraphBuilder.categoryScreen(
         val categoryId = backStackEntry.arguments?.getInt(categoryIdArg) ?: -1
         val photoId = backStackEntry.arguments?.getInt(photoIdArg) ?: -1
 
-        if(photoId > 0) {
-            vm.setActivePhotoId(photoId)
-        }
-
         LaunchedEffect(categoryId) {
             vm.loadCategory(categoryId)
             vm.loadPhotos(categoryId)
+
+            setNavArea(NavigationArea.Category)
+        }
+
+        LaunchedEffect(photoId) {
+            if(photoId > 0) {
+                vm.setActivePhotoId(photoId)
+            }
         }
 
         val category by vm.category.collectAsStateWithLifecycle()
@@ -61,8 +65,9 @@ fun NavGraphBuilder.categoryScreen(
         val activePhotoId by vm.activePhotoId.collectAsStateWithLifecycle()
         val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
 
-        updateTopBar(true, true, buildTitle(category))
-        setNavArea(NavigationArea.Category)
+        LaunchedEffect(category) {
+            updateTopBar(true, true, buildTitle(category))
+        }
 
         if(category != null) {
             CategoryScreen(
@@ -72,7 +77,8 @@ fun NavGraphBuilder.categoryScreen(
                 photos,
                 activePhotoId,
                 activePhotoIndex,
-                onPhotoClicked = { navigateToPhoto(categoryId, it.id) }
+                navigateToPhoto = navigateToPhoto,
+                updateActivePhoto = { newPhotoId -> vm.setActivePhotoId(newPhotoId) }
             )
         }
     }
@@ -94,13 +100,14 @@ fun CategoryScreen(
     photos: List<Photo>,
     activePhotoId: Int,
     activePhotoIndex: Int,
-    onPhotoClicked: (ImageGridItem) -> Unit
+    navigateToPhoto: (categoryId: Int, photoId: Int) -> Unit,
+    updateActivePhoto: (photoId: Int) -> Unit
 ) {
     if(activePhotoId <= 0) {
         ImageGrid(
             gridItems = gridItems,
             thumbnailSize = thumbSize,
-            onSelectGridItem = onPhotoClicked
+            onSelectGridItem = { photo -> navigateToPhoto(category.id, photo.id) }
         )
     } else {
         PhotoPager(
@@ -115,7 +122,8 @@ fun CategoryScreen(
             navigateToCategory = { },
             toggleSlideshow = { },
             sharePhoto = { },
-            toggleDetails = { }
+            toggleDetails = { },
+            updateCurrentPhoto = updateActivePhoto
         )
     }
 }
