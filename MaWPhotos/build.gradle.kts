@@ -176,7 +176,8 @@ dependencies {
     implementation(libs.zoomable)
 
     // testing
-    testImplementation(libs.junit)
+    val junitBom = platform(libs.junit)
+    testImplementation(junitBom)
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.test.espresso)
 }
