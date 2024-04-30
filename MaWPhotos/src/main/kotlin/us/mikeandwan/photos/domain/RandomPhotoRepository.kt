@@ -19,10 +19,7 @@ class RandomPhotoRepository @Inject constructor(
     }
 
     private var scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private var fetchNextJob: Job? = null
-
-    private val _doFetch = MutableStateFlow(false)
-    private val doFetch = _doFetch.asStateFlow()
+    private var periodicJob: PeriodicJob<ExternalCallStatus<List<Photo>>>
 
     private val slideshowDurationInMillis = randomPreferenceRepository
         .getRandomPreferences()
@@ -33,7 +30,7 @@ class RandomPhotoRepository @Inject constructor(
     val photos = _photos.asStateFlow()
 
     fun setDoFetch(doFetch: Boolean) {
-        _doFetch.value = doFetch
+        periodicJob.setDoJob(doFetch)
     }
 
     fun fetch(count: Int) = flow {
@@ -60,40 +57,11 @@ class RandomPhotoRepository @Inject constructor(
         _photos.value = emptyList()
     }
 
-    private fun scheduleFetchNext(scope: CoroutineScope, interval: Long) {
-        scope.launch {
-            fetchNextJob = launch {
-                while(true) {
-                    delay(interval)
-                    fetch(1).collect { }
-                }
-            }
-        }
-    }
-
-    private fun cancelFetchNext() {
-        fetchNextJob?.cancel("Stopping fetch", null)
-        fetchNextJob = null
-    }
-
     init {
-        scope.launch {
-            combine(
-                doFetch,
-                slideshowDurationInMillis
-            ){ doFetch, interval -> Pair(doFetch, interval) }
-            .onEach { (doFetch, interval) ->
-                if(doFetch) {
-                    if(fetchNextJob != null) {
-                        cancelFetchNext()
-                    }
-
-                    scheduleFetchNext(this, interval)
-                } else {
-                    cancelFetchNext()
-                }
-            }
-            .launchIn(this)
-        }
+        periodicJob = PeriodicJob<ExternalCallStatus<List<Photo>>>(
+            true,
+            slideshowDurationInMillis.value,
+            { fetch(1) }
+        )
     }
 }

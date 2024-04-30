@@ -33,17 +33,11 @@ class RandomViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            if(randomPhotoRepository.photos.value.isEmpty()) {
-                performInitialFetch()
-            }
+            randomPhotoRepository
+                .fetch(24)
+                .collect { }
 
             randomPhotoRepository.setDoFetch(true)
         }
-    }
-
-    private suspend fun performInitialFetch() {
-        randomPhotoRepository
-            .fetch(24)
-            .collect { }
     }
 }
