@@ -22,15 +22,19 @@ class RandomPhotoRepository @Inject constructor(
     private var periodicJob: PeriodicJob<ExternalCallStatus<List<Photo>>>
 
     private val slideshowDurationInMillis = randomPreferenceRepository
-        .getRandomPreferences()
-        .map { prefs -> (prefs.slideshowIntervalSeconds * 1000).toLong() }
+        .getSlideshowIntervalSeconds()
+        .map { seconds -> (seconds * 1000).toLong() }
         .stateIn(scope, SharingStarted.Eagerly, (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
 
     private val _photos = MutableStateFlow(emptyList<Photo>())
     val photos = _photos.asStateFlow()
 
     fun setDoFetch(doFetch: Boolean) {
-        periodicJob.setDoJob(doFetch)
+        if(doFetch) {
+            periodicJob.start()
+        } else {
+            periodicJob.stop()
+        }
     }
 
     fun fetch(count: Int) = flow {

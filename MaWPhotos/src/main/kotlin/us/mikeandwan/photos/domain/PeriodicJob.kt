@@ -8,6 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -23,12 +24,14 @@ class PeriodicJob<T>(
     private val _doJob = MutableStateFlow(doJob)
     private val _intervalMillis = MutableStateFlow(intervalMillis)
 
-    fun setDoJob(doJob: Boolean) {
-        _doJob.value = doJob
+    val doJob = _doJob.asStateFlow()
+
+    fun start() {
+        _doJob.value = true
     }
 
-    fun toggleDoJob() {
-        setDoJob(!_doJob.value)
+    fun stop() {
+        _doJob.value = false
     }
 
     fun setIntervalMillis(millis: Long) {

@@ -64,6 +64,7 @@ fun NavGraphBuilder.categoryScreen(
         val photos by vm.photos.collectAsStateWithLifecycle()
         val activePhotoId by vm.activePhotoId.collectAsStateWithLifecycle()
         val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
+        val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
 
         LaunchedEffect(category) {
             updateTopBar(true, true, buildTitle(category))
@@ -77,8 +78,10 @@ fun NavGraphBuilder.categoryScreen(
                 photos,
                 activePhotoId,
                 activePhotoIndex,
+                isSlideshowPlaying,
                 navigateToPhoto = navigateToPhoto,
-                updateActivePhoto = { newPhotoId -> vm.setActivePhotoId(newPhotoId) }
+                updateActivePhoto = { newPhotoId -> vm.setActivePhotoId(newPhotoId) },
+                toggleSlideshow = { vm.toggleSlideshow() }
             )
         }
     }
@@ -100,8 +103,10 @@ fun CategoryScreen(
     photos: List<Photo>,
     activePhotoId: Int,
     activePhotoIndex: Int,
+    isSlideshowPlaying: Boolean,
     navigateToPhoto: (categoryId: Int, photoId: Int) -> Unit,
-    updateActivePhoto: (photoId: Int) -> Unit
+    updateActivePhoto: (photoId: Int) -> Unit,
+    toggleSlideshow: () -> Unit
 ) {
     if(activePhotoId <= 0) {
         ImageGrid(
@@ -116,11 +121,11 @@ fun CategoryScreen(
             photos = photos,
             showPositionAndCount = true,
             showYearAndCategory = false,
-            isSlideshowPlaying = false,
+            isSlideshowPlaying = isSlideshowPlaying,
             showDetails = false,
             navigateToYear = { },
             navigateToCategory = { },
-            toggleSlideshow = { },
+            toggleSlideshow = toggleSlideshow,
             sharePhoto = { },
             toggleDetails = { },
             updateCurrentPhoto = updateActivePhoto

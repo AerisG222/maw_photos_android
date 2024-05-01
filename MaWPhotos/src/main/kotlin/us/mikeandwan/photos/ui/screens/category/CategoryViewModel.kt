@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import us.mikeandwan.photos.domain.PeriodicJob
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.PhotoPreferenceRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.ui.toImageGridItem
 import javax.inject.Inject
 
@@ -19,6 +21,15 @@ class CategoryViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
     photoPreferenceRepository: PhotoPreferenceRepository
 ) : ViewModel() {
+    private var slideshowJob: PeriodicJob<Unit>
+
+    private val slideshowDurationInMillis = photoPreferenceRepository
+        .getSlideshowIntervalSeconds()
+        .map { seconds -> (seconds * 1000).toLong() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
+
+    var isSlideshowPlaying: StateFlow<Boolean>
+
     private val _category = MutableStateFlow<PhotoCategory?>(null)
     val category = _category.asStateFlow()
 
@@ -65,9 +76,39 @@ class CategoryViewModel @Inject constructor (
                 .map { it.result }
                 .collect { _photos.value = it }
         }
+
+        viewModelScope.launch {
+            isSlideshowPlaying
+        }
     }
 
     fun setActivePhotoId(photoId: Int) {
         _activePhotoId.value = photoId
+    }
+
+    fun toggleSlideshow() {
+        if(slideshowJob.doJob.value) {
+            slideshowJob.stop()
+        } else {
+            slideshowJob.start()
+        }
+    }
+
+    private fun moveNext() = flow<Unit>{
+        if(activePhotoIndex.value >= photos.value.size) {
+            slideshowJob.stop()
+        } else {
+            setActivePhotoId(photos.value[activePhotoIndex.value + 1].id)
+        }
+    }
+
+    init {
+        slideshowJob = PeriodicJob(
+            false,
+            slideshowDurationInMillis.value,
+            { moveNext() }
+        )
+
+        isSlideshowPlaying = slideshowJob.doJob
     }
 }

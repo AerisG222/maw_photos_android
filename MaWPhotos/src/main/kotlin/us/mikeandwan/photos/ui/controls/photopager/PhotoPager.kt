@@ -71,6 +71,10 @@ fun PhotoPager(
         setActiveRotation(newRotation)
     }
 
+    LaunchedEffect(activePhotoIndex) {
+        pagerState.animateScrollToPage(activePhotoIndex)
+    }
+
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             setActiveRotation(getRotationForPage(page))
@@ -98,7 +102,7 @@ fun PhotoPager(
                 .graphicsLayer {
                     val pageOffset =
                         (pagerState.currentPage - index) +
-                            pagerState.currentPageOffsetFraction
+                                pagerState.currentPageOffsetFraction
 
                     alpha = lerp(
                         start = 0.4f,
