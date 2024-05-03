@@ -1,12 +1,15 @@
 package us.mikeandwan.photos.ui.controls.photopager
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 
@@ -24,41 +27,47 @@ fun ButtonBar(
     Row(
         horizontalArrangement = Arrangement.Absolute.SpaceAround,
         modifier = Modifier
+            .padding(4.dp, 2.dp)
             .fillMaxWidth()
     ) {
-        AsyncImage(
-            model = R.drawable.ic_rotate_left,
-            contentDescription = stringResource(id = R.string.rotate_left_icon_description),
-            modifier = Modifier
-                .clickable { onRotateLeft() }
-        )
+        IconButton(onClick = onRotateLeft) {
+            AsyncImage(
+                model = R.drawable.ic_rotate_left,
+                contentDescription = stringResource(id = R.string.rotate_left_icon_description),
+                modifier = Modifier.size(48.dp)
+            )
+        }
 
-        AsyncImage(
-            model = R.drawable.ic_rotate_right,
-            contentDescription = stringResource(id = R.string.rotate_right_icon_description),
-            modifier = Modifier
-                .clickable { onRotateRight() }
-        )
+        IconButton(onClick = onRotateRight) {
+            AsyncImage(
+                model = R.drawable.ic_rotate_right,
+                contentDescription = stringResource(id = R.string.rotate_right_icon_description),
+                modifier = Modifier.size(48.dp)
+            )
+        }
 
-        AsyncImage(
-            model = slideshowIcon,
-            contentDescription = stringResource(id = R.string.toggle_slideshow_icon_description),
-            modifier = Modifier
-                .clickable { onToggleSlideshow() }
-        )
+        IconButton(onClick = onToggleSlideshow) {
+            AsyncImage(
+                model = slideshowIcon,
+                contentDescription = stringResource(id = R.string.toggle_slideshow_icon_description),
+                modifier = Modifier.size(48.dp)
+            )
+        }
 
-        AsyncImage(
-            model = R.drawable.ic_share,
-            contentDescription = stringResource(id = R.string.toggle_slideshow_icon_description),
-            modifier = Modifier
-                .clickable { onShare() }
-        )
+        IconButton(onClick = onShare) {
+            AsyncImage(
+                model = R.drawable.ic_share,
+                contentDescription = stringResource(id = R.string.toggle_slideshow_icon_description),
+                modifier = Modifier.size(48.dp)
+            )
+        }
 
-        AsyncImage(
-            model = R.drawable.ic_keyboard_double_arrow_up,
-            contentDescription = stringResource(id = R.string.view_photo_details_icon_description),
-            modifier = Modifier
-                .clickable { onViewDetails() }
-        )
+        IconButton(onClick = onViewDetails) {
+            AsyncImage(
+                model = R.drawable.ic_keyboard_double_arrow_up,
+                contentDescription = stringResource(id = R.string.view_photo_details_icon_description),
+                modifier = Modifier.size(48.dp)
+            )
+        }
     }
 }
