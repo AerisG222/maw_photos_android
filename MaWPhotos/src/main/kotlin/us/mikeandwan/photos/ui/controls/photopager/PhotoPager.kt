@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
@@ -30,7 +32,7 @@ import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheet
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoPager(
     activePhotoIndex: Int,
@@ -40,6 +42,7 @@ fun PhotoPager(
     showYearAndCategory: Boolean,
     isSlideshowPlaying: Boolean,
     showDetails: Boolean,
+    sheetState: SheetState,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit,
     updateCurrentPhoto: (photoId: Int) -> Unit,
@@ -174,6 +177,7 @@ fun PhotoPager(
 
     if(showDetails) {
         PhotoDetailBottomSheet(
+            sheetState = sheetState,
             onDismissRequest = toggleDetails
         )
     }

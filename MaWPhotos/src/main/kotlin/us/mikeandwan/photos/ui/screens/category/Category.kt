@@ -1,8 +1,13 @@
 package us.mikeandwan.photos.ui.screens.category
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -95,6 +100,7 @@ fun NavController.navigateToCategory(categoryId: Int, photoId: Int? = null) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
     category: PhotoCategory,
@@ -108,6 +114,9 @@ fun CategoryScreen(
     updateActivePhoto: (photoId: Int) -> Unit,
     toggleSlideshow: () -> Unit
 ) {
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     if(activePhotoId <= 0) {
         ImageGrid(
             gridItems = gridItems,
@@ -122,12 +131,13 @@ fun CategoryScreen(
             showPositionAndCount = true,
             showYearAndCategory = false,
             isSlideshowPlaying = isSlideshowPlaying,
-            showDetails = false,
+            showDetails = showBottomSheet,
+            sheetState = sheetState,
             navigateToYear = { },
             navigateToCategory = { },
             toggleSlideshow = toggleSlideshow,
             sharePhoto = { },
-            toggleDetails = { },
+            toggleDetails = { showBottomSheet = true },
             updateCurrentPhoto = updateActivePhoto
         )
     }
