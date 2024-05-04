@@ -23,6 +23,9 @@ class CategoryViewModel @Inject constructor (
 ) : ViewModel() {
     private var slideshowJob: PeriodicJob<Unit>
 
+    private val _showDetailSheet = MutableStateFlow(false)
+    val showDetailSheet = _showDetailSheet.asStateFlow()
+
     private val slideshowDurationInMillis = photoPreferenceRepository
         .getSlideshowIntervalSeconds()
         .map { seconds -> (seconds * 1000).toLong() }
@@ -92,6 +95,10 @@ class CategoryViewModel @Inject constructor (
         } else {
             slideshowJob.start()
         }
+    }
+
+    fun toggleShowDetails() {
+        _showDetailSheet.value = !_showDetailSheet.value
     }
 
     private fun moveNext() = flow<Unit>{

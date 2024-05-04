@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
@@ -42,7 +42,6 @@ fun PhotoPager(
     showYearAndCategory: Boolean,
     isSlideshowPlaying: Boolean,
     showDetails: Boolean,
-    sheetState: SheetState,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit,
     updateCurrentPhoto: (photoId: Int) -> Unit,
@@ -50,6 +49,7 @@ fun PhotoPager(
     sharePhoto: () -> Unit,
     toggleDetails: () -> Unit
 ) {
+    val sheetState = rememberModalBottomSheetState()
     val pagerState = rememberPagerState(
         pageCount = { photos.size },
         initialPage = activePhotoIndex
