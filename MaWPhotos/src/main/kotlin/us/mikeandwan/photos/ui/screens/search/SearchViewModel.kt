@@ -19,9 +19,9 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val activeIdRepository: ActiveIdRepository,
     private val searchRepository: SearchRepository,
-    val searchPreferenceRepository: SearchPreferenceRepository
+    searchPreferenceRepository: SearchPreferenceRepository
 ) : ViewModel() {
-    val searchResults = searchRepository
+    private val searchResults = searchRepository
         .searchResults
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 

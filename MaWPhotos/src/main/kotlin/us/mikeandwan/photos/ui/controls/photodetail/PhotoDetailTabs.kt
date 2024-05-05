@@ -20,15 +20,17 @@ import us.mikeandwan.photos.ui.controls.photocomment.PhotoCommentScreen
 import us.mikeandwan.photos.ui.controls.photoexif.PhotoExifScreen
 import us.mikeandwan.photos.ui.controls.photorating.PhotoRatingScreen
 
+private object TabIndex {
+    const val RATING = 0
+    const val COMMENT = 1
+    const val EXIF = 2
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoDetailTabs() {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
-
-    val IDX_RATING = 0
-    val IDX_COMMENT = 1
-    val IDX_EXIF = 2
 
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
@@ -36,10 +38,10 @@ fun PhotoDetailTabs() {
             contentColor = MaterialTheme.colorScheme.onSurface
         ) {
             Tab(
-                selected = pagerState.currentPage == IDX_RATING,
+                selected = pagerState.currentPage == TabIndex.RATING,
                 onClick = {
                     coroutineScope.launch {
-                        pagerState.animateScrollToPage(IDX_RATING)
+                        pagerState.animateScrollToPage(TabIndex.RATING)
                     }
                 },
                 icon = {
@@ -51,10 +53,10 @@ fun PhotoDetailTabs() {
                 },
             )
             Tab(
-                selected = pagerState.currentPage == IDX_COMMENT,
+                selected = pagerState.currentPage == TabIndex.COMMENT,
                 onClick = {
                     coroutineScope.launch {
-                        pagerState.animateScrollToPage(IDX_COMMENT)
+                        pagerState.animateScrollToPage(TabIndex.COMMENT)
                     }
                 },
                 icon = {
@@ -66,10 +68,10 @@ fun PhotoDetailTabs() {
                 }
             )
             Tab(
-                selected = pagerState.currentPage == IDX_EXIF,
+                selected = pagerState.currentPage == TabIndex.EXIF,
                 onClick = {
                     coroutineScope.launch {
-                        pagerState.animateScrollToPage(IDX_EXIF)
+                        pagerState.animateScrollToPage(TabIndex.EXIF)
                     }
                 },
                 icon = {
@@ -86,14 +88,10 @@ fun PhotoDetailTabs() {
             state = pagerState,
             userScrollEnabled = false,
             pageContent = {
-                if (it == IDX_RATING) {
-                    PhotoRatingScreen()
-                }
-                if (it == IDX_COMMENT) {
-                    PhotoCommentScreen()
-                }
-                if (it == IDX_EXIF) {
-                    PhotoExifScreen()
+                when(it) {
+                    TabIndex.RATING -> PhotoRatingScreen()
+                    TabIndex.COMMENT -> PhotoCommentScreen()
+                    TabIndex.EXIF -> PhotoExifScreen()
                 }
             }
         )

@@ -68,7 +68,7 @@ class SearchRepository @Inject constructor(
         val query = searchRequest.value.query
         val position = searchResults.value.size
 
-        if(query.isNotBlank() && position >= 0 && position <= totalFound.value) {
+        if(query.isNotBlank() && position <= totalFound.value) {
             executeSearch(query, position)
                 .collect{ emit(it) }
         }

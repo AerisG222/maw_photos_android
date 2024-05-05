@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.CategoryPreferenceRepository
-import us.mikeandwan.photos.domain.ErrorRepository
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
 import us.mikeandwan.photos.domain.PhotoPreferenceRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
@@ -24,8 +23,7 @@ class SettingsViewModel @Inject constructor (
     private val notificationPreferenceRepository: NotificationPreferenceRepository,
     private val photoPreferenceRepository: PhotoPreferenceRepository,
     private val randomPreferenceRepository: RandomPreferenceRepository,
-    private val searchPreferenceRepository: SearchPreferenceRepository,
-    private val errorRepository: ErrorRepository
+    private val searchPreferenceRepository: SearchPreferenceRepository
 ): ViewModel() {
     val notificationDoNotify = notificationPreferenceRepository
         .getDoNotify()

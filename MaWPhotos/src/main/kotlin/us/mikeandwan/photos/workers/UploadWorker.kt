@@ -68,7 +68,7 @@ class UploadWorker @AssistedInject constructor(
     }
 
     private fun getValidatedFile(filename: String?): File? {
-        if (filename == null || filename.isBlank() || !File(filename).exists()) {
+        if (filename.isNullOrBlank() || !File(filename).exists()) {
             return null
         }
 

@@ -21,12 +21,12 @@ class AuthService(
     private val authorizationService: AuthorizationService,
     private val authStateManager: AuthStateManager
 ) {
-    val authClientId: String = application.resources.getString(R.string.auth_client_id)
+    private val authClientId: String = application.resources.getString(R.string.auth_client_id)
     private val authSchemeRedirect: String = application.resources.getString(R.string.auth_scheme_redirect_uri)
-    val authSchemeRedirectUri: Uri = Uri.parse(authSchemeRedirect)
+    private val authSchemeRedirectUri: Uri = Uri.parse(authSchemeRedirect)
 
     private var _authConfig: AuthorizationServiceConfiguration? = null
-    val authConfig: AuthorizationServiceConfiguration?
+    private val authConfig: AuthorizationServiceConfiguration?
         get() { return _authConfig }
 
     private val _authStatus = MutableStateFlow(if(authStateManager.current.isAuthorized) AuthStatus.Authorized else AuthStatus.RequiresAuthorization)
@@ -75,7 +75,7 @@ class AuthService(
         _authStatus.value = AuthStatus.RequiresAuthorization
     }
 
-    suspend fun clearAuthState() {
+    private suspend fun clearAuthState() {
         _authConfig = loadConfig()
 
         authStateManager.replace(AuthState(_authConfig!!))

@@ -80,7 +80,6 @@ class MainViewModel @Inject constructor(
         val mediaUri = if (Build.VERSION.SDK_INT >= 33) {
             intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
         } else {
-            @Suppress("DEPRECATION")
             intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
         }
 
@@ -93,7 +92,6 @@ class MainViewModel @Inject constructor(
         val mediaUris = if (Build.VERSION.SDK_INT >= 33) {
             intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
         } else {
-            @Suppress("DEPRECATION")
             intent.getParcelableArrayListExtra<Uri?>(Intent.EXTRA_STREAM)
         }
 
@@ -138,7 +136,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    suspend fun clearFileCache() {
+    private suspend fun clearFileCache() {
         fileStorageRepository.clearLegacyDatabase()
         fileStorageRepository.clearShareCache()
         fileStorageRepository.clearLegacyFiles()

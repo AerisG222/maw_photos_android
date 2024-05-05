@@ -47,7 +47,7 @@ class CategoryViewModel @Inject constructor (
         .map { photos -> photos.map { it.toImageGridItem() } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    private val _activePhotoId = MutableStateFlow<Int>(-1)
+    private val _activePhotoId = MutableStateFlow(-1)
     val activePhotoId = _activePhotoId.asStateFlow()
 
     val activePhotoIndex = photos.combine(activePhotoId) { photos, activePhotoId ->
@@ -124,9 +124,8 @@ class CategoryViewModel @Inject constructor (
     init {
         slideshowJob = PeriodicJob(
             false,
-            slideshowDurationInMillis.value,
-            { moveNext() }
-        )
+            slideshowDurationInMillis.value
+        ) { moveNext() }
 
         isSlideshowPlaying = slideshowJob.doJob
     }

@@ -62,10 +62,9 @@ class RandomPhotoRepository @Inject constructor(
     }
 
     init {
-        periodicJob = PeriodicJob<ExternalCallStatus<List<Photo>>>(
+        periodicJob = PeriodicJob(
             true,
-            slideshowDurationInMillis.value,
-            { fetch(1) }
-        )
+            slideshowDurationInMillis.value
+        ) { fetch(1) }
     }
 }

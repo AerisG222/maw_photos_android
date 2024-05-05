@@ -11,8 +11,4 @@ class ErrorRepository {
     fun showError(message: String) {
         _error.value = ErrorMessage.Display(message)
     }
-
-    fun errorDisplayed() {
-        _error.value = ErrorMessage.DoNotDisplay
-    }
 }

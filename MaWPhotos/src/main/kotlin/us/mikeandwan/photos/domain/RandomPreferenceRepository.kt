@@ -10,7 +10,7 @@ import javax.inject.Inject
 class RandomPreferenceRepository @Inject constructor (
     private val dao: RandomPreferenceDao
 ) {
-    fun getRandomPreferences() = dao
+    private fun getRandomPreferences() = dao
         .getRandomPreference(Constants.ID)
         .map { it.toDomainRandomPreference() }
 

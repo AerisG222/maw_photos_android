@@ -11,7 +11,7 @@ plugins {
 
 val homedir = System.getProperty("user.home")
 val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(homedir + "/.gradle/gradle.properties"))
+keystoreProperties.load(FileInputStream("$homedir/.gradle/gradle.properties"))
 
 android {
     compileSdk = 34
