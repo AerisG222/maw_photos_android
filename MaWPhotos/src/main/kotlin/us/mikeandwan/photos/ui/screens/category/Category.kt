@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.screens.category
 
+import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,6 +18,7 @@ import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
+import java.io.File
 
 const val CategoryRoute = "category"
 private const val categoryIdArg = "categoryId"
@@ -84,7 +86,10 @@ fun NavGraphBuilder.categoryScreen(
                 navigateToPhoto = navigateToPhoto,
                 updateActivePhoto = { newPhotoId -> vm.setActivePhotoId(newPhotoId) },
                 toggleSlideshow = { vm.toggleSlideshow() },
-                toggleShowDetails = { vm.toggleShowDetails() }
+                toggleShowDetails = { vm.toggleShowDetails() },
+                savePhotoToShare = { drawable, filename, onComplete ->
+                    vm.saveFileToShare(drawable, filename, onComplete)
+                }
             )
         }
     }
@@ -111,7 +116,8 @@ fun CategoryScreen(
     navigateToPhoto: (categoryId: Int, photoId: Int) -> Unit,
     updateActivePhoto: (photoId: Int) -> Unit,
     toggleSlideshow: () -> Unit,
-    toggleShowDetails: () -> Unit
+    toggleShowDetails: () -> Unit,
+    savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
 ) {
     if(activePhotoId <= 0) {
         ImageGrid(
@@ -131,7 +137,7 @@ fun CategoryScreen(
             navigateToYear = { },
             navigateToCategory = { },
             toggleSlideshow = toggleSlideshow,
-            sharePhoto = { },
+            savePhotoToShare = savePhotoToShare,
             toggleDetails = toggleShowDetails,
             updateCurrentPhoto = updateActivePhoto
         )

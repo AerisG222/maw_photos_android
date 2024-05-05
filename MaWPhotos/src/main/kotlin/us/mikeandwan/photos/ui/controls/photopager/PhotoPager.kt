@@ -1,5 +1,8 @@
 package us.mikeandwan.photos.ui.controls.photopager
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.drawable.Drawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,20 +20,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.core.content.FileProvider
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.request.SuccessResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.engawapg.lib.zoomable.ScrollGesturePropagation
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheet
+import us.mikeandwan.photos.utils.getFilenameFromUrl
+import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -46,9 +60,11 @@ fun PhotoPager(
     navigateToCategory: (PhotoCategory) -> Unit,
     updateCurrentPhoto: (photoId: Int) -> Unit,
     toggleSlideshow: () -> Unit,
-    sharePhoto: () -> Unit,
+    savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
     toggleDetails: () -> Unit
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
     val pagerState = rememberPagerState(
         pageCount = { photos.size },
@@ -169,7 +185,11 @@ fun PhotoPager(
                 onRotateLeft = { updateRotation(-90f) },
                 onRotateRight = { updateRotation(90f) },
                 onToggleSlideshow = toggleSlideshow,
-                onShare = sharePhoto,
+                onShare = {
+                    coroutineScope.launch {
+                        sharePhoto(context, savePhotoToShare, photos[activePhotoIndex])
+                    }
+                },
                 onViewDetails = toggleDetails
             )
         }
@@ -183,34 +203,38 @@ fun PhotoPager(
     }
 }
 
+private suspend fun sharePhoto(
+    ctx: Context,
+    savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
+    photo: Photo
+) {
+    val drawable = getPhotoToShare(ctx, photo)
 
+    savePhotoToShare(
+        drawable,
+        getFilenameFromUrl(photo.mdUrl)
+    ) { fileToShare ->
+        val contentUri = FileProvider.getUriForFile(ctx, "us.mikeandwan.photos.fileprovider", fileToShare)
+        val sendIntent = Intent(Intent.ACTION_SEND)
 
+        sendIntent.setDataAndType(contentUri, "image/*")
+        sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        sendIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
 
-//private suspend fun sharePhoto(photo: Photo) {
-//    viewModel.sharePhotoComplete()
-//
-//    val drawable = getPhotoToShare(photo)
-//    val fileToShare = viewModel.savePhotoToShare(drawable, getFilenameFromUrl(photo.mdUrl))
-//    val contentUri = FileProvider.getUriForFile(requireActivity(), "us.mikeandwan.photos.fileprovider", fileToShare)
-//    val sendIntent = Intent(Intent.ACTION_SEND)
-//
-//    sendIntent.setDataAndType(contentUri, "image/*")
-//    sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//    sendIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
-//
-//    val shareIntent = Intent.createChooser(sendIntent, null)
-//
-//    startActivity(shareIntent)
-//}
-//
-//private suspend fun getPhotoToShare(photo: Photo): Drawable {
-//    return withContext(Dispatchers.IO) {
-//        val loader = ImageLoader(requireActivity())
-//        val request = ImageRequest.Builder(requireActivity())
-//            .data(photo.mdUrl)
-//            .allowHardware(false) // Disable hardware bitmaps.
-//            .build()
-//
-//        (loader.execute(request) as SuccessResult).drawable
-//    }
-//}
+        val shareIntent = Intent.createChooser(sendIntent, null)
+
+        ctx.startActivity(shareIntent)
+    }
+}
+
+private suspend fun getPhotoToShare(ctx: Context, photo: Photo): Drawable {
+    return withContext(Dispatchers.IO) {
+        val loader = ImageLoader(ctx)
+        val request = ImageRequest.Builder(ctx)
+            .data(photo.mdUrl)
+            .allowHardware(false) // Disable hardware bitmaps.
+            .build()
+
+        (loader.execute(request) as SuccessResult).drawable
+    }
+}

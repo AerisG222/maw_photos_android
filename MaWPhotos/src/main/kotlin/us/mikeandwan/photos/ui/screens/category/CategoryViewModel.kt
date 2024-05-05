@@ -1,10 +1,12 @@
 package us.mikeandwan.photos.ui.screens.category
 
+import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.PeriodicJob
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.PhotoPreferenceRepository
@@ -14,11 +16,13 @@ import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.ui.toImageGridItem
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoryViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
+    private val fileRepository: FileStorageRepository,
     photoPreferenceRepository: PhotoPreferenceRepository
 ) : ViewModel() {
     private var slideshowJob: PeriodicJob<Unit>
@@ -99,6 +103,14 @@ class CategoryViewModel @Inject constructor (
 
     fun toggleShowDetails() {
         _showDetailSheet.value = !_showDetailSheet.value
+    }
+
+    fun saveFileToShare(drawable: Drawable, filename: String, onComplete: (File) -> Unit) {
+        viewModelScope.launch {
+            val file = fileRepository.savePhotoToShare(drawable, filename)
+
+            onComplete(file)
+        }
     }
 
     private fun moveNext() = flow<Unit>{
