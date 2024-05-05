@@ -71,6 +71,7 @@ fun NavGraphBuilder.categoryScreen(
 
         val userRating by vm.userRating.collectAsStateWithLifecycle()
         val averageRating by vm.averageRating.collectAsStateWithLifecycle()
+        val exif by vm.exif.collectAsStateWithLifecycle()
 
         LaunchedEffect(category) {
             updateTopBar(true, true, buildTitle(category))
@@ -95,9 +96,10 @@ fun NavGraphBuilder.categoryScreen(
                 },
                 userRating = userRating,
                 averageRating = averageRating,
+                exif = exif,
                 setRating = { vm.setRating(it) },
                 fetchRatingDetails = { vm.fetchRatingDetails() },
-                fetchExifDetails = { /* vm.fetchExifDetails() */ },
+                fetchExifDetails = { vm.fetchExifDetails() },
                 fetchCommentDetails = { /* vm.fetchCommentDetails() */ }
             )
         }
@@ -129,6 +131,7 @@ fun CategoryScreen(
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
     userRating: Short,
     averageRating: Float,
+    exif: List<Pair<String, String>>,
     setRating: (Short) -> Unit,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
@@ -157,6 +160,7 @@ fun CategoryScreen(
             updateCurrentPhoto = updateActivePhoto,
             userRating = userRating,
             averageRating = averageRating,
+            exif = exif,
             setRating = setRating,
             fetchRatingDetails = fetchRatingDetails,
             fetchExifDetails = fetchExifDetails,

@@ -16,6 +16,7 @@ import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
+import us.mikeandwan.photos.utils.ExifDataFormatter.prepareForDisplay
 import us.mikeandwan.photos.ui.toImageGridItem
 import java.io.File
 import javax.inject.Inject
@@ -150,6 +151,20 @@ class CategoryViewModel @Inject constructor (
                     _userRating.value = it.result.userRating
                     _averageRating.value = it.result.averageRating
                 }
+        }
+    }
+
+    // EXIF
+    private val _exif = MutableStateFlow<List<Pair<String, String>>>(emptyList())
+    val exif = _exif.asStateFlow()
+
+    fun fetchExifDetails() {
+        viewModelScope.launch {
+            photoRepository.getExifData(activePhotoId.value)
+                .filter { it is ExternalCallStatus.Success }
+                .map { it as ExternalCallStatus.Success }
+                .map { prepareForDisplay(it.result) }
+                .collect { _exif.value = it }
         }
     }
 

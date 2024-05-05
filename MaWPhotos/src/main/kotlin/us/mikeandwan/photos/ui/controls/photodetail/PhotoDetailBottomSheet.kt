@@ -11,6 +11,7 @@ fun PhotoDetailBottomSheet(
     sheetState: SheetState,
     userRating: Short,
     averageRating: Float,
+    exif: List<Pair<String, String>>,
     setRating: (Short) -> Unit,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
@@ -24,6 +25,7 @@ fun PhotoDetailBottomSheet(
         PhotoDetailTabs(
             userRating = userRating,
             averageRating = averageRating,
+            exif = exif,
             setRating = setRating,
             fetchRatingDetails = fetchRatingDetails,
             fetchExifDetails = fetchExifDetails,
