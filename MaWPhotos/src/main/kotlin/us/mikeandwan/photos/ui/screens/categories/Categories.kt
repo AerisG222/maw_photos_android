@@ -44,13 +44,12 @@ fun NavGraphBuilder.categoriesScreen(
 
         LaunchedEffect(year) {
             vm.loadCategories(year)
+            updateTopBar(true, true, year.toString())
+            setNavArea(NavigationArea.Category)
         }
 
         val categories by vm.categories.collectAsStateWithLifecycle()
         val preferences by vm.preferences.collectAsStateWithLifecycle()
-
-        updateTopBar(true, true, year.toString())
-        setNavArea(NavigationArea.Category)
 
         CategoriesScreen(
             categories = categories,
