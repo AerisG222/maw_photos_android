@@ -2,7 +2,7 @@ package us.mikeandwan.photos.ui.screens.main
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.BackoffPolicy
@@ -77,11 +77,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun handleSendSingle(intent: Intent) {
-        val mediaUri = if (Build.VERSION.SDK_INT >= 33) {
-            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-        } else {
-            intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
-        }
+        val mediaUri = IntentCompat.getParcelableExtra(
+            intent,
+            Intent.EXTRA_STREAM,
+            Uri::class.java
+        )
 
         if(mediaUri != null) {
             enqueueUpload(mediaUri)
@@ -89,11 +89,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun handleSendMultiple(intent: Intent) {
-        val mediaUris = if (Build.VERSION.SDK_INT >= 33) {
-            intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
-        } else {
-            intent.getParcelableArrayListExtra<Uri?>(Intent.EXTRA_STREAM)
-        }
+        val mediaUris = IntentCompat.getParcelableArrayListExtra(
+            intent,
+            Intent.EXTRA_STREAM,
+            Uri::class.java
+        )
 
         if(mediaUris != null) {
             enqueueUpload(*mediaUris.toTypedArray())
