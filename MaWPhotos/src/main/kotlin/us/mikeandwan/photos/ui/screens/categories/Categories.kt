@@ -60,12 +60,8 @@ fun NavGraphBuilder.categoriesScreen(
     }
 }
 
-fun NavController.buildCategoriesRoute(year: Int): String {
-    return "${CategoriesRoute}/${year}"
-}
-
 fun NavController.navigateToCategories(year: Int) {
-    navigate(buildCategoriesRoute(year)) {
+    navigate("${CategoriesRoute}/${year}") {
         launchSingleTop = true
     }
 }
