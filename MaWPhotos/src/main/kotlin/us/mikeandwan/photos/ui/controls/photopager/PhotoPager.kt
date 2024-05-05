@@ -61,7 +61,13 @@ fun PhotoPager(
     updateCurrentPhoto: (photoId: Int) -> Unit,
     toggleSlideshow: () -> Unit,
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
-    toggleDetails: () -> Unit
+    toggleDetails: () -> Unit,
+    userRating: Short,
+    averageRating: Float,
+    setRating: (Short) -> Unit,
+    fetchRatingDetails: () -> Unit,
+    fetchExifDetails: () -> Unit,
+    fetchCommentDetails: () -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -96,8 +102,10 @@ fun PhotoPager(
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
-            setActiveRotation(getRotationForPage(page))
-            updateCurrentPhoto(photos[page].id)
+            if(page >= 0) {
+                setActiveRotation(getRotationForPage(page))
+                updateCurrentPhoto(photos[page].id)
+            }
         }
     }
 
@@ -198,6 +206,12 @@ fun PhotoPager(
     if(showDetails) {
         PhotoDetailBottomSheet(
             sheetState = sheetState,
+            userRating = userRating,
+            averageRating = averageRating,
+            setRating = setRating,
+            fetchRatingDetails = fetchRatingDetails,
+            fetchExifDetails = fetchExifDetails,
+            fetchCommentDetails = fetchCommentDetails,
             onDismissRequest = toggleDetails
         )
     }

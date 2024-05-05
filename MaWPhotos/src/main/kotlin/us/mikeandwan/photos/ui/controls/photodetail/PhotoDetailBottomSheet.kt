@@ -9,12 +9,25 @@ import androidx.compose.runtime.Composable
 @Composable
 fun PhotoDetailBottomSheet(
     sheetState: SheetState,
+    userRating: Short,
+    averageRating: Float,
+    setRating: (Short) -> Unit,
+    fetchRatingDetails: () -> Unit,
+    fetchExifDetails: () -> Unit,
+    fetchCommentDetails: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = { onDismissRequest() }
     ) {
-        PhotoDetailTabs()
+        PhotoDetailTabs(
+            userRating = userRating,
+            averageRating = averageRating,
+            setRating = setRating,
+            fetchRatingDetails = fetchRatingDetails,
+            fetchExifDetails = fetchExifDetails,
+            fetchCommentDetails = fetchCommentDetails
+        )
     }
 }

@@ -10,6 +10,7 @@ import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.PeriodicJob
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.PhotoPreferenceRepository
+import us.mikeandwan.photos.domain.PhotoRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class CategoryViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val fileRepository: FileStorageRepository,
+    private val photoRepository: PhotoRepository,
     photoPreferenceRepository: PhotoPreferenceRepository
 ) : ViewModel() {
     private var slideshowJob: PeriodicJob<Unit>
@@ -118,6 +120,36 @@ class CategoryViewModel @Inject constructor (
             slideshowJob.stop()
         } else {
             setActivePhotoId(photos.value[activePhotoIndex.value + 1].id)
+        }
+    }
+
+    // RATINGS
+    private val _userRating = MutableStateFlow<Short>(0)
+    val userRating = _userRating.asStateFlow()
+
+    private val _averageRating = MutableStateFlow(0f)
+    val averageRating = _averageRating.asStateFlow()
+
+    fun setRating(rating: Short) {
+        val newAverageRating = photoRepository.setRating(activePhotoId.value, rating)
+
+        viewModelScope.launch {
+            newAverageRating
+                .filter { it is ExternalCallStatus.Success }
+                .map { it as ExternalCallStatus.Success }
+                .collect { _averageRating.value = it.result.averageRating }
+        }
+    }
+
+    fun fetchRatingDetails() {
+        viewModelScope.launch {
+            photoRepository.getRating(activePhotoId.value)
+                .filter { it is ExternalCallStatus.Success }
+                .map { it as ExternalCallStatus.Success }
+                .collect {
+                    _userRating.value = it.result.userRating
+                    _averageRating.value = it.result.averageRating
+                }
         }
     }
 

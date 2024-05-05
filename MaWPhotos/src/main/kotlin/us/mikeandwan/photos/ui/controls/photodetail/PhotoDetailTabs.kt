@@ -28,7 +28,14 @@ private object TabIndex {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PhotoDetailTabs() {
+fun PhotoDetailTabs(
+    userRating: Short,
+    averageRating: Float,
+    setRating: (Short) -> Unit,
+    fetchRatingDetails: () -> Unit,
+    fetchExifDetails: () -> Unit,
+    fetchCommentDetails: () -> Unit
+) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
 
@@ -89,9 +96,25 @@ fun PhotoDetailTabs() {
             userScrollEnabled = false,
             pageContent = {
                 when(it) {
-                    TabIndex.RATING -> PhotoRatingScreen()
-                    TabIndex.COMMENT -> PhotoCommentScreen()
-                    TabIndex.EXIF -> PhotoExifScreen()
+                    TabIndex.RATING -> {
+                        fetchRatingDetails()
+
+                        PhotoRatingScreen(
+                            userRating,
+                            averageRating,
+                            setRating
+                        )
+                    }
+                    TabIndex.COMMENT -> {
+                        fetchCommentDetails()
+
+                        PhotoCommentScreen()
+                    }
+                    TabIndex.EXIF -> {
+                        fetchExifDetails()
+
+                        PhotoExifScreen()
+                    }
                 }
             }
         )

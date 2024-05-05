@@ -9,29 +9,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.smarttoolfactory.ratingbar.RatingBar
 import com.smarttoolfactory.ratingbar.model.GestureStrategy
 import com.smarttoolfactory.ratingbar.model.RateChangeStrategy
 import com.smarttoolfactory.ratingbar.model.RatingInterval
-import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 
 @Composable
 fun PhotoRatingScreen(
-    viewModel: PhotoRatingViewModel = hiltViewModel()
+    userRating: Short,
+    averageRating: Float,
+    setRating: (rating: Short) -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val userRating = viewModel.userRating.collectAsState()
-    val avgRating = viewModel.averageRating.collectAsState()
-
     Column(modifier = Modifier.fillMaxHeight()) {
         Row(
             modifier = Modifier
@@ -50,18 +44,15 @@ fun PhotoRatingScreen(
             RatingBar(
                 itemSize = 32.dp,
                 space = 2.dp,
-                rating = userRating.value.toFloat(),
+                rating = userRating.toFloat(),
                 imageVectorEmpty = ImageVector.vectorResource(R.drawable.ic_baseline_star_outline),
                 imageVectorFilled = ImageVector.vectorResource(R.drawable.ic_star),
                 tintEmpty = MaterialTheme.colorScheme.primary,
                 tintFilled = MaterialTheme.colorScheme.primary,
                 rateChangeStrategy = RateChangeStrategy.InstantChange,
                 ratingInterval = RatingInterval.Full,
-            ) { rating ->
-                coroutineScope.launch {
-                    viewModel.setRating(rating.toInt().toShort())
-                }
-            }
+                onRatingChange = { rating -> setRating(rating.toInt().toShort()) }
+            )
         }
 
         Row(modifier = Modifier
@@ -78,15 +69,14 @@ fun PhotoRatingScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             RatingBar(
-                rating = avgRating.value,
+                rating = averageRating,
                 imageVectorEmpty = ImageVector.vectorResource(R.drawable.ic_baseline_star_outline),
                 imageVectorFilled = ImageVector.vectorResource(R.drawable.ic_star),
                 tintEmpty = MaterialTheme.colorScheme.primary,
                 tintFilled = MaterialTheme.colorScheme.primary,
-                gestureStrategy = GestureStrategy.None
-            ) {
-
-            }
+                gestureStrategy = GestureStrategy.None,
+                onRatingChange = { }
+            )
         }
     }
 }

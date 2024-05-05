@@ -69,6 +69,9 @@ fun NavGraphBuilder.categoryScreen(
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
 
+        val userRating by vm.userRating.collectAsStateWithLifecycle()
+        val averageRating by vm.averageRating.collectAsStateWithLifecycle()
+
         LaunchedEffect(category) {
             updateTopBar(true, true, buildTitle(category))
         }
@@ -89,7 +92,13 @@ fun NavGraphBuilder.categoryScreen(
                 toggleShowDetails = { vm.toggleShowDetails() },
                 savePhotoToShare = { drawable, filename, onComplete ->
                     vm.saveFileToShare(drawable, filename, onComplete)
-                }
+                },
+                userRating = userRating,
+                averageRating = averageRating,
+                setRating = { vm.setRating(it) },
+                fetchRatingDetails = { vm.fetchRatingDetails() },
+                fetchExifDetails = { /* vm.fetchExifDetails() */ },
+                fetchCommentDetails = { /* vm.fetchCommentDetails() */ }
             )
         }
     }
@@ -118,6 +127,12 @@ fun CategoryScreen(
     toggleSlideshow: () -> Unit,
     toggleShowDetails: () -> Unit,
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
+    userRating: Short,
+    averageRating: Float,
+    setRating: (Short) -> Unit,
+    fetchRatingDetails: () -> Unit,
+    fetchExifDetails: () -> Unit,
+    fetchCommentDetails: () -> Unit,
 ) {
     if(activePhotoId <= 0) {
         ImageGrid(
@@ -139,7 +154,13 @@ fun CategoryScreen(
             toggleSlideshow = toggleSlideshow,
             savePhotoToShare = savePhotoToShare,
             toggleDetails = toggleShowDetails,
-            updateCurrentPhoto = updateActivePhoto
+            updateCurrentPhoto = updateActivePhoto,
+            userRating = userRating,
+            averageRating = averageRating,
+            setRating = setRating,
+            fetchRatingDetails = fetchRatingDetails,
+            fetchExifDetails = fetchExifDetails,
+            fetchCommentDetails = fetchCommentDetails
         )
     }
 }
