@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
@@ -5,9 +8,6 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.org.jetbrains.kotlin.serialization)
 }
-
-import java.util.Properties
-import java.io.FileInputStream
 
 val homedir = System.getProperty("user.home")
 val keystoreProperties = Properties()
