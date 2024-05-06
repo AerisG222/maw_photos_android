@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.ui.controls.photocomment.PhotoCommentScreen
 import us.mikeandwan.photos.ui.controls.photoexif.PhotoExifScreen
 import us.mikeandwan.photos.ui.controls.photorating.PhotoRatingScreen
@@ -32,7 +33,9 @@ fun PhotoDetailTabs(
     userRating: Short,
     averageRating: Float,
     exif: List<Pair<String, String>>,
+    comments: List<PhotoComment>,
     setRating: (Short) -> Unit,
+    addComment: (String) -> Unit,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
     fetchCommentDetails: () -> Unit
@@ -109,7 +112,10 @@ fun PhotoDetailTabs(
                     TabIndex.COMMENT -> {
                         fetchCommentDetails()
 
-                        PhotoCommentScreen()
+                        PhotoCommentScreen(
+                            comments,
+                            addComment
+                        )
                     }
                     TabIndex.EXIF -> {
                         fetchExifDetails()

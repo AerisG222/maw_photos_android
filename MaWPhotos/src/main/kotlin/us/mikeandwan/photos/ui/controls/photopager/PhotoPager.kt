@@ -42,6 +42,7 @@ import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheet
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
@@ -65,6 +66,8 @@ fun PhotoPager(
     userRating: Short,
     averageRating: Float,
     exif: List<Pair<String, String>>,
+    comments: List<PhotoComment>,
+    addComment: (String) -> Unit,
     setRating: (Short) -> Unit,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
@@ -210,7 +213,9 @@ fun PhotoPager(
             userRating = userRating,
             averageRating = averageRating,
             exif = exif,
+            comments = comments,
             setRating = setRating,
+            addComment = addComment,
             fetchRatingDetails = fetchRatingDetails,
             fetchExifDetails = fetchExifDetails,
             fetchCommentDetails = fetchCommentDetails,

@@ -15,6 +15,7 @@ import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.utils.ExifDataFormatter.prepareForDisplay
 import us.mikeandwan.photos.ui.toImageGridItem
@@ -165,6 +166,37 @@ class CategoryViewModel @Inject constructor (
                 .map { it as ExternalCallStatus.Success }
                 .map { prepareForDisplay(it.result) }
                 .collect { _exif.value = it }
+        }
+    }
+
+    // COMMENTS
+    private val _comments = MutableStateFlow(emptyList<PhotoComment>())
+    val comments = _comments.asStateFlow()
+
+    fun fetchCommentDetails() {
+        viewModelScope.launch {
+            photoRepository.getComments(activePhotoId.value)
+                .map {
+                    when (it) {
+                        is ExternalCallStatus.Loading -> emptyList()
+                        is ExternalCallStatus.Error -> emptyList()
+                        is ExternalCallStatus.Success -> it.result
+                    }
+                }
+                .collect { _comments.value = it }
+        }
+    }
+
+    fun addComment(comment: String) {
+        if(comment.isNotBlank()) {
+            viewModelScope.launch {
+                photoRepository.addComment(activePhotoId.value, comment)
+                    .collect { result ->
+                        if (result is ExternalCallStatus.Success) {
+                            _comments.value = result.result
+                        }
+                    }
+            }
         }
     }
 

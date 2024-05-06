@@ -10,22 +10,25 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.models.PhotoComment
 
 @Composable
 fun PhotoCommentScreen(
-    viewModel: PhotoCommentViewModel = hiltViewModel()
+    comments: List<PhotoComment>,
+    addComment: (String) -> Unit
 ) {
-    val comments = viewModel.comments.collectAsState()
-    val newComment = viewModel.newComment.collectAsState()
+    var newComment by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxHeight()) {
-        CommentTable(comments = comments.value)
+        CommentTable(comments = comments)
 
         Row(modifier = Modifier
             .padding(8.dp, 8.dp)
@@ -33,13 +36,11 @@ fun PhotoCommentScreen(
         ) {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = newComment.value,
+                value = newComment,
                 singleLine = false,
                 minLines = 3,
                 maxLines = 3,
-                onValueChange = {
-                    viewModel.setNewComment(it)
-                }
+                onValueChange = { newComment = it }
             )
         }
 
@@ -49,7 +50,7 @@ fun PhotoCommentScreen(
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = { viewModel.addComment() },
+                onClick = { addComment(newComment) },
             ) {
                 Text(
                     text = stringResource(id = R.string.frg_comment_add_comment)

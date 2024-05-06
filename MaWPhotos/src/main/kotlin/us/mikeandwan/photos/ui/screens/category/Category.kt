@@ -15,6 +15,7 @@ import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
@@ -72,6 +73,7 @@ fun NavGraphBuilder.categoryScreen(
         val userRating by vm.userRating.collectAsStateWithLifecycle()
         val averageRating by vm.averageRating.collectAsStateWithLifecycle()
         val exif by vm.exif.collectAsStateWithLifecycle()
+        val comments by vm.comments.collectAsStateWithLifecycle()
 
         LaunchedEffect(category) {
             updateTopBar(true, true, buildTitle(category))
@@ -97,10 +99,12 @@ fun NavGraphBuilder.categoryScreen(
                 userRating = userRating,
                 averageRating = averageRating,
                 exif = exif,
+                comments = comments,
+                addComment = { vm.addComment(it) },
                 setRating = { vm.setRating(it) },
                 fetchRatingDetails = { vm.fetchRatingDetails() },
                 fetchExifDetails = { vm.fetchExifDetails() },
-                fetchCommentDetails = { /* vm.fetchCommentDetails() */ }
+                fetchCommentDetails = { vm.fetchCommentDetails() }
             )
         }
     }
@@ -132,6 +136,8 @@ fun CategoryScreen(
     userRating: Short,
     averageRating: Float,
     exif: List<Pair<String, String>>,
+    comments: List<PhotoComment>,
+    addComment: (String) -> Unit,
     setRating: (Short) -> Unit,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
@@ -161,7 +167,9 @@ fun CategoryScreen(
             userRating = userRating,
             averageRating = averageRating,
             exif = exif,
+            comments = comments,
             setRating = setRating,
+            addComment = addComment,
             fetchRatingDetails = fetchRatingDetails,
             fetchExifDetails = fetchExifDetails,
             fetchCommentDetails = fetchCommentDetails
