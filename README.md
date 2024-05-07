@@ -30,6 +30,11 @@ Please see the original notes about DNS below.  Those were not fully working, so
 details for DNS in the follow bullets.  These are ugly, but allowed me to finally get the
 emulator working locally against the dev site.
 
+note: if dnsmasq below fails because port is already in use, update /etc/dnsmasq.conf by uncommenting
+the 'listen-address' line and add the ip for the machine (192.168.x.x) then restart.  This is needed
+as it listens by default to 0.0.0.0 and we need to have localhost/127.0.0.1 listen to support the
+emulator.  Additionally, you also need to uncomment the bind-interfaces line.
+
 - start dev dns server (dnsmasq)
   - `./start_dev_dns.sh`
 - start dev emulator
