@@ -26,26 +26,6 @@ abstract class PhotoCategoryDao {
     @Query("""
         SELECT pc.*
           FROM photo_category pc
-         INNER JOIN active_id ai
-                 ON ai.type = :type
-                AND ai.id = pc.year
-         ORDER BY id DESC
-    """
-    )
-    protected abstract fun getCategoriesForActiveYear(type: ActiveIdType): Flow<List<PhotoCategory>>
-
-    @Query("""
-        SELECT pc.*
-          FROM photo_category pc
-         INNER JOIN active_id ai
-                 ON ai.type = :type
-                AND ai.id = pc.id
-    """)
-    abstract fun getActiveCategory(type: ActiveIdType): Flow<PhotoCategory?>
-
-    @Query("""
-        SELECT pc.*
-          FROM photo_category pc
          WHERE id = :id
     """)
     abstract fun getCategory(id: Int): Flow<PhotoCategory?>
@@ -59,7 +39,4 @@ abstract class PhotoCategoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun upsert(vararg categories: PhotoCategory)
-
-    fun getCategoriesForActiveYear(): Flow<List<PhotoCategory>> = getCategoriesForActiveYear(ActiveIdType.PhotoCategoryYear)
-    fun getActiveCategory(): Flow<PhotoCategory?> = getActiveCategory(ActiveIdType.PhotoCategory)
 }

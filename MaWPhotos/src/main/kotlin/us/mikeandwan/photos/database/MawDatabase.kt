@@ -6,7 +6,6 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [
-        ActiveId::class,
         Authorization::class,
         CategoryPreference::class,
         NotificationPreference::class,
@@ -16,13 +15,12 @@ import androidx.room.TypeConverters
         SearchHistory::class,
         SearchPreference::class
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(
     Converters::class
 )
 abstract class MawDatabase : RoomDatabase() {
-    abstract fun activeIdDao(): ActiveIdDao
     abstract fun authorizationDao(): AuthorizationDao
     abstract fun categoryPreferenceDao(): CategoryPreferenceDao
     abstract fun notificationPreferenceDao(): NotificationPreferenceDao

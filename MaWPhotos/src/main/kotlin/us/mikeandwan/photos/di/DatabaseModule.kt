@@ -2,6 +2,8 @@ package us.mikeandwan.photos.di
 
 import android.app.Application
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,15 +23,9 @@ class DatabaseModule {
             MawDatabase::class.java,
             "us.mikeandwan.photos"
         )
-            .fallbackToDestructiveMigration()
             .addCallback(MawDatabaseCreateCallback())
+            .addMigrations(MIGRATION_1_2)
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideActiveIdDao(mawDatabase: MawDatabase): ActiveIdDao {
-        return mawDatabase.activeIdDao()
     }
 
     @Provides
@@ -78,5 +74,11 @@ class DatabaseModule {
     @Singleton
     fun provideSearchPreferenceDao(mawDatabase: MawDatabase): SearchPreferenceDao {
         return mawDatabase.searchPreferenceDao()
+    }
+
+    private val MIGRATION_1_2 = object: Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("DROP TABLE active_id")
+        }
     }
 }

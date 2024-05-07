@@ -154,8 +154,10 @@ fun SearchScreen(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Button(onClick = { continueSearch() }) {
-                        Text(text = stringResource(id = R.string.fragment_search_load_more))
+                    if(results.size < totalFound) {
+                        Button(onClick = { continueSearch() }) {
+                            Text(text = stringResource(id = R.string.fragment_search_load_more))
+                        }
                     }
 
                     Row(

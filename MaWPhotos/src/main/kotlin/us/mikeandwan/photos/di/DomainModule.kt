@@ -16,12 +16,6 @@ import javax.inject.Singleton
 class DomainModule {
     @Provides
     @Singleton
-    fun provideActiveIdRepository(activeIdDao: ActiveIdDao): ActiveIdRepository {
-        return ActiveIdRepository(activeIdDao)
-    }
-
-    @Provides
-    @Singleton
     fun provideErrorRepository(): ErrorRepository {
         return ErrorRepository()
     }
@@ -41,10 +35,9 @@ class DomainModule {
         api: PhotoApiClient,
         db: MawDatabase,
         photoCategoryDao: PhotoCategoryDao,
-        activeIdDao: ActiveIdDao,
         apiErrorHandler: ApiErrorHandler
     ): PhotoCategoryRepository {
-        return PhotoCategoryRepository(api, db, photoCategoryDao, activeIdDao, apiErrorHandler)
+        return PhotoCategoryRepository(api, db, photoCategoryDao, apiErrorHandler)
     }
 
     @Provides

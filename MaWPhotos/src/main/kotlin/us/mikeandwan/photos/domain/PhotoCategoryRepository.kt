@@ -13,7 +13,6 @@ class PhotoCategoryRepository @Inject constructor(
     private val api: PhotoApiClient,
     private val db: MawDatabase,
     private val pcDao: PhotoCategoryDao,
-    private val idDao: ActiveIdDao,
     private val apiErrorHandler: ApiErrorHandler
 ) {
     companion object {
@@ -100,11 +99,9 @@ class PhotoCategoryRepository @Inject constructor(
                     emit(ExternalCallStatus.Success(emptyList()))
                 } else {
                     val dbCategories = categories.map { apiCat -> apiCat.toDatabasePhotoCategory() }
-                    val maxYear = dbCategories.maxOf { it.year }
 
                     db.withTransaction {
                         pcDao.upsert(*dbCategories.toTypedArray())
-                        idDao.setActiveId(ActiveId(ActiveIdType.PhotoCategoryYear, maxYear))
                     }
 
                     emit(ExternalCallStatus.Success(dbCategories.map { it.toDomainPhotoCategory() }))
