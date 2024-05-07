@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -21,14 +19,14 @@ fun MenuPreference(
     selectedValue: String,
     onSelect: (String) -> Unit
 ) {
-    var display by remember { mutableStateOf(false) }
+    val (display, setDisplay) = remember { mutableStateOf(false) }
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { display = !display }
+            .clickable { setDisplay(!display) }
     ) {
         MenuPreferenceSummary(
             labelStringId = labelStringId,
@@ -36,16 +34,16 @@ fun MenuPreference(
         )
 
         if(display) {
-            Dialog(onDismissRequest = { display = false }) {
+            Dialog(onDismissRequest = { setDisplay(false) } ) {
                 MenuPreferenceCard(
                     labelStringId = labelStringId,
                     options = options,
                     selectedValue = selectedValue,
                     onSelect = {
-                        display = false
+                        setDisplay(false)
                         onSelect(it)
                     },
-                    onCancel = { display = false }
+                    onCancel = { setDisplay(false) }
                 )
             }
         }
