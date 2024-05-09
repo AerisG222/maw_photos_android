@@ -60,13 +60,15 @@ fun NavGraphBuilder.searchScreen(
             }
         }
 
+        LaunchedEffect(Unit) {
+            updateTopBar(true, true, "Search")
+            setNavArea(NavigationArea.Search)
+        }
+
         val results by vm.searchResultsAsCategories.collectAsStateWithLifecycle()
         val totalFound by vm.totalFound.collectAsStateWithLifecycle()
         val displayType by vm.displayType.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
-
-        updateTopBar(true, true, "Search")
-        setNavArea(NavigationArea.Search)
 
         SearchScreen(
             results,
