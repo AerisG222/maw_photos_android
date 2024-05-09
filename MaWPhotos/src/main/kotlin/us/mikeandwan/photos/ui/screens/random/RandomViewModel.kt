@@ -23,21 +23,19 @@ class RandomViewModel @Inject constructor(
         .getPhotoGridItemSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
+    fun fetch(count: Int) {
+        viewModelScope.launch {
+            randomPhotoRepository
+                .fetch(count)
+                .collect { }
+        }
+    }
+
     fun onResume() {
         randomPhotoRepository.setDoFetch(true)
     }
 
     fun onPause() {
         randomPhotoRepository.setDoFetch(false)
-    }
-
-    init {
-        viewModelScope.launch {
-            randomPhotoRepository
-                .fetch(24)
-                .collect { }
-
-            randomPhotoRepository.setDoFetch(true)
-        }
     }
 }

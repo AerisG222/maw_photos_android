@@ -63,7 +63,7 @@ class RandomPhotoRepository @Inject constructor(
 
     init {
         periodicJob = PeriodicJob(
-            true,
+            false,
             slideshowDurationInMillis.value
         ) { fetch(1) }
     }
