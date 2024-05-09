@@ -39,7 +39,8 @@ private const val searchTermArg = "searchTermArg"
 fun NavGraphBuilder.searchScreen(
     onNavigateToCategory: (PhotoCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
-    setNavArea: (NavigationArea) -> Unit
+    setNavArea: (NavigationArea) -> Unit,
+    updateInitialSearchTerm: (String) -> Unit
 ) {
     composable(
         route = "$SearchRoute?term={$searchTermArg}",
@@ -56,6 +57,7 @@ fun NavGraphBuilder.searchScreen(
 
         LaunchedEffect(searchTerm) {
             if(searchTerm != null) {
+                updateInitialSearchTerm(searchTerm)
                 vm.search(searchTerm)
             }
         }

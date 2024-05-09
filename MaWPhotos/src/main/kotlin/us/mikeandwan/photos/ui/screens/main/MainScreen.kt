@@ -74,6 +74,7 @@ fun MainScreen() {
     val (navArea, setNavArea) = remember { mutableStateOf(NavigationArea.Category) }
     val (topBarDoShow, setTopBarDoShow) = remember { mutableStateOf(true) }
     val (topBarTitle, setTopBarTitle) = remember { mutableStateOf("") }
+    val (topBarInitialSearchTerm, setTopBarInitialSearchTerm) = remember { mutableStateOf("") }
     val (topBarShowAppIcon, setTopBarShowAppIcon) = remember { mutableStateOf(false) }
     val (activeYear, setActiveYear) = remember { mutableIntStateOf(years.firstOrNull() ?: 0) }
 
@@ -161,7 +162,7 @@ fun MainScreen() {
                 if (topBarDoShow) {
                     TopBar(
                         scrollBehavior,
-                        initialSearchTerm = "",
+                        initialSearchTerm = topBarInitialSearchTerm,
                         showSearch = navArea == NavigationArea.Search,
                         title = topBarTitle,
                         showAppIcon = topBarShowAppIcon,
@@ -212,6 +213,7 @@ fun MainScreen() {
                 )
                 searchScreen(
                     updateTopBar = ::updateTopBar,
+                    updateInitialSearchTerm = { setTopBarInitialSearchTerm(it) },
                     onNavigateToCategory = { navController.navigateToCategory(it.id) },
                     setNavArea = { setNavArea(it) },
                 )

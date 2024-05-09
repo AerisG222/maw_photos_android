@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,6 +34,10 @@ fun SearchBar(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val (searchTerm, setSearchTerm)= remember{ mutableStateOf(initialSearchTerm) }
+
+    LaunchedEffect(initialSearchTerm) {
+        setSearchTerm(initialSearchTerm)
+    }
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
