@@ -47,9 +47,8 @@ class SearchRepository @Inject constructor(
     fun performSearch(query: String, searchSource: SearchSource) = flow {
         val currentQuery = searchRequest.value.query
 
-        _searchResults.value = emptyList()
-
         if(query.isNotBlank() && !currentQuery.equals(query, true)) {
+            _searchResults.value = emptyList()
             _searchRequest.value = SearchRequest(query, searchSource)
             _isSearching.value = true
 
