@@ -24,6 +24,7 @@ fun NavGraphBuilder.splashScreen(
         val year = vm.mostRecentYear.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
+            // TODO: remove this delay
             delay(300)
 
             if(authStatus.value == AuthStatus.Authorized && year.value != null && year.value!! > 0) {
