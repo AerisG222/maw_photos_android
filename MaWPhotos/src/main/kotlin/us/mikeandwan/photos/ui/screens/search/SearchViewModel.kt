@@ -48,6 +48,7 @@ class SearchViewModel @Inject constructor(
                 .collect { }
         }
     }
+
     fun continueSearch() {
         viewModelScope.launch {
             searchRepository
