@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,8 +39,10 @@ fun NavGraphBuilder.aboutScreen(
         val vm: AboutViewModel = hiltViewModel()
         val history by vm.history.collectAsStateWithLifecycle()
 
-        updateTopBar(true, false, "About")
-        setNavArea(NavigationArea.About)
+        LaunchedEffect(Unit) {
+            updateTopBar(true, false, "About")
+            setNavArea(NavigationArea.About)
+        }
 
         AboutScreen(
             vm.version,

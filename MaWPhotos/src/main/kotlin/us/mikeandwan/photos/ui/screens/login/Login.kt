@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -39,8 +40,10 @@ fun NavGraphBuilder.loginScreen(
         val vm: LoginViewModel = hiltViewModel()
         val authStatus by vm.authStatus.collectAsStateWithLifecycle()
 
-        updateTopBar(false, true, "Login")
-        setNavArea(NavigationArea.Login)
+        LaunchedEffect(Unit) {
+            updateTopBar(false, true, "Login")
+            setNavArea(NavigationArea.Login)
+        }
 
         LoginScreen(
             authStatus,

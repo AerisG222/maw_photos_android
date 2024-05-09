@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
@@ -60,8 +61,10 @@ fun NavGraphBuilder.settingsScreen(
         val searchDisplayType by viewModel.searchDisplayType.collectAsStateWithLifecycle()
         val searchThumbnailSize by viewModel.searchThumbnailSize.collectAsStateWithLifecycle()
 
-        updateTopBar(true, false, "Settings")
-        setNavArea(NavigationArea.Settings)
+        LaunchedEffect(Unit) {
+            updateTopBar(true, false, "Settings")
+            setNavArea(NavigationArea.Settings)
+        }
 
         SettingsScreen(
             notificationDoNotify,

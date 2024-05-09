@@ -3,6 +3,7 @@ package us.mikeandwan.photos.ui.screens.upload
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,8 +31,10 @@ fun NavGraphBuilder.uploadScreen(
         val vm: UploadViewModel = hiltViewModel()
         val files by vm.filesToUpload.collectAsStateWithLifecycle()
 
-        updateTopBar(true, false, "Upload Queue")
-        setNavArea(NavigationArea.Upload)
+        LaunchedEffect(Unit) {
+            updateTopBar(true, false, "Upload Queue")
+            setNavArea(NavigationArea.Upload)
+        }
 
         UploadScreen(
             files

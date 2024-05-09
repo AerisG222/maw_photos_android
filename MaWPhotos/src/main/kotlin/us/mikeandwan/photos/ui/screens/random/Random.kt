@@ -29,10 +29,9 @@ fun NavGraphBuilder.randomScreen(
         val photos by vm.photos.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
 
-        updateTopBar(true, true, "Random")
-        setNavArea(NavigationArea.Random)
-
         LaunchedEffect(Unit) {
+            updateTopBar(true, true, "Random")
+            setNavArea(NavigationArea.Random)
             vm.fetch(24)
         }
 
