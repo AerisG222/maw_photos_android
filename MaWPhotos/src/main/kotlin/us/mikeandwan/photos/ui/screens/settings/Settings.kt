@@ -1,5 +1,9 @@
 package us.mikeandwan.photos.ui.screens.settings
 
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,11 +23,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -43,6 +50,8 @@ fun NavGraphBuilder.settingsScreen(
     setNavArea: (NavigationArea) -> Unit
 ) {
     composable(SettingsRoute) {
+        val context = LocalContext.current
+
         val viewModel: SettingsViewModel = hiltViewModel()
 
         val notificationDoNotify by viewModel.notificationDoNotify.collectAsStateWithLifecycle()
@@ -66,7 +75,33 @@ fun NavGraphBuilder.settingsScreen(
             setNavArea(NavigationArea.Settings)
         }
 
+        fun areNotificationsPermitted(): Boolean {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                return  ContextCompat.checkSelfPermission(
+                    context,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+
+            return true
+        }
+
+        val (permissionPostNotificationAllowed, setPermissionPostNotificationAllowed) = mutableStateOf(areNotificationsPermitted())
+
+        // https://stackoverflow.com/questions/60608101/how-request-permissions-with-jetpack-compose
+        val permissionLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if (it) {
+                setPermissionPostNotificationAllowed(true)
+            } else {
+                setPermissionPostNotificationAllowed(false)
+                viewModel.showError("Please enable the Notification permission under Settings > Apps > Maw Photos")
+            }
+        }
+
         SettingsScreen(
+            permissionPostNotificationAllowed,
             notificationDoNotify,
             notificationDoVibrate,
             categoryDisplayType,
@@ -78,7 +113,17 @@ fun NavGraphBuilder.settingsScreen(
             searchQueryCount,
             searchDisplayType,
             searchThumbnailSize,
-            setNotificationDoNotify = { viewModel.setNotificationDoNotify(it) },
+            setNotificationDoNotify = { doNotify ->
+                if (
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    doNotify &&
+                    !areNotificationsPermitted()
+                ) {
+                    permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    viewModel.setNotificationDoNotify(doNotify)
+                }
+            },
             setNotificationDoVibrate = { viewModel.setNotificationDoVibrate(it) },
             setCategoryDisplayType = { viewModel.setCategoryDisplayType(it) },
             setCategoryThumbnailSize = { viewModel.setCategoryThumbnailSize(it) },
@@ -103,6 +148,7 @@ fun NavController.navigateToSettings() {
 
 @Composable
 fun SettingsScreen(
+    permissionPostNotificationAllowed: Boolean,
     notificationDoNotify: Boolean,
     notificationDoVibrate: Boolean,
     categoryDisplayType: CategoryDisplayType,
@@ -142,7 +188,7 @@ fun SettingsScreen(
         Heading(stringId = R.string.pref_notifications_header)
         SwitchPreference(
             labelStringId = R.string.pref_notifications_new_message_title,
-            isChecked = notificationDoNotify,
+            isChecked = notificationDoNotify && permissionPostNotificationAllowed,
             onChange = { setNotificationDoNotify(it) }
         )
         SwitchPreference(
@@ -279,62 +325,3 @@ fun SettingsScreen(
         }
     }
 }
-
-
-
-
-/*
-    private fun initStateObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                setDatabaseShowNotificationFlag(getDatabaseShowNotificationFlag() && areNotificationsPermitted(), false)
-
-                viewModel.repo.getDoNotify()
-                    .distinctUntilChanged()
-                    .mapLatest { v -> handleShowNotificationChange(v) }
-                    .launchIn(this)
-            }
-        }
-    }
-
-    private fun handleShowNotificationChange(doShow: Boolean) {
-        // tiramisu added permissions for notifications, so only worry about this if we are
-        // on a newer device
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if(doShow && !areNotificationsPermitted()) {
-                requestPermissionLauncher.launch("android.permission.POST_NOTIFICATIONS")
-            }
-        }
-    }
-
-    private fun areNotificationsPermitted(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            return  ContextCompat.checkSelfPermission(
-                requireContext(),
-                "android.permission.POST_NOTIFICATIONS"
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-
-        return true
-    }
-
-    private fun getDatabaseShowNotificationFlag(): Boolean {
-        return (viewModel.dataStore as MawPreferenceDataStore).getShowNotifications()
-    }
-
-    private fun setDatabaseShowNotificationFlag(doShow: Boolean, refreshUi: Boolean) {
-        (viewModel.dataStore as MawPreferenceDataStore).setShowNotifications(doShow)
-
-        // if the user denies the permission, we need to refresh the preferences screen
-        // otherwise it will show as enabled
-        if(!doShow && refreshUi) {
-            viewModel.errorRepository.showError("Please enable the Notification permission under Settings > Apps > Maw Photos")
-
-            onCreate(null)
-        }
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean -> setDatabaseShowNotificationFlag(isGranted, true) }
-     */
