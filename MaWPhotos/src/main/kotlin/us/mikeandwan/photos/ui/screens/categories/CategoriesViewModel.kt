@@ -3,7 +3,6 @@ package us.mikeandwan.photos.ui.screens.categories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -20,7 +19,7 @@ class CategoriesViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
     categoryPreferenceRepository: CategoryPreferenceRepository
 ): ViewModel() {
-    private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(false, null))
+    private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(0, false, null))
     val refreshStatus = _refreshStatus.asStateFlow()
 
     private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
@@ -30,20 +29,14 @@ class CategoriesViewModel @Inject constructor (
         .getCategoryPreference()
         .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
 
-    // TODO: 1 did not work on emulator, 10 did work, lets make it 20 to be safe - FUGLY!
-    private val HACK_DELAY = 20L
-
-    val onRefreshCategories: () -> Unit = {
+    fun onRefreshCategories(id: Int) {
         viewModelScope.launch {
             photoCategoryRepository
                 .getNewCategories()
                 .onEach {
                     when(it) {
                         is ExternalCallStatus.Loading -> {
-                            _refreshStatus.value = CategoryRefreshStatus(true, null)
-
-                            // TODO: this delay ensures that observers will see the change of refresh status
-                            delay(HACK_DELAY)
+                            _refreshStatus.value = CategoryRefreshStatus(id,true, null)
                         }
                         is ExternalCallStatus.Success -> {
                             val msg = when(it.result.count()) {
@@ -52,16 +45,10 @@ class CategoriesViewModel @Inject constructor (
                                 else -> "${it.result.count()} categories loaded"
                             }
 
-                            _refreshStatus.value = CategoryRefreshStatus(false, msg)
-
-                            // TODO: this delay ensures that observers will see the change of refresh status
-                            delay(HACK_DELAY)
+                            _refreshStatus.value = CategoryRefreshStatus(id,false, msg)
                         }
                         is ExternalCallStatus.Error -> {
-                            _refreshStatus.value = CategoryRefreshStatus(false, "There was an error loading categories")
-
-                            // TODO: this delay ensures that observers will see the change of refresh status
-                            delay(HACK_DELAY)
+                            _refreshStatus.value = CategoryRefreshStatus(id,false, "There was an error loading categories")
                         }
                     }
                 }
