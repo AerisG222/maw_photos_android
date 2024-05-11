@@ -2,12 +2,16 @@ package us.mikeandwan.photos.ui.screens.upload
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -56,7 +60,11 @@ fun UploadScreen(
     ) {
         AsyncImage(
             model = R.drawable.ic_share,
-            contentDescription = stringResource(id = R.string.share_photo_icon_description)
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+            contentDescription = stringResource(id = R.string.share_photo_icon_description),
+            modifier = Modifier
+                .padding(40.dp)
+                .fillMaxSize()
         )
     }
 
