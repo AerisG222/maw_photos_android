@@ -58,8 +58,8 @@ fun SearchBar(
                 }
             ),
             modifier = Modifier
-                //.height(40.dp)
-                .padding(8.dp, 0.dp)
+                .padding(0.dp, 0.dp, 8.dp, 0.dp)
+                .weight(1f)
         )
 
         AsyncImage(
