@@ -1,14 +1,13 @@
 package us.mikeandwan.photos.ui.controls.topbar
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -62,22 +61,23 @@ fun SearchBar(
                 .weight(1f)
         )
 
-        AsyncImage(
-            model = R.drawable.ic_search,
-            contentDescription = stringResource(R.string.search_icon_description),
-            colorFilter = ColorFilter.tint(
-                MaterialTheme.colorScheme.primary,
-                blendMode = BlendMode.Modulate
-            ),
-            alignment = Alignment.Center,
-            modifier = Modifier
-                .height(48.dp)
-                .width(48.dp)
-                .clickable {
-                    onSearch(searchTerm)
-                    keyboardController?.hide()
-                }
-        )
+        IconButton(
+            modifier = Modifier.size(42.dp),
+            onClick = {
+                onSearch(searchTerm)
+                keyboardController?.hide()
+            }
+        ) {
+            AsyncImage(
+                model = R.drawable.ic_search,
+                contentDescription = stringResource(R.string.search_icon_description),
+                alignment = Alignment.Center,
+                colorFilter = ColorFilter.tint(
+                    MaterialTheme.colorScheme.primary,
+                    blendMode = BlendMode.Modulate
+                )
+            )
+        }
     }
 }
 
