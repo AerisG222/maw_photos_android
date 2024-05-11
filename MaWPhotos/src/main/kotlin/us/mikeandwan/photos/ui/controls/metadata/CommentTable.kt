@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.photocomment
+package us.mikeandwan.photos.ui.controls.metadata
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

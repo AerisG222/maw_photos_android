@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.navigationrail
+package us.mikeandwan.photos.ui.controls.navigation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding

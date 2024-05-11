@@ -43,7 +43,7 @@ import net.engawapg.lib.zoomable.zoomable
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.PhotoComment
-import us.mikeandwan.photos.ui.controls.photodetail.PhotoDetailBottomSheet
+import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
 
@@ -208,7 +208,7 @@ fun PhotoPager(
     }
 
     if(showDetails) {
-        PhotoDetailBottomSheet(
+        DetailBottomSheet(
             sheetState = sheetState,
             userRating = userRating,
             averageRating = averageRating,

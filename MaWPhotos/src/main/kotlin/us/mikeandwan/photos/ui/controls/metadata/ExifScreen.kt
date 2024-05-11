@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.photoexif
+package us.mikeandwan.photos.ui.controls.metadata
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PhotoExifScreen(
+fun ExifScreen(
     exif: List<Pair<String, String>>
 ) {
     LazyColumn(Modifier.fillMaxSize()) {

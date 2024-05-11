@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.searchnavmenu
+package us.mikeandwan.photos.ui.controls.navigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

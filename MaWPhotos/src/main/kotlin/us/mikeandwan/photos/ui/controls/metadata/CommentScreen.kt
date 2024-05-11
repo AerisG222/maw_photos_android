@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.photocomment
+package us.mikeandwan.photos.ui.controls.metadata
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.PhotoComment
 
 @Composable
-fun PhotoCommentScreen(
+fun CommentScreen(
     comments: List<PhotoComment>,
     addComment: (String) -> Unit
 ) {

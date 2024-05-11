@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
-import us.mikeandwan.photos.ui.controls.navigationrail.NavigationRail
+import us.mikeandwan.photos.ui.controls.navigation.NavigationRail
 import us.mikeandwan.photos.ui.controls.topbar.TopBar
 import us.mikeandwan.photos.ui.screens.about.aboutScreen
 import us.mikeandwan.photos.ui.screens.about.navigateToAbout

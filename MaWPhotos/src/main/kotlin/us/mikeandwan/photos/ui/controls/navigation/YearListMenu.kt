@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.yearnavmenu
+package us.mikeandwan.photos.ui.controls.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

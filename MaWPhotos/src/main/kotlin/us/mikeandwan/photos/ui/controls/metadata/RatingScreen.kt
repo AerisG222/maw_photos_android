@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.photorating
+package us.mikeandwan.photos.ui.controls.metadata
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import com.smarttoolfactory.ratingbar.model.RatingInterval
 import us.mikeandwan.photos.R
 
 @Composable
-fun PhotoRatingScreen(
+fun RatingScreen(
     userRating: Short,
     averageRating: Float,
     setRating: (rating: Short) -> Unit

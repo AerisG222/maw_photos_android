@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.navigationrail
+package us.mikeandwan.photos.ui.controls.navigation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +13,6 @@ import androidx.compose.ui.unit.dp
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.SearchHistory
-import us.mikeandwan.photos.ui.controls.randomnavmenu.RandomMenu
-import us.mikeandwan.photos.ui.controls.searchnavmenu.SearchListMenu
-import us.mikeandwan.photos.ui.controls.yearnavmenu.YearListMenu
 
 @Composable
 fun NavigationRail(

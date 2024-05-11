@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.photodetail
+package us.mikeandwan.photos.ui.controls.metadata
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
@@ -17,9 +17,6 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.PhotoComment
-import us.mikeandwan.photos.ui.controls.photocomment.PhotoCommentScreen
-import us.mikeandwan.photos.ui.controls.photoexif.PhotoExifScreen
-import us.mikeandwan.photos.ui.controls.photorating.PhotoRatingScreen
 
 private object TabIndex {
     const val RATING = 0
@@ -103,7 +100,7 @@ fun PhotoDetailTabs(
                     TabIndex.RATING -> {
                         fetchRatingDetails()
 
-                        PhotoRatingScreen(
+                        RatingScreen(
                             userRating,
                             averageRating,
                             setRating
@@ -112,7 +109,7 @@ fun PhotoDetailTabs(
                     TabIndex.COMMENT -> {
                         fetchCommentDetails()
 
-                        PhotoCommentScreen(
+                        CommentScreen(
                             comments,
                             addComment
                         )
@@ -120,7 +117,7 @@ fun PhotoDetailTabs(
                     TabIndex.EXIF -> {
                         fetchExifDetails()
 
-                        PhotoExifScreen(exif)
+                        ExifScreen(exif)
                     }
                 }
             }
