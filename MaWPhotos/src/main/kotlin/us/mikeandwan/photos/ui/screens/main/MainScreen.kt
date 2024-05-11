@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigationrail.NavigationRail
@@ -96,6 +97,7 @@ fun MainScreen() {
 
     val mostRecentYear by vm.mostRecentYear
         .filter { it != null }
+        .map { it!! }
         .collectAsStateWithLifecycle(initialValue = 2024)
 
     ModalNavigationDrawer(
@@ -117,7 +119,7 @@ fun MainScreen() {
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToCategories = {
-                        navController.navigateToCategories(mostRecentYear!!)
+                        navController.navigateToCategories(mostRecentYear)
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToCategoriesByYear = {
@@ -190,7 +192,8 @@ fun MainScreen() {
                 )
                 loginScreen(
                     updateTopBar = ::updateTopBar,
-                    setNavArea = { setNavArea(it) }
+                    setNavArea = { setNavArea(it) },
+                    navigateToCategories = { navController.navigateToCategories(mostRecentYear) }
                 )
                 aboutScreen(
                     updateTopBar = ::updateTopBar,
