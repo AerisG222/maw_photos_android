@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -20,7 +20,17 @@ fun PhotoExifScreen(
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
         itemsIndexed(exif) { index, data ->
-            val bgColor = if (index % 2 == 0) { Color.DarkGray } else { Color.Gray }
+            val bgColor = if (index % 2 == 0) {
+                MaterialTheme.colorScheme.surfaceVariant
+            } else {
+                MaterialTheme.colorScheme.surface
+            }
+
+            val txtColor = if (index % 2 == 0) {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            }
 
             Row(
                 Modifier
@@ -29,6 +39,7 @@ fun PhotoExifScreen(
             ) {
                 Text (
                     text = data.first,
+                    color = txtColor,
                     fontSize = 14.sp,
                     modifier = Modifier
                         .weight(1f)
@@ -36,6 +47,7 @@ fun PhotoExifScreen(
                 )
                 Text (
                     text = data.second,
+                    color = txtColor,
                     fontSize = 14.sp,
                     modifier = Modifier
                         .weight(1f)

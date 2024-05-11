@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,8 +24,10 @@ fun CommentTable(
     comments: List<PhotoComment>
 ) {
     val fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val bgHead = Color.DarkGray
-    val bgRow = Color.Gray
+    val bgHead = MaterialTheme.colorScheme.surfaceVariant
+    val txtHead = MaterialTheme.colorScheme.onSurfaceVariant
+    val bgRow = MaterialTheme.colorScheme.surface
+    val txtRow = MaterialTheme.colorScheme.onSurface
 
     LazyColumn {
         itemsIndexed(comments) { index, comment ->
@@ -37,11 +40,13 @@ fun CommentTable(
                 Text(
                     maxLines = 1,
                     fontWeight = FontWeight.Bold,
+                    color = txtHead,
                     text = comment.username
                 )
                 Text(
                     maxLines = 1,
                     fontWeight = FontWeight.Bold,
+                    color = txtHead,
                     textAlign = TextAlign.End,
                     text = comment.entryDate
                         .toInstant()
@@ -55,7 +60,14 @@ fun CommentTable(
                 .background(bgRow)
                 .padding(4.dp, 2.dp)
             ) {
-                Text(text = comment.commentText)
+                Text(
+                    color = txtRow,
+                    text = comment.commentText
+                )
+            }
+
+            if (index != comments.size - 1) {
+                HorizontalDivider()
             }
         }
     }
