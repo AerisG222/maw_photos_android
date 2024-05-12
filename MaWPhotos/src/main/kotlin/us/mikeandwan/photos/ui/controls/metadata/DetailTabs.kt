@@ -10,6 +10,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,7 @@ private object TabIndex {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoDetailTabs(
+    activePhotoId: Int,
     userRating: Short,
     averageRating: Float,
     exif: List<Pair<String, String>>,
@@ -39,6 +42,10 @@ fun PhotoDetailTabs(
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
+
+    val (commentPhotoId, setCommentPhotoId) = remember { mutableIntStateOf(0) }
+    val (ratingPhotoId, setRatingPhotoId) = remember { mutableIntStateOf(0) }
+    val (exifPhotoId, setExifPhotoId) = remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
@@ -98,7 +105,10 @@ fun PhotoDetailTabs(
             pageContent = {
                 when(it) {
                     TabIndex.RATING -> {
-                        fetchRatingDetails()
+                        if(activePhotoId != ratingPhotoId) {
+                            setRatingPhotoId(activePhotoId)
+                            fetchRatingDetails()
+                        }
 
                         RatingScreen(
                             userRating,
@@ -107,7 +117,10 @@ fun PhotoDetailTabs(
                         )
                     }
                     TabIndex.COMMENT -> {
-                        fetchCommentDetails()
+                        if(activePhotoId != commentPhotoId) {
+                            setCommentPhotoId(activePhotoId)
+                            fetchCommentDetails()
+                        }
 
                         CommentScreen(
                             comments,
@@ -115,7 +128,10 @@ fun PhotoDetailTabs(
                         )
                     }
                     TabIndex.EXIF -> {
-                        fetchExifDetails()
+                        if(activePhotoId != exifPhotoId) {
+                            setExifPhotoId(activePhotoId)
+                            fetchExifDetails()
+                        }
 
                         ExifScreen(exif)
                     }

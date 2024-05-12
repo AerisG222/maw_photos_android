@@ -10,6 +10,7 @@ import us.mikeandwan.photos.domain.models.PhotoComment
 @Composable
 fun DetailBottomSheet(
     sheetState: SheetState,
+    activePhotoId: Int,
     userRating: Short,
     averageRating: Float,
     exif: List<Pair<String, String>>,
@@ -26,6 +27,7 @@ fun DetailBottomSheet(
         onDismissRequest = { onDismissRequest() }
     ) {
         PhotoDetailTabs(
+            activePhotoId = activePhotoId,
             userRating = userRating,
             averageRating = averageRating,
             exif = exif,

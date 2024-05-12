@@ -19,6 +19,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
@@ -83,6 +84,7 @@ fun PhotoPager(
     val zoomState = rememberZoomState()
     val rotationDictionary = remember { HashMap<Int,Float>() }
     val (activeRotation, setActiveRotation) = remember { mutableFloatStateOf(0f) }
+    val (activePhotoId, setActivePhotoId) = remember { mutableIntStateOf(0) }
 
     fun getRotationForPage(page: Int): Float {
         return when(rotationDictionary.containsKey(page)) {
@@ -101,6 +103,7 @@ fun PhotoPager(
     }
 
     LaunchedEffect(activePhotoIndex) {
+        setActivePhotoId(photos[activePhotoIndex].id)
         pagerState.animateScrollToPage(activePhotoIndex)
     }
 
@@ -209,6 +212,7 @@ fun PhotoPager(
 
     if(showDetails) {
         DetailBottomSheet(
+            activePhotoId = activePhotoId,
             sheetState = sheetState,
             userRating = userRating,
             averageRating = averageRating,
