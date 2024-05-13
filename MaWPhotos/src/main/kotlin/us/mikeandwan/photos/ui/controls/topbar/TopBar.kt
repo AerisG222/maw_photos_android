@@ -33,8 +33,6 @@ fun TopBar(
     onBackClicked: () -> Unit,
     onSearch: (String) -> Unit
 ) {
-
-
     TopAppBar(
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
@@ -82,21 +80,4 @@ fun TopBar(
             }
         }
     )
-
-//    Row(modifier = Modifier
-//        .fillMaxWidth()
-//    ) {
-//        if(showSearch.value) {
-//
-//        } else {
-//            Text(
-//                text = toolbarTitle.value,
-//                style = MaterialTheme.typography.headlineMedium,
-//                modifier = Modifier
-//                    .align(Alignment.CenterVertically)
-//                    .fillMaxWidth()
-//                    .padding(8.dp)
-//            )
-//        }
-//    }
 }
