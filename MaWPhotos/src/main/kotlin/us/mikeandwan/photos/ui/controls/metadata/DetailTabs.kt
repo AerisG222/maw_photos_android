@@ -28,7 +28,7 @@ private object TabIndex {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PhotoDetailTabs(
+fun DetailTabs(
     activePhotoId: Int,
     userRating: Short,
     averageRating: Float,
