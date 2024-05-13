@@ -2,13 +2,12 @@ package us.mikeandwan.photos.di
 
 import android.app.Application
 import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.database.*
+import us.mikeandwan.photos.database.migrations.MIGRATION_1_2
 import us.mikeandwan.photos.database.migrations.MawDatabaseCreateCallback
 import javax.inject.Singleton
 
@@ -74,11 +73,5 @@ class DatabaseModule {
     @Singleton
     fun provideSearchPreferenceDao(mawDatabase: MawDatabase): SearchPreferenceDao {
         return mawDatabase.searchPreferenceDao()
-    }
-
-    private val MIGRATION_1_2 = object: Migration(1, 2) {
-        override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("DROP TABLE active_id")
-        }
     }
 }
