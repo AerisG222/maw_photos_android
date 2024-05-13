@@ -26,7 +26,7 @@ fun DetailBottomSheet(
         sheetState = sheetState,
         onDismissRequest = { onDismissRequest() }
     ) {
-        PhotoDetailTabs(
+        DetailTabs(
             activePhotoId = activePhotoId,
             userRating = userRating,
             averageRating = averageRating,
