@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -13,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.PhotoComment
@@ -23,7 +27,14 @@ fun CommentScreen(
     comments: List<PhotoComment>,
     addComment: (String) -> Unit
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val (newComment, setNewComment) = remember { mutableStateOf("") }
+
+    fun addComment() {
+        addComment(newComment)
+        keyboardController?.hide()
+        setNewComment("")
+    }
 
     Column(modifier = Modifier.fillMaxHeight()) {
         CommentTable(comments = comments)
@@ -38,7 +49,13 @@ fun CommentScreen(
                 singleLine = false,
                 minLines = 3,
                 maxLines = 3,
-                onValueChange = { setNewComment(it) }
+                onValueChange = { setNewComment(it) },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { addComment() }
+                ),
             )
         }
 
@@ -48,7 +65,7 @@ fun CommentScreen(
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = { addComment(newComment) },
+                onClick = { addComment() },
             ) {
                 Text(
                     text = stringResource(id = R.string.frg_comment_add_comment)
