@@ -31,6 +31,8 @@ class CategoryViewModel @Inject constructor (
 ) : ViewModel() {
     private var slideshowJob: PeriodicJob<Unit>
 
+    private val _resumeSlideshowAfterShowingDetails = MutableStateFlow(false)
+
     private val _showDetailSheet = MutableStateFlow(false)
     val showDetailSheet = _showDetailSheet.asStateFlow()
 
@@ -106,6 +108,16 @@ class CategoryViewModel @Inject constructor (
     }
 
     fun toggleShowDetails() {
+        if(_showDetailSheet.value) {
+            // detail sheet to be hidden
+            if(_resumeSlideshowAfterShowingDetails.value) {
+                slideshowJob.start()
+            }
+        } else {
+            _resumeSlideshowAfterShowingDetails.value = isSlideshowPlaying.value
+            slideshowJob.stop()
+        }
+
         _showDetailSheet.value = !_showDetailSheet.value
     }
 
