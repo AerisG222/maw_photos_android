@@ -142,6 +142,7 @@ dependencies {
     // hilt
     implementation(libs.hilt)
     implementation(libs.hilt.navigation)
+    ksp(libs.hilt.compiler)
     ksp(libs.hilt.android.compiler)
     androidTestImplementation(libs.hilt.testing)
     testImplementation(libs.hilt.testing)
