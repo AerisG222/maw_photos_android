@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.controls.metadata
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,8 @@ fun CommentScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val (newComment, setNewComment) = remember { mutableStateOf("") }
 
+    val interactionSource = remember { MutableInteractionSource() }
+
     fun addComment() {
         addComment(newComment)
         keyboardController?.hide()
@@ -37,39 +40,40 @@ fun CommentScreen(
     }
 
     Column(modifier = Modifier.fillMaxHeight()) {
-        CommentTable(comments = comments)
-
-        Row(modifier = Modifier
-            .padding(8.dp, 8.dp)
-            .fillMaxWidth()
-        ) {
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = newComment,
-                singleLine = false,
-                minLines = 3,
-                maxLines = 3,
-                onValueChange = { setNewComment(it) },
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { addComment() }
-                ),
-            )
-        }
-
-        Row(modifier = Modifier
-            .padding(0.dp, 0.dp, 0.dp, 8.dp)
-            .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Button(
-                onClick = { addComment() },
+        CommentTable(comments = comments) {
+            Row(modifier = Modifier
+                .padding(8.dp, 8.dp)
+                .fillMaxWidth()
             ) {
-                Text(
-                    text = stringResource(id = R.string.frg_comment_add_comment)
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = newComment,
+                    singleLine = false,
+                    minLines = 3,
+                    maxLines = 3,
+                    interactionSource = interactionSource,
+                    onValueChange = { setNewComment(it) },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { addComment() }
+                    ),
                 )
+            }
+
+            Row(modifier = Modifier
+                .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = { addComment() },
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.frg_comment_add_comment)
+                    )
+                }
             }
         }
     }

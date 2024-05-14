@@ -21,7 +21,8 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun CommentTable(
-    comments: List<PhotoComment>
+    comments: List<PhotoComment>,
+    footer: @Composable () -> Unit
 ) {
     val fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val bgHead = MaterialTheme.colorScheme.surfaceVariant
@@ -69,6 +70,10 @@ fun CommentTable(
             if (index != comments.size - 1) {
                 HorizontalDivider()
             }
+        }
+
+        item {
+            footer()
         }
     }
 }
