@@ -139,7 +139,10 @@ class CategoryViewModel @Inject constructor (
             newAverageRating
                 .filter { it is ExternalCallStatus.Success }
                 .map { it as ExternalCallStatus.Success }
-                .collect { _averageRating.value = it.result.averageRating }
+                .collect {
+                    _userRating.value = rating
+                    _averageRating.value = it.result.averageRating
+                }
         }
     }
 
