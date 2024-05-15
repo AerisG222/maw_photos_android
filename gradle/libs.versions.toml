@@ -15,6 +15,9 @@ junit = "5.10.2"
 kotlin = "1.9.24"
 kotlinx-serialization = "1.6.3"
 ksp = "1.9.24-1.0.20"
+
+# do not update lifecycle to 2.8.0 until compose bom updates compose to 1.7.0
+# https://medium.com/@abrarwiryawan/compose-multiplatform-lifecycleowner-gotchas-288bc0d452db
 lifecycle = "2.7.0"
 markdown = "0.4.1"
 material3 = "1.2.1"
