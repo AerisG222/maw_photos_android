@@ -114,8 +114,11 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.ui.tooling.preview)
+    // below are noinspect as these are included in the bom
+    // noinspection UseTomlInstead
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    //noinspection UseTomlInstead
+    implementation("androidx.compose.ui:ui-tooling-preview")
 
     // core
     implementation(libs.core.ktx)
