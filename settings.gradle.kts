@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 }
 
 include(":MaWPhotos")
+include(":mawphotos:baselineprofile")

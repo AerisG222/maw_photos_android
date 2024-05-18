@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.org.jetbrains.kotlin.serialization)
+    alias(libs.plugins.baselineprofile)
 }
 
 val homedir = System.getProperty("user.home")
@@ -110,6 +111,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(project(":mawphotos:baselineprofile"))
+
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
