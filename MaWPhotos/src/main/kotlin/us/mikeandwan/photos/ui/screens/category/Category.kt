@@ -55,12 +55,6 @@ fun NavGraphBuilder.categoryScreen(
             setNavArea(NavigationArea.Category)
         }
 
-        LaunchedEffect(photoId) {
-            if(photoId > 0) {
-                vm.setActivePhotoId(photoId)
-            }
-        }
-
         val category by vm.category.collectAsStateWithLifecycle()
         val gridItems by vm.gridItems.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
@@ -75,8 +69,14 @@ fun NavGraphBuilder.categoryScreen(
         val exif by vm.exif.collectAsStateWithLifecycle()
         val comments by vm.comments.collectAsStateWithLifecycle()
 
-        LaunchedEffect(category) {
-            updateTopBar(true, true, buildTitle(category))
+        LaunchedEffect(category, photos, photoId) {
+            if(category != null) {
+                updateTopBar(true, true, buildTitle(category))
+            }
+
+            if(photos.isNotEmpty() && photoId > 0) {
+                vm.setActivePhotoId(photoId)
+            }
         }
 
         if(category != null) {
