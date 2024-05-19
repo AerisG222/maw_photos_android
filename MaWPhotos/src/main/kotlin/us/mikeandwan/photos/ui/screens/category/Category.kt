@@ -26,13 +26,6 @@ const val CategoryRoute = "category"
 private const val categoryIdArg = "categoryId"
 private const val photoIdArg = "photoId"
 
-fun buildTitle(category: PhotoCategory?): String {
-    return when(category) {
-        null -> ""
-        else -> category.name
-    }
-}
-
 fun NavGraphBuilder.categoryScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
@@ -46,22 +39,22 @@ fun NavGraphBuilder.categoryScreen(
         )
     ) { backStackEntry ->
         val vm: CategoryViewModel = hiltViewModel()
-        val state = rememberCategoryState(vm)
-
         val categoryId = backStackEntry.arguments?.getInt(categoryIdArg) ?: -1
         val photoId = backStackEntry.arguments?.getInt(photoIdArg) ?: -1
+        val state = rememberCategoryState(vm, categoryId, photoId)
 
-        LaunchedEffect(categoryId) {
-            vm.loadCategory(categoryId)
-            vm.loadPhotos(categoryId)
-
+        LaunchedEffect(Unit) {
             setNavArea(NavigationArea.Category)
         }
 
-        val category by vm.category.collectAsStateWithLifecycle()
+        LaunchedEffect(state.category) {
+            if(state.category != null) {
+                updateTopBar(true, true, state.category.name)
+            }
+        }
+
         val gridItems by vm.gridItems.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
-        val photos by vm.photos.collectAsStateWithLifecycle()
         val activePhotoId by vm.activePhotoId.collectAsStateWithLifecycle()
         val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
@@ -69,22 +62,12 @@ fun NavGraphBuilder.categoryScreen(
         val exif by vm.exif.collectAsStateWithLifecycle()
         val comments by vm.comments.collectAsStateWithLifecycle()
 
-        LaunchedEffect(category, photos, photoId) {
-            if(category != null) {
-                updateTopBar(true, true, buildTitle(category))
-            }
-
-            if(photos.isNotEmpty() && photoId > 0) {
-                vm.setActivePhotoId(photoId)
-            }
-        }
-
-        if(category != null) {
+        if(state.category != null) {
             CategoryScreen(
-                category!!,
+                state.category,
                 gridItems,
                 thumbSize,
-                photos,
+                state.photos,
                 activePhotoId,
                 activePhotoIndex,
                 isSlideshowPlaying,
