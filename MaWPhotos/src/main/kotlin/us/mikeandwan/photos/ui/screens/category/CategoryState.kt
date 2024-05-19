@@ -6,7 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.ui.controls.metadata.ExifState
 import us.mikeandwan.photos.ui.controls.metadata.RatingState
+import us.mikeandwan.photos.ui.controls.metadata.rememberExifState
 import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
 
 sealed class CategoryState {
@@ -19,7 +21,8 @@ sealed class CategoryState {
     data class Loaded(
         val category: PhotoCategory,
         val photos: List<Photo>,
-        val ratingState: RatingState
+        val ratingState: RatingState,
+        val exifState: ExifState
     ): CategoryState()
 }
 
@@ -52,6 +55,10 @@ fun rememberCategoryState(
         updateUserRating = { vm.setRating(it) }
     )
 
+    val exif by vm.exif.collectAsStateWithLifecycle()
+
+    val exifState = rememberExifState(exif)
+
     return if(category == null) {
         CategoryState.Loading
     } else if(photos.isEmpty()) {
@@ -60,7 +67,8 @@ fun rememberCategoryState(
         CategoryState.Loaded(
             category!!,
             photos,
-            ratingState
+            ratingState,
+            exifState
         )
     }
 }

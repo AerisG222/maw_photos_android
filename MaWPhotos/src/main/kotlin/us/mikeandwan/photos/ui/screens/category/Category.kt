@@ -19,6 +19,7 @@ import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.loading.Loading
+import us.mikeandwan.photos.ui.controls.metadata.ExifState
 import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
 import java.io.File
@@ -54,7 +55,6 @@ fun NavGraphBuilder.categoryScreen(
         val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
-        val exif by vm.exif.collectAsStateWithLifecycle()
         val comments by vm.comments.collectAsStateWithLifecycle()
 
         when(state) {
@@ -90,7 +90,7 @@ fun NavGraphBuilder.categoryScreen(
                     savePhotoToShare = { drawable, filename, onComplete ->
                         vm.saveFileToShare(drawable, filename, onComplete)
                     },
-                    exif = exif,
+                    exifState = state.exifState,
                     comments = comments,
                     addComment = { vm.addComment(it) },
                     fetchRatingDetails = { vm.fetchRatingDetails() },
@@ -126,7 +126,7 @@ fun CategoryScreen(
     toggleShowDetails: () -> Unit,
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
     ratingState: RatingState,
-    exif: List<Pair<String, String>>,
+    exifState: ExifState,
     comments: List<PhotoComment>,
     addComment: (String) -> Unit,
     fetchRatingDetails: () -> Unit,
@@ -155,7 +155,7 @@ fun CategoryScreen(
             toggleDetails = toggleShowDetails,
             updateCurrentPhoto = updateActivePhoto,
             ratingState = ratingState,
-            exif = exif,
+            exifState = exifState,
             comments = comments,
             addComment = addComment,
             fetchRatingDetails = fetchRatingDetails,

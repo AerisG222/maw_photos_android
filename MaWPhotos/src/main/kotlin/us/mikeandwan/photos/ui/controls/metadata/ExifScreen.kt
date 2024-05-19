@@ -16,10 +16,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ExifScreen(
-    exif: List<Pair<String, String>>
+    exifState: ExifState
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
-        itemsIndexed(exif) { index, data ->
+        itemsIndexed(exifState.exifDisplay) { index, data ->
             val bgColor = if (index % 2 == 0) {
                 MaterialTheme.colorScheme.surfaceVariant
             } else {

@@ -12,7 +12,7 @@ fun DetailBottomSheet(
     sheetState: SheetState,
     activePhotoId: Int,
     ratingState: RatingState,
-    exif: List<Pair<String, String>>,
+    exifState: ExifState,
     comments: List<PhotoComment>,
     addComment: (String) -> Unit,
     fetchRatingDetails: () -> Unit,
@@ -27,7 +27,7 @@ fun DetailBottomSheet(
         DetailTabs(
             activePhotoId = activePhotoId,
             ratingState = ratingState,
-            exif = exif,
+            exifState = exifState,
             comments = comments,
             addComment = addComment,
             fetchRatingDetails = fetchRatingDetails,

@@ -31,7 +31,7 @@ private object TabIndex {
 fun DetailTabs(
     activePhotoId: Int,
     ratingState: RatingState,
-    exif: List<Pair<String, String>>,
+    exifState: ExifState,
     comments: List<PhotoComment>,
     addComment: (String) -> Unit,
     fetchRatingDetails: () -> Unit,
@@ -127,7 +127,7 @@ fun DetailTabs(
                             fetchExifDetails()
                         }
 
-                        ExifScreen(exif)
+                        ExifScreen(exifState)
                     }
                 }
             }

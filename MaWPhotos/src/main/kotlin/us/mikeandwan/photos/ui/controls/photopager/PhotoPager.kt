@@ -45,6 +45,7 @@ import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
+import us.mikeandwan.photos.ui.controls.metadata.ExifState
 import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
@@ -60,13 +61,13 @@ fun PhotoPager(
     isSlideshowPlaying: Boolean,
     showDetails: Boolean,
     ratingState: RatingState,
+    exifState: ExifState,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit,
     updateCurrentPhoto: (photoId: Int) -> Unit,
     toggleSlideshow: () -> Unit,
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
     toggleDetails: () -> Unit,
-    exif: List<Pair<String, String>>,
     comments: List<PhotoComment>,
     addComment: (String) -> Unit,
     fetchRatingDetails: () -> Unit,
@@ -214,7 +215,7 @@ fun PhotoPager(
             activePhotoId = activePhotoId,
             sheetState = sheetState,
             ratingState = ratingState,
-            exif = exif,
+            exifState = exifState,
             comments = comments,
             addComment = addComment,
             fetchRatingDetails = fetchRatingDetails,
