@@ -61,6 +61,13 @@ fun NavGraphBuilder.categoryScreen(
             is CategoryState.Loading -> {
                 Loading()
             }
+            is CategoryState.CategoryLoaded -> {
+                LaunchedEffect(state.category) {
+                    updateTopBar(true, true, state.category.name)
+                }
+
+                Loading()
+            }
             is CategoryState.Loaded -> {
                 LaunchedEffect(state.category) {
                     updateTopBar(true, true, state.category.name)

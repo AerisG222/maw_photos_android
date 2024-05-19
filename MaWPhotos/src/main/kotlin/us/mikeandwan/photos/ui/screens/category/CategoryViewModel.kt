@@ -76,7 +76,7 @@ class CategoryViewModel @Inject constructor (
 
         viewModelScope.launch {
             if(BuildConfig.DEBUG) {
-                delay(1000)
+                delay(500)
             }
 
             photoCategoryRepository
@@ -91,6 +91,10 @@ class CategoryViewModel @Inject constructor (
         }
 
         viewModelScope.launch {
+            if(BuildConfig.DEBUG) {
+                delay(1000)
+            }
+
             photoCategoryRepository
                 .getPhotos(categoryId)
                 .filter { it is ExternalCallStatus.Success }

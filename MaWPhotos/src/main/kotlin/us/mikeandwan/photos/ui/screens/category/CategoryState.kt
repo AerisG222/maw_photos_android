@@ -12,6 +12,10 @@ import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
 sealed class CategoryState {
     data object Loading: CategoryState()
 
+    data class CategoryLoaded(
+        val category: PhotoCategory
+    ): CategoryState()
+
     data class Loaded(
         val category: PhotoCategory,
         val photos: List<Photo>,
@@ -48,8 +52,10 @@ fun rememberCategoryState(
         updateUserRating = { vm.setRating(it) }
     )
 
-    return if(category == null || photos.isEmpty()) {
+    return if(category == null) {
         CategoryState.Loading
+    } else if(photos.isEmpty()) {
+        CategoryState.CategoryLoaded(category!!)
     } else {
         CategoryState.Loaded(
             category!!,
