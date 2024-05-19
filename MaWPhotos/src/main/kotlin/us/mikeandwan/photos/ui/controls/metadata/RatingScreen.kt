@@ -21,11 +21,7 @@ import com.smarttoolfactory.ratingbar.model.RatingInterval
 import us.mikeandwan.photos.R
 
 @Composable
-fun RatingScreen(
-    userRating: Short,
-    averageRating: Float,
-    setRating: (rating: Short) -> Unit
-) {
+fun RatingScreen(state: RatingState) {
     Column(modifier = Modifier.fillMaxHeight()) {
         Row(
             modifier = Modifier
@@ -44,14 +40,14 @@ fun RatingScreen(
             RatingBar(
                 itemSize = 32.dp,
                 space = 2.dp,
-                rating = userRating.toFloat(),
+                rating = state.userRating.toFloat(),
                 imageVectorEmpty = ImageVector.vectorResource(R.drawable.ic_baseline_star_outline),
                 imageVectorFilled = ImageVector.vectorResource(R.drawable.ic_star),
                 tintEmpty = MaterialTheme.colorScheme.primary,
                 tintFilled = MaterialTheme.colorScheme.primary,
                 rateChangeStrategy = RateChangeStrategy.InstantChange,
                 ratingInterval = RatingInterval.Full,
-                onRatingChange = { rating -> setRating(rating.toInt().toShort()) }
+                onRatingChange = { rating -> state.updateUserRating(rating.toInt().toShort()) }
             )
         }
 
@@ -69,7 +65,7 @@ fun RatingScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             RatingBar(
-                rating = averageRating,
+                rating = state.averageRating,
                 imageVectorEmpty = ImageVector.vectorResource(R.drawable.ic_baseline_star_outline),
                 imageVectorFilled = ImageVector.vectorResource(R.drawable.ic_star),
                 tintEmpty = MaterialTheme.colorScheme.primary,

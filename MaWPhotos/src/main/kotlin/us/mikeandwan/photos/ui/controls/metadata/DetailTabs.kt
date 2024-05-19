@@ -30,11 +30,9 @@ private object TabIndex {
 @Composable
 fun DetailTabs(
     activePhotoId: Int,
-    userRating: Short,
-    averageRating: Float,
+    ratingState: RatingState,
     exif: List<Pair<String, String>>,
     comments: List<PhotoComment>,
-    setRating: (Short) -> Unit,
     addComment: (String) -> Unit,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
@@ -110,11 +108,7 @@ fun DetailTabs(
                             fetchRatingDetails()
                         }
 
-                        RatingScreen(
-                            userRating,
-                            averageRating,
-                            setRating
-                        )
+                        RatingScreen(ratingState)
                     }
                     TabIndex.COMMENT -> {
                         if(activePhotoId != commentPhotoId) {

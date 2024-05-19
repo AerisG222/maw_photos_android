@@ -11,12 +11,10 @@ import us.mikeandwan.photos.domain.models.PhotoComment
 fun DetailBottomSheet(
     sheetState: SheetState,
     activePhotoId: Int,
-    userRating: Short,
-    averageRating: Float,
+    ratingState: RatingState,
     exif: List<Pair<String, String>>,
     comments: List<PhotoComment>,
     addComment: (String) -> Unit,
-    setRating: (Short) -> Unit,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
     fetchCommentDetails: () -> Unit,
@@ -28,12 +26,10 @@ fun DetailBottomSheet(
     ) {
         DetailTabs(
             activePhotoId = activePhotoId,
-            userRating = userRating,
-            averageRating = averageRating,
+            ratingState = ratingState,
             exif = exif,
             comments = comments,
             addComment = addComment,
-            setRating = setRating,
             fetchRatingDetails = fetchRatingDetails,
             fetchExifDetails = fetchExifDetails,
             fetchCommentDetails = fetchCommentDetails
