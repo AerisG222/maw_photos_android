@@ -18,6 +18,7 @@ import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
+import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
 import java.io.File
@@ -47,12 +48,6 @@ fun NavGraphBuilder.categoryScreen(
             setNavArea(NavigationArea.Category)
         }
 
-        LaunchedEffect(state.category) {
-            if(state.category != null) {
-                updateTopBar(true, true, state.category.name)
-            }
-        }
-
         val gridItems by vm.gridItems.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
         val activePhotoId by vm.activePhotoId.collectAsStateWithLifecycle()
@@ -62,31 +57,40 @@ fun NavGraphBuilder.categoryScreen(
         val exif by vm.exif.collectAsStateWithLifecycle()
         val comments by vm.comments.collectAsStateWithLifecycle()
 
-        if(state.category != null) {
-            CategoryScreen(
-                state.category,
-                gridItems,
-                thumbSize,
-                state.photos,
-                activePhotoId,
-                activePhotoIndex,
-                isSlideshowPlaying,
-                showDetailSheet,
-                ratingState = state.ratingState,
-                navigateToPhoto = navigateToPhoto,
-                updateActivePhoto = { newPhotoId -> vm.setActivePhotoId(newPhotoId) },
-                toggleSlideshow = { vm.toggleSlideshow() },
-                toggleShowDetails = { vm.toggleShowDetails() },
-                savePhotoToShare = { drawable, filename, onComplete ->
-                    vm.saveFileToShare(drawable, filename, onComplete)
-                },
-                exif = exif,
-                comments = comments,
-                addComment = { vm.addComment(it) },
-                fetchRatingDetails = { vm.fetchRatingDetails() },
-                fetchExifDetails = { vm.fetchExifDetails() },
-                fetchCommentDetails = { vm.fetchCommentDetails() }
-            )
+        when(state) {
+            is CategoryState.Loading -> {
+                Loading()
+            }
+            is CategoryState.Loaded -> {
+                LaunchedEffect(state.category) {
+                    updateTopBar(true, true, state.category.name)
+                }
+
+                CategoryScreen(
+                    state.category,
+                    gridItems,
+                    thumbSize,
+                    state.photos,
+                    activePhotoId,
+                    activePhotoIndex,
+                    isSlideshowPlaying,
+                    showDetailSheet,
+                    ratingState = state.ratingState,
+                    navigateToPhoto = navigateToPhoto,
+                    updateActivePhoto = { newPhotoId -> vm.setActivePhotoId(newPhotoId) },
+                    toggleSlideshow = { vm.toggleSlideshow() },
+                    toggleShowDetails = { vm.toggleShowDetails() },
+                    savePhotoToShare = { drawable, filename, onComplete ->
+                        vm.saveFileToShare(drawable, filename, onComplete)
+                    },
+                    exif = exif,
+                    comments = comments,
+                    addComment = { vm.addComment(it) },
+                    fetchRatingDetails = { vm.fetchRatingDetails() },
+                    fetchExifDetails = { vm.fetchExifDetails() },
+                    fetchCommentDetails = { vm.fetchCommentDetails() }
+                )
+            }
         }
     }
 }

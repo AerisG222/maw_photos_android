@@ -9,11 +9,15 @@ import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
 
-class CategoryState(
-    val category: PhotoCategory?,
-    val photos: List<Photo>,
-    val ratingState: RatingState
-)
+sealed class CategoryState {
+    data object Loading: CategoryState()
+
+    data class Loaded(
+        val category: PhotoCategory,
+        val photos: List<Photo>,
+        val ratingState: RatingState
+    ): CategoryState()
+}
 
 @Composable
 fun rememberCategoryState(
@@ -44,9 +48,13 @@ fun rememberCategoryState(
         updateUserRating = { vm.setRating(it) }
     )
 
-    return CategoryState(
-        category,
-        photos,
-        ratingState
-    )
+    return if(category == null || photos.isEmpty()) {
+        CategoryState.Loading
+    } else {
+        CategoryState.Loaded(
+            category!!,
+            photos,
+            ratingState
+        )
+    }
 }

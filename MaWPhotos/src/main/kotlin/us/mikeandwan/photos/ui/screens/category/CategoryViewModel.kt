@@ -4,8 +4,10 @@ import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import us.mikeandwan.photos.BuildConfig
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.PeriodicJob
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
@@ -69,7 +71,14 @@ class CategoryViewModel @Inject constructor (
             return
         }
 
+        _category.value = null
+        _photos.value = emptyList()
+
         viewModelScope.launch {
+            if(BuildConfig.DEBUG) {
+                delay(1000)
+            }
+
             photoCategoryRepository
                 .getCategory(categoryId)
                 .collect { _category.value = it }
