@@ -4,7 +4,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
-import us.mikeandwan.photos.domain.models.PhotoComment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -13,8 +12,7 @@ fun DetailBottomSheet(
     activePhotoId: Int,
     ratingState: RatingState,
     exifState: ExifState,
-    comments: List<PhotoComment>,
-    addComment: (String) -> Unit,
+    commentState: CommentState,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
     fetchCommentDetails: () -> Unit,
@@ -28,8 +26,7 @@ fun DetailBottomSheet(
             activePhotoId = activePhotoId,
             ratingState = ratingState,
             exifState = exifState,
-            comments = comments,
-            addComment = addComment,
+            commentState = commentState,
             fetchRatingDetails = fetchRatingDetails,
             fetchExifDetails = fetchExifDetails,
             fetchCommentDetails = fetchCommentDetails

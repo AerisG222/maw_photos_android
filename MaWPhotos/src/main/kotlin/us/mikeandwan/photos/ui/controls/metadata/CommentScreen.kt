@@ -21,26 +21,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.domain.models.PhotoComment
 
 @Composable
-fun CommentScreen(
-    comments: List<PhotoComment>,
-    addComment: (String) -> Unit
-) {
+fun CommentScreen(commentState: CommentState) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val (newComment, setNewComment) = remember { mutableStateOf("") }
 
     val interactionSource = remember { MutableInteractionSource() }
 
     fun addComment() {
-        addComment(newComment)
+        commentState.addComment(newComment)
         keyboardController?.hide()
         setNewComment("")
     }
 
     Column(modifier = Modifier.fillMaxHeight()) {
-        CommentTable(comments = comments) {
+        CommentTable(comments = commentState.comments) {
             Row(modifier = Modifier
                 .padding(8.dp, 8.dp)
                 .fillMaxWidth()

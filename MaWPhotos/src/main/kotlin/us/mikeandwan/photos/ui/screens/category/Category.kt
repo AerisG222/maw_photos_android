@@ -15,10 +15,10 @@ import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
-import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.loading.Loading
+import us.mikeandwan.photos.ui.controls.metadata.CommentState
 import us.mikeandwan.photos.ui.controls.metadata.ExifState
 import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
@@ -55,7 +55,7 @@ fun NavGraphBuilder.categoryScreen(
         val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
-        val comments by vm.comments.collectAsStateWithLifecycle()
+
 
         when(state) {
             is CategoryState.Loading -> {
@@ -83,6 +83,8 @@ fun NavGraphBuilder.categoryScreen(
                     isSlideshowPlaying,
                     showDetailSheet,
                     ratingState = state.ratingState,
+                    exifState = state.exifState,
+                    commentState = state.commentState,
                     navigateToPhoto = navigateToPhoto,
                     updateActivePhoto = { newPhotoId -> vm.setActivePhotoId(newPhotoId) },
                     toggleSlideshow = { vm.toggleSlideshow() },
@@ -90,9 +92,6 @@ fun NavGraphBuilder.categoryScreen(
                     savePhotoToShare = { drawable, filename, onComplete ->
                         vm.saveFileToShare(drawable, filename, onComplete)
                     },
-                    exifState = state.exifState,
-                    comments = comments,
-                    addComment = { vm.addComment(it) },
                     fetchRatingDetails = { vm.fetchRatingDetails() },
                     fetchExifDetails = { vm.fetchExifDetails() },
                     fetchCommentDetails = { vm.fetchCommentDetails() }
@@ -127,8 +126,7 @@ fun CategoryScreen(
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
     ratingState: RatingState,
     exifState: ExifState,
-    comments: List<PhotoComment>,
-    addComment: (String) -> Unit,
+    commentState: CommentState,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
     fetchCommentDetails: () -> Unit,
@@ -156,8 +154,7 @@ fun CategoryScreen(
             updateCurrentPhoto = updateActivePhoto,
             ratingState = ratingState,
             exifState = exifState,
-            comments = comments,
-            addComment = addComment,
+            commentState = commentState,
             fetchRatingDetails = fetchRatingDetails,
             fetchExifDetails = fetchExifDetails,
             fetchCommentDetails = fetchCommentDetails

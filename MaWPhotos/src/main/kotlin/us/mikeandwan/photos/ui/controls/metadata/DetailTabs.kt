@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.domain.models.PhotoComment
 
 private object TabIndex {
     const val RATING = 0
@@ -32,8 +31,7 @@ fun DetailTabs(
     activePhotoId: Int,
     ratingState: RatingState,
     exifState: ExifState,
-    comments: List<PhotoComment>,
-    addComment: (String) -> Unit,
+    commentState: CommentState,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
     fetchCommentDetails: () -> Unit
@@ -116,10 +114,7 @@ fun DetailTabs(
                             fetchCommentDetails()
                         }
 
-                        CommentScreen(
-                            comments,
-                            addComment
-                        )
+                        CommentScreen(commentState)
                     }
                     TabIndex.EXIF -> {
                         if(activePhotoId != exifPhotoId) {

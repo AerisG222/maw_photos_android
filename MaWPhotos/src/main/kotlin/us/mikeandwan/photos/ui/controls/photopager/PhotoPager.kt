@@ -43,7 +43,7 @@ import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
-import us.mikeandwan.photos.domain.models.PhotoComment
+import us.mikeandwan.photos.ui.controls.metadata.CommentState
 import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
 import us.mikeandwan.photos.ui.controls.metadata.ExifState
 import us.mikeandwan.photos.ui.controls.metadata.RatingState
@@ -62,14 +62,13 @@ fun PhotoPager(
     showDetails: Boolean,
     ratingState: RatingState,
     exifState: ExifState,
+    commentState: CommentState,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit,
     updateCurrentPhoto: (photoId: Int) -> Unit,
     toggleSlideshow: () -> Unit,
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
     toggleDetails: () -> Unit,
-    comments: List<PhotoComment>,
-    addComment: (String) -> Unit,
     fetchRatingDetails: () -> Unit,
     fetchExifDetails: () -> Unit,
     fetchCommentDetails: () -> Unit
@@ -216,8 +215,7 @@ fun PhotoPager(
             sheetState = sheetState,
             ratingState = ratingState,
             exifState = exifState,
-            comments = comments,
-            addComment = addComment,
+            commentState = commentState,
             fetchRatingDetails = fetchRatingDetails,
             fetchExifDetails = fetchExifDetails,
             fetchCommentDetails = fetchCommentDetails,
