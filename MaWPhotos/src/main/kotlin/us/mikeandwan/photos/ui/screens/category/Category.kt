@@ -91,10 +91,7 @@ fun NavGraphBuilder.categoryScreen(
                     toggleShowDetails = { vm.toggleShowDetails() },
                     savePhotoToShare = { drawable, filename, onComplete ->
                         vm.saveFileToShare(drawable, filename, onComplete)
-                    },
-                    fetchRatingDetails = { vm.fetchRatingDetails() },
-                    fetchExifDetails = { vm.fetchExifDetails() },
-                    fetchCommentDetails = { vm.fetchCommentDetails() }
+                    }
                 )
             }
         }
@@ -126,10 +123,7 @@ fun CategoryScreen(
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
     ratingState: RatingState,
     exifState: ExifState,
-    commentState: CommentState,
-    fetchRatingDetails: () -> Unit,
-    fetchExifDetails: () -> Unit,
-    fetchCommentDetails: () -> Unit,
+    commentState: CommentState
 ) {
     if(activePhotoId <= 0) {
         ImageGrid(
@@ -154,10 +148,7 @@ fun CategoryScreen(
             updateCurrentPhoto = updateActivePhoto,
             ratingState = ratingState,
             exifState = exifState,
-            commentState = commentState,
-            fetchRatingDetails = fetchRatingDetails,
-            fetchExifDetails = fetchExifDetails,
-            fetchCommentDetails = fetchCommentDetails
+            commentState = commentState
         )
     }
 }

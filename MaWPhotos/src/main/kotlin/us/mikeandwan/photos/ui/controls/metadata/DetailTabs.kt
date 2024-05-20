@@ -31,10 +31,7 @@ fun DetailTabs(
     activePhotoId: Int,
     ratingState: RatingState,
     exifState: ExifState,
-    commentState: CommentState,
-    fetchRatingDetails: () -> Unit,
-    fetchExifDetails: () -> Unit,
-    fetchCommentDetails: () -> Unit
+    commentState: CommentState
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
@@ -103,7 +100,7 @@ fun DetailTabs(
                     TabIndex.RATING -> {
                         if(activePhotoId != ratingPhotoId) {
                             setRatingPhotoId(activePhotoId)
-                            fetchRatingDetails()
+                            ratingState.fetchRating()
                         }
 
                         RatingScreen(ratingState)
@@ -111,7 +108,7 @@ fun DetailTabs(
                     TabIndex.COMMENT -> {
                         if(activePhotoId != commentPhotoId) {
                             setCommentPhotoId(activePhotoId)
-                            fetchCommentDetails()
+                            commentState.fetchComments()
                         }
 
                         CommentScreen(commentState)
@@ -119,7 +116,7 @@ fun DetailTabs(
                     TabIndex.EXIF -> {
                         if(activePhotoId != exifPhotoId) {
                             setExifPhotoId(activePhotoId)
-                            fetchExifDetails()
+                            exifState.fetchExif()
                         }
 
                         ExifScreen(exifState)

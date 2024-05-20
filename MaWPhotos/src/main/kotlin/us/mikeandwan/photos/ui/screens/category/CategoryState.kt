@@ -55,17 +55,22 @@ fun rememberCategoryState(
     val ratingState = rememberRatingState(
         userRating = userRating,
         averageRating = averageRating,
+        fetchRating = { vm.fetchRatingDetails() },
         updateUserRating = { vm.setRating(it) }
     )
 
     val exif by vm.exif.collectAsStateWithLifecycle()
 
-    val exifState = rememberExifState(exif)
+    val exifState = rememberExifState(
+        exif,
+        fetchExif = { vm.fetchExifDetails() }
+    )
 
     val comments by vm.comments.collectAsStateWithLifecycle()
 
     val commentState = rememberCommentState(
         comments = comments,
+        fetchComments = { vm.fetchCommentDetails() },
         addComment = { vm.addComment(it) }
     )
 

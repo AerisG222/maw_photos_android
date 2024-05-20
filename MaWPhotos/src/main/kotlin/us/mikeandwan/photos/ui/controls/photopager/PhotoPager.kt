@@ -68,10 +68,7 @@ fun PhotoPager(
     updateCurrentPhoto: (photoId: Int) -> Unit,
     toggleSlideshow: () -> Unit,
     savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
-    toggleDetails: () -> Unit,
-    fetchRatingDetails: () -> Unit,
-    fetchExifDetails: () -> Unit,
-    fetchCommentDetails: () -> Unit
+    toggleDetails: () -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -216,9 +213,6 @@ fun PhotoPager(
             ratingState = ratingState,
             exifState = exifState,
             commentState = commentState,
-            fetchRatingDetails = fetchRatingDetails,
-            fetchExifDetails = fetchExifDetails,
-            fetchCommentDetails = fetchCommentDetails,
             onDismissRequest = toggleDetails
         )
     }

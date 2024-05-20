@@ -13,9 +13,6 @@ fun DetailBottomSheet(
     ratingState: RatingState,
     exifState: ExifState,
     commentState: CommentState,
-    fetchRatingDetails: () -> Unit,
-    fetchExifDetails: () -> Unit,
-    fetchCommentDetails: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     ModalBottomSheet(
@@ -26,10 +23,7 @@ fun DetailBottomSheet(
             activePhotoId = activePhotoId,
             ratingState = ratingState,
             exifState = exifState,
-            commentState = commentState,
-            fetchRatingDetails = fetchRatingDetails,
-            fetchExifDetails = fetchExifDetails,
-            fetchCommentDetails = fetchCommentDetails
+            commentState = commentState
         )
     }
 }
