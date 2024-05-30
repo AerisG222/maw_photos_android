@@ -12,12 +12,8 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 @Composable
-fun ImageGrid(
-    gridItems: List<ImageGridItem>,
-    thumbnailSize: GridThumbnailSize,
-    onSelectGridItem: (ImageGridItem) -> Unit
-) {
-    val size = getSize(thumbnailSize)
+fun ImageGrid(state: ImageGridState) {
+    val size = getSize(state.thumbnailSize)
 
     if(size > 0.dp) {
         LazyVerticalGrid(
@@ -25,11 +21,11 @@ fun ImageGrid(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            items(gridItems) {
+            items(state.gridItems) {
                 ImageGridImage(
                     item = it,
                     size = size,
-                    onSelectImage = onSelectGridItem
+                    onSelectImage = { item -> state.onSelectGridItem(item) }
                 )
             }
         }

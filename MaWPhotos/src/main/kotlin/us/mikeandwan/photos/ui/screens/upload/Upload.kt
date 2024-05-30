@@ -23,6 +23,7 @@ import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
+import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import java.io.File
 
 const val UploadRoute = "upload"
@@ -54,6 +55,12 @@ fun NavController.navigateToUpload() {
 fun UploadScreen(
     files: List<File>
 ) {
+    val gridState = rememberImageGridState(
+        gridItems = files.mapIndexed { id, file -> ImageGridItem(id, file.path, file) },
+        thumbnailSize = GridThumbnailSize.Medium,
+        onSelectGridItem = { }
+    )
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
@@ -69,10 +76,6 @@ fun UploadScreen(
     }
 
     Box {
-        ImageGrid(
-            gridItems = files.mapIndexed { id, file -> ImageGridItem(id, file.path, file) },
-            thumbnailSize = GridThumbnailSize.Medium,
-            onSelectGridItem = { }
-        )
+        ImageGrid(gridState)
     }
 }

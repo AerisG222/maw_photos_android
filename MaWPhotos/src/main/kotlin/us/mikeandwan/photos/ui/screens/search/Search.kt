@@ -33,6 +33,7 @@ import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
+import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import us.mikeandwan.photos.ui.toImageGridItem
 
 const val SearchRoute = "search"
@@ -131,11 +132,13 @@ fun SearchScreen(
         ) {
             when (displayType) {
                 CategoryDisplayType.Grid -> {
-                    ImageGrid(
+                    val gridState = rememberImageGridState(
                         gridItems = results.map { it.toImageGridItem() },
                         thumbnailSize = thumbSize,
                         onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
                     )
+
+                    ImageGrid(gridState)
                 }
 
                 CategoryDisplayType.List -> {

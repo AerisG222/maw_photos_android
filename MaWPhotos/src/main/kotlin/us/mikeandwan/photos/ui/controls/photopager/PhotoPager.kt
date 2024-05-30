@@ -43,39 +43,23 @@ import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
-import us.mikeandwan.photos.ui.controls.metadata.CommentState
 import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
-import us.mikeandwan.photos.ui.controls.metadata.ExifState
-import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoPager(
-    activePhotoIndex: Int,
-    category: PhotoCategory?,
-    photos: List<Photo>,
-    showPositionAndCount: Boolean,
-    showYearAndCategory: Boolean,
-    isSlideshowPlaying: Boolean,
-    showDetails: Boolean,
-    ratingState: RatingState,
-    exifState: ExifState,
-    commentState: CommentState,
+    state: PhotoPagerState,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit,
-    updateCurrentPhoto: (photoId: Int) -> Unit,
-    toggleSlideshow: () -> Unit,
-    savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
-    toggleDetails: () -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
     val pagerState = rememberPagerState(
-        pageCount = { photos.size },
-        initialPage = activePhotoIndex
+        pageCount = { state.photos.size },
+        initialPage = state.activePhotoIndex
     )
     val zoomState = rememberZoomState()
     val rotationDictionary = remember { HashMap<Int,Float>() }
@@ -98,16 +82,16 @@ fun PhotoPager(
         setActiveRotation(newRotation)
     }
 
-    LaunchedEffect(activePhotoIndex) {
-        setActivePhotoId(photos[activePhotoIndex].id)
-        pagerState.animateScrollToPage(activePhotoIndex)
+    LaunchedEffect(state.activePhotoIndex) {
+        setActivePhotoId(state.photos[state.activePhotoIndex].id)
+        pagerState.animateScrollToPage(state.activePhotoIndex)
     }
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             if(page >= 0) {
                 setActiveRotation(getRotationForPage(page))
-                updateCurrentPhoto(photos[page].id)
+                state.updateCurrentPhoto(state.photos[page].id)
             }
         }
     }
@@ -120,7 +104,7 @@ fun PhotoPager(
             .fillMaxSize()
     ) { index ->
         AsyncImage(
-            model = photos[index].mdUrl,
+            model = state.photos[index].mdUrl,
             contentDescription = "",
             contentScale = ContentScale.Fit,
             modifier = Modifier
@@ -165,22 +149,22 @@ fun PhotoPager(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        if(showYearAndCategory || showPositionAndCount) {
-            val ha = if(showYearAndCategory) Arrangement.SpaceBetween else Arrangement.End
+        if(state.showYearAndCategory || state.showPositionAndCount) {
+            val ha = if(state.showYearAndCategory) Arrangement.SpaceBetween else Arrangement.End
 
             Row(horizontalArrangement = ha,
                 modifier = Modifier.fillMaxWidth()) {
-                if(showYearAndCategory && category != null) {
+                if(state.showYearAndCategory && state.category != null) {
                     OverlayYearName(
-                        category = category,
+                        category = state.category,
                         onClickYear = { year -> navigateToYear(year) },
                         onClickCategory = { category -> navigateToCategory(category) })
                 }
 
-                if(showPositionAndCount) {
+                if(state.showPositionAndCount) {
                     OverlayPositionCount(
-                        position = activePhotoIndex + 1,
-                        count = photos.size
+                        position = state.activePhotoIndex + 1,
+                        count = state.photos.size
                     )
                 }
             }
@@ -192,28 +176,28 @@ fun PhotoPager(
             .padding(2.dp, 4.dp)
         ) {
             ButtonBar(
-                isSlideshowPlaying = isSlideshowPlaying,
+                isSlideshowPlaying = state.isSlideshowPlaying,
                 onRotateLeft = { updateRotation(-90f) },
                 onRotateRight = { updateRotation(90f) },
-                onToggleSlideshow = toggleSlideshow,
+                onToggleSlideshow = state.toggleSlideshow,
                 onShare = {
                     coroutineScope.launch {
-                        sharePhoto(context, savePhotoToShare, photos[activePhotoIndex])
+                        sharePhoto(context, state.savePhotoToShare, state.photos[state.activePhotoIndex])
                     }
                 },
-                onViewDetails = toggleDetails
+                onViewDetails = state.toggleDetails
             )
         }
     }
 
-    if(showDetails) {
+    if(state.showDetails) {
         DetailBottomSheet(
             activePhotoId = activePhotoId,
             sheetState = sheetState,
-            ratingState = ratingState,
-            exifState = exifState,
-            commentState = commentState,
-            onDismissRequest = toggleDetails
+            ratingState = state.ratingState,
+            exifState = state.exifState,
+            commentState = state.commentState,
+            onDismissRequest = state.toggleDetails
         )
     }
 }

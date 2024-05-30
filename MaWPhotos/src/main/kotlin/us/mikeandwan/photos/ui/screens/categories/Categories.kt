@@ -30,6 +30,7 @@ import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.PhotoCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
+import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import us.mikeandwan.photos.ui.toImageGridItem
 import kotlin.random.Random
 
@@ -106,6 +107,12 @@ fun CategoriesScreen(
         }
     }
 
+    val gridState = rememberImageGridState(
+        gridItems = categories.map { it.toImageGridItem() },
+        thumbnailSize = preferences.gridThumbnailSize,
+        onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
+    )
+
     Scaffold (
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -117,11 +124,7 @@ fun CategoriesScreen(
         ) {
             when (preferences.displayType) {
                 CategoryDisplayType.Grid -> {
-                    ImageGrid(
-                        gridItems = categories.map { it.toImageGridItem() },
-                        thumbnailSize = preferences.gridThumbnailSize,
-                        onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
-                    )
+                    ImageGrid(gridState)
                 }
 
                 CategoryDisplayType.List -> {
