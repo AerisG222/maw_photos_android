@@ -9,6 +9,9 @@ import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.domain.*
+import us.mikeandwan.photos.domain.services.PhotoCommentService
+import us.mikeandwan.photos.domain.services.PhotoExifService
+import us.mikeandwan.photos.domain.services.PhotoRatingService
 import javax.inject.Singleton
 
 @Module
@@ -71,6 +74,36 @@ class DomainModule {
             searchHistoryDao,
             searchPreferenceRepository,
             apiErrorHandler)
+    }
+
+    @Provides
+    @Singleton
+    fun providesPhotoRatingService(
+        photoRepository: PhotoRepository
+    ): PhotoRatingService {
+        return PhotoRatingService(
+            photoRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesPhotoCommentService(
+        photoRepository: PhotoRepository
+    ): PhotoCommentService {
+        return PhotoCommentService(
+            photoRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesPhotoExifService(
+        photoRepository: PhotoRepository
+    ): PhotoExifService {
+        return PhotoExifService(
+            photoRepository
+        )
     }
 
     @Provides

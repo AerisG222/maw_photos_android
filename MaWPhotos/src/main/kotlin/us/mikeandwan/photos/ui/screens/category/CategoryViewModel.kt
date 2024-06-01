@@ -12,14 +12,14 @@ import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.PeriodicJob
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.PhotoPreferenceRepository
-import us.mikeandwan.photos.domain.PhotoRepository
+import us.mikeandwan.photos.domain.services.PhotoRatingService
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
-import us.mikeandwan.photos.domain.models.PhotoComment
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
-import us.mikeandwan.photos.utils.ExifDataFormatter.prepareForDisplay
+import us.mikeandwan.photos.domain.services.PhotoCommentService
+import us.mikeandwan.photos.domain.services.PhotoExifService
 import us.mikeandwan.photos.ui.toImageGridItem
 import java.io.File
 import javax.inject.Inject
@@ -28,7 +28,9 @@ import javax.inject.Inject
 class CategoryViewModel @Inject constructor (
     private val photoCategoryRepository: PhotoCategoryRepository,
     private val fileRepository: FileStorageRepository,
-    private val photoRepository: PhotoRepository,
+    private val photoRatingService: PhotoRatingService,
+    private val photoCommentService: PhotoCommentService,
+    private val photoExifService: PhotoExifService,
     photoPreferenceRepository: PhotoPreferenceRepository
 ) : ViewModel() {
     private var slideshowJob: PeriodicJob<Unit>
@@ -150,81 +152,43 @@ class CategoryViewModel @Inject constructor (
         }
     }
 
-    // RATINGS
-    private val _userRating = MutableStateFlow<Short>(0)
-    val userRating = _userRating.asStateFlow()
-
-    private val _averageRating = MutableStateFlow(0f)
-    val averageRating = _averageRating.asStateFlow()
+    // RATING
+    val userRating = photoRatingService.userRating
+    val averageRating = photoRatingService.averageRating
 
     fun setRating(rating: Short) {
-        val newAverageRating = photoRepository.setRating(activePhotoId.value, rating)
-
         viewModelScope.launch {
-            newAverageRating
-                .filter { it is ExternalCallStatus.Success }
-                .map { it as ExternalCallStatus.Success }
-                .collect {
-                    _userRating.value = rating
-                    _averageRating.value = it.result.averageRating
-                }
+            photoRatingService.setRating(activePhotoId.value, rating)
         }
     }
 
     fun fetchRatingDetails() {
         viewModelScope.launch {
-            photoRepository.getRating(activePhotoId.value)
-                .filter { it is ExternalCallStatus.Success }
-                .map { it as ExternalCallStatus.Success }
-                .collect {
-                    _userRating.value = it.result.userRating
-                    _averageRating.value = it.result.averageRating
-                }
+            photoRatingService.fetchRatingDetails(activePhotoId.value)
         }
     }
 
     // EXIF
-    private val _exif = MutableStateFlow<List<Pair<String, String>>>(emptyList())
-    val exif = _exif.asStateFlow()
+    val exif = photoExifService.exif
 
     fun fetchExifDetails() {
         viewModelScope.launch {
-            photoRepository.getExifData(activePhotoId.value)
-                .filter { it is ExternalCallStatus.Success }
-                .map { it as ExternalCallStatus.Success }
-                .map { prepareForDisplay(it.result) }
-                .collect { _exif.value = it }
+            photoExifService.fetchExifDetails(activePhotoId.value)
         }
     }
 
     // COMMENTS
-    private val _comments = MutableStateFlow(emptyList<PhotoComment>())
-    val comments = _comments.asStateFlow()
+    val comments = photoCommentService.comments
 
     fun fetchCommentDetails() {
         viewModelScope.launch {
-            photoRepository.getComments(activePhotoId.value)
-                .map {
-                    when (it) {
-                        is ExternalCallStatus.Loading -> emptyList()
-                        is ExternalCallStatus.Error -> emptyList()
-                        is ExternalCallStatus.Success -> it.result
-                    }
-                }
-                .collect { _comments.value = it }
+            photoCommentService.fetchCommentDetails(activePhotoId.value)
         }
     }
 
     fun addComment(comment: String) {
-        if(comment.isNotBlank()) {
-            viewModelScope.launch {
-                photoRepository.addComment(activePhotoId.value, comment)
-                    .collect { result ->
-                        if (result is ExternalCallStatus.Success) {
-                            _comments.value = result.result
-                        }
-                    }
-            }
+        viewModelScope.launch {
+            photoCommentService.addComment(activePhotoId.value, comment)
         }
     }
 
