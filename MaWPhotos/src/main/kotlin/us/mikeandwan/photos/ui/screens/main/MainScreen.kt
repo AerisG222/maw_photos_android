@@ -43,6 +43,8 @@ import us.mikeandwan.photos.ui.screens.categories.categoriesScreen
 import us.mikeandwan.photos.ui.screens.categories.navigateToCategories
 import us.mikeandwan.photos.ui.screens.category.categoryScreen
 import us.mikeandwan.photos.ui.screens.category.navigateToCategory
+import us.mikeandwan.photos.ui.screens.categoryItem.categoryItemScreen
+import us.mikeandwan.photos.ui.screens.categoryItem.navigateToCategoryPhoto
 import us.mikeandwan.photos.ui.screens.login.loginScreen
 import us.mikeandwan.photos.ui.screens.login.navigateToLogin
 import us.mikeandwan.photos.ui.screens.random.navigateToRandom
@@ -207,7 +209,11 @@ fun MainScreen() {
                 categoryScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
-                    navigateToPhoto = { categoryId, photoId -> navController.navigateToCategory(categoryId, photoId) }
+                    navigateToCategoryPhoto = { categoryId, photoId -> navController.navigateToCategoryPhoto(categoryId, photoId) }
+                )
+                categoryItemScreen(
+                    updateTopBar = ::updateTopBar,
+                    setNavArea = { setNavArea(it) }
                 )
                 randomScreen(
                     updateTopBar = ::updateTopBar,
