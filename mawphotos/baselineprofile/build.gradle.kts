@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.test)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
-    alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 android {
@@ -41,7 +41,7 @@ baselineProfile {
 }
 
 dependencies {
-    implementation(libs.androidx.test.ext)
+    implementation(libs.androidx.test.ext.junit)
     implementation(libs.androidx.test.espresso)
     implementation(libs.androidx.uiautomator)
     implementation(libs.androidx.benchmark.macro.junit4)

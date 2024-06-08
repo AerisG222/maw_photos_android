@@ -1,22 +1,19 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.com.android.application)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.org.jetbrains.kotlin.serialization)
-    alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.androidx.baselineprofile)
 }
-
-val homedir = System.getProperty("user.home")
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream("$homedir/.gradle/gradle.properties"))
 
 android {
     compileSdk = 34
-    buildToolsVersion = "34.0.0"
     namespace = "us.mikeandwan.photos"
 
     defaultConfig {
@@ -45,23 +42,20 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-
-        freeCompilerArgs = listOf(
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        )
-    }
-
     kotlin {
         jvmToolchain(17)
+
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+            // freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
+        }
     }
 
     signingConfigs {
+        val homedir = System.getProperty("user.home")
+        val keystoreProperties = Properties()
+        keystoreProperties.load(FileInputStream("$homedir/.gradle/gradle.properties"))
+
         create("release") {
             storeFile = file(keystoreProperties["RELEASE_STORE_FILE"] as String)
             storePassword = keystoreProperties["RELEASE_STORE_PASSWORD"] as String
@@ -104,10 +98,10 @@ android {
             excludes += listOf("META-INF/LICENSE", "META-INF/NOTICE")
         }
     }
+}
 
-    lint {
-        abortOnError = false
-    }
+composeCompiler {
+    enableStrongSkippingMode = true
 }
 
 dependencies {
@@ -118,76 +112,52 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    // below are noinspect as these are included in the bom
-    // noinspection UseTomlInstead
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    //noinspection UseTomlInstead
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation(libs.jetbrains.kotlin.stdlib)
+    implementation(libs.jetbrains.coroutines.android)
+    implementation(libs.jetbrains.kotlinx.serialization.json)
 
-    // core
-    implementation(libs.core.ktx)
-    implementation(libs.coroutines.core)
-    implementation(libs.coroutines.android)
-
-    // jetpack
-    implementation(libs.androidx.activity)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.hilt.navigation)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.lifecycle.compose)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.okhttp)
+    implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room)
     implementation(libs.androidx.work)
+
+    ksp(libs.androidx.hilt.compiler)
     ksp(libs.androidx.room.compiler)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
-    // coil
-    implementation(libs.coil)
+    implementation(libs.google.hilt)
+    ksp(libs.google.hilt.android.compiler)
+    androidTestImplementation(libs.google.hilt.testing)
+    testImplementation(libs.google.hilt.testing)
 
-    // hilt
-    implementation(libs.hilt)
-    implementation(libs.hilt.navigation)
-    ksp(libs.hilt.compiler)
-    ksp(libs.hilt.android.compiler)
-    androidTestImplementation(libs.hilt.testing)
-    testImplementation(libs.hilt.testing)
-
-    // markdown
-    implementation(libs.markdown)
-
-    // media3
-    implementation(libs.media3.exoplayer)
-    implementation(libs.media3.okhttp)
-    implementation(libs.media3.ui)
-
-    // appauth
     implementation(libs.appauth)
-
-    // okhttp
+    implementation(libs.coil)
+    implementation(libs.compose.ratingbar)
     implementation(platform(libs.okhttp.bom))
+    implementation(libs.markdown)
     implementation(libs.okhttp)
-
-    // retrofit
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization)
-
-    // rating bar
-    implementation(libs.compose.ratingbar)
-
-    // timber
     implementation(libs.timber)
-
-    // zoomable
     implementation(libs.zoomable)
 
-    // testing
-    val junitBom = platform(libs.junit)
-    testImplementation(junitBom)
-    androidTestImplementation(libs.androidx.test.ext)
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.espresso)
+    androidTestImplementation(libs.androidx.test.ext.junit)
 }
 
 hilt {

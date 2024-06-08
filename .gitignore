@@ -7,6 +7,9 @@ gradle/wrapper
 **/build/*
 MaWPhotos/production
 
+# Since Kotlin 2.0.0, folder named ".kotlin" is created at compile time
+.kotlin
+
 # Crashlytics configuations
 com_crashlytics_export_strings.xml
 
@@ -44,4 +47,3 @@ local.properties
 .Trashes
 ehthumbs.db
 Thumbs.db
-
