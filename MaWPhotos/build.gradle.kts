@@ -106,7 +106,7 @@ composeCompiler {
 
 dependencies {
     implementation(libs.androidx.profileinstaller)
-    "baselineProfile"(project(":mawphotos:baselineprofile"))
+    "baselineProfile"(project(":baselineprofile"))
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)

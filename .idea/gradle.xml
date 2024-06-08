@@ -10,8 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/MaWPhotos" />
-            <option value="$PROJECT_DIR$/mawphotos" />
-            <option value="$PROJECT_DIR$/mawphotos/baselineprofile" />
+            <option value="$PROJECT_DIR$/baselineprofile" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
