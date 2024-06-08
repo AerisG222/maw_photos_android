@@ -14,10 +14,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
+import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.NavigationArea
@@ -26,13 +26,14 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import java.io.File
 
-const val UploadRoute = "upload"
+@Serializable
+object UploadRoute
 
 fun NavGraphBuilder.uploadScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
-    composable(UploadRoute) {
+    composable<UploadRoute> {
         val vm: UploadViewModel = hiltViewModel()
         val files by vm.filesToUpload.collectAsStateWithLifecycle()
 
@@ -45,10 +46,6 @@ fun NavGraphBuilder.uploadScreen(
             files
         )
     }
-}
-
-fun NavController.navigateToUpload() {
-    this.navigate(UploadRoute)
 }
 
 @Composable

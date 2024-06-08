@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.Photo
@@ -17,14 +18,15 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import us.mikeandwan.photos.ui.toImageGridItem
 
-const val RandomRoute = "random"
+@Serializable
+object RandomRoute
 
 fun NavGraphBuilder.randomScreen(
     onNavigateToPhoto: (Int) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
-    composable(RandomRoute) {
+    composable<RandomRoute> {
         val vm: RandomViewModel = hiltViewModel()
 
         val photos by vm.photos.collectAsStateWithLifecycle()
@@ -50,10 +52,6 @@ fun NavGraphBuilder.randomScreen(
             onPhotoClicked = { onNavigateToPhoto(it.id) }
         )
     }
-}
-
-fun NavController.navigateToRandom() {
-    this.navigate(RandomRoute)
 }
 
 @Composable

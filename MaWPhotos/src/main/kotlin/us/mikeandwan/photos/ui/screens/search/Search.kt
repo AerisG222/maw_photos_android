@@ -20,12 +20,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import coil.compose.AsyncImage
+import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
@@ -36,8 +35,10 @@ import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import us.mikeandwan.photos.ui.toImageGridItem
 
-const val SearchRoute = "search"
-private const val searchTermArg = "searchTermArg"
+@Serializable
+data class SearchRoute (
+    val searchTerm: String? = null
+)
 
 fun NavGraphBuilder.searchScreen(
     onNavigateToCategory: (PhotoCategory) -> Unit,
@@ -45,23 +46,14 @@ fun NavGraphBuilder.searchScreen(
     setNavArea: (NavigationArea) -> Unit,
     updateInitialSearchTerm: (String) -> Unit
 ) {
-    composable(
-        route = "$SearchRoute?term={$searchTermArg}",
-        arguments = listOf(
-            navArgument(searchTermArg) {
-                type = NavType.StringType
-                nullable = true
-                defaultValue = null
-            }
-        )
-    ) { backStackEntry ->
+    composable<SearchRoute> { backStackEntry ->
         val vm: SearchViewModel = hiltViewModel()
-        val searchTerm = backStackEntry.arguments?.getString(searchTermArg)
+        val args = backStackEntry.toRoute<SearchRoute>()
 
-        LaunchedEffect(searchTerm) {
-            if(searchTerm != null) {
-                updateInitialSearchTerm(searchTerm)
-                vm.search(searchTerm)
+        LaunchedEffect(args.searchTerm) {
+            if(args.searchTerm != null) {
+                updateInitialSearchTerm(args.searchTerm)
+                vm.search(args.searchTerm)
             }
         }
 
@@ -84,14 +76,6 @@ fun NavGraphBuilder.searchScreen(
             continueSearch = { vm.continueSearch() }
         )
     }
-}
-
-fun NavController.navigateToSearch() {
-    this.navigate(SearchRoute)
-}
-
-fun NavController.navigateToSearch(searchTerm: String) {
-    navigate("$SearchRoute?term=$searchTerm")
 }
 
 @Composable

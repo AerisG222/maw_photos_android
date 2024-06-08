@@ -25,17 +25,19 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.logo.Logo
 
-const val AboutRoute = "about"
+@Serializable
+object AboutRoute
 
 fun NavGraphBuilder.aboutScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
-    composable(AboutRoute) {
+    composable<AboutRoute> {
         val vm: AboutViewModel = hiltViewModel()
         val history by vm.history.collectAsStateWithLifecycle()
 
@@ -49,10 +51,6 @@ fun NavGraphBuilder.aboutScreen(
             history
         )
     }
-}
-
-fun NavController.navigateToAbout() {
-    this.navigate(AboutRoute)
 }
 
 @Composable

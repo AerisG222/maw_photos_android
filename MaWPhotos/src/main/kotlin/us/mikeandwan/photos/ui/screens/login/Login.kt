@@ -25,19 +25,21 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
+import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.logo.Logo
 
-const val LoginRoute = "login"
+@Serializable
+object LoginRoute
 
 fun NavGraphBuilder.loginScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToCategories: () -> Unit
 ) {
-    composable(LoginRoute) {
+    composable<LoginRoute> {
         val vm: LoginViewModel = hiltViewModel()
         val authStatus by vm.authStatus.collectAsStateWithLifecycle()
 
@@ -52,10 +54,6 @@ fun NavGraphBuilder.loginScreen(
             navigateToCategories = navigateToCategories
         )
     }
-}
-
-fun NavController.navigateToLogin() {
-    this.navigate(LoginRoute)
 }
 
 @Composable

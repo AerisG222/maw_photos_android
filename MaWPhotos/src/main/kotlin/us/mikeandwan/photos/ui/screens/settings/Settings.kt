@@ -33,23 +33,24 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
+import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.NavigationArea
 
-const val SettingsRoute = "settings"
+@Serializable
+object SettingsRoute
 
 fun NavGraphBuilder.settingsScreen(
     onNavigateToLogin: () -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
-    composable(SettingsRoute) {
+    composable<SettingsRoute> {
         val context = LocalContext.current
 
         val viewModel: SettingsViewModel = hiltViewModel()
@@ -140,10 +141,6 @@ fun NavGraphBuilder.settingsScreen(
             }
         )
     }
-}
-
-fun NavController.navigateToSettings() {
-    this.navigate(SettingsRoute)
 }
 
 @Composable

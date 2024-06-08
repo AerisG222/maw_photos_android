@@ -37,25 +37,25 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigation.NavigationRail
 import us.mikeandwan.photos.ui.controls.topbar.TopBar
+import us.mikeandwan.photos.ui.screens.about.AboutRoute
 import us.mikeandwan.photos.ui.screens.about.aboutScreen
-import us.mikeandwan.photos.ui.screens.about.navigateToAbout
+import us.mikeandwan.photos.ui.screens.categories.CategoriesRoute
 import us.mikeandwan.photos.ui.screens.categories.categoriesScreen
-import us.mikeandwan.photos.ui.screens.categories.navigateToCategories
+import us.mikeandwan.photos.ui.screens.category.CategoryRoute
 import us.mikeandwan.photos.ui.screens.category.categoryScreen
-import us.mikeandwan.photos.ui.screens.category.navigateToCategory
+import us.mikeandwan.photos.ui.screens.categoryItem.CategoryItemRoute
 import us.mikeandwan.photos.ui.screens.categoryItem.categoryItemScreen
-import us.mikeandwan.photos.ui.screens.categoryItem.navigateToCategoryPhoto
+import us.mikeandwan.photos.ui.screens.login.LoginRoute
 import us.mikeandwan.photos.ui.screens.login.loginScreen
-import us.mikeandwan.photos.ui.screens.login.navigateToLogin
-import us.mikeandwan.photos.ui.screens.random.navigateToRandom
+import us.mikeandwan.photos.ui.screens.random.RandomRoute
 import us.mikeandwan.photos.ui.screens.random.randomScreen
-import us.mikeandwan.photos.ui.screens.search.navigateToSearch
+import us.mikeandwan.photos.ui.screens.search.SearchRoute
 import us.mikeandwan.photos.ui.screens.search.searchScreen
-import us.mikeandwan.photos.ui.screens.settings.navigateToSettings
+import us.mikeandwan.photos.ui.screens.settings.SettingsRoute
 import us.mikeandwan.photos.ui.screens.settings.settingsScreen
 import us.mikeandwan.photos.ui.screens.splash.SplashRoute
 import us.mikeandwan.photos.ui.screens.splash.splashScreen
-import us.mikeandwan.photos.ui.screens.upload.navigateToUpload
+import us.mikeandwan.photos.ui.screens.upload.UploadRoute
 import us.mikeandwan.photos.ui.screens.upload.uploadScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,39 +121,39 @@ fun MainScreen() {
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToCategories = {
-                        navController.navigateToCategories(mostRecentYear)
+                        navController.navigate(CategoriesRoute(mostRecentYear))
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToCategoriesByYear = {
                         setActiveYear(it)
-                        navController.navigateToCategories(it)
+                        navController.navigate(CategoriesRoute(it))
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToRandom = {
-                        navController.navigateToRandom()
+                        navController.navigate(RandomRoute)
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToSearch = {
-                        navController.navigateToSearch()
+                        navController.navigate(SearchRoute())
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToSearchWithTerm = {
-                        navController.navigateToSearch(it)
+                        navController.navigate(SearchRoute(it))
                         coroutineScope.launch { drawerState.close() }
                     },
                     onClearSearchHistory = {
                         vm.clearSearchHistory()
                     },
                     navigateToSettings = {
-                        navController.navigateToSettings()
+                        navController.navigate(SettingsRoute)
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToUpload = {
-                        navController.navigateToUpload()
+                        navController.navigate(UploadRoute)
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToAbout = {
-                        navController.navigateToAbout()
+                        navController.navigate(AboutRoute)
                         coroutineScope.launch { drawerState.close() }
                     }
                 )
@@ -172,7 +172,7 @@ fun MainScreen() {
                         showAppIcon = topBarShowAppIcon,
                         onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
                         onBackClicked = { navController.popBackStack() },
-                        onSearch = { navController.navigateToSearch(it) },
+                        onSearch = { navController.navigate(SearchRoute(it)) },
                     )
                 }
             },
@@ -186,16 +186,16 @@ fun MainScreen() {
                 startDestination = SplashRoute
             ) {
                 splashScreen(
-                    navigateToLogin = { navController.navigateToLogin() },
+                    navigateToLogin = { navController.navigate(LoginRoute) },
                     navigateToCategories = {
                         setActiveYear(it)
-                        navController.navigateToCategories(it)
+                        navController.navigate(CategoriesRoute(it))
                     }
                 )
                 loginScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
-                    navigateToCategories = { navController.navigateToCategories(mostRecentYear) }
+                    navigateToCategories = { navController.navigate(CategoriesRoute(mostRecentYear)) }
                 )
                 aboutScreen(
                     updateTopBar = ::updateTopBar,
@@ -204,12 +204,14 @@ fun MainScreen() {
                 categoriesScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
-                    onNavigateToCategory = { navController.navigateToCategory(it.id) }
+                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.id)) }
                 )
                 categoryScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
-                    navigateToCategoryPhoto = { categoryId, photoId -> navController.navigateToCategoryPhoto(categoryId, photoId) }
+                    navigateToCategoryPhoto = { categoryId, photoId ->
+                        navController.navigate(CategoryItemRoute(categoryId, photoId))
+                    }
                 )
                 categoryItemScreen(
                     updateTopBar = ::updateTopBar,
@@ -217,18 +219,18 @@ fun MainScreen() {
                 )
                 randomScreen(
                     updateTopBar = ::updateTopBar,
-                    onNavigateToPhoto = { navController.navigateToCategory(it) },
+                    onNavigateToPhoto = { navController.navigate(CategoryRoute(it)) },
                     setNavArea = { setNavArea(it) },
                 )
                 searchScreen(
                     updateTopBar = ::updateTopBar,
                     updateInitialSearchTerm = { setTopBarInitialSearchTerm(it) },
-                    onNavigateToCategory = { navController.navigateToCategory(it.id) },
+                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.id)) },
                     setNavArea = { setNavArea(it) },
                 )
                 settingsScreen(
                     updateTopBar = ::updateTopBar,
-                    onNavigateToLogin = { navController.navigateToLogin() },
+                    onNavigateToLogin = { navController.navigate(LoginRoute) },
                     setNavArea = { setNavArea(it) },
                 )
                 uploadScreen(
@@ -245,11 +247,11 @@ fun handleIntent(intent: Intent, vm: MainViewModel, navController: NavController
         when (intent.action) {
             Intent.ACTION_SEND -> {
                 vm.handleSendSingle(intent)
-                navController.navigateToUpload()
+                navController.navigate(UploadRoute)
             }
             Intent.ACTION_SEND_MULTIPLE -> {
                 vm.handleSendMultiple(intent)
-                navController.navigateToUpload()
+                navController.navigate(UploadRoute)
             }
         }
     } else {

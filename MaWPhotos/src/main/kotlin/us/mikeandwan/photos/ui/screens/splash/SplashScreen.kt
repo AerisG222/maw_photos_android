@@ -10,15 +10,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.delay
+import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.authorization.AuthStatus
 
-const val SplashRoute = "splash"
+@Serializable
+object SplashRoute
 
 fun NavGraphBuilder.splashScreen(
     navigateToLogin: () -> Unit,
     navigateToCategories: (Int) -> Unit
 ) {
-    composable(SplashRoute) {
+    composable<SplashRoute> {
         val vm: SplashViewModel = hiltViewModel()
         val authStatus = vm.authStatus.collectAsStateWithLifecycle()
         val year = vm.mostRecentYear.collectAsStateWithLifecycle()

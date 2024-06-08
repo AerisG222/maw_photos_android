@@ -17,11 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import kotlinx.serialization.Serializable
 import timber.log.Timber
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.CategoryPreference
@@ -34,26 +33,23 @@ import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import us.mikeandwan.photos.ui.toImageGridItem
 import kotlin.random.Random
 
-const val CategoriesRoute = "categories"
-private const val yearArg = "year"
+@Serializable
+data class CategoriesRoute (
+    val year: Int
+)
 
 fun NavGraphBuilder.categoriesScreen(
     onNavigateToCategory: (PhotoCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
-    composable(
-        route = "$CategoriesRoute/{$yearArg}",
-        arguments = listOf(
-            navArgument(yearArg) { type = NavType.IntType }
-        )
-    ) { backStackEntry ->
+    composable<CategoriesRoute> { backStackEntry ->
         val vm: CategoriesViewModel = hiltViewModel()
-        val year = backStackEntry.arguments?.getInt(yearArg) ?: 0
+        val args = backStackEntry.toRoute<CategoriesRoute>()
 
-        LaunchedEffect(year) {
-            vm.loadCategories(year)
-            updateTopBar(true, true, year.toString())
+        LaunchedEffect(args.year) {
+            vm.loadCategories(args.year)
+            updateTopBar(true, true, args.year.toString())
             setNavArea(NavigationArea.Category)
         }
 
@@ -68,12 +64,6 @@ fun NavGraphBuilder.categoriesScreen(
             onNavigateToCategory = onNavigateToCategory,
             onRefresh = { vm.onRefreshCategories(it) }
         )
-    }
-}
-
-fun NavController.navigateToCategories(year: Int) {
-    navigate("${CategoriesRoute}/${year}") {
-        launchSingleTop = true
     }
 }
 
