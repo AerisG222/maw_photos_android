@@ -3,7 +3,6 @@ package us.mikeandwan.photos.ui.controls.photopager
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,7 +46,7 @@ import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoPager(
     state: PhotoPagerState,
