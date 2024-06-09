@@ -49,6 +49,8 @@ import us.mikeandwan.photos.ui.screens.login.LoginRoute
 import us.mikeandwan.photos.ui.screens.login.loginScreen
 import us.mikeandwan.photos.ui.screens.random.RandomRoute
 import us.mikeandwan.photos.ui.screens.random.randomScreen
+import us.mikeandwan.photos.ui.screens.randomItem.RandomItemRoute
+import us.mikeandwan.photos.ui.screens.randomItem.randomItemScreen
 import us.mikeandwan.photos.ui.screens.search.SearchRoute
 import us.mikeandwan.photos.ui.screens.search.searchScreen
 import us.mikeandwan.photos.ui.screens.settings.SettingsRoute
@@ -219,8 +221,14 @@ fun MainScreen() {
                 )
                 randomScreen(
                     updateTopBar = ::updateTopBar,
-                    onNavigateToPhoto = { navController.navigate(CategoryRoute(it)) },
+                    onNavigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
                     setNavArea = { setNavArea(it) },
+                )
+                randomItemScreen(
+                    updateTopBar = ::updateTopBar,
+                    setNavArea = { setNavArea(it) },
+                    navigateToYear = { navController.navigate(CategoriesRoute(it)) },
+                    navigateToCategory = { navController.navigate(CategoryRoute(it.id)) }
                 )
                 searchScreen(
                     updateTopBar = ::updateTopBar,

@@ -15,7 +15,7 @@ import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
 
 abstract class BaseCategoryViewModel (
-    val photoCategoryRepository: PhotoCategoryRepository
+    protected val photoCategoryRepository: PhotoCategoryRepository
 ) : ViewModel() {
     private val _category = MutableStateFlow<PhotoCategory?>(null)
     val category = _category.asStateFlow()
