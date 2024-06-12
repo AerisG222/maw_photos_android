@@ -30,7 +30,6 @@ import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
 import us.mikeandwan.photos.ui.controls.photopager.ButtonBar
 import us.mikeandwan.photos.ui.controls.photopager.OverlayPositionCount
-import us.mikeandwan.photos.ui.controls.photopager.OverlayYearName
 import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
@@ -85,6 +84,7 @@ fun CategoryItemScreen(
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
     val (showDetails, setShowDetails) = remember { mutableStateOf(false) }
+    val (activeRotation, setActiveRotation) = remember { mutableStateOf(0f) }
     val rotationDictionary = remember { HashMap<Int,Float>() }
 
     fun getRotationForPage(page: Int): Float {
@@ -100,6 +100,11 @@ fun CategoryItemScreen(
         val newRotation = currRotation + deg
 
         rotationDictionary[page] = newRotation
+        setActiveRotation(newRotation)
+    }
+
+    LaunchedEffect(state.activePhotoIndex) {
+        setActiveRotation(getRotationForPage(state.activePhotoIndex))
     }
 
     ItemPagerScaffold(
@@ -144,7 +149,7 @@ fun CategoryItemScreen(
         PhotoPager(
             state.photos,
             state.activePhotoIndex,
-            getRotationForPage(state.activePhotoIndex),
+            activeRotation,
             setActiveIndex = { state.updateCurrentPhoto(state.photos[it].id) }
         )
     }
