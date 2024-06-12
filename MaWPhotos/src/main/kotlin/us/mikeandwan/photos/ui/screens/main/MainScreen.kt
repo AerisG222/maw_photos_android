@@ -173,7 +173,7 @@ fun MainScreen() {
                         title = topBarTitle,
                         showAppIcon = topBarShowAppIcon,
                         onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
-                        onBackClicked = { navController.popBackStack() },
+                        onBackClicked = { navController.navigateUp() },
                         onSearch = { navController.navigate(SearchRoute(it)) },
                     )
                 }
