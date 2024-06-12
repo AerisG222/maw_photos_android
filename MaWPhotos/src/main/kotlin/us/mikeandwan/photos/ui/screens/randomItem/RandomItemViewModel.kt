@@ -52,27 +52,30 @@ class RandomItemViewModel @Inject constructor(
 
     var isSlideshowPlaying: StateFlow<Boolean>
 
-    private val _activePhotoId = MutableStateFlow(-1)
-    val activePhotoId = _activePhotoId.asStateFlow()
+    private val _activeIndex = MutableStateFlow(-1)
+    val activeIndex = _activeIndex.asStateFlow()
 
-    val activePhotoIndex = photos.combine(activePhotoId) { photos, activePhotoId ->
-        photos.indexOfFirst { it.id == activePhotoId }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, -1)
-
-    private val _category = MutableStateFlow<PhotoCategory?>(null)
-    val category = _category.asStateFlow()
-
-    val activePhoto = photos.combine(activePhotoIndex) { photos, index ->
-        if(index > 0) {
+    val activePhoto = photos.combine(activeIndex) { photos, index ->
+        if(index >= 0 && index < photos.size) {
             photos[index]
         } else {
             null
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    fun setActivePhotoId(photoId: Int) {
-        _activePhotoId.value = photoId
+    val activeId = activePhoto
+        .map { photo -> photo?.id ?: -1 }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, -1)
+
+    fun setActiveIndex(index: Int) {
+        _activeIndex.value = index
     }
+
+    fun setActiveId(id: Int) {
+        setActiveIndex(photos.value.indexOfFirst { it.id == id })
+    }
+    private val _category = MutableStateFlow<PhotoCategory?>(null)
+    val category = _category.asStateFlow()
 
     fun loadCategory(categoryId: Int) {
         if(category.value?.id == categoryId) {
@@ -119,10 +122,10 @@ class RandomItemViewModel @Inject constructor(
     }
 
     private fun moveNext() = flow<Unit>{
-        if(activePhotoIndex.value >= photos.value.size) {
+        if(activeIndex.value >= photos.value.size) {
             slideshowJob.stop()
         } else {
-            setActivePhotoId(photos.value[activePhotoIndex.value + 1].id)
+            setActiveIndex(activeIndex.value + 1)
         }
     }
 
@@ -132,13 +135,13 @@ class RandomItemViewModel @Inject constructor(
 
     fun setRating(rating: Short) {
         viewModelScope.launch {
-            photoRatingService.setRating(activePhotoId.value, rating)
+            photoRatingService.setRating(activeId.value, rating)
         }
     }
 
     fun fetchRatingDetails() {
         viewModelScope.launch {
-            photoRatingService.fetchRatingDetails(activePhotoId.value)
+            photoRatingService.fetchRatingDetails(activeId.value)
         }
     }
 
@@ -147,7 +150,7 @@ class RandomItemViewModel @Inject constructor(
 
     fun fetchExifDetails() {
         viewModelScope.launch {
-            photoExifService.fetchExifDetails(activePhotoId.value)
+            photoExifService.fetchExifDetails(activeId.value)
         }
     }
 
@@ -156,13 +159,13 @@ class RandomItemViewModel @Inject constructor(
 
     fun fetchCommentDetails() {
         viewModelScope.launch {
-            photoCommentService.fetchCommentDetails(activePhotoId.value)
+            photoCommentService.fetchCommentDetails(activeId.value)
         }
     }
 
     fun addComment(comment: String) {
         viewModelScope.launch {
-            photoCommentService.addComment(activePhotoId.value, comment)
+            photoCommentService.addComment(activeId.value, comment)
         }
     }
 

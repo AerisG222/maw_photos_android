@@ -6,6 +6,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.ui.controls.metadata.CommentState
+import us.mikeandwan.photos.ui.controls.metadata.ExifState
+import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.ui.controls.metadata.rememberCommentState
 import us.mikeandwan.photos.ui.controls.metadata.rememberExifState
 import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
@@ -15,7 +19,22 @@ sealed class RandomItemState {
     data object Loading: RandomItemState()
 
     data class Loaded(
-        val photos: List<Photo>
+        val category: PhotoCategory,
+        val photos: List<Photo>,
+        val activePhotoId: Int,
+        val activePhotoIndex: Int,
+        val isSlideshowPlaying: Boolean,
+        val showDetails: Boolean,
+        val showPositionAndCount: Boolean,
+        val showYearAndCategory: Boolean,
+        val ratingState: RatingState,
+        val exifState: ExifState,
+        val commentState: CommentState,
+        val setActiveId: (id: Int) -> Unit,
+        val setActiveIndex: (index: Int) -> Unit,
+        val toggleSlideshow: () -> Unit,
+        val savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
+        val toggleDetails: () -> Unit
     ): RandomItemState()
 }
 
@@ -26,15 +45,15 @@ fun rememberRandomItemState(
 ): RandomItemState {
     val category by vm.category.collectAsStateWithLifecycle()
     val photos by vm.photos.collectAsStateWithLifecycle()
-    val activePhotoId by vm.activePhotoId.collectAsStateWithLifecycle()
-    val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
+    val activePhotoId by vm.activeId.collectAsStateWithLifecycle()
+    val activePhotoIndex by vm.activeIndex.collectAsStateWithLifecycle()
     val activePhoto by vm.activePhoto.collectAsStateWithLifecycle()
     val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
     val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
 
     LaunchedEffect(photos, photoId) {
         if(photos.isNotEmpty() && photoId > 0) {
-            vm.setActivePhotoId(photoId)
+            vm.setActiveId(photoId)
         }
     }
 
@@ -69,8 +88,12 @@ fun rememberRandomItemState(
         addComment = { vm.addComment(it) }
     )
 
-    fun updateActivePhoto(newPhotoId: Int) {
-        vm.setActivePhotoId(newPhotoId)
+    fun setActiveId(newId: Int) {
+        vm.setActiveId(newId)
+    }
+
+    fun setActiveIndex(index: Int) {
+        vm.setActiveIndex(index)
     }
 
     fun toggleSlideshow() {
@@ -85,29 +108,26 @@ fun rememberRandomItemState(
         vm.saveFileToShare(drawable, filename, onComplete)
     }
 
-//    val pagerState = rememberPhotoPagerState(
-//        category,
-//        photos,
-//        activePhotoId,
-//        activePhotoIndex,
-//        isSlideshowPlaying,
-//        showDetails = showDetailSheet,
-//        showPositionAndCount = true,
-//        showYearAndCategory = true,
-//        ratingState,
-//        exifState,
-//        commentState,
-//        updateCurrentPhoto = { updateActivePhoto(it) },
-//        toggleSlideshow = { toggleSlideshow() },
-//        toggleDetails = { toggleShowDetails() },
-//        savePhotoToShare = { drawable, filename, onComplete -> savePhotoToShare(drawable, filename, onComplete) }
-//    )
-
     return if(category == null) {
         RandomItemState.Loading
     } else {
         RandomItemState.Loaded(
-            photos
+            category!!,
+            photos,
+            activePhotoId,
+            activePhotoIndex,
+            isSlideshowPlaying,
+            showDetails = showDetailSheet,
+            showPositionAndCount = true,
+            showYearAndCategory = true,
+            ratingState,
+            exifState,
+            commentState,
+            setActiveId = { setActiveId(it) },
+            setActiveIndex = { setActiveIndex(it) },
+            toggleSlideshow = { toggleSlideshow() },
+            toggleDetails = { toggleShowDetails() },
+            savePhotoToShare = { drawable, filename, onComplete -> savePhotoToShare(drawable, filename, onComplete) }
         )
     }
 }

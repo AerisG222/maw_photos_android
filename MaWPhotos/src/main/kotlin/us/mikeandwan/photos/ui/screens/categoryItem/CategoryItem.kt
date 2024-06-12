@@ -7,8 +7,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
@@ -31,6 +29,7 @@ import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
 import us.mikeandwan.photos.ui.controls.photopager.ButtonBar
 import us.mikeandwan.photos.ui.controls.photopager.OverlayPositionCount
 import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
+import us.mikeandwan.photos.ui.controls.photopager.rememberRotation
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
 
@@ -83,37 +82,10 @@ fun CategoryItemScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
-    val (activeRotation, setActiveRotation) = remember { mutableFloatStateOf(0f) }
-    val rotationDictionary = remember { HashMap<Int,Float>() }
-
-    fun getRotationForPage(page: Int): Float {
-        return when(rotationDictionary.containsKey(page)) {
-            true -> rotationDictionary[page]!!
-            false -> 0f
-        }
-    }
-
-    fun updateRotation(deg: Float) {
-        val page = state.activePhotoIndex
-        val currRotation = getRotationForPage(page)
-        val newRotation = currRotation + deg
-
-        rotationDictionary[page] = newRotation
-        setActiveRotation(newRotation)
-    }
-
-    LaunchedEffect(state.activePhotoIndex) {
-        setActiveRotation(getRotationForPage(state.activePhotoIndex))
-    }
+    val rotationState = rememberRotation(state.activePhotoIndex)
 
     ItemPagerScaffold(
         showDetails = state.showDetails,
-        topLeftContent = {
-//            OverlayYearName(
-//                category = state.category,
-//                onClickYear = { year -> navigateToYear(year) },
-//                onClickCategory = { category -> navigateToCategory(category) })
-        },
         topRightContent = {
             OverlayPositionCount(
                 position = state.activePhotoIndex + 1,
@@ -123,8 +95,8 @@ fun CategoryItemScreen(
         bottomBarContent = {
             ButtonBar(
                 isSlideshowPlaying = state.isSlideshowPlaying,
-                onRotateLeft = { updateRotation(-90f) },
-                onRotateRight = { updateRotation(90f) },
+                onRotateLeft = { rotationState.setActiveRotation(-90f) },
+                onRotateRight = { rotationState.setActiveRotation(90f) },
                 onToggleSlideshow = state.toggleSlideshow,
                 onShare = {
                     coroutineScope.launch {
@@ -148,7 +120,7 @@ fun CategoryItemScreen(
         PhotoPager(
             state.photos,
             state.activePhotoIndex,
-            activeRotation,
+            rotationState.activeRotation,
             setActiveIndex = { index -> state.setActiveIndex(index) }
         )
     }
