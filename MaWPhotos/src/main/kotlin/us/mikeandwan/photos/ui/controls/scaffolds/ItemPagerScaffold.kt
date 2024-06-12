@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.itemPagerScaffold
+package us.mikeandwan.photos.ui.controls.scaffolds
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.ui.controls.itemPagerScaffold.ItemPagerScaffold
+import us.mikeandwan.photos.ui.controls.scaffolds.ItemPagerScaffold
 import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
 import us.mikeandwan.photos.ui.controls.photopager.ButtonBar
