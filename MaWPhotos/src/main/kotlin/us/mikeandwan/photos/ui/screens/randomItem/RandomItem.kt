@@ -63,9 +63,9 @@ fun RandomItemScreen(
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit
 ) {
-    PhotoPager(
-        state.pagerState,
-        navigateToYear = navigateToYear,
-        navigateToCategory = navigateToCategory
-    )
+//    PhotoPager(
+//        state.pagerState,
+//        navigateToYear = navigateToYear,
+//        navigateToCategory = navigateToCategory
+//    )
 }

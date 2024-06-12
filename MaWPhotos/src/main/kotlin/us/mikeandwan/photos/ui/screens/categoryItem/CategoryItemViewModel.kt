@@ -146,13 +146,4 @@ class CategoryItemViewModel @Inject constructor (
 
         isSlideshowPlaying = slideshowJob.doJob
     }
-
-    init {
-        slideshowJob = PeriodicJob(
-            false,
-            slideshowDurationInMillis.value
-        ) { moveNext() }
-
-        isSlideshowPlaying = slideshowJob.doJob
-    }
 }

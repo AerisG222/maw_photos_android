@@ -5,12 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.ui.controls.metadata.CommentState
+import us.mikeandwan.photos.ui.controls.metadata.ExifState
+import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.ui.controls.metadata.rememberCommentState
 import us.mikeandwan.photos.ui.controls.metadata.rememberExifState
 import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
-import us.mikeandwan.photos.ui.controls.photopager.PhotoPagerState
-import us.mikeandwan.photos.ui.controls.photopager.rememberPhotoPagerState
 import java.io.File
 
 sealed class CategoryItemState {
@@ -22,7 +24,20 @@ sealed class CategoryItemState {
 
     data class Loaded(
         val category: PhotoCategory,
-        val photoPagerState: PhotoPagerState
+        val photos: List<Photo>,
+        val activePhotoId: Int,
+        val activePhotoIndex: Int,
+        val isSlideshowPlaying: Boolean,
+        val showDetails: Boolean,
+        val showPositionAndCount: Boolean,
+        val showYearAndCategory: Boolean,
+        val ratingState: RatingState,
+        val exifState: ExifState,
+        val commentState: CommentState,
+        val updateCurrentPhoto: (photoId: Int) -> Unit,
+        val toggleSlideshow: () -> Unit,
+        val savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
+        val toggleDetails: () -> Unit
     ): CategoryItemState()
 }
 
@@ -91,24 +106,6 @@ fun rememberCategoryItemState(
         vm.saveFileToShare(drawable, filename, onComplete)
     }
 
-    val pagerState = rememberPhotoPagerState(
-        category,
-        photos,
-        activePhotoId,
-        activePhotoIndex,
-        isSlideshowPlaying,
-        showDetails = showDetailSheet,
-        showPositionAndCount = true,
-        showYearAndCategory = false,
-        ratingState,
-        exifState,
-        commentState,
-        updateCurrentPhoto = { updateActivePhoto(it) },
-        toggleSlideshow = { toggleSlideshow() },
-        toggleDetails = { toggleShowDetails() },
-        savePhotoToShare = { drawable, filename, onComplete -> savePhotoToShare(drawable, filename, onComplete) }
-    )
-
     return if(category == null) {
         CategoryItemState.Loading
     } else if(photos.isEmpty() || activePhotoIndex < 0) {
@@ -116,7 +113,20 @@ fun rememberCategoryItemState(
     } else {
         CategoryItemState.Loaded(
             category!!,
-            pagerState
+            photos,
+            activePhotoId,
+            activePhotoIndex,
+            isSlideshowPlaying,
+            showDetails = showDetailSheet,
+            showPositionAndCount = true,
+            showYearAndCategory = false,
+            ratingState,
+            exifState,
+            commentState,
+            updateCurrentPhoto = { updateActivePhoto(it) },
+            toggleSlideshow = { toggleSlideshow() },
+            toggleDetails = { toggleShowDetails() },
+            savePhotoToShare = { drawable, filename, onComplete -> savePhotoToShare(drawable, filename, onComplete) }
         )
     }
 }

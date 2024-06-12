@@ -5,18 +5,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.controls.metadata.rememberCommentState
 import us.mikeandwan.photos.ui.controls.metadata.rememberExifState
 import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
-import us.mikeandwan.photos.ui.controls.photopager.PhotoPagerState
-import us.mikeandwan.photos.ui.controls.photopager.rememberPhotoPagerState
 import java.io.File
 
 sealed class RandomItemState {
     data object Loading: RandomItemState()
 
     data class Loaded(
-        val pagerState: PhotoPagerState
+        val photos: List<Photo>
     ): RandomItemState()
 }
 
@@ -86,29 +85,29 @@ fun rememberRandomItemState(
         vm.saveFileToShare(drawable, filename, onComplete)
     }
 
-    val pagerState = rememberPhotoPagerState(
-        category,
-        photos,
-        activePhotoId,
-        activePhotoIndex,
-        isSlideshowPlaying,
-        showDetails = showDetailSheet,
-        showPositionAndCount = true,
-        showYearAndCategory = true,
-        ratingState,
-        exifState,
-        commentState,
-        updateCurrentPhoto = { updateActivePhoto(it) },
-        toggleSlideshow = { toggleSlideshow() },
-        toggleDetails = { toggleShowDetails() },
-        savePhotoToShare = { drawable, filename, onComplete -> savePhotoToShare(drawable, filename, onComplete) }
-    )
+//    val pagerState = rememberPhotoPagerState(
+//        category,
+//        photos,
+//        activePhotoId,
+//        activePhotoIndex,
+//        isSlideshowPlaying,
+//        showDetails = showDetailSheet,
+//        showPositionAndCount = true,
+//        showYearAndCategory = true,
+//        ratingState,
+//        exifState,
+//        commentState,
+//        updateCurrentPhoto = { updateActivePhoto(it) },
+//        toggleSlideshow = { toggleSlideshow() },
+//        toggleDetails = { toggleShowDetails() },
+//        savePhotoToShare = { drawable, filename, onComplete -> savePhotoToShare(drawable, filename, onComplete) }
+//    )
 
     return if(category == null) {
         RandomItemState.Loading
     } else {
         RandomItemState.Loaded(
-            pagerState
+            photos
         )
     }
 }
