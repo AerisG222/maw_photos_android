@@ -34,7 +34,8 @@ sealed class CategoryItemState {
         val ratingState: RatingState,
         val exifState: ExifState,
         val commentState: CommentState,
-        val updateCurrentPhoto: (photoId: Int) -> Unit,
+        val setActiveId: (id: Int) -> Unit,
+        val setActiveIndex: (index: Int) -> Unit,
         val toggleSlideshow: () -> Unit,
         val savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
         val toggleDetails: () -> Unit
@@ -54,14 +55,14 @@ fun rememberCategoryItemState(
 
     val category by vm.category.collectAsStateWithLifecycle()
     val photos by vm.photos.collectAsStateWithLifecycle()
-    val activePhotoId by vm.activePhotoId.collectAsStateWithLifecycle()
-    val activePhotoIndex by vm.activePhotoIndex.collectAsStateWithLifecycle()
+    val activePhotoId by vm.activeId.collectAsStateWithLifecycle()
+    val activePhotoIndex by vm.activeIndex.collectAsStateWithLifecycle()
     val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
     val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
 
     LaunchedEffect(photos, photoId) {
         if(photos.isNotEmpty() && photoId > 0) {
-            vm.setActivePhotoId(photoId)
+            vm.setActiveId(photoId)
         }
     }
 
@@ -90,8 +91,12 @@ fun rememberCategoryItemState(
         addComment = { vm.addComment(it) }
     )
 
-    fun updateActivePhoto(newPhotoId: Int) {
-        vm.setActivePhotoId(newPhotoId)
+    fun setActiveId(newId: Int) {
+        vm.setActiveId(newId)
+    }
+
+    fun setActiveIndex(index: Int) {
+        vm.setActiveIndex(index)
     }
 
     fun toggleSlideshow() {
@@ -123,7 +128,8 @@ fun rememberCategoryItemState(
             ratingState,
             exifState,
             commentState,
-            updateCurrentPhoto = { updateActivePhoto(it) },
+            setActiveId = { setActiveId(it) },
+            setActiveIndex = { setActiveIndex(it) },
             toggleSlideshow = { toggleSlideshow() },
             toggleDetails = { toggleShowDetails() },
             savePhotoToShare = { drawable, filename, onComplete -> savePhotoToShare(drawable, filename, onComplete) }

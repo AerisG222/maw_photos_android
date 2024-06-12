@@ -22,13 +22,13 @@ import us.mikeandwan.photos.domain.models.Photo
 @Composable
 fun PhotoPager(
     photos: List<Photo>,
-    activePhotoIndex: Int,
+    activeIndex: Int,
     activeRotation: Float = 0f,
     setActiveIndex: (Int) -> Unit
 ) {
     val pagerState = rememberPagerState(
         pageCount = { photos.size },
-        initialPage = activePhotoIndex
+        initialPage = activeIndex
     )
     val zoomState = rememberZoomState()
 
@@ -38,6 +38,10 @@ fun PhotoPager(
                 setActiveIndex(page)
             }
         }
+    }
+
+    LaunchedEffect(activeIndex) {
+        pagerState.animateScrollToPage(activeIndex)
     }
 
     HorizontalPager(
