@@ -35,18 +35,10 @@ fun PhotoPager(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             if(page >= 0) {
-//                setActiveRotation(getRotationForPage(page))
-//                state.updateCurrentPhoto(state.photos[page].id)
-
                 setActiveIndex(page)
             }
         }
     }
-
-//    LaunchedEffect(activePhotoIndex) {
-//        setActivePhotoId(photos[activePhotoIndex].id)
-//        pagerState.animateScrollToPage(activePhotoIndex)
-//    }
 
     HorizontalPager(
         state = pagerState,
