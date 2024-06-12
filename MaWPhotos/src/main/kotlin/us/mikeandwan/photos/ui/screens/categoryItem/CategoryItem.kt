@@ -83,7 +83,6 @@ fun CategoryItemScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
-    val (showDetails, setShowDetails) = remember { mutableStateOf(false) }
     val (activeRotation, setActiveRotation) = remember { mutableStateOf(0f) }
     val rotationDictionary = remember { HashMap<Int,Float>() }
 
@@ -108,7 +107,7 @@ fun CategoryItemScreen(
     }
 
     ItemPagerScaffold(
-        showDetails = showDetails,
+        showDetails = state.showDetails,
         topLeftContent = {
 //            OverlayYearName(
 //                category = state.category,
@@ -132,7 +131,7 @@ fun CategoryItemScreen(
                         sharePhoto(context, state.savePhotoToShare, state.photos[state.activePhotoIndex])
                     }
                 },
-                onViewDetails = { setShowDetails(!showDetails) }
+                onViewDetails = state.toggleDetails
             )
         },
         detailSheetContent = {
