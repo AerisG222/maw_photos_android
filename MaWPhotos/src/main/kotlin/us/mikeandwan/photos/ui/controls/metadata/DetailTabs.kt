@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.ui.controls.metadata
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -25,7 +24,6 @@ private object TabIndex {
     const val EXIF = 2
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailTabs(
     activePhotoId: Int,

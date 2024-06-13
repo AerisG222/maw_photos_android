@@ -15,11 +15,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ItemPagerScaffold(
     showDetails: Boolean = false,
-    topLeftContent: @Composable() () -> Unit = {},
-    topRightContent: @Composable() () -> Unit = {},
-    bottomBarContent: @Composable() () -> Unit = {},
-    detailSheetContent: @Composable() () -> Unit = {},
-    content: @Composable() () -> Unit,
+    topLeftContent: @Composable () -> Unit = {},
+    topRightContent: @Composable () -> Unit = {},
+    bottomBarContent: @Composable () -> Unit = {},
+    detailSheetContent: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     content()
 
