@@ -27,6 +27,7 @@ sealed class CategoryItemState {
         val photos: List<Photo>,
         val activePhotoId: Int,
         val activePhotoIndex: Int,
+        val activePhoto: Photo,
         val isSlideshowPlaying: Boolean,
         val showDetails: Boolean,
         val ratingState: RatingState,
@@ -55,6 +56,7 @@ fun rememberCategoryItemState(
     val photos by vm.photos.collectAsStateWithLifecycle()
     val activePhotoId by vm.activeId.collectAsStateWithLifecycle()
     val activePhotoIndex by vm.activeIndex.collectAsStateWithLifecycle()
+    val activePhoto by vm.activePhoto.collectAsStateWithLifecycle()
     val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
     val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
 
@@ -119,6 +121,7 @@ fun rememberCategoryItemState(
             photos,
             activePhotoId,
             activePhotoIndex,
+            activePhoto!!,
             isSlideshowPlaying,
             showDetails = showDetailSheet,
             ratingState,

@@ -22,6 +22,7 @@ import us.mikeandwan.photos.ui.controls.photopager.OverlayPositionCount
 import us.mikeandwan.photos.ui.controls.photopager.OverlayYearName
 import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
 import us.mikeandwan.photos.ui.controls.photopager.rememberRotation
+import us.mikeandwan.photos.ui.sharePhoto
 import us.mikeandwan.photos.ui.controls.scaffolds.ItemPagerScaffold
 
 @Serializable
@@ -102,7 +103,7 @@ fun RandomItemScreen(
                 onToggleSlideshow = state.toggleSlideshow,
                 onShare = {
                     coroutineScope.launch {
-                       // sharePhoto(context, state.savePhotoToShare, state.photos[state.activePhotoIndex])
+                       sharePhoto(context, state.savePhotoToShare, state.photos[state.activePhotoIndex])
                     }
                 },
                 onViewDetails = state.toggleDetails
