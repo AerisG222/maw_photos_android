@@ -35,10 +35,10 @@ fun ImageGrid(state: ImageGridState) {
 @Composable
 fun getSize(size: GridThumbnailSize): Dp {
     return when (size) {
-        GridThumbnailSize.ExtraSmall -> dimensionResource(R.dimen.image_grid_thumbnail_size_extra_small)
-        GridThumbnailSize.Small -> dimensionResource(R.dimen.image_grid_thumbnail_size_small)
-        GridThumbnailSize.Medium -> dimensionResource(R.dimen.image_grid_thumbnail_size_medium)
-        GridThumbnailSize.Large -> dimensionResource(R.dimen.image_grid_thumbnail_size_large)
+        GridThumbnailSize.ExtraSmall -> 60.dp
+        GridThumbnailSize.Small -> 90.dp
+        GridThumbnailSize.Medium -> 120.dp
+        GridThumbnailSize.Large -> 180.dp
         GridThumbnailSize.Unspecified -> 0.dp
     }
 }
