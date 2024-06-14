@@ -61,8 +61,7 @@ class RandomItemViewModel @Inject constructor(
     init {
         photoListService.initialize(
             photos,
-            slideshowDurationInMillis,
-            viewModelScope
+            slideshowDurationInMillis
         )
     }
 }

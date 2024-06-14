@@ -2,6 +2,8 @@ package us.mikeandwan.photos.domain.services
 
 import android.graphics.drawable.Drawable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,13 +29,13 @@ class PhotoListService @Inject constructor (
     private val photoCommentService: PhotoCommentService,
     private val photoExifService: PhotoExifService
 ) {
-    private lateinit var _viewModelScope: CoroutineScope
-    private lateinit var _photos: StateFlow<List<Photo>>
-    private lateinit var _slideshowDurationInMillis: StateFlow<Long>
-    private lateinit var _slideshowJob: PeriodicJob<Unit>
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    private val _photos = MutableStateFlow<List<Photo>>(emptyList())
+
+    private val _slideshowJob = PeriodicJob { moveNext() }
 
     private val _resumeSlideshowAfterShowingDetails = MutableStateFlow(false)
-    val isSlideshowPlaying: StateFlow<Boolean> = _slideshowJob.doJob
+    val isSlideshowPlaying = _slideshowJob.doJob
 
     private val _showDetailSheet = MutableStateFlow(false)
     val showDetailSheet = _showDetailSheet.asStateFlow()
@@ -50,11 +52,11 @@ class PhotoListService @Inject constructor (
         } else {
             null
         }
-    }.stateIn(_viewModelScope, SharingStarted.Eagerly, null)
+    }.stateIn(scope, SharingStarted.Eagerly, null)
 
     val activeId = activePhoto
         .map { photo -> photo?.id ?: -1 }
-        .stateIn(_viewModelScope, SharingStarted.Eagerly, -1)
+        .stateIn(scope, SharingStarted.Eagerly, -1)
 
     fun setActiveIndex(index: Int) {
         _activeIndex.value = index
@@ -66,11 +68,14 @@ class PhotoListService @Inject constructor (
 
     fun toggleSlideshow() {
         if(_slideshowJob.doJob.value) {
-            _slideshowJob.stop()
+            stopSlideshow()
         } else {
-            _slideshowJob.start()
+            startSlideshow()
         }
     }
+
+    fun startSlideshow() { _slideshowJob.start() }
+    fun stopSlideshow() { _slideshowJob.stop() }
 
     fun toggleShowDetails() {
         if(_showDetailSheet.value) {
@@ -87,7 +92,7 @@ class PhotoListService @Inject constructor (
     }
 
     fun saveFileToShare(drawable: Drawable, filename: String, onComplete: (File) -> Unit) {
-        _viewModelScope.launch {
+        scope.launch {
             val file = fileRepository.savePhotoToShare(drawable, filename)
 
             onComplete(file)
@@ -99,13 +104,13 @@ class PhotoListService @Inject constructor (
     val averageRating = photoRatingService.averageRating
 
     fun setRating(rating: Short) {
-        _viewModelScope.launch {
+        scope.launch {
             photoRatingService.setRating(activeId.value, rating)
         }
     }
 
     fun fetchRating() {
-        _viewModelScope.launch {
+        scope.launch {
             photoRatingService.fetchRatingDetails(activeId.value)
         }
     }
@@ -114,7 +119,7 @@ class PhotoListService @Inject constructor (
     val exif = photoExifService.exif
 
     fun fetchExif() {
-        _viewModelScope.launch {
+        scope.launch {
             photoExifService.fetchExifDetails(activeId.value)
         }
     }
@@ -123,39 +128,34 @@ class PhotoListService @Inject constructor (
     val comments = photoCommentService.comments
 
     fun fetchComments() {
-        _viewModelScope.launch {
+        scope.launch {
             photoCommentService.fetchCommentDetails(activeId.value)
         }
     }
 
     fun addComment(comment: String) {
-        _viewModelScope.launch {
+        scope.launch {
             photoCommentService.addComment(activeId.value, comment)
         }
     }
 
     fun initialize(
         photos: StateFlow<List<Photo>>,
-        slideshowDurationInMillis: StateFlow<Long>,
-        viewModelScope: CoroutineScope
+        slideshowDurationInMillis: StateFlow<Long>
     ) {
-        _photos = photos
-        _slideshowDurationInMillis = slideshowDurationInMillis
-        _viewModelScope = viewModelScope
+        scope.launch {
+            photos
+                .collect { _photos.value = it }
+        }
 
-        _slideshowJob = PeriodicJob(
-            false,
-            slideshowDurationInMillis.value
-        ) { moveNext() }
-
-        viewModelScope.launch {
+        scope.launch {
             activePhoto
                 .filter { it != null }
                 .collect { loadCategory(it!!.categoryId) }
         }
 
-        viewModelScope.launch {
-            _slideshowDurationInMillis
+        scope.launch {
+            slideshowDurationInMillis
                 .collect { _slideshowJob.setIntervalMillis(it) }
         }
     }
@@ -167,7 +167,7 @@ class PhotoListService @Inject constructor (
 
         _category.value = null
 
-        _viewModelScope.launch {
+        scope.launch {
             photoCategoryRepository
                 .getCategory(categoryId)
                 .collect { _category.value = it }
@@ -176,7 +176,7 @@ class PhotoListService @Inject constructor (
 
     private fun moveNext() = flow<Unit>{
         if(activeIndex.value >= _photos.value.size) {
-            _slideshowJob.stop()
+            stopSlideshow()
         } else {
             setActiveIndex(activeIndex.value + 1)
         }
