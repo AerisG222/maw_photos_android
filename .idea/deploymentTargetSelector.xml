@@ -5,9 +5,6 @@
       <SelectionState runConfigName="MaWPhotos">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Generate Baseline Profile for MaWPhotos">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
     </selectionStates>
   </component>
 </project>
