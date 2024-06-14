@@ -118,10 +118,7 @@ fun NavGraphBuilder.randomItemScreen(
 
         when(photoListState) {
             is PhotoListState.Loading -> Loading()
-            is PhotoListState.CategoryLoaded -> {
-                //updateTopBar(true, true, photoListState.category.name)
-                Loading()
-            }
+            is PhotoListState.CategoryLoaded -> Loading()
             is PhotoListState.Loaded -> {
                 RandomItemScreen(
                     photoListState,

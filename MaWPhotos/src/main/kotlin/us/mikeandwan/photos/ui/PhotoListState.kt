@@ -46,7 +46,7 @@ fun rememberPhotoListState(
         return PhotoListState.Loading
     }
 
-    if(category != null && photos.isEmpty()) {
+    if((category != null && photos.isEmpty()) || activePhotoIndex < 0) {
         return PhotoListState.CategoryLoaded(category)
     }
 
