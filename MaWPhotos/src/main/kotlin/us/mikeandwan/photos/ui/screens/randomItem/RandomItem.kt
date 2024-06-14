@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.ui.screens.randomItem
 
-import android.graphics.drawable.Drawable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -17,8 +16,8 @@ import androidx.navigation.toRoute
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.domain.models.NavigationArea
-import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.ui.PhotoListState
 import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.metadata.CommentState
 import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
@@ -34,7 +33,7 @@ import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
 import us.mikeandwan.photos.ui.controls.photopager.rememberRotation
 import us.mikeandwan.photos.ui.sharePhoto
 import us.mikeandwan.photos.ui.controls.scaffolds.ItemPagerScaffold
-import java.io.File
+import us.mikeandwan.photos.ui.rememberPhotoListState
 
 @Serializable
 data class RandomItemRoute (
@@ -51,6 +50,7 @@ fun NavGraphBuilder.randomItemScreen(
         val vm: RandomItemViewModel = hiltViewModel()
         val args = backStackEntry.toRoute<RandomItemRoute>()
 
+        // photo list
         val category by vm.category.collectAsStateWithLifecycle()
         val photos by vm.photos.collectAsStateWithLifecycle()
         val activePhotoId by vm.activeId.collectAsStateWithLifecycle()
@@ -58,6 +58,19 @@ fun NavGraphBuilder.randomItemScreen(
         val activePhoto by vm.activePhoto.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
+        val photoListState = rememberPhotoListState(
+            category,
+            photos,
+            activePhotoId,
+            activePhotoIndex,
+            activePhoto,
+            isSlideshowPlaying,
+            showDetailSheet,
+            setActiveIndex = { vm.setActiveIndex(it) },
+            toggleSlideshow = { vm.toggleSlideshow() },
+            toggleDetails = { vm.toggleShowDetails() },
+            savePhotoToShare = { drawable, filename, onComplete -> vm.saveFileToShare(drawable, filename, onComplete) },
+        )
 
         LaunchedEffect(photos, args.photoId) {
             if(photos.isNotEmpty() && args.photoId > 0) {
@@ -103,27 +116,22 @@ fun NavGraphBuilder.randomItemScreen(
             addComment = { vm.addComment(it) }
         )
 
-        if(category == null || activePhoto == null) {
-            Loading()
-        } else {
-            RandomItemScreen(
-                category!!,
-                photos,
-                activePhotoId,
-                activePhotoIndex,
-                activePhoto!!,
-                isSlideshowPlaying,
-                showDetails = showDetailSheet,
-                ratingState,
-                exifState,
-                commentState,
-                setActiveIndex = { vm.setActiveIndex(it) },
-                toggleSlideshow = { vm.toggleSlideshow() },
-                toggleDetails = { vm.toggleShowDetails() },
-                savePhotoToShare = { drawable, filename, onComplete -> vm.saveFileToShare(drawable, filename, onComplete) },
-                navigateToYear,
-                navigateToCategory
-            )
+        when(photoListState) {
+            is PhotoListState.Loading -> Loading()
+            is PhotoListState.CategoryLoaded -> {
+                //updateTopBar(true, true, photoListState.category.name)
+                Loading()
+            }
+            is PhotoListState.Loaded -> {
+                RandomItemScreen(
+                    photoListState,
+                    ratingState,
+                    exifState,
+                    commentState,
+                    navigateToYear,
+                    navigateToCategory
+                )
+            }
         }
     }
 }
@@ -131,72 +139,62 @@ fun NavGraphBuilder.randomItemScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RandomItemScreen(
-    category: PhotoCategory,
-    photos: List<Photo>,
-    activePhotoId: Int,
-    activePhotoIndex: Int,
-    activePhoto: Photo,
-    isSlideshowPlaying: Boolean,
-    showDetails: Boolean,
+    photoListState: PhotoListState.Loaded,
     ratingState: RatingState,
     exifState: ExifState,
     commentState: CommentState,
-    setActiveIndex: (index: Int) -> Unit,
-    toggleSlideshow: () -> Unit,
-    toggleDetails: () -> Unit,
-    savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (PhotoCategory) -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
-    val rotationState = rememberRotation(activePhotoIndex)
+    val rotationState = rememberRotation(photoListState.activePhotoIndex)
 
     ItemPagerScaffold(
-        showDetails = showDetails,
+        showDetails = photoListState.showDetailSheet,
         topLeftContent = {
             OverlayYearName(
-                category = category,
+                category = photoListState.category,
                 onClickYear = { year -> navigateToYear(year) },
                 onClickCategory = { category -> navigateToCategory(category) })
         },
         topRightContent = {
             OverlayPositionCount(
-                position = activePhotoIndex + 1,
-                count = photos.size
+                position = photoListState.activePhotoIndex + 1,
+                count = photoListState.photos.size
             )
         },
         bottomBarContent = {
             ButtonBar(
-                isSlideshowPlaying = isSlideshowPlaying,
+                isSlideshowPlaying = photoListState.isSlideshowPlaying,
                 onRotateLeft = { rotationState.setActiveRotation(-90f) },
                 onRotateRight = { rotationState.setActiveRotation(90f) },
-                onToggleSlideshow = toggleSlideshow,
+                onToggleSlideshow = photoListState.toggleSlideshow,
                 onShare = {
                     coroutineScope.launch {
-                       sharePhoto(context, savePhotoToShare, activePhoto)
+                       sharePhoto(context, photoListState.savePhotoToShare, photoListState.activePhoto!!)
                     }
                 },
-                onViewDetails = toggleDetails
+                onViewDetails = photoListState.toggleDetails
             )
         },
         detailSheetContent = {
             DetailBottomSheet(
-                activePhotoId = activePhotoId,
+                activePhotoId = photoListState.activePhotoId,
                 sheetState = sheetState,
                 ratingState = ratingState,
                 exifState = exifState,
                 commentState = commentState,
-                onDismissRequest = toggleDetails
+                onDismissRequest = photoListState.toggleDetails
             )
         }
     ) {
         PhotoPager(
-            photos,
-            activePhotoIndex,
+            photoListState.photos,
+            photoListState.activePhotoIndex,
             rotationState.activeRotation,
-            setActiveIndex = { index -> setActiveIndex(index) }
+            setActiveIndex = { index -> photoListState.setActiveIndex(index) }
         )
     }
 }
