@@ -6,7 +6,7 @@ import java.util.*
 
 sealed class ApiResult<out T> {
     data class Error(val error: String, val errorCode: Int? = null, val exception: Throwable? = null): ApiResult<Nothing>()
-    object Empty: ApiResult<Nothing>()
+    data object Empty: ApiResult<Nothing>()
     data class Success<out T>(val result: T): ApiResult<T>()
 
     companion object {

@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 
 abstract class BaseRandomViewModel (
-    protected val randomPhotoRepository: RandomPhotoRepository
+    private val randomPhotoRepository: RandomPhotoRepository
 ): ViewModel() {
     val photos = randomPhotoRepository
         .photos
