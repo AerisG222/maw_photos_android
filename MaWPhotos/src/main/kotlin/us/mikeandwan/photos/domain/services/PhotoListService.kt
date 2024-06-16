@@ -18,7 +18,7 @@ import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.PeriodicJob
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 import java.io.File
 import javax.inject.Inject
 
@@ -40,7 +40,7 @@ class PhotoListService @Inject constructor (
     private val _showDetailSheet = MutableStateFlow(false)
     val showDetailSheet = _showDetailSheet.asStateFlow()
 
-    private val _category = MutableStateFlow<PhotoCategory?>(null)
+    private val _category = MutableStateFlow<MediaCategory?>(null)
     val category = _category.asStateFlow()
 
     private val _activeIndex = MutableStateFlow(-1)

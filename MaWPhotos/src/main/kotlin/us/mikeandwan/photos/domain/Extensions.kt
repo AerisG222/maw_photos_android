@@ -4,8 +4,21 @@ import us.mikeandwan.photos.Constants
 import us.mikeandwan.photos.domain.models.*
 import java.net.HttpURLConnection
 
-fun us.mikeandwan.photos.database.PhotoCategory.toDomainPhotoCategory(): PhotoCategory {
-    return PhotoCategory(
+fun us.mikeandwan.photos.database.PhotoCategory.toDomainMediaCategory(): MediaCategory {
+    return MediaCategory(
+        MediaType.Photo,
+        this.id,
+        this.year,
+        this.name,
+        this.teaserHeight,
+        this.teaserWidth,
+        this.teaserUrl
+    )
+}
+
+fun us.mikeandwan.photos.database.VideoCategory.toDomainMediaCategory(): MediaCategory {
+    return MediaCategory(
+        MediaType.Video,
         this.id,
         this.year,
         this.name,
@@ -17,6 +30,17 @@ fun us.mikeandwan.photos.database.PhotoCategory.toDomainPhotoCategory(): PhotoCa
 
 fun us.mikeandwan.photos.api.Category.toDatabasePhotoCategory(): us.mikeandwan.photos.database.PhotoCategory {
     return us.mikeandwan.photos.database.PhotoCategory(
+        this.id,
+        this.year,
+        this.name,
+        this.teaserImage.height,
+        this.teaserImage.width,
+        this.teaserImage.url
+    )
+}
+
+fun us.mikeandwan.photos.api.Category.toDatabaseVideoCategory(): us.mikeandwan.photos.database.VideoCategory {
+    return us.mikeandwan.photos.database.VideoCategory(
         this.id,
         this.year,
         this.name,
@@ -57,34 +81,49 @@ fun us.mikeandwan.photos.database.RandomPreference.toDomainRandomPreference(): R
 
 fun us.mikeandwan.photos.api.Photo.toDomainPhoto(): Photo {
     return Photo(
+        MediaType.Photo,
         this.id,
         this.categoryId,
-        this.imageMd.height,
-        this.imageMd.width,
-        this.imageMd.url,
         this.imageXs.height,
         this.imageXs.width,
-        this.imageXs.url
+        this.imageXs.url,
+        this.imageMd.height,
+        this.imageMd.width,
+        this.imageMd.url
     )
 }
 
-fun us.mikeandwan.photos.api.Rating.toDomainPhotoRating(): PhotoRating {
-    return PhotoRating(
+fun us.mikeandwan.photos.api.Video.toDomainVideo(): Video {
+    return Video(
+        MediaType.Video,
+        this.id,
+        this.categoryId,
+        this.thumbnail.width,
+        this.thumbnail.width,
+        this.thumbnail.url,
+        this.videoScaled.height,
+        this.videoScaled.width,
+        this.videoScaled.url
+    )
+}
+
+fun us.mikeandwan.photos.api.Rating.toDomainRating(): Rating {
+    return Rating(
         this.userRating,
         this.averageRating
     )
 }
 
-fun us.mikeandwan.photos.api.Comment.toDomainPhotoComment(): PhotoComment {
-    return PhotoComment(
+fun us.mikeandwan.photos.api.Comment.toDomainComment(): Comment {
+    return Comment(
         this.entryDate,
         this.commentText,
         this.username
     )
 }
 
-fun us.mikeandwan.photos.api.ExifData.toDomainExifData(): PhotoExifData {
-    return PhotoExifData(
+fun us.mikeandwan.photos.api.ExifData.toDomainExifData(): ExifData {
+    return ExifData(
         // exif
         this.bitsPerSample,
         this.compression,

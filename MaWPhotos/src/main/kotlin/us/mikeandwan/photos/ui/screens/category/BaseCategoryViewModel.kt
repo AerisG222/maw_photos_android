@@ -12,12 +12,12 @@ import us.mikeandwan.photos.BuildConfig
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 
 abstract class BaseCategoryViewModel (
     protected val photoCategoryRepository: PhotoCategoryRepository
 ) : ViewModel() {
-    private val _category = MutableStateFlow<PhotoCategory?>(null)
+    private val _category = MutableStateFlow<MediaCategory?>(null)
     val category = _category.asStateFlow()
 
     private val _photos = MutableStateFlow<List<Photo>>(emptyList())

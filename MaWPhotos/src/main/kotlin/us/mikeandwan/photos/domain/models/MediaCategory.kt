@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.domain.models
 
-data class PhotoCategory(
+data class MediaCategory(
+    val type: MediaType,
     val id: Int,
     val year: Int,
     val name: String,

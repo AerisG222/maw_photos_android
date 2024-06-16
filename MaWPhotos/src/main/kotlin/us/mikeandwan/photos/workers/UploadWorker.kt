@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.api.UploadApiClient
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
 import us.mikeandwan.photos.ui.main.MainActivity
@@ -27,7 +27,7 @@ import java.io.File
 class UploadWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-    private val apiClient: PhotoApiClient,
+    private val apiClient: UploadApiClient,
     private val preferenceRepository: NotificationPreferenceRepository,
     private val notificationManager: NotificationManager,
     private val fileStorageRepository: FileStorageRepository

@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import us.mikeandwan.photos.domain.models.PhotoComment
+import us.mikeandwan.photos.domain.models.Comment
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun CommentTable(
-    comments: List<PhotoComment>,
+    comments: List<Comment>,
     footer: @Composable () -> Unit
 ) {
     val fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")

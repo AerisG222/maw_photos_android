@@ -29,7 +29,7 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.NavigationArea
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
@@ -41,7 +41,7 @@ data class SearchRoute (
 )
 
 fun NavGraphBuilder.searchScreen(
-    onNavigateToCategory: (PhotoCategory) -> Unit,
+    onNavigateToCategory: (MediaCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     updateInitialSearchTerm: (String) -> Unit
@@ -80,11 +80,11 @@ fun NavGraphBuilder.searchScreen(
 
 @Composable
 fun SearchScreen(
-    results: List<PhotoCategory>,
+    results: List<MediaCategory>,
     totalFound: Int,
     displayType: CategoryDisplayType,
     thumbSize: GridThumbnailSize,
-    onNavigateToCategory: (PhotoCategory) -> Unit,
+    onNavigateToCategory: (MediaCategory) -> Unit,
     continueSearch: () -> Unit
 ) {
     if(results.isEmpty()) {
@@ -119,7 +119,7 @@ fun SearchScreen(
                     val gridState = rememberImageGridState(
                         gridItems = results.map { it.toImageGridItem() },
                         thumbnailSize = thumbSize,
-                        onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
+                        onSelectGridItem = { onNavigateToCategory(it.data as MediaCategory) }
                     )
 
                     ImageGrid(gridState)

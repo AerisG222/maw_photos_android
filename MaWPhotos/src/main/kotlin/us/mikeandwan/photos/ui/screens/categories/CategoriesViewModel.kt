@@ -11,7 +11,7 @@ import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +22,7 @@ class CategoriesViewModel @Inject constructor (
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(0, false, null))
     val refreshStatus = _refreshStatus.asStateFlow()
 
-    private val _categories = MutableStateFlow<List<PhotoCategory>>(emptyList())
+    private val _categories = MutableStateFlow<List<MediaCategory>>(emptyList())
     val categories = _categories.asStateFlow()
 
     val preferences = categoryPreferenceRepository

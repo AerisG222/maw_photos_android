@@ -14,13 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 
 @Composable
 fun CategoryListItem(
-    category: PhotoCategory,
+    category: MediaCategory,
     showYear: Boolean,
-    onSelectCategory: (PhotoCategory) -> Unit,
+    onSelectCategory: (MediaCategory) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(

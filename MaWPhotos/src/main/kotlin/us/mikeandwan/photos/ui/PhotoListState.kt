@@ -3,18 +3,18 @@ package us.mikeandwan.photos.ui
 import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Composable
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 import java.io.File
 
 sealed class PhotoListState {
     data object Loading: PhotoListState()
 
     data class CategoryLoaded(
-        val category: PhotoCategory
+        val category: MediaCategory
     ): PhotoListState()
 
     data class Loaded(
-        val category: PhotoCategory,
+        val category: MediaCategory,
         val photos: List<Photo>,
         val activePhotoId: Int,
         val activePhotoIndex: Int,
@@ -30,7 +30,7 @@ sealed class PhotoListState {
 
 @Composable
 fun rememberPhotoListState(
-    category: PhotoCategory?,
+    category: MediaCategory?,
     photos: List<Photo>,
     activePhotoId: Int,
     activePhotoIndex: Int,

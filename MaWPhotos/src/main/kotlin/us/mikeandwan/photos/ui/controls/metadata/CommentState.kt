@@ -1,17 +1,17 @@
 package us.mikeandwan.photos.ui.controls.metadata
 
 import androidx.compose.runtime.Composable
-import us.mikeandwan.photos.domain.models.PhotoComment
+import us.mikeandwan.photos.domain.models.Comment
 
 class CommentState(
-    val comments: List<PhotoComment>,
+    val comments: List<Comment>,
     val fetchComments: () -> Unit,
     val addComment: (String) -> Unit
 )
 
 @Composable
 fun rememberCommentState(
-    comments: List<PhotoComment> = emptyList(),
+    comments: List<Comment> = emptyList(),
     fetchComments: () -> Unit = {},
     addComment: (String) -> Unit = {}
 ): CommentState {

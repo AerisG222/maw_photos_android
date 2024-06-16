@@ -3,7 +3,7 @@ package us.mikeandwan.photos.domain
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import us.mikeandwan.photos.api.ApiResult
-import us.mikeandwan.photos.api.PhotoApiClient
+import us.mikeandwan.photos.api.SearchApiClient
 import us.mikeandwan.photos.database.SearchHistory
 import us.mikeandwan.photos.database.SearchHistoryDao
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
@@ -15,7 +15,7 @@ import javax.inject.Inject
 import kotlin.math.max
 
 class SearchRepository @Inject constructor(
-    private val api: PhotoApiClient,
+    private val api: SearchApiClient,
     private val searchHistoryDao: SearchHistoryDao,
     private val searchPreferenceRepository: SearchPreferenceRepository,
     private val apiErrorHandler: ApiErrorHandler

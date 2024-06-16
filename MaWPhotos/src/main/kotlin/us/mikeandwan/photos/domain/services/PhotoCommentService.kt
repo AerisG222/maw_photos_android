@@ -5,13 +5,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.domain.PhotoRepository
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
-import us.mikeandwan.photos.domain.models.PhotoComment
+import us.mikeandwan.photos.domain.models.Comment
 import javax.inject.Inject
 
 class PhotoCommentService @Inject constructor (
     private val photoRepository: PhotoRepository
 ) {
-    private val _comments = MutableStateFlow(emptyList<PhotoComment>())
+    private val _comments = MutableStateFlow(emptyList<Comment>())
     val comments = _comments.asStateFlow()
 
     suspend fun fetchCommentDetails(photoId: Int) {

@@ -2,7 +2,7 @@ package us.mikeandwan.photos.domain.models
 
 import java.util.*
 
-data class PhotoExifData(
+data class ExifData(
     // exif
     val bitsPerSample: Short?,
     val compression: String?,

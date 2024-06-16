@@ -10,7 +10,7 @@ import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.SearchSource
-import us.mikeandwan.photos.ui.toDomainPhotoCategory
+import us.mikeandwan.photos.ui.toDomainMediaCategory
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +23,7 @@ class SearchViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val searchResultsAsCategories = searchResults
-        .map { results -> results.map { it.toDomainPhotoCategory() }}
+        .map { results -> results.map { it.toDomainMediaCategory() }}
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val displayType = searchPreferenceRepository

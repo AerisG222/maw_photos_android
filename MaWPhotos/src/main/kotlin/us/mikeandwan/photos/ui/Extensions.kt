@@ -3,7 +3,8 @@ package us.mikeandwan.photos.ui
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
+import us.mikeandwan.photos.domain.models.MediaType
 import us.mikeandwan.photos.domain.models.SearchResultCategory
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 
@@ -15,7 +16,7 @@ fun Photo.toImageGridItem(): ImageGridItem {
     )
 }
 
-fun PhotoCategory.toImageGridItem(): ImageGridItem {
+fun MediaCategory.toImageGridItem(): ImageGridItem {
     return ImageGridItem(
         this.id,
         this.teaserUrl.replace("/xs/", "/md/"),
@@ -23,8 +24,11 @@ fun PhotoCategory.toImageGridItem(): ImageGridItem {
     )
 }
 
-fun SearchResultCategory.toDomainPhotoCategory(): PhotoCategory {
-    return PhotoCategory(
+fun SearchResultCategory.toDomainMediaCategory(): MediaCategory {
+    val type = if ( this.multimediaType == "photo" ) { MediaType.Photo } else { MediaType.Video }
+
+    return MediaCategory(
+        type,
         this.id,
         this.year,
         this.name,

@@ -15,7 +15,7 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
 import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.ui.main.MainActivity
 import us.mikeandwan.photos.utils.NOTIFICATION_CHANNEL_ID_NEW_CATEGORIES
 import us.mikeandwan.photos.utils.PendingIntentFlagHelper
@@ -74,7 +74,7 @@ class UpdateCategoriesWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun showSuccessNotification(newCategories: List<PhotoCategory>) {
+    private suspend fun showSuccessNotification(newCategories: List<MediaCategory>) {
         val pluralize = if (newCategories.size == 1) "category" else "categories"
         val contentText = "${newCategories.size} new $pluralize"
 

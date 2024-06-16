@@ -8,13 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 
 @Composable
 fun OverlayYearName(
-    category: PhotoCategory,
+    category: MediaCategory,
     onClickYear: (Int) -> Unit,
-    onClickCategory: (PhotoCategory) -> Unit
+    onClickCategory: (MediaCategory) -> Unit
 ) {
     Row(modifier = Modifier.padding(4.dp, 2.dp)) {
         Text(

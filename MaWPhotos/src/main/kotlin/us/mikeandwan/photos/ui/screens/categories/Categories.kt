@@ -26,7 +26,7 @@ import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.CategoryPreference
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.NavigationArea
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
@@ -39,7 +39,7 @@ data class CategoriesRoute (
 )
 
 fun NavGraphBuilder.categoriesScreen(
-    onNavigateToCategory: (PhotoCategory) -> Unit,
+    onNavigateToCategory: (MediaCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
@@ -71,9 +71,9 @@ fun NavGraphBuilder.categoriesScreen(
 @Composable
 fun CategoriesScreen(
     preferences: CategoryPreference,
-    categories: List<PhotoCategory>,
+    categories: List<MediaCategory>,
     refreshStatus: CategoryRefreshStatus,
-    onNavigateToCategory: (PhotoCategory) -> Unit,
+    onNavigateToCategory: (MediaCategory) -> Unit,
     onRefresh: suspend (Int) -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
@@ -100,7 +100,7 @@ fun CategoriesScreen(
     val gridState = rememberImageGridState(
         gridItems = categories.map { it.toImageGridItem() },
         thumbnailSize = preferences.gridThumbnailSize,
-        onSelectGridItem = { onNavigateToCategory(it.data as PhotoCategory) }
+        onSelectGridItem = { onNavigateToCategory(it.data as MediaCategory) }
     )
 
     Scaffold (

@@ -14,6 +14,9 @@ import javax.inject.Singleton
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import us.mikeandwan.photos.api.SearchApiClient
+import us.mikeandwan.photos.api.UploadApiClient
+import us.mikeandwan.photos.api.VideoApiClient
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -48,5 +51,23 @@ class NetworkModule {
     @Singleton
     fun providePhotoApiClient(retrofit: Retrofit): PhotoApiClient {
         return PhotoApiClient(retrofit)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchApiClient(retrofit: Retrofit): SearchApiClient {
+        return SearchApiClient(retrofit)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUploadApiClient(retrofit: Retrofit): UploadApiClient {
+        return UploadApiClient(retrofit)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVideoApiClient(retrofit: Retrofit): VideoApiClient {
+        return VideoApiClient(retrofit)
     }
 }

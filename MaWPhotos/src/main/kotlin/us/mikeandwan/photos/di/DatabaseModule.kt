@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.database.migrations.MIGRATION_1_2
+import us.mikeandwan.photos.database.migrations.MIGRATION_2_3
 import us.mikeandwan.photos.database.migrations.MawDatabaseCreateCallback
 import javax.inject.Singleton
 
@@ -24,6 +25,7 @@ class DatabaseModule {
         )
             .addCallback(MawDatabaseCreateCallback())
             .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_2_3)
             .build()
     }
 
@@ -37,6 +39,12 @@ class DatabaseModule {
     @Singleton
     fun provideCategoryPreferenceDao(mawDatabase: MawDatabase): CategoryPreferenceDao {
         return mawDatabase.categoryPreferenceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMediaCategoryDao(mawDatabase: MawDatabase): MediaCategoryDao {
+        return mawDatabase.mediaCategoryDao()
     }
 
     @Provides
@@ -73,5 +81,11 @@ class DatabaseModule {
     @Singleton
     fun provideSearchPreferenceDao(mawDatabase: MawDatabase): SearchPreferenceDao {
         return mawDatabase.searchPreferenceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideVideoCategoryDao(mawDatabase: MawDatabase): VideoCategoryDao {
+        return mawDatabase.videoCategoryDao()
     }
 }

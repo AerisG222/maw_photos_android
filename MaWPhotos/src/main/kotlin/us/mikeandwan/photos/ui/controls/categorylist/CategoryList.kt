@@ -6,13 +6,13 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 
 @Composable
 fun CategoryList(
-    categories: List<PhotoCategory>,
+    categories: List<MediaCategory>,
     showYear: Boolean,
-    onSelectCategory: (PhotoCategory) -> Unit
+    onSelectCategory: (MediaCategory) -> Unit
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
         itemsIndexed(categories) { index, category ->

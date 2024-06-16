@@ -16,7 +16,7 @@ import androidx.navigation.toRoute
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.domain.models.NavigationArea
-import us.mikeandwan.photos.domain.models.PhotoCategory
+import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.ui.PhotoListState
 import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.metadata.CommentState
@@ -44,7 +44,7 @@ fun NavGraphBuilder.randomItemScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToYear: (Int) -> Unit,
-    navigateToCategory: (PhotoCategory) -> Unit
+    navigateToCategory: (MediaCategory) -> Unit
 ) {
     composable<RandomItemRoute> { backStackEntry ->
         val vm: RandomItemViewModel = hiltViewModel()
@@ -141,7 +141,7 @@ fun RandomItemScreen(
     exifState: ExifState,
     commentState: CommentState,
     navigateToYear: (Int) -> Unit,
-    navigateToCategory: (PhotoCategory) -> Unit
+    navigateToCategory: (MediaCategory) -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()

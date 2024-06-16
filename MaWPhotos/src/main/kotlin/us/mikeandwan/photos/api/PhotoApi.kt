@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.api
 
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -23,9 +22,6 @@ internal interface PhotoApi {
     @GET("photo-categories/{categoryId}/photos")
     suspend fun getPhotosByCategory(@Path("categoryId") categoryId: Int): Response<ApiCollection<Photo>>
 
-    @GET("search/multimedia-categories")
-    suspend fun searchCategories(@Query("query") query: String, @Query("start") start: Int): Response<SearchResults<SearchResultCategory>>
-
     @PATCH("photos/{photoId}/rating")
     suspend fun ratePhoto(@Path("photoId") photoId: Int, @Body rating: RatePhoto): Response<Rating>
 
@@ -34,8 +30,4 @@ internal interface PhotoApi {
         @Path("photoId") photoId: Int,
         @Body commentPhoto: CommentPhoto
     ): Response<ApiCollection<Comment>>
-
-    @Multipart
-    @POST("upload/upload")
-    suspend fun uploadFile(@Part file: MultipartBody.Part): Response<FileOperationResult>
 }

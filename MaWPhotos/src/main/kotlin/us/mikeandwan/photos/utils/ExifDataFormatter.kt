@@ -1,14 +1,14 @@
 package us.mikeandwan.photos.utils
 
 import okhttp3.internal.toImmutableList
-import us.mikeandwan.photos.domain.models.PhotoExifData
+import us.mikeandwan.photos.domain.models.ExifData
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 object ExifDataFormatter {
     @JvmStatic
-    fun prepareForDisplay(exif: PhotoExifData): List<Pair<String, String>> {
+    fun prepareForDisplay(exif: ExifData): List<Pair<String, String>> {
         val list = mutableListOf<Pair<String, String>>()
 
         // exif
