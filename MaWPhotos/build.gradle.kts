@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId = "us.mikeandwan.pictures"
-        minSdk = 31
+        minSdk = 26
         targetSdk = 34
         versionCode = 56
         versionName = "7.4"
