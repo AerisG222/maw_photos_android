@@ -14,7 +14,7 @@ class VideoCategoryRepository @Inject constructor(
     private val db: MawDatabase,
     private val vcDao: VideoCategoryDao,
     private val apiErrorHandler: ApiErrorHandler
-) {
+) : ICategoryRepository {
     companion object {
         const val ERR_MSG_LOAD_CATEGORIES = "Unable to load categories at this time.  Please try again later."
         const val ERR_MSG_LOAD_VIDEOS = "Unable to load videos.  Please try again later."
@@ -23,7 +23,7 @@ class VideoCategoryRepository @Inject constructor(
     private var _lastCategoryId = -1
     private var _lastCategoryVideos = emptyList<Video>()
 
-    fun getYears() = flow {
+    override fun getYears() = flow {
         val data = vcDao.getYears()
 
         if(data.first().isEmpty()) {
@@ -35,9 +35,9 @@ class VideoCategoryRepository @Inject constructor(
         emitAll(data)
     }
 
-    fun getMostRecentYear() = vcDao.getMostRecentYear()
+    override fun getMostRecentYear() = vcDao.getMostRecentYear()
 
-    fun getNewCategories() = flow {
+    override fun getNewCategories() = flow {
         val category = vcDao
             .getMostRecentCategory()
             .first()
@@ -53,7 +53,7 @@ class VideoCategoryRepository @Inject constructor(
         emitAll(categories)
     }
 
-    fun getCategories(year: Int) = vcDao
+    override fun getCategories(year: Int) = vcDao
         .getCategoriesForYear(year)
         .map { dbList ->
             dbList.map { dbCat -> dbCat.toDomainMediaCategory() }
@@ -64,7 +64,7 @@ class VideoCategoryRepository @Inject constructor(
         .filter { it != null }
         .map { cat -> cat!!.toDomainMediaCategory() }
 
-    fun getVideos(categoryId: Int) = flow {
+    fun getMedia(categoryId: Int) = flow {
         if(categoryId == _lastCategoryId) {
             emit(ExternalCallStatus.Success(_lastCategoryVideos))
         } else {

@@ -24,7 +24,7 @@ import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.domain.ErrorRepository
 import us.mikeandwan.photos.domain.FileStorageRepository
-import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.ErrorMessage
@@ -36,15 +36,15 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     val authService: AuthService,
-    private val photoCategoryRepository: PhotoCategoryRepository,
+    private val mediaCategoryRepository: MediaCategoryRepository,
     private val fileStorageRepository: FileStorageRepository,
     private val searchRepository: SearchRepository,
     private val randomPhotoRepository: RandomPhotoRepository,
     errorRepository: ErrorRepository
 ): ViewModel() {
-    val mostRecentYear = photoCategoryRepository.getMostRecentYear()
+    val mostRecentYear = mediaCategoryRepository.getMostRecentYear()
 
-    val years = photoCategoryRepository.getYears()
+    val years = mediaCategoryRepository.getYears()
 
     val errorsToDisplay = errorRepository.error
         .filter { it is ErrorMessage.Display }
@@ -154,10 +154,10 @@ class MainViewModel @Inject constructor(
                 .filter { it is AuthStatus.Authorized }
                 .collect {
                     Timber.i("User authorized - fetching categories")
-                    photoCategoryRepository.getYears().collect {}
+                    mediaCategoryRepository.getYears().collect {}
                 }
 
-            photoCategoryRepository.getNewCategories()
+            mediaCategoryRepository.getNewCategories()
 
             clearFileCache()
         }

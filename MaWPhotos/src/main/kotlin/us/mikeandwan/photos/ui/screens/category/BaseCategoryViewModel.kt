@@ -53,7 +53,7 @@ abstract class BaseCategoryViewModel (
             }
 
             photoCategoryRepository
-                .getPhotos(categoryId)
+                .getMedia(categoryId)
                 .filter { it is ExternalCallStatus.Success }
                 .map { it as ExternalCallStatus.Success }
                 .map { it.result }

@@ -14,7 +14,7 @@ class PhotoCategoryRepository @Inject constructor(
     private val db: MawDatabase,
     private val pcDao: PhotoCategoryDao,
     private val apiErrorHandler: ApiErrorHandler
-) {
+) : ICategoryRepository {
     companion object {
         const val ERR_MSG_LOAD_CATEGORIES = "Unable to load categories at this time.  Please try again later."
         const val ERR_MSG_LOAD_PHOTOS = "Unable to load photos.  Please try again later."
@@ -23,7 +23,7 @@ class PhotoCategoryRepository @Inject constructor(
     private var _lastCategoryId = -1
     private var _lastCategoryPhotos = emptyList<Photo>()
 
-    fun getYears() = flow {
+    override fun getYears() = flow {
         val data = pcDao.getYears()
 
         if(data.first().isEmpty()) {
@@ -35,9 +35,9 @@ class PhotoCategoryRepository @Inject constructor(
         emitAll(data)
     }
 
-    fun getMostRecentYear() = pcDao.getMostRecentYear()
+    override fun getMostRecentYear() = pcDao.getMostRecentYear()
 
-    fun getNewCategories() = flow {
+    override fun getNewCategories() = flow {
         val category = pcDao
             .getMostRecentCategory()
             .first()
@@ -53,7 +53,7 @@ class PhotoCategoryRepository @Inject constructor(
         emitAll(categories)
     }
 
-    fun getCategories(year: Int) = pcDao
+    override fun getCategories(year: Int) = pcDao
         .getCategoriesForYear(year)
         .map { dbList ->
             dbList.map { dbCat -> dbCat.toDomainMediaCategory() }
@@ -64,7 +64,7 @@ class PhotoCategoryRepository @Inject constructor(
         .filter { it != null }
         .map { cat -> cat!!.toDomainMediaCategory() }
 
-    fun getPhotos(categoryId: Int) = flow {
+    fun getMedia(categoryId: Int) = flow {
         if(categoryId == _lastCategoryId) {
             emit(ExternalCallStatus.Success(_lastCategoryPhotos))
         } else {

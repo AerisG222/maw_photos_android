@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import us.mikeandwan.photos.domain.CategoryPreferenceRepository
-import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor (
-    private val photoCategoryRepository: PhotoCategoryRepository,
+    private val mediaCategoryRepository: MediaCategoryRepository,
     categoryPreferenceRepository: CategoryPreferenceRepository
 ): ViewModel() {
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(0, false, null))
@@ -31,7 +31,7 @@ class CategoriesViewModel @Inject constructor (
 
     fun onRefreshCategories(id: Int) {
         viewModelScope.launch {
-            photoCategoryRepository
+            mediaCategoryRepository
                 .getNewCategories()
                 .onEach {
                     when(it) {
@@ -59,7 +59,7 @@ class CategoriesViewModel @Inject constructor (
 
     fun loadCategories(year: Int) {
         viewModelScope.launch {
-            photoCategoryRepository
+            mediaCategoryRepository
                 .getCategories(year)
                 .collect { cats -> _categories.value = cats }
         }

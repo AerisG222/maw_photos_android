@@ -28,6 +28,18 @@ fun us.mikeandwan.photos.database.VideoCategory.toDomainMediaCategory(): MediaCa
     )
 }
 
+fun us.mikeandwan.photos.database.MediaCategory.toDomainMediaCategory(): MediaCategory {
+    return MediaCategory(
+        MediaType.Video,
+        this.id,
+        this.year,
+        this.name,
+        this.teaserHeight,
+        this.teaserWidth,
+        this.teaserUrl
+    )
+}
+
 fun us.mikeandwan.photos.api.Category.toDatabasePhotoCategory(): us.mikeandwan.photos.database.PhotoCategory {
     return us.mikeandwan.photos.database.PhotoCategory(
         this.id,
