@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.models.Media
+import us.mikeandwan.photos.domain.models.MediaType
 
 private object TabIndex {
     const val RATING = 0
@@ -26,17 +28,22 @@ private object TabIndex {
 
 @Composable
 fun DetailTabs(
-    activePhotoId: Int,
+    activeMedia: Media,
     ratingState: RatingState,
     exifState: ExifState,
     commentState: CommentState
 ) {
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    val tabs = when(activeMedia.type) {
+        MediaType.Photo -> listOf(TabIndex.RATING, TabIndex.COMMENT, TabIndex.EXIF)
+        MediaType.Video -> listOf(TabIndex.RATING, TabIndex.COMMENT)
+    }
+
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
     val coroutineScope = rememberCoroutineScope()
 
-    val (commentPhotoId, setCommentPhotoId) = remember { mutableIntStateOf(0) }
-    val (ratingPhotoId, setRatingPhotoId) = remember { mutableIntStateOf(0) }
-    val (exifPhotoId, setExifPhotoId) = remember { mutableIntStateOf(0) }
+    val (commentMediaId, setCommentMediaId) = remember { mutableIntStateOf(0) }
+    val (ratingMediaId, setRatingMediaId) = remember { mutableIntStateOf(0) }
+    val (exifMediaId, setExifMediaId) = remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
@@ -73,21 +80,24 @@ fun DetailTabs(
                     )
                 }
             )
-            Tab(
-                selected = pagerState.currentPage == TabIndex.EXIF,
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(TabIndex.EXIF)
+
+            if(tabs.contains(TabIndex.EXIF)) {
+                Tab(
+                    selected = pagerState.currentPage == TabIndex.EXIF,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(TabIndex.EXIF)
+                        }
+                    },
+                    icon = {
+                        AsyncImage(
+                            model = R.drawable.ic_tune,
+                            contentDescription = "Exif",
+                            modifier = Modifier.size(32.dp)
+                        )
                     }
-                },
-                icon = {
-                    AsyncImage(
-                        model = R.drawable.ic_tune,
-                        contentDescription = "Exif",
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            )
+                )
+            }
         }
 
         HorizontalPager(
@@ -96,24 +106,24 @@ fun DetailTabs(
             pageContent = {
                 when(it) {
                     TabIndex.RATING -> {
-                        if(activePhotoId != ratingPhotoId) {
-                            setRatingPhotoId(activePhotoId)
+                        if(activeMedia.id != ratingMediaId) {
+                            setRatingMediaId(activeMedia.id)
                             ratingState.fetchRating()
                         }
 
                         RatingScreen(ratingState)
                     }
                     TabIndex.COMMENT -> {
-                        if(activePhotoId != commentPhotoId) {
-                            setCommentPhotoId(activePhotoId)
+                        if(activeMedia.id != commentMediaId) {
+                            setCommentMediaId(activeMedia.id)
                             commentState.fetchComments()
                         }
 
                         CommentScreen(commentState)
                     }
                     TabIndex.EXIF -> {
-                        if(activePhotoId != exifPhotoId) {
-                            setExifPhotoId(activePhotoId)
+                        if(activeMedia.id != exifMediaId) {
+                            setExifMediaId(activeMedia.id)
                             exifState.fetchExif()
                         }
 

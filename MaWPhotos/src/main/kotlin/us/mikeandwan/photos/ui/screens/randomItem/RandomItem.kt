@@ -178,7 +178,7 @@ fun RandomItemScreen(
         },
         detailSheetContent = {
             DetailBottomSheet(
-                activePhotoId = mediaListState.activeId,
+                activeMedia = mediaListState.activeMedia!!,
                 sheetState = sheetState,
                 ratingState = ratingState,
                 exifState = exifState,

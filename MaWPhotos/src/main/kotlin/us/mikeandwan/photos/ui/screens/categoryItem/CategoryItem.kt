@@ -50,17 +50,17 @@ fun NavGraphBuilder.categoryItemScreen(
 
         val category by vm.category.collectAsStateWithLifecycle()
         val media by vm.media.collectAsStateWithLifecycle()
-        val activePhotoId by vm.activeId.collectAsStateWithLifecycle()
-        val activePhotoIndex by vm.activeIndex.collectAsStateWithLifecycle()
-        val activePhoto by vm.activePhoto.collectAsStateWithLifecycle()
+        val activeId by vm.activeId.collectAsStateWithLifecycle()
+        val activeIndex by vm.activeIndex.collectAsStateWithLifecycle()
+        val activeMedia by vm.activeMedia.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
         val photoListState = rememberMediaListState(
             category,
             media,
-            activePhotoId,
-            activePhotoIndex,
-            activePhoto,
+            activeId,
+            activeIndex,
+            activeMedia,
             isSlideshowPlaying,
             showDetailSheet,
             setActiveIndex = { vm.setActiveIndex(it) },
@@ -173,7 +173,7 @@ fun CategoryItemScreen(
         },
         detailSheetContent = {
             DetailBottomSheet(
-                activePhotoId = mediaListState.activeId,
+                activeMedia = mediaListState.activeMedia!!,
                 sheetState = sheetState,
                 ratingState = ratingState,
                 exifState = exifState,

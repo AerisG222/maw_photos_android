@@ -22,7 +22,7 @@ class CategoryItemViewModel @Inject constructor (
 ) : BaseCategoryViewModel(
     mediaCategoryRepository
 ) {
-    val activePhoto = mediaListService.activeMedia
+    val activeMedia = mediaListService.activeMedia
     val activeId = mediaListService.activeId
     val activeIndex = mediaListService.activeIndex
     val isSlideshowPlaying = mediaListService.isSlideshowPlaying
