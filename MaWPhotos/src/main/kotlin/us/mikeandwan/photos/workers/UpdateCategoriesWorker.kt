@@ -12,8 +12,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
-import us.mikeandwan.photos.domain.PhotoCategoryRepository
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.ui.main.MainActivity
@@ -24,7 +24,7 @@ import us.mikeandwan.photos.utils.PendingIntentFlagHelper
 class UpdateCategoriesWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-    private val photoCategoryRepository: PhotoCategoryRepository,
+    private val mediaCategoryRepository: MediaCategoryRepository,
     private val preferenceRepository: NotificationPreferenceRepository,
     private val notificationManager: NotificationManager
 ): CoroutineWorker(appContext, params) {
@@ -38,13 +38,13 @@ class UpdateCategoriesWorker @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result {
-        if(photoCategoryRepository.getYears().first().isEmpty()) {
+        if(mediaCategoryRepository.getYears().first().isEmpty()) {
             return Result.success()
         }
 
         var status = STATUS_UNKNOWN
 
-        photoCategoryRepository
+        mediaCategoryRepository
             .getNewCategories()
             .collect {
                 when(it) {
@@ -78,7 +78,7 @@ class UpdateCategoriesWorker @AssistedInject constructor(
         val pluralize = if (newCategories.size == 1) "category" else "categories"
         val contentText = "${newCategories.size} new $pluralize"
 
-        showNotification("New Photos Available", contentText)
+        showNotification("New Items Available", contentText)
     }
 
     private suspend fun showNotification(title: String, contentText: String) {
