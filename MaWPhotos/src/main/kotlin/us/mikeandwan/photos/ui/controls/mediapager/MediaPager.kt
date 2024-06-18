@@ -18,6 +18,8 @@ import net.engawapg.lib.zoomable.ScrollGesturePropagation
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import us.mikeandwan.photos.domain.models.Media
+import us.mikeandwan.photos.domain.models.MediaType
+import us.mikeandwan.photos.ui.controls.videoplayer.VideoPlayer
 import us.mikeandwan.photos.ui.getMediaUrl
 
 @Composable
@@ -51,44 +53,53 @@ fun MediaPager(
         userScrollEnabled = true,
         modifier = Modifier.fillMaxSize()
     ) { index ->
-        AsyncImage(
-            model = media[index].getMediaUrl(),
-            contentDescription = "",
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .fillMaxSize()
-                .zoomable(
-                    zoomState,
-                    scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
+        val activeMedia = media[index]
+
+        when(activeMedia.type) {
+            MediaType.Photo -> {
+                AsyncImage(
+                    model = activeMedia.getMediaUrl(),
+                    contentDescription = "",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .zoomable(
+                            zoomState,
+                            scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
+                        )
+                        .graphicsLayer {
+                            val pageOffset =
+                                (pagerState.currentPage - index) +
+                                        pagerState.currentPageOffsetFraction
+
+                            alpha = lerp(
+                                start = 0.4f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                            )
+
+                            cameraDistance = 8 * density
+                            rotationY = lerp(
+                                start = 0f,
+                                stop = 40f,
+                                fraction = pageOffset.coerceIn(-1f, 1f),
+                            )
+
+                            lerp(
+                                start = 0.5f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                            ).also { scale ->
+                                scaleX = scale
+                                scaleY = scale
+                            }
+                        }
+                        .rotate(activeRotation)
                 )
-                .graphicsLayer {
-                    val pageOffset =
-                        (pagerState.currentPage - index) +
-                                pagerState.currentPageOffsetFraction
-
-                    alpha = lerp(
-                        start = 0.4f,
-                        stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                    )
-
-                    cameraDistance = 8 * density
-                    rotationY = lerp(
-                        start = 0f,
-                        stop = 40f,
-                        fraction = pageOffset.coerceIn(-1f, 1f),
-                    )
-
-                    lerp(
-                        start = 0.5f,
-                        stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                    ).also { scale ->
-                        scaleX = scale
-                        scaleY = scale
-                    }
-                }
-                .rotate(activeRotation)
-        )
+            }
+            MediaType.Video -> {
+                VideoPlayer(activeMedia)
+            }
+        }
     }
 }
