@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.photopager
+package us.mikeandwan.photos.ui.controls.mediapager
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

@@ -1,4 +1,4 @@
-package us.mikeandwan.photos.ui.controls.photopager
+package us.mikeandwan.photos.ui.controls.mediapager
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

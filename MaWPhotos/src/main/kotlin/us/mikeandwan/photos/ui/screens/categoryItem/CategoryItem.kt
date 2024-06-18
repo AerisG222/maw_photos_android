@@ -26,10 +26,10 @@ import us.mikeandwan.photos.ui.controls.metadata.RatingState
 import us.mikeandwan.photos.ui.controls.metadata.rememberCommentState
 import us.mikeandwan.photos.ui.controls.metadata.rememberExifState
 import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
-import us.mikeandwan.photos.ui.controls.photopager.ButtonBar
-import us.mikeandwan.photos.ui.controls.photopager.OverlayPositionCount
-import us.mikeandwan.photos.ui.controls.photopager.MediaPager
-import us.mikeandwan.photos.ui.controls.photopager.rememberRotation
+import us.mikeandwan.photos.ui.controls.mediapager.ButtonBar
+import us.mikeandwan.photos.ui.controls.mediapager.OverlayPositionCount
+import us.mikeandwan.photos.ui.controls.mediapager.MediaPager
+import us.mikeandwan.photos.ui.controls.mediapager.rememberRotation
 import us.mikeandwan.photos.ui.rememberMediaListState
 import us.mikeandwan.photos.ui.shareMedia
 
