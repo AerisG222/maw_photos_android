@@ -12,10 +12,10 @@ import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 
 @Composable
-fun ImageGridImage(
-    item: ImageGridItem,
+fun <T> ImageGridImage(
+    item: ImageGridItem<T>,
     size: Dp,
-    onSelectImage: (ImageGridItem) -> Unit,
+    onSelectImage: (ImageGridItem<T>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     AsyncImage(

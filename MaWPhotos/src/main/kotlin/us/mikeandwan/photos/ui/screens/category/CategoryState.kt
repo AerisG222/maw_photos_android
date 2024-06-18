@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridState
@@ -18,7 +19,7 @@ sealed class CategoryState {
 
     data class Loaded(
         val category: MediaCategory,
-        val gridState: ImageGridState
+        val gridState: ImageGridState<Media>
     ): CategoryState()
 }
 

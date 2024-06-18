@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 @Composable
-fun ImageGrid(state: ImageGridState) {
+fun <T> ImageGrid(state: ImageGridState<T>) {
     val size = getSize(state.thumbnailSize)
 
     if(size > 0.dp) {

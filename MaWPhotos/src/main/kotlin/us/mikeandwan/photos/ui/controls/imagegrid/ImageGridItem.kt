@@ -1,7 +1,7 @@
 package us.mikeandwan.photos.ui.controls.imagegrid
 
-data class ImageGridItem (
+data class ImageGridItem<T> (
     val id: Int,
     val url: String,
-    val data: Any
+    val data: T
 )

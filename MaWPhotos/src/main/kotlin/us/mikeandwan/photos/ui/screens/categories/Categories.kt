@@ -97,10 +97,10 @@ fun CategoriesScreen(
         }
     }
 
-    val gridState = rememberImageGridState(
+    val gridState = rememberImageGridState (
         gridItems = categories.map { it.toImageGridItem() },
         thumbnailSize = preferences.gridThumbnailSize,
-        onSelectGridItem = { onNavigateToCategory(it.data as MediaCategory) }
+        onSelectGridItem = { onNavigateToCategory(it.data) }
     )
 
     Scaffold (

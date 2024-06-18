@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
+import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
@@ -57,7 +58,7 @@ fun NavGraphBuilder.randomScreen(
 fun RandomScreen(
     photos: List<Photo>,
     thumbSize: GridThumbnailSize,
-    onPhotoClicked: (ImageGridItem) -> Unit
+    onPhotoClicked: (ImageGridItem<Media>) -> Unit
 ) {
     val gridState = rememberImageGridState(
         photos.map { it.toImageGridItem() },

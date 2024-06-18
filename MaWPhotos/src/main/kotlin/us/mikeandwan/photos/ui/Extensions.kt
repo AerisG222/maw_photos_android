@@ -2,21 +2,31 @@ package us.mikeandwan.photos.ui
 
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.domain.models.MediaType
 import us.mikeandwan.photos.domain.models.SearchResultCategory
+import us.mikeandwan.photos.domain.models.Video
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 
-fun Photo.toImageGridItem(): ImageGridItem {
-    return ImageGridItem(
+fun Photo.toImageGridItem(): ImageGridItem<Media> {
+    return ImageGridItem (
         this.id,
         this.mdUrl,
         this
     )
 }
 
-fun MediaCategory.toImageGridItem(): ImageGridItem {
+fun Video.toImageGridItem(): ImageGridItem<Media> {
+    return ImageGridItem (
+        this.id,
+        this.thumbnailUrl,
+        this
+    )
+}
+
+fun MediaCategory.toImageGridItem(): ImageGridItem<MediaCategory> {
     return ImageGridItem(
         this.id,
         this.teaserUrl.replace("/xs/", "/md/"),
