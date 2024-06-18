@@ -59,12 +59,12 @@ class VideoCategoryRepository @Inject constructor(
             dbList.map { dbCat -> dbCat.toDomainMediaCategory() }
         }
 
-    fun getCategory(id: Int) = vcDao
-        .getCategory(id)
+    override fun getCategory(categoryId: Int) = vcDao
+        .getCategory(categoryId)
         .filter { it != null }
         .map { cat -> cat!!.toDomainMediaCategory() }
 
-    fun getMedia(categoryId: Int) = flow {
+    override fun getMedia(categoryId: Int) = flow {
         if(categoryId == _lastCategoryId) {
             emit(ExternalCallStatus.Success(_lastCategoryVideos))
         } else {

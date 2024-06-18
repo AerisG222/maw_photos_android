@@ -1,12 +1,15 @@
 package us.mikeandwan.photos.domain
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.database.MediaCategoryDao
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.domain.models.MediaCategory
+import us.mikeandwan.photos.domain.models.MediaType
 import javax.inject.Inject
 
 class MediaCategoryRepository @Inject constructor(
@@ -67,4 +70,31 @@ class MediaCategoryRepository @Inject constructor(
         .map { dbList ->
             dbList.map { dbCat -> dbCat.toDomainMediaCategory() }
         }
+
+    override fun getCategory(categoryId: Int): Flow<MediaCategory> {
+        throw NotImplementedError("Please use a specific media type repo to load individual categories")
+    }
+
+    fun getCategory(type: MediaType, id: Int): Flow<MediaCategory> {
+        val repo = getRepo(type)
+
+        return repo.getCategory(id)
+    }
+
+    override fun getMedia(categoryId: Int): Flow<ExternalCallStatus<List<Media>>> {
+        throw NotImplementedError("Please use a specific media type repo to load media")
+    }
+
+    fun getMedia(type: MediaType, categoryId: Int): Flow<ExternalCallStatus<List<Media>>> {
+        val repo = getRepo(type)
+
+        return repo.getMedia(categoryId)
+    }
+
+    private fun getRepo(type: MediaType): ICategoryRepository {
+        return when(type) {
+            MediaType.Photo -> pcRepo
+            MediaType.Video -> vcRepo
+        }
+    }
 }

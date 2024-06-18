@@ -14,8 +14,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import us.mikeandwan.photos.domain.models.MediaType
 import us.mikeandwan.photos.domain.models.NavigationArea
-import us.mikeandwan.photos.ui.PhotoListState
+import us.mikeandwan.photos.ui.MediaListState
 import us.mikeandwan.photos.ui.controls.scaffolds.ItemPagerScaffold
 import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.metadata.CommentState
@@ -27,13 +28,14 @@ import us.mikeandwan.photos.ui.controls.metadata.rememberExifState
 import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
 import us.mikeandwan.photos.ui.controls.photopager.ButtonBar
 import us.mikeandwan.photos.ui.controls.photopager.OverlayPositionCount
-import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
+import us.mikeandwan.photos.ui.controls.photopager.MediaPager
 import us.mikeandwan.photos.ui.controls.photopager.rememberRotation
-import us.mikeandwan.photos.ui.rememberPhotoListState
-import us.mikeandwan.photos.ui.sharePhoto
+import us.mikeandwan.photos.ui.rememberMediaListState
+import us.mikeandwan.photos.ui.shareMedia
 
 @Serializable
 data class CategoryItemRoute (
+    val mediaType: String,
     val categoryId: Int,
     val photoId: Int
 )
@@ -47,15 +49,15 @@ fun NavGraphBuilder.categoryItemScreen(
         val args = backStackEntry.toRoute<CategoryItemRoute>()
 
         val category by vm.category.collectAsStateWithLifecycle()
-        val photos by vm.photos.collectAsStateWithLifecycle()
+        val media by vm.media.collectAsStateWithLifecycle()
         val activePhotoId by vm.activeId.collectAsStateWithLifecycle()
         val activePhotoIndex by vm.activeIndex.collectAsStateWithLifecycle()
         val activePhoto by vm.activePhoto.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
-        val photoListState = rememberPhotoListState(
+        val photoListState = rememberMediaListState(
             category,
-            photos,
+            media,
             activePhotoId,
             activePhotoIndex,
             activePhoto,
@@ -64,7 +66,7 @@ fun NavGraphBuilder.categoryItemScreen(
             setActiveIndex = { vm.setActiveIndex(it) },
             toggleSlideshow = { vm.toggleSlideshow() },
             toggleDetails = { vm.toggleShowDetails() },
-            savePhotoToShare = { drawable, filename, onComplete -> vm.saveFileToShare(drawable, filename, onComplete) },
+            saveMediaToShare = { drawable, filename, onComplete -> vm.saveFileToShare(drawable, filename, onComplete) },
         )
 
         LaunchedEffect(Unit) {
@@ -72,12 +74,14 @@ fun NavGraphBuilder.categoryItemScreen(
         }
 
         LaunchedEffect(args.categoryId) {
-            vm.loadCategory(args.categoryId)
-            vm.loadPhotos(args.categoryId)
+            val type = MediaType.valueOf(args.mediaType)
+
+            vm.loadCategory(type, args.categoryId)
+            vm.loadMedia(type, args.categoryId)
         }
 
-        LaunchedEffect(photos, args.photoId) {
-            if(photos.isNotEmpty() && args.photoId > 0) {
+        LaunchedEffect(media, args.photoId) {
+            if(media.isNotEmpty() && args.photoId > 0) {
                 vm.setActiveId(args.photoId)
             }
         }
@@ -108,15 +112,15 @@ fun NavGraphBuilder.categoryItemScreen(
         )
 
         when(photoListState) {
-            is PhotoListState.Loading -> Loading()
-            is PhotoListState.CategoryLoaded -> {
+            is MediaListState.Loading -> Loading()
+            is MediaListState.CategoryLoaded -> {
                 LaunchedEffect(photoListState.category) {
                     updateTopBar(true, true, photoListState.category.name)
                 }
 
                 Loading()
             }
-            is PhotoListState.Loaded -> {
+            is MediaListState.Loaded -> {
                 LaunchedEffect(photoListState.category) {
                     updateTopBar(true, true, photoListState.category.name)
                 }
@@ -135,7 +139,7 @@ fun NavGraphBuilder.categoryItemScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryItemScreen(
-    photoListState: PhotoListState.Loaded,
+    mediaListState: MediaListState.Loaded,
     ratingState: RatingState,
     exifState: ExifState,
     commentState: CommentState
@@ -143,46 +147,46 @@ fun CategoryItemScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
-    val rotationState = rememberRotation(photoListState.activePhotoIndex)
+    val rotationState = rememberRotation(mediaListState.activeIndex)
 
     ItemPagerScaffold(
-        showDetails = photoListState.showDetailSheet,
+        showDetails = mediaListState.showDetailSheet,
         topRightContent = {
             OverlayPositionCount(
-                position = photoListState.activePhotoIndex + 1,
-                count = photoListState.photos.size
+                position = mediaListState.activeIndex + 1,
+                count = mediaListState.media.size
             )
         },
         bottomBarContent = {
             ButtonBar(
-                isSlideshowPlaying = photoListState.isSlideshowPlaying,
+                isSlideshowPlaying = mediaListState.isSlideshowPlaying,
                 onRotateLeft = { rotationState.setActiveRotation(-90f) },
                 onRotateRight = { rotationState.setActiveRotation(90f) },
-                onToggleSlideshow = photoListState.toggleSlideshow,
+                onToggleSlideshow = mediaListState.toggleSlideshow,
                 onShare = {
                     coroutineScope.launch {
-                        sharePhoto(context, photoListState.savePhotoToShare, photoListState.activePhoto!!)
+                        shareMedia(context, mediaListState.saveMediaToShare, mediaListState.activeMedia!!)
                     }
                 },
-                onViewDetails = photoListState.toggleDetails
+                onViewDetails = mediaListState.toggleDetails
             )
         },
         detailSheetContent = {
             DetailBottomSheet(
-                activePhotoId = photoListState.activePhotoId,
+                activePhotoId = mediaListState.activeId,
                 sheetState = sheetState,
                 ratingState = ratingState,
                 exifState = exifState,
                 commentState = commentState,
-                onDismissRequest = photoListState.toggleDetails
+                onDismissRequest = mediaListState.toggleDetails
             )
         }
     ) {
-        PhotoPager(
-            photoListState.photos,
-            photoListState.activePhotoIndex,
+        MediaPager(
+            mediaListState.media,
+            mediaListState.activeIndex,
             rotationState.activeRotation,
-            setActiveIndex = { index -> photoListState.setActiveIndex(index) }
+            setActiveIndex = { index -> mediaListState.setActiveIndex(index) }
         )
     }
 }

@@ -4,12 +4,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import us.mikeandwan.photos.domain.PhotoRepository
+import us.mikeandwan.photos.domain.MediaRepository
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
+import us.mikeandwan.photos.domain.models.Media
 import javax.inject.Inject
 
-class PhotoRatingService @Inject constructor (
-    private val photoRepository: PhotoRepository
+class MediaRatingService @Inject constructor (
+    private val mediaRepository: MediaRepository
 ){
     private val _userRating = MutableStateFlow<Short>(0)
     val userRating = _userRating.asStateFlow()
@@ -17,8 +18,8 @@ class PhotoRatingService @Inject constructor (
     private val _averageRating = MutableStateFlow(0f)
     val averageRating = _averageRating.asStateFlow()
 
-    suspend fun setRating(photoId: Int, rating: Short) {
-        val newAverageRating = photoRepository.setRating(photoId, rating)
+    suspend fun setRating(media: Media, rating: Short) {
+        val newAverageRating = mediaRepository.setRating(media, rating)
 
         newAverageRating
             .filter { it is ExternalCallStatus.Success }
@@ -29,8 +30,8 @@ class PhotoRatingService @Inject constructor (
             }
     }
 
-    suspend fun fetchRatingDetails(photoId: Int) {
-        photoRepository.getRating(photoId)
+    suspend fun fetchRatingDetails(media: Media) {
+        mediaRepository.getRating(media)
             .filter { it is ExternalCallStatus.Success }
             .map { it as ExternalCallStatus.Success }
             .collect {

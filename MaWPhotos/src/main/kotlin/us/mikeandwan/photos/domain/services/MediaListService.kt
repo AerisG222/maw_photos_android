@@ -15,22 +15,24 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.FileStorageRepository
+import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.PeriodicJob
-import us.mikeandwan.photos.domain.PhotoCategoryRepository
-import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.domain.models.MediaCategory
+import us.mikeandwan.photos.domain.models.MediaType
+import us.mikeandwan.photos.domain.models.Video
 import java.io.File
 import javax.inject.Inject
 
-class PhotoListService @Inject constructor (
-    private val photoCategoryRepository: PhotoCategoryRepository,
+class MediaListService @Inject constructor (
+    private val mediaCategoryRepository: MediaCategoryRepository,
     private val fileRepository: FileStorageRepository,
-    private val photoRatingService: PhotoRatingService,
-    private val photoCommentService: PhotoCommentService,
-    private val photoExifService: PhotoExifService
+    private val mediaRatingService: MediaRatingService,
+    private val mediaCommentService: MediaCommentService,
+    private val mediaExifService: MediaExifService
 ) {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
-    private val _photos = MutableStateFlow<List<Photo>>(emptyList())
+    private val _media = MutableStateFlow<List<Media>>(emptyList())
 
     private val _slideshowJob = PeriodicJob { moveNext() }
 
@@ -46,7 +48,7 @@ class PhotoListService @Inject constructor (
     private val _activeIndex = MutableStateFlow(-1)
     val activeIndex = _activeIndex.asStateFlow()
 
-    val activePhoto = _photos.combine(activeIndex) { photos, index ->
+    val activeMedia = _media.combine(activeIndex) { photos, index ->
         if(index >= 0 && index < photos.size) {
             photos[index]
         } else {
@@ -54,7 +56,7 @@ class PhotoListService @Inject constructor (
         }
     }.stateIn(scope, SharingStarted.Eagerly, null)
 
-    val activeId = activePhoto
+    val activeId = activeMedia
         .map { photo -> photo?.id ?: -1 }
         .stateIn(scope, SharingStarted.Eagerly, -1)
 
@@ -63,7 +65,7 @@ class PhotoListService @Inject constructor (
     }
 
     fun setActiveId(id: Int) {
-        setActiveIndex(_photos.value.indexOfFirst { it.id == id })
+        setActiveIndex(_media.value.indexOfFirst { it.id == id })
     }
 
     fun toggleSlideshow() {
@@ -99,59 +101,81 @@ class PhotoListService @Inject constructor (
         }
     }
 
+    // TODO: pass in media rather than relying on activeMedia?
+
     // RATINGS
-    val userRating = photoRatingService.userRating
-    val averageRating = photoRatingService.averageRating
+    val userRating = mediaRatingService.userRating
+    val averageRating = mediaRatingService.averageRating
 
     fun setRating(rating: Short) {
+        if(activeMedia.value == null) {
+            return
+        }
+
         scope.launch {
-            photoRatingService.setRating(activeId.value, rating)
+            mediaRatingService.setRating(activeMedia.value!!, rating)
         }
     }
 
     fun fetchRating() {
+        if(activeMedia.value == null) {
+            return
+        }
+
         scope.launch {
-            photoRatingService.fetchRatingDetails(activeId.value)
+            mediaRatingService.fetchRatingDetails(activeMedia.value!!)
         }
     }
 
     // EXIF
-    val exif = photoExifService.exif
+    val exif = mediaExifService.exif
 
     fun fetchExif() {
+        if(activeMedia.value == null || activeMedia.value is Video) {
+            return
+        }
+
         scope.launch {
-            photoExifService.fetchExifDetails(activeId.value)
+            mediaExifService.fetchExifDetails(activeMedia.value!!)
         }
     }
 
     // COMMENTS
-    val comments = photoCommentService.comments
+    val comments = mediaCommentService.comments
 
     fun fetchComments() {
+        if(activeMedia.value == null) {
+            return
+        }
+
         scope.launch {
-            photoCommentService.fetchCommentDetails(activeId.value)
+            mediaCommentService.fetchCommentDetails(activeMedia.value!!)
         }
     }
 
     fun addComment(comment: String) {
+        if(activeMedia.value == null) {
+            return
+        }
+
         scope.launch {
-            photoCommentService.addComment(activeId.value, comment)
+            mediaCommentService.addComment(activeMedia.value!!, comment)
         }
     }
 
     fun initialize(
-        photos: StateFlow<List<Photo>>,
+        media: StateFlow<List<Media>>,
         slideshowDurationInMillis: StateFlow<Long>
     ) {
         scope.launch {
-            photos
-                .collect { _photos.value = it }
+            media
+                .collect { _media.value = it }
         }
 
         scope.launch {
-            activePhoto
+            activeMedia
                 .filter { it != null }
-                .collect { loadCategory(it!!.categoryId) }
+                .collect { loadCategory(it!!.type, it.categoryId) }
         }
 
         scope.launch {
@@ -160,7 +184,7 @@ class PhotoListService @Inject constructor (
         }
     }
 
-    private fun loadCategory(categoryId: Int) {
+    private fun loadCategory(mediaType: MediaType, categoryId: Int) {
         if(category.value?.id == categoryId) {
             return
         }
@@ -168,14 +192,14 @@ class PhotoListService @Inject constructor (
         _category.value = null
 
         scope.launch {
-            photoCategoryRepository
-                .getCategory(categoryId)
+            mediaCategoryRepository
+                .getCategory(mediaType, categoryId)
                 .collect { _category.value = it }
         }
     }
 
     private fun moveNext() = flow<Unit>{
-        if(activeIndex.value >= _photos.value.size) {
+        if(activeIndex.value >= _media.value.size) {
             stopSlideshow()
         } else {
             setActiveIndex(activeIndex.value + 1)

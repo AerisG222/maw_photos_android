@@ -206,13 +206,13 @@ fun MainScreen() {
                 categoriesScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
-                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.id)) }
+                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) }
                 )
                 categoryScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
-                    navigateToCategoryPhoto = { categoryId, photoId ->
-                        navController.navigate(CategoryItemRoute(categoryId, photoId))
+                    navigateToMedia = {
+                        navController.navigate(CategoryItemRoute(it.type.name, it.categoryId, it.id))
                     }
                 )
                 categoryItemScreen(
@@ -228,12 +228,12 @@ fun MainScreen() {
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
                     navigateToYear = { navController.navigate(CategoriesRoute(it)) },
-                    navigateToCategory = { navController.navigate(CategoryRoute(it.id)) }
+                    navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) }
                 )
                 searchScreen(
                     updateTopBar = ::updateTopBar,
                     updateInitialSearchTerm = { setTopBarInitialSearchTerm(it) },
-                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.id)) },
+                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
                     setNavArea = { setNavArea(it) },
                 )
                 settingsScreen(

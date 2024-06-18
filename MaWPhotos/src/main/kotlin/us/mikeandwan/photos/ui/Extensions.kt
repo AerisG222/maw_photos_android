@@ -26,6 +26,18 @@ fun Video.toImageGridItem(): ImageGridItem<Media> {
     )
 }
 
+fun Media.toImageGridItem(): ImageGridItem<Media> {
+    return when(this.type) {
+        MediaType.Photo -> (this as Photo).toImageGridItem()
+        MediaType.Video -> (this as Video).toImageGridItem()
+    }
+}
+
+fun Media.getMediaUrl() = when(this.type) {
+    MediaType.Photo -> (this as Photo).mdUrl
+    MediaType.Video -> (this as Video).scaledUrl
+}
+
 fun MediaCategory.toImageGridItem(): ImageGridItem<MediaCategory> {
     return ImageGridItem(
         this.id,

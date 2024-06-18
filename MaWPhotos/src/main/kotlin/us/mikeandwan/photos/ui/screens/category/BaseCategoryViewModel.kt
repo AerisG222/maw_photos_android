@@ -9,40 +9,41 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.BuildConfig
-import us.mikeandwan.photos.domain.PhotoCategoryRepository
+import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
-import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.domain.models.MediaCategory
+import us.mikeandwan.photos.domain.models.MediaType
 
 abstract class BaseCategoryViewModel (
-    protected val photoCategoryRepository: PhotoCategoryRepository
+    private val mediaCategoryRepository: MediaCategoryRepository,
 ) : ViewModel() {
     private val _category = MutableStateFlow<MediaCategory?>(null)
     val category = _category.asStateFlow()
 
-    private val _photos = MutableStateFlow<List<Photo>>(emptyList())
-    val photos = _photos.asStateFlow()
+    private val _media = MutableStateFlow<List<Media>>(emptyList())
+    val media = _media.asStateFlow()
 
-    fun loadCategory(categoryId: Int) {
-        if(category.value?.id == categoryId) {
+    fun loadCategory(mediaType: MediaType, categoryId: Int) {
+        if(category.value?.id == categoryId && category.value?.type == mediaType) {
             return
         }
 
         _category.value = null
-        _photos.value = emptyList()
+        _media.value = emptyList()
 
         viewModelScope.launch {
             if(BuildConfig.DEBUG) {
                 delay(500)
             }
 
-            photoCategoryRepository
-                .getCategory(categoryId)
+            mediaCategoryRepository
+                .getCategory(mediaType, categoryId)
                 .collect { _category.value = it }
         }
     }
 
-    fun loadPhotos(categoryId: Int) {
+    fun loadMedia(mediaType: MediaType, categoryId: Int) {
         if(category.value?.id == categoryId) {
             return
         }
@@ -52,12 +53,12 @@ abstract class BaseCategoryViewModel (
                 delay(1000)
             }
 
-            photoCategoryRepository
-                .getMedia(categoryId)
+            mediaCategoryRepository
+                .getMedia(mediaType, categoryId)
                 .filter { it is ExternalCallStatus.Success }
                 .map { it as ExternalCallStatus.Success }
                 .map { it.result }
-                .collect { _photos.value = it }
+                .collect { _media.value = it }
         }
     }
 }

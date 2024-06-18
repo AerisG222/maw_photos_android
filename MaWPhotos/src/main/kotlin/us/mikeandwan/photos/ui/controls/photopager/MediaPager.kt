@@ -17,17 +17,18 @@ import coil.compose.AsyncImage
 import net.engawapg.lib.zoomable.ScrollGesturePropagation
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
-import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.Media
+import us.mikeandwan.photos.ui.getMediaUrl
 
 @Composable
-fun PhotoPager(
-    photos: List<Photo>,
+fun MediaPager(
+    media: List<Media>,
     activeIndex: Int,
     activeRotation: Float = 0f,
     setActiveIndex: (Int) -> Unit
 ) {
     val pagerState = rememberPagerState(
-        pageCount = { photos.size },
+        pageCount = { media.size },
         initialPage = activeIndex
     )
     val zoomState = rememberZoomState()
@@ -51,7 +52,7 @@ fun PhotoPager(
         modifier = Modifier.fillMaxSize()
     ) { index ->
         AsyncImage(
-            model = photos[index].mdUrl,
+            model = media[index].getMediaUrl(),
             contentDescription = "",
             contentScale = ContentScale.Fit,
             modifier = Modifier

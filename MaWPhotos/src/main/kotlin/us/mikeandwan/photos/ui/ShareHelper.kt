@@ -9,20 +9,20 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import us.mikeandwan.photos.domain.models.Photo
+import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
 
-suspend fun sharePhoto(
+suspend fun shareMedia(
     ctx: Context,
-    savePhotoToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
-    photo: Photo
+    saveMediaToShare: (drawable: Drawable, filename: String, onComplete: (File) -> Unit) -> Unit,
+    media: Media
 ) {
-    val drawable = getPhotoToShare(ctx, photo)
+    val drawable = getMediaToShare(ctx, media)
 
-    savePhotoToShare(
+    saveMediaToShare(
         drawable,
-        getFilenameFromUrl(photo.mdUrl)
+        getFilenameFromUrl(media.getMediaUrl())
     ) { fileToShare ->
         val contentUri = FileProvider.getUriForFile(ctx, "us.mikeandwan.photos.fileprovider", fileToShare)
         val sendIntent = Intent(Intent.ACTION_SEND)
@@ -37,14 +37,16 @@ suspend fun sharePhoto(
     }
 }
 
-private suspend fun getPhotoToShare(ctx: Context, photo: Photo): Drawable {
+private suspend fun getMediaToShare(ctx: Context, media: Media): Drawable {
     return withContext(Dispatchers.IO) {
         val loader = ImageLoader(ctx)
         val request = ImageRequest.Builder(ctx)
-            .data(photo.mdUrl)
+            .data(media.getMediaUrl())
             .allowHardware(false) // Disable hardware bitmaps.
             .build()
 
         (loader.execute(request) as SuccessResult).drawable
     }
 }
+
+

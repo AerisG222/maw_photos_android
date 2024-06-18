@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
-import us.mikeandwan.photos.domain.services.PhotoListService
+import us.mikeandwan.photos.domain.services.MediaListService
 import us.mikeandwan.photos.ui.screens.random.BaseRandomViewModel
 import java.io.File
 import javax.inject.Inject
@@ -18,40 +18,40 @@ import javax.inject.Inject
 class RandomItemViewModel @Inject constructor(
     randomPhotoRepository: RandomPhotoRepository,
     randomPreferenceRepository: RandomPreferenceRepository,
-    private val photoListService: PhotoListService
+    private val mediaListService: MediaListService
 ) : BaseRandomViewModel(
     randomPhotoRepository
 ) {
-    val category = photoListService.category
-    val activePhoto = photoListService.activePhoto
-    val activeId = photoListService.activeId
-    val activeIndex = photoListService.activeIndex
-    val isSlideshowPlaying = photoListService.isSlideshowPlaying
-    val showDetailSheet = photoListService.showDetailSheet
+    val category = mediaListService.category
+    val activePhoto = mediaListService.activeMedia
+    val activeId = mediaListService.activeId
+    val activeIndex = mediaListService.activeIndex
+    val isSlideshowPlaying = mediaListService.isSlideshowPlaying
+    val showDetailSheet = mediaListService.showDetailSheet
 
-    fun setActiveId(id: Int) { photoListService.setActiveId(id) }
-    fun setActiveIndex(index: Int) { photoListService.setActiveIndex(index) }
-    fun toggleSlideshow() { photoListService.toggleSlideshow() }
-    fun toggleShowDetails() { photoListService.toggleShowDetails() }
+    fun setActiveId(id: Int) { mediaListService.setActiveId(id) }
+    fun setActiveIndex(index: Int) { mediaListService.setActiveIndex(index) }
+    fun toggleSlideshow() { mediaListService.toggleSlideshow() }
+    fun toggleShowDetails() { mediaListService.toggleShowDetails() }
 
     fun saveFileToShare(drawable: Drawable, filename: String, onComplete: (File) -> Unit) {
-        photoListService.saveFileToShare(drawable, filename, onComplete)
+        mediaListService.saveFileToShare(drawable, filename, onComplete)
     }
 
     // ratings
-    val userRating = photoListService.userRating
-    val averageRating = photoListService.averageRating
-    fun setRating(rating: Short) { photoListService.setRating(rating) }
-    fun fetchRatingDetails() { photoListService.fetchRating() }
+    val userRating = mediaListService.userRating
+    val averageRating = mediaListService.averageRating
+    fun setRating(rating: Short) { mediaListService.setRating(rating) }
+    fun fetchRatingDetails() { mediaListService.fetchRating() }
 
     // exif
-    val exif = photoListService.exif
-    fun fetchExif() { photoListService.fetchExif() }
+    val exif = mediaListService.exif
+    fun fetchExif() { mediaListService.fetchExif() }
 
     // comments
-    val comments = photoListService.comments
-    fun fetchCommentDetails() { photoListService.fetchComments() }
-    fun addComment(comment: String) { photoListService.addComment(comment) }
+    val comments = mediaListService.comments
+    fun fetchCommentDetails() { mediaListService.fetchComments() }
+    fun addComment(comment: String) { mediaListService.addComment(comment) }
 
     private val slideshowDurationInMillis = randomPreferenceRepository
         .getSlideshowIntervalSeconds()
@@ -59,7 +59,7 @@ class RandomItemViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
 
     init {
-        photoListService.initialize(
+        mediaListService.initialize(
             photos,
             slideshowDurationInMillis
         )

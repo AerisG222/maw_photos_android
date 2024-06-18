@@ -6,61 +6,61 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import us.mikeandwan.photos.domain.FileStorageRepository
-import us.mikeandwan.photos.domain.PhotoCategoryRepository
-import us.mikeandwan.photos.domain.PhotoRepository
-import us.mikeandwan.photos.domain.services.PhotoCommentService
-import us.mikeandwan.photos.domain.services.PhotoExifService
-import us.mikeandwan.photos.domain.services.PhotoListService
-import us.mikeandwan.photos.domain.services.PhotoRatingService
+import us.mikeandwan.photos.domain.MediaCategoryRepository
+import us.mikeandwan.photos.domain.MediaRepository
+import us.mikeandwan.photos.domain.services.MediaCommentService
+import us.mikeandwan.photos.domain.services.MediaExifService
+import us.mikeandwan.photos.domain.services.MediaListService
+import us.mikeandwan.photos.domain.services.MediaRatingService
 
 @Module
 @InstallIn(ViewModelComponent::class)
 class ViewModelModule {
     @Provides
     @ViewModelScoped
-    fun providesPhotoRatingService(
-        photoRepository: PhotoRepository
-    ): PhotoRatingService {
-        return PhotoRatingService(
-            photoRepository
+    fun providesMediaRatingService(
+        mediaRepository: MediaRepository
+    ): MediaRatingService {
+        return MediaRatingService(
+            mediaRepository
         )
     }
 
     @Provides
     @ViewModelScoped
-    fun providesPhotoCommentService(
-        photoRepository: PhotoRepository
-    ): PhotoCommentService {
-        return PhotoCommentService(
-            photoRepository
+    fun providesMediaCommentService(
+        mediaRepository: MediaRepository
+    ): MediaCommentService {
+        return MediaCommentService(
+            mediaRepository
         )
     }
 
     @Provides
     @ViewModelScoped
-    fun providesPhotoExifService(
-        photoRepository: PhotoRepository
-    ): PhotoExifService {
-        return PhotoExifService(
-            photoRepository
+    fun providesMediaExifService(
+        mediaRepository: MediaRepository
+    ): MediaExifService {
+        return MediaExifService(
+            mediaRepository
         )
     }
 
     @Provides
     @ViewModelScoped
-    fun providePhotoListService(
-        photoCategoryRepository: PhotoCategoryRepository,
+    fun provideMediaListService(
+        mediaCategoryRepository: MediaCategoryRepository,
         fileRepository: FileStorageRepository,
-        photoRatingService: PhotoRatingService,
-        photoCommentService: PhotoCommentService,
-        photoExifService: PhotoExifService
-    ): PhotoListService {
-        return PhotoListService(
-            photoCategoryRepository,
+        mediaRatingService: MediaRatingService,
+        mediaCommentService: MediaCommentService,
+        mediaExifService: MediaExifService
+    ): MediaListService {
+        return MediaListService(
+            mediaCategoryRepository,
             fileRepository,
-            photoRatingService,
-            photoCommentService,
-            photoExifService
+            mediaRatingService,
+            mediaCommentService,
+            mediaExifService
         )
     }
 }

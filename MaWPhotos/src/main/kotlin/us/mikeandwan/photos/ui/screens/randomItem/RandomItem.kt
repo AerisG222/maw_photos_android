@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.MediaCategory
-import us.mikeandwan.photos.ui.PhotoListState
+import us.mikeandwan.photos.ui.MediaListState
 import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.metadata.CommentState
 import us.mikeandwan.photos.ui.controls.metadata.DetailBottomSheet
@@ -29,11 +29,11 @@ import us.mikeandwan.photos.ui.controls.metadata.rememberRatingState
 import us.mikeandwan.photos.ui.controls.photopager.ButtonBar
 import us.mikeandwan.photos.ui.controls.photopager.OverlayPositionCount
 import us.mikeandwan.photos.ui.controls.photopager.OverlayYearName
-import us.mikeandwan.photos.ui.controls.photopager.PhotoPager
+import us.mikeandwan.photos.ui.controls.photopager.MediaPager
 import us.mikeandwan.photos.ui.controls.photopager.rememberRotation
-import us.mikeandwan.photos.ui.sharePhoto
+import us.mikeandwan.photos.ui.shareMedia
 import us.mikeandwan.photos.ui.controls.scaffolds.ItemPagerScaffold
-import us.mikeandwan.photos.ui.rememberPhotoListState
+import us.mikeandwan.photos.ui.rememberMediaListState
 
 @Serializable
 data class RandomItemRoute (
@@ -58,7 +58,7 @@ fun NavGraphBuilder.randomItemScreen(
         val activePhoto by vm.activePhoto.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
-        val photoListState = rememberPhotoListState(
+        val photoListState = rememberMediaListState(
             category,
             photos,
             activePhotoId,
@@ -69,7 +69,7 @@ fun NavGraphBuilder.randomItemScreen(
             setActiveIndex = { vm.setActiveIndex(it) },
             toggleSlideshow = { vm.toggleSlideshow() },
             toggleDetails = { vm.toggleShowDetails() },
-            savePhotoToShare = { drawable, filename, onComplete -> vm.saveFileToShare(drawable, filename, onComplete) },
+            saveMediaToShare = { drawable, filename, onComplete -> vm.saveFileToShare(drawable, filename, onComplete) },
         )
 
         LaunchedEffect(photos, args.photoId) {
@@ -117,9 +117,9 @@ fun NavGraphBuilder.randomItemScreen(
         )
 
         when(photoListState) {
-            is PhotoListState.Loading -> Loading()
-            is PhotoListState.CategoryLoaded -> Loading()
-            is PhotoListState.Loaded -> {
+            is MediaListState.Loading -> Loading()
+            is MediaListState.CategoryLoaded -> Loading()
+            is MediaListState.Loaded -> {
                 RandomItemScreen(
                     photoListState,
                     ratingState,
@@ -136,7 +136,7 @@ fun NavGraphBuilder.randomItemScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RandomItemScreen(
-    photoListState: PhotoListState.Loaded,
+    mediaListState: MediaListState.Loaded,
     ratingState: RatingState,
     exifState: ExifState,
     commentState: CommentState,
@@ -146,52 +146,52 @@ fun RandomItemScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
-    val rotationState = rememberRotation(photoListState.activePhotoIndex)
+    val rotationState = rememberRotation(mediaListState.activeIndex)
 
     ItemPagerScaffold(
-        showDetails = photoListState.showDetailSheet,
+        showDetails = mediaListState.showDetailSheet,
         topLeftContent = {
             OverlayYearName(
-                category = photoListState.category,
+                category = mediaListState.category,
                 onClickYear = { year -> navigateToYear(year) },
                 onClickCategory = { category -> navigateToCategory(category) })
         },
         topRightContent = {
             OverlayPositionCount(
-                position = photoListState.activePhotoIndex + 1,
-                count = photoListState.photos.size
+                position = mediaListState.activeIndex + 1,
+                count = mediaListState.media.size
             )
         },
         bottomBarContent = {
             ButtonBar(
-                isSlideshowPlaying = photoListState.isSlideshowPlaying,
+                isSlideshowPlaying = mediaListState.isSlideshowPlaying,
                 onRotateLeft = { rotationState.setActiveRotation(-90f) },
                 onRotateRight = { rotationState.setActiveRotation(90f) },
-                onToggleSlideshow = photoListState.toggleSlideshow,
+                onToggleSlideshow = mediaListState.toggleSlideshow,
                 onShare = {
                     coroutineScope.launch {
-                       sharePhoto(context, photoListState.savePhotoToShare, photoListState.activePhoto!!)
+                       shareMedia(context, mediaListState.saveMediaToShare, mediaListState.activeMedia!!)
                     }
                 },
-                onViewDetails = photoListState.toggleDetails
+                onViewDetails = mediaListState.toggleDetails
             )
         },
         detailSheetContent = {
             DetailBottomSheet(
-                activePhotoId = photoListState.activePhotoId,
+                activePhotoId = mediaListState.activeId,
                 sheetState = sheetState,
                 ratingState = ratingState,
                 exifState = exifState,
                 commentState = commentState,
-                onDismissRequest = photoListState.toggleDetails
+                onDismissRequest = mediaListState.toggleDetails
             )
         }
     ) {
-        PhotoPager(
-            photoListState.photos,
-            photoListState.activePhotoIndex,
+        MediaPager(
+            mediaListState.media,
+            mediaListState.activeIndex,
             rotationState.activeRotation,
-            setActiveIndex = { index -> photoListState.setActiveIndex(index) }
+            setActiveIndex = { index -> mediaListState.setActiveIndex(index) }
         )
     }
 }

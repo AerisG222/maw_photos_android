@@ -5,8 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import us.mikeandwan.photos.domain.models.Media
-import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.domain.models.MediaCategory
+import us.mikeandwan.photos.domain.models.MediaType
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridState
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 
@@ -26,26 +26,24 @@ sealed class CategoryState {
 @Composable
 fun rememberCategoryState(
     vm: CategoryViewModel,
+    mediaType: MediaType,
     categoryId: Int,
-    navigateToCategoryPhoto: (categoryId: Int, photoId: Int) -> Unit
+    navigateToMedia: (Media) -> Unit
 ): CategoryState {
     LaunchedEffect(categoryId) {
-        vm.loadCategory(categoryId)
-        vm.loadPhotos(categoryId)
+        vm.loadCategory(mediaType, categoryId)
+        vm.loadMedia(mediaType, categoryId)
     }
 
     val category by vm.category.collectAsStateWithLifecycle()
-    val photos by vm.photos.collectAsStateWithLifecycle()
+    val photos by vm.media.collectAsStateWithLifecycle()
     val gridItems by vm.gridItems.collectAsStateWithLifecycle()
     val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
 
     val gridState = rememberImageGridState(
         gridItems = gridItems,
         thumbnailSize = thumbSize,
-        onSelectGridItem = { item ->
-            val photo = item.data as Photo
-            navigateToCategoryPhoto(photo.categoryId, photo.id)
-        }
+        onSelectGridItem = { navigateToMedia(it.data) }
     )
 
     return if(category == null) {

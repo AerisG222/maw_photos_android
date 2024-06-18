@@ -30,7 +30,7 @@ fun us.mikeandwan.photos.database.VideoCategory.toDomainMediaCategory(): MediaCa
 
 fun us.mikeandwan.photos.database.MediaCategory.toDomainMediaCategory(): MediaCategory {
     return MediaCategory(
-        MediaType.Video,
+        this.type,
         this.id,
         this.year,
         this.name,

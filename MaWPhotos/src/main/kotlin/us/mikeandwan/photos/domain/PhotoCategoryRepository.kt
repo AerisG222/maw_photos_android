@@ -59,12 +59,12 @@ class PhotoCategoryRepository @Inject constructor(
             dbList.map { dbCat -> dbCat.toDomainMediaCategory() }
         }
 
-    fun getCategory(id: Int) = pcDao
-        .getCategory(id)
+    override fun getCategory(categoryId: Int) = pcDao
+        .getCategory(categoryId)
         .filter { it != null }
         .map { cat -> cat!!.toDomainMediaCategory() }
 
-    fun getMedia(categoryId: Int) = flow {
+    override fun getMedia(categoryId: Int) = flow {
         if(categoryId == _lastCategoryId) {
             emit(ExternalCallStatus.Success(_lastCategoryPhotos))
         } else {
