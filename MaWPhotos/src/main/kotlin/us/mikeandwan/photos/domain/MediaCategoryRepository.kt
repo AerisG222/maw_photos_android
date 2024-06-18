@@ -1,7 +1,5 @@
 package us.mikeandwan.photos.domain
 
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -22,6 +20,7 @@ class MediaCategoryRepository @Inject constructor(
         if(data.first().isEmpty()) {
             emit(emptyList())
             getNewCategories()
+                .collect { }
         }
 
         emitAll(data)
@@ -30,28 +29,37 @@ class MediaCategoryRepository @Inject constructor(
     override fun getMostRecentYear() = mcDao.getMostRecentYear()
 
     override fun getNewCategories() = flow {
-        var err = true
-
         emit(ExternalCallStatus.Loading)
 
-        val photoCategories = pcRepo.getNewCategories()
-        val videoCategories = vcRepo.getNewCategories()
-        val cat = mutableListOf<MediaCategory>()
+        val photoCategoriesResult = try {
+            pcRepo.getNewCategories().first { it !is ExternalCallStatus.Loading }
+        } catch (e: NoSuchElementException) {
+            ExternalCallStatus.Error("No photo categories emitted.")
+        }
 
-        photoCategories.combine(videoCategories) { pc, vc ->
-            if (pc is ExternalCallStatus.Success) {
-                cat += pc.result
-                err = false
-            }
-            if (vc is ExternalCallStatus.Success) {
-                cat += vc.result
-                err = false
-            }
+        val videoCategoriesResult = try {
+            vcRepo.getNewCategories().first { it !is ExternalCallStatus.Loading }
+        } catch (e: NoSuchElementException) {
+            ExternalCallStatus.Error("No video categories emitted.")
+        }
 
-            if(!err) {
-                emit(ExternalCallStatus.Success(cat.toList()))
-            }
-        }.collect()
+        val combinedCategories = mutableListOf<MediaCategory>()
+
+        if (photoCategoriesResult is ExternalCallStatus.Success) {
+            combinedCategories.addAll(photoCategoriesResult.result)
+        }
+
+        if (videoCategoriesResult is ExternalCallStatus.Success) {
+            combinedCategories.addAll(videoCategoriesResult.result)
+        }
+
+        when {
+            photoCategoriesResult is ExternalCallStatus.Error ||
+            videoCategoriesResult is ExternalCallStatus.Error ->
+                emit(ExternalCallStatus.Error("Unable to load all categories."))
+            else ->
+                emit(ExternalCallStatus.Success(combinedCategories))
+        }
     }
 
     override fun getCategories(year: Int) = mcDao
