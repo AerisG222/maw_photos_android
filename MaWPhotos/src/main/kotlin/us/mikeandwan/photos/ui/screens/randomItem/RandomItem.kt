@@ -167,13 +167,14 @@ fun RandomItemScreen(
         },
         bottomBarContent = {
             ButtonBar(
+                activeMediaType = mediaListState.activeMedia!!.type,
                 isSlideshowPlaying = mediaListState.isSlideshowPlaying,
                 onRotateLeft = { rotationState.setActiveRotation(-90f) },
                 onRotateRight = { rotationState.setActiveRotation(90f) },
                 onToggleSlideshow = mediaListState.toggleSlideshow,
                 onShare = {
                     coroutineScope.launch {
-                       shareMedia(context, mediaListState.saveMediaToShare, mediaListState.activeMedia!!)
+                       shareMedia(context, mediaListState.saveMediaToShare, mediaListState.activeMedia)
                     }
                 },
                 onViewDetails = mediaListState.toggleDetails

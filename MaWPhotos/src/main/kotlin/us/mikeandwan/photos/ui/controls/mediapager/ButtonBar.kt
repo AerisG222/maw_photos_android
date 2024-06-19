@@ -12,9 +12,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.domain.models.MediaType
 
 @Composable
 fun ButtonBar(
+    activeMediaType: MediaType,
     isSlideshowPlaying: Boolean,
     onRotateLeft: () -> Unit,
     onRotateRight: () -> Unit,
@@ -30,36 +32,38 @@ fun ButtonBar(
             .padding(4.dp, 2.dp)
             .fillMaxWidth()
     ) {
-        IconButton(onClick = onRotateLeft) {
-            AsyncImage(
-                model = R.drawable.ic_rotate_left,
-                contentDescription = stringResource(id = R.string.rotate_left_icon_description),
-                modifier = Modifier.size(48.dp)
-            )
-        }
+        if(activeMediaType == MediaType.Photo) {
+            IconButton(onClick = onRotateLeft) {
+                AsyncImage(
+                    model = R.drawable.ic_rotate_left,
+                    contentDescription = stringResource(id = R.string.rotate_left_icon_description),
+                    modifier = Modifier.size(48.dp)
+                )
+            }
 
-        IconButton(onClick = onRotateRight) {
-            AsyncImage(
-                model = R.drawable.ic_rotate_right,
-                contentDescription = stringResource(id = R.string.rotate_right_icon_description),
-                modifier = Modifier.size(48.dp)
-            )
-        }
+            IconButton(onClick = onRotateRight) {
+                AsyncImage(
+                    model = R.drawable.ic_rotate_right,
+                    contentDescription = stringResource(id = R.string.rotate_right_icon_description),
+                    modifier = Modifier.size(48.dp)
+                )
+            }
 
-        IconButton(onClick = onToggleSlideshow) {
-            AsyncImage(
-                model = slideshowIcon,
-                contentDescription = stringResource(id = R.string.toggle_slideshow_icon_description),
-                modifier = Modifier.size(48.dp)
-            )
-        }
+            IconButton(onClick = onToggleSlideshow) {
+                AsyncImage(
+                    model = slideshowIcon,
+                    contentDescription = stringResource(id = R.string.toggle_slideshow_icon_description),
+                    modifier = Modifier.size(48.dp)
+                )
+            }
 
-        IconButton(onClick = onShare) {
-            AsyncImage(
-                model = R.drawable.ic_share,
-                contentDescription = stringResource(id = R.string.toggle_slideshow_icon_description),
-                modifier = Modifier.size(48.dp)
-            )
+            IconButton(onClick = onShare) {
+                AsyncImage(
+                    model = R.drawable.ic_share,
+                    contentDescription = stringResource(id = R.string.toggle_slideshow_icon_description),
+                    modifier = Modifier.size(48.dp)
+                )
+            }
         }
 
         IconButton(onClick = onViewDetails) {
