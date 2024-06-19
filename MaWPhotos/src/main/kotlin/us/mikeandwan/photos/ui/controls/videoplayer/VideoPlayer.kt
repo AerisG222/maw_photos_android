@@ -59,20 +59,17 @@ fun VideoPlayer(
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
             when (event) {
                 Lifecycle.Event.ON_START -> {
-                    // Start playing when the Composable is in the foreground
                     if (exoPlayer.isPlaying.not()) {
                         exoPlayer.play()
                     }
                 }
 
-                Lifecycle.Event.ON_STOP -> {
-                    // Pause the player when the Composable is in the background
-                    exoPlayer.pause()
-                }
-
-                else -> {
-                    // Nothing
-                }
+                // some of this may be duplicative w/ disposable effect above but keeping to try
+                // to provide extra assurance the player is paused/removed
+                Lifecycle.Event.ON_STOP -> { exoPlayer.pause() }
+                Lifecycle.Event.ON_PAUSE -> { exoPlayer.pause() }
+                Lifecycle.Event.ON_DESTROY -> { exoPlayer.release() }
+                else -> { }
             }
         }
     })
