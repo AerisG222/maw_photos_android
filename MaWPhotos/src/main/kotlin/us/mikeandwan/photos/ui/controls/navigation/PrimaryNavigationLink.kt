@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -30,10 +29,7 @@ fun PrimaryNavigationLink(
         model = iconId,
         contentDescription = stringResource(descriptionStringId),
         contentScale = ContentScale.Fit,
-        colorFilter = ColorFilter.tint(
-            color = color,
-            blendMode = BlendMode.Modulate
-        ),
+        colorFilter = ColorFilter.tint(color),
         modifier = modifier
             .padding(top = 8.dp, bottom = 8.dp)
             .width(32.dp)

@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -72,10 +71,7 @@ fun SearchBar(
                 model = R.drawable.ic_search,
                 contentDescription = stringResource(R.string.search_icon_description),
                 alignment = Alignment.Center,
-                colorFilter = ColorFilter.tint(
-                    MaterialTheme.colorScheme.primary,
-                    blendMode = BlendMode.Modulate
-                )
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
             )
         }
     }

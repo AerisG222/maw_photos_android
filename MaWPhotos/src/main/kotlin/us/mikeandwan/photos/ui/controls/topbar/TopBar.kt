@@ -13,7 +13,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -69,7 +68,7 @@ fun TopBar(
                 AsyncImage(
                     model = R.drawable.ic_arrow_back,
                     contentDescription = stringResource(R.string.navigate_back_icon_description),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary, blendMode = BlendMode.Modulate),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .height(56.dp)

@@ -25,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -304,10 +303,7 @@ fun SettingsScreen(
                 AsyncImage(
                     model = R.drawable.ic_logout,
                     contentDescription = stringResource(id = R.string.fragment_settings_log_out),
-                    colorFilter = ColorFilter.tint(
-                        color = MaterialTheme.colorScheme.primary,
-                        blendMode = BlendMode.Modulate
-                    ),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                     modifier = Modifier
                         .padding(4.dp, 4.dp, 12.dp, 4.dp)
                         .height(24.dp)
