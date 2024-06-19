@@ -47,7 +47,10 @@ fun VideoPlayer(
     }
 
     DisposableEffect(Unit) {
-        onDispose { exoPlayer.release() }
+        onDispose {
+            exoPlayer.pause()
+            exoPlayer.release()
+        }
     }
 
     // credit: https://medium.com/@munbonecci/how-to-display-videos-using-exoplayer-on-android-with-jetpack-compose-1fb4d57778f4
