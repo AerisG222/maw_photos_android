@@ -3,6 +3,7 @@ package us.mikeandwan.photos.ui.controls.videoplayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -23,6 +24,7 @@ import us.mikeandwan.photos.ui.getMediaUrl
 fun VideoPlayer(
     activeMedia: Media,
     videoPlayerHttpDataSourceFactory: HttpDataSource.Factory,
+    modifier: Modifier
 ) {
     if(activeMedia.type != MediaType.Video) {
         return
@@ -73,6 +75,7 @@ fun VideoPlayer(
     })
 
     AndroidView(
+        modifier = modifier,
         factory = {
             PlayerView(context).apply {
                 player = exoPlayer

@@ -57,6 +57,35 @@ fun MediaPager(
     ) { index ->
         val activeMedia = media[index]
 
+        val swipeAnimation = Modifier
+            .graphicsLayer {
+                val pageOffset =
+                    (pagerState.currentPage - index) +
+                            pagerState.currentPageOffsetFraction
+
+                alpha = lerp(
+                    start = 0.4f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                )
+
+                cameraDistance = 8 * density
+                rotationY = lerp(
+                    start = 0f,
+                    stop = 40f,
+                    fraction = pageOffset.coerceIn(-1f, 1f),
+                )
+
+                lerp(
+                    start = 0.5f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                ).also { scale ->
+                    scaleX = scale
+                    scaleY = scale
+                }
+            }
+
         when(activeMedia.type) {
             MediaType.Photo -> {
                 AsyncImage(
@@ -69,40 +98,17 @@ fun MediaPager(
                             zoomState,
                             scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
                         )
-                        .graphicsLayer {
-                            val pageOffset =
-                                (pagerState.currentPage - index) +
-                                        pagerState.currentPageOffsetFraction
-
-                            alpha = lerp(
-                                start = 0.4f,
-                                stop = 1f,
-                                fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                            )
-
-                            cameraDistance = 8 * density
-                            rotationY = lerp(
-                                start = 0f,
-                                stop = 40f,
-                                fraction = pageOffset.coerceIn(-1f, 1f),
-                            )
-
-                            lerp(
-                                start = 0.5f,
-                                stop = 1f,
-                                fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                            ).also { scale ->
-                                scaleX = scale
-                                scaleY = scale
-                            }
-                        }
+                        .then(swipeAnimation)
                         .rotate(activeRotation)
                 )
             }
             MediaType.Video -> {
                 VideoPlayer(
                     activeMedia,
-                    videoPlayerDataSourceFactory
+                    videoPlayerDataSourceFactory,
+                    Modifier
+                        .fillMaxSize()
+                        .then(swipeAnimation)
                 )
             }
         }
