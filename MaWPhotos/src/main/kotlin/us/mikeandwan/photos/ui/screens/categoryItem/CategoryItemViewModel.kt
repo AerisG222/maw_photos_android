@@ -2,6 +2,7 @@ package us.mikeandwan.photos.ui.screens.categoryItem
 
 import android.graphics.drawable.Drawable
 import androidx.lifecycle.viewModelScope
+import androidx.media3.datasource.HttpDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class CategoryItemViewModel @Inject constructor (
     mediaCategoryRepository: MediaCategoryRepository,
     photoPreferenceRepository: PhotoPreferenceRepository,
+    val videoPlayerDataSourceFactory: HttpDataSource.Factory,
     private val mediaListService: MediaListService
 ) : BaseCategoryViewModel(
     mediaCategoryRepository

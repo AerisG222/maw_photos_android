@@ -1,5 +1,7 @@
 package us.mikeandwan.photos.di
 
+import androidx.media3.datasource.HttpDataSource
+import androidx.media3.datasource.okhttp.OkHttpDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,18 +29,25 @@ class NetworkModule {
         authenticator: AuthAuthenticator,
         authInterceptor: AuthInterceptor
     ): OkHttpClient {
-
         return OkHttpClient.Builder()
             .authenticator(authenticator)
             .addInterceptor(authInterceptor)
             .build()
     }
 
-    private val json = Json { ignoreUnknownKeys = true }
+    @Provides
+    @Singleton
+    fun provideHttpDataSourceFactory(
+        okHttpClient: OkHttpClient
+    ): HttpDataSource.Factory {
+        return OkHttpDataSource.Factory(okHttpClient)
+    }
 
     @Provides
     @Singleton
     fun provideRetrofit(httpClient: OkHttpClient): Retrofit {
+        val json = Json { ignoreUnknownKeys = true }
+
         return Retrofit.Builder()
             .baseUrl(Constants.API_BASE_URL)
             .addConverterFactory(

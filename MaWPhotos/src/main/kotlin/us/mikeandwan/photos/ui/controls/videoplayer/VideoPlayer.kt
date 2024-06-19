@@ -10,7 +10,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
+import androidx.media3.datasource.HttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.domain.models.MediaType
@@ -18,7 +20,10 @@ import us.mikeandwan.photos.ui.getMediaUrl
 
 // thank you gemini...
 @Composable
-fun VideoPlayer(activeMedia: Media) {
+fun VideoPlayer(
+    activeMedia: Media,
+    videoPlayerHttpDataSourceFactory: HttpDataSource.Factory,
+) {
     if(activeMedia.type != MediaType.Video) {
         return
     }
@@ -27,6 +32,10 @@ fun VideoPlayer(activeMedia: Media) {
     val exoPlayer = remember {
         ExoPlayer
             .Builder(context)
+            .setMediaSourceFactory(
+                DefaultMediaSourceFactory(context)
+                    .setDataSourceFactory(videoPlayerHttpDataSourceFactory)
+            )
             .build()
             .apply {
                 setMediaItem(MediaItem.fromUri(activeMedia.getMediaUrl()))

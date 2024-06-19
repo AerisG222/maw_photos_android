@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.datasource.HttpDataSource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -125,6 +126,7 @@ fun NavGraphBuilder.randomItemScreen(
                     ratingState,
                     exifState,
                     commentState,
+                    vm.videoPlayerDataSourceFactory,
                     navigateToYear,
                     navigateToCategory
                 )
@@ -140,6 +142,7 @@ fun RandomItemScreen(
     ratingState: RatingState,
     exifState: ExifState,
     commentState: CommentState,
+    videoPlayerDataSourceFactory: HttpDataSource.Factory,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (MediaCategory) -> Unit
 ) {
@@ -191,6 +194,7 @@ fun RandomItemScreen(
             mediaListState.media,
             mediaListState.activeIndex,
             rotationState.activeRotation,
+            videoPlayerDataSourceFactory,
             setActiveIndex = { index -> mediaListState.setActiveIndex(index) }
         )
     }
