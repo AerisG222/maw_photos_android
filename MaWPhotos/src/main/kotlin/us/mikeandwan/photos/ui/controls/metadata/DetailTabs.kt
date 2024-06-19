@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
@@ -45,6 +46,9 @@ fun DetailTabs(
     val (ratingMediaId, setRatingMediaId) = remember { mutableIntStateOf(0) }
     val (exifMediaId, setExifMediaId) = remember { mutableIntStateOf(0) }
 
+    val bgActive = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+    val bgInactive = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
+
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
@@ -61,7 +65,8 @@ fun DetailTabs(
                     AsyncImage(
                         model = R.drawable.ic_star,
                         contentDescription = "Ratings",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
+                        colorFilter = if(pagerState.currentPage == TabIndex.RATING) { bgActive } else { bgInactive }
                     )
                 },
             )
@@ -76,7 +81,8 @@ fun DetailTabs(
                     AsyncImage(
                         model = R.drawable.ic_comment_white,
                         contentDescription = "Comment",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
+                        colorFilter = if(pagerState.currentPage == TabIndex.COMMENT) { bgActive } else { bgInactive }
                     )
                 }
             )
@@ -93,7 +99,8 @@ fun DetailTabs(
                         AsyncImage(
                             model = R.drawable.ic_tune,
                             contentDescription = "Exif",
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(32.dp),
+                            colorFilter = if(pagerState.currentPage == TabIndex.EXIF) { bgActive } else { bgInactive }
                         )
                     }
                 )
