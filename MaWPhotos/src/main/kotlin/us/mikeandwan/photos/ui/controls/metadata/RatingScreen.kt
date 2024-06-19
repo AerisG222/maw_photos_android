@@ -22,6 +22,19 @@ import us.mikeandwan.photos.R
 
 @Composable
 fun RatingScreen(state: RatingState) {
+    var activeRating = state.userRating
+
+    fun updateRating(rating: Float) {
+        var newRating = rating.toInt().toShort()
+
+        if(newRating == activeRating) {
+            newRating = 0
+        }
+
+        state.updateUserRating(newRating)
+        activeRating = newRating
+    }
+
     Column(modifier = Modifier.fillMaxHeight()) {
         Row(
             modifier = Modifier
@@ -47,7 +60,8 @@ fun RatingScreen(state: RatingState) {
                 tintFilled = MaterialTheme.colorScheme.primary,
                 rateChangeStrategy = RateChangeStrategy.InstantChange,
                 ratingInterval = RatingInterval.Full,
-                onRatingChange = { rating -> state.updateUserRating(rating.toInt().toShort()) }
+                gestureStrategy = GestureStrategy.Press,
+                onRatingChange = { updateRating(it) }
             )
         }
 
