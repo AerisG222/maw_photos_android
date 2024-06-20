@@ -119,7 +119,7 @@ fun SearchScreen(
                     val gridState = rememberImageGridState(
                         gridItems = results.map { it.toImageGridItem() },
                         thumbnailSize = thumbSize,
-                        onSelectGridItem = { onNavigateToCategory(it.data as MediaCategory) }
+                        onSelectGridItem = { onNavigateToCategory(it.data) }
                     )
 
                     ImageGrid(gridState)
