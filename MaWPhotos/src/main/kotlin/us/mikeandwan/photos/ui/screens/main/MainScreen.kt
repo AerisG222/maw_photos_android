@@ -59,6 +59,7 @@ import us.mikeandwan.photos.ui.screens.splash.SplashRoute
 import us.mikeandwan.photos.ui.screens.splash.splashScreen
 import us.mikeandwan.photos.ui.screens.upload.UploadRoute
 import us.mikeandwan.photos.ui.screens.upload.uploadScreen
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +103,7 @@ fun MainScreen() {
     val mostRecentYear by vm.mostRecentYear
         .filter { it != null }
         .map { it!! }
-        .collectAsStateWithLifecycle(initialValue = 2024)
+        .collectAsStateWithLifecycle(initialValue = LocalDate.now().year)
 
     ModalNavigationDrawer(
         gesturesEnabled = navArea != NavigationArea.Login,
