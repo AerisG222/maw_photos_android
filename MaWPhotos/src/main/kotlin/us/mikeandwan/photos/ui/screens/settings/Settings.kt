@@ -88,6 +88,10 @@ fun NavGraphBuilder.settingsScreen(
 
         val (permissionPostNotificationAllowed, setPermissionPostNotificationAllowed) = mutableStateOf(areNotificationsPermitted())
 
+        LaunchedEffect(Unit) {
+            setPermissionPostNotificationAllowed(areNotificationsPermitted())
+        }
+
         // https://stackoverflow.com/questions/60608101/how-request-permissions-with-jetpack-compose
         val permissionLauncher = rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission()
