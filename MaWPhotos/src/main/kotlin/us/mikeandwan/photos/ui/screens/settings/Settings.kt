@@ -215,9 +215,9 @@ fun SettingsScreen(
         HorizontalDivider(modifier = dividerModifier)
 
         // --- CATEGORY / PHOTO ----
-        Heading(stringId = R.string.pref_photo_display_header)
+        Heading(stringId = R.string.pref_media_display_header)
         MenuPreference(
-            labelStringId = R.string.pref_photo_display_slideshow_interval,
+            labelStringId = R.string.pref_media_display_slideshow_interval,
             options = slideshowIntervalList,
             selectedValue = "${photoSlideshowInterval}s",
             onSelect = {
@@ -237,7 +237,7 @@ fun SettingsScreen(
         // --- RANDOM ----
         Heading(stringId = R.string.pref_random_display_header)
         MenuPreference(
-            labelStringId = R.string.pref_photo_display_slideshow_interval,
+            labelStringId = R.string.pref_media_display_slideshow_interval,
             options = slideshowIntervalList,
             selectedValue = "${randomSlideshowInterval}s",
             onSelect = {

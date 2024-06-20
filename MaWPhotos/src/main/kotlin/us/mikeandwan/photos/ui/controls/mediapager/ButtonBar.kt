@@ -76,7 +76,7 @@ fun ButtonBar(
         IconButton(onClick = onViewDetails) {
             AsyncImage(
                 model = R.drawable.ic_keyboard_double_arrow_up,
-                contentDescription = stringResource(id = R.string.view_photo_details_icon_description),
+                contentDescription = stringResource(id = R.string.view_media_details_icon_description),
                 modifier = Modifier.size(48.dp),
                 colorFilter = ColorFilter.tint(color)
             )
