@@ -77,8 +77,8 @@ fun us.mikeandwan.photos.database.NotificationPreference.toDomainNotificationPre
 }
 
 
-fun us.mikeandwan.photos.database.PhotoPreference.toDomainPhotoPreference(): PhotoPreference {
-    return PhotoPreference(
+fun us.mikeandwan.photos.database.MediaPreference.toDomainPhotoPreference(): MediaPreference {
+    return MediaPreference(
         this.slideshowIntervalSeconds,
         this.gridThumbnailSize
     )

@@ -1,11 +1,11 @@
 package us.mikeandwan.photos.domain.models
 
-data class PhotoPreference (
+data class MediaPreference (
     val slideshowIntervalSeconds: Int,
     val gridThumbnailSize: GridThumbnailSize
 )
 
-val PHOTO_PREFERENCE_DEFAULT = PhotoPreference(
+val MEDIA_PREFERENCE_DEFAULT = MediaPreference(
     3,
     GridThumbnailSize.Unspecified
 )

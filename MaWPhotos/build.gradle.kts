@@ -52,6 +52,12 @@ android {
         schemaDirectory("$projectDir/schemas")
     }
 
+    // https://developer.android.com/training/data-storage/room/migrating-db-versions#kotlin_2
+    sourceSets {
+        // Adds exported schema location as test app assets.
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
+    }
+
     signingConfigs {
         val homedir = System.getProperty("user.home")
         val keystoreProperties = Properties()
@@ -107,16 +113,14 @@ composeCompiler {
 
 dependencies {
     implementation(libs.androidx.profileinstaller)
-    "baselineProfile"(project(":baselineprofile"))
 
-    val composeBom = platform(libs.androidx.compose.bom)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
+    "baselineProfile"(project(":baselineprofile"))
 
     implementation(libs.jetbrains.kotlin.stdlib)
     implementation(libs.jetbrains.coroutines.android)
     implementation(libs.jetbrains.kotlinx.serialization.json)
 
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
@@ -141,8 +145,6 @@ dependencies {
 
     implementation(libs.google.hilt)
     ksp(libs.google.hilt.android.compiler)
-    androidTestImplementation(libs.google.hilt.testing)
-    testImplementation(libs.google.hilt.testing)
 
     implementation(libs.appauth)
     implementation(libs.coil)
@@ -155,10 +157,18 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.zoomable)
 
+    testImplementation(libs.junit)
+    testImplementation(libs.google.hilt.testing)
+
     androidTestImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.espresso)
+    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.room.testing)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.google.hilt.testing)
 }
 
 hilt {

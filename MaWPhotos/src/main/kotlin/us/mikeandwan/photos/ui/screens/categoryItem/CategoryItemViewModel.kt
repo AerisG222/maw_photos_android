@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import us.mikeandwan.photos.domain.MediaCategoryRepository
-import us.mikeandwan.photos.domain.PhotoPreferenceRepository
-import us.mikeandwan.photos.domain.models.PHOTO_PREFERENCE_DEFAULT
+import us.mikeandwan.photos.domain.MediaPreferenceRepository
+import us.mikeandwan.photos.domain.models.MEDIA_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.services.MediaListService
 import us.mikeandwan.photos.ui.screens.category.BaseCategoryViewModel
 import java.io.File
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryItemViewModel @Inject constructor (
     mediaCategoryRepository: MediaCategoryRepository,
-    photoPreferenceRepository: PhotoPreferenceRepository,
+    mediaPreferenceRepository: MediaPreferenceRepository,
     val videoPlayerDataSourceFactory: HttpDataSource.Factory,
     private val mediaListService: MediaListService
 ) : BaseCategoryViewModel(
@@ -54,10 +54,10 @@ class CategoryItemViewModel @Inject constructor (
     fun fetchCommentDetails() { mediaListService.fetchComments() }
     fun addComment(comment: String) { mediaListService.addComment(comment) }
 
-    private val slideshowDurationInMillis = photoPreferenceRepository
+    private val slideshowDurationInMillis = mediaPreferenceRepository
         .getSlideshowIntervalSeconds()
         .map { seconds -> (seconds * 1000).toLong() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, (PHOTO_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, (MEDIA_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
 
     init {
         mediaListService.initialize(

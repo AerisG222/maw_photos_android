@@ -100,8 +100,8 @@ class DomainModule {
 
     @Provides
     @Singleton
-    fun providePhotoPreferenceRepository(photoPreferenceDao: PhotoPreferenceDao): PhotoPreferenceRepository {
-        return PhotoPreferenceRepository(photoPreferenceDao)
+    fun providePhotoPreferenceRepository(photoPreferenceDao: MediaPreferenceDao): MediaPreferenceRepository {
+        return MediaPreferenceRepository(photoPreferenceDao)
     }
 
     @Provides

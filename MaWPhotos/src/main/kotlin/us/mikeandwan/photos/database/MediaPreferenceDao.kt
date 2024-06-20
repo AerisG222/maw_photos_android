@@ -7,10 +7,10 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface PhotoPreferenceDao {
-    @Query("SELECT * FROM photo_preference WHERE id = :id")
-    fun getPhotoPreference(id: Int): Flow<PhotoPreference>
+interface MediaPreferenceDao {
+    @Query("SELECT * FROM media_preference WHERE id = :id")
+    fun getPhotoPreference(id: Int): Flow<MediaPreference>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun setPhotoPreference(preference: PhotoPreference)
+    suspend fun setPhotoPreference(preference: MediaPreference)
 }

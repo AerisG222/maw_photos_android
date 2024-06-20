@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.domain.MediaCategoryRepository
-import us.mikeandwan.photos.domain.PhotoPreferenceRepository
+import us.mikeandwan.photos.domain.MediaPreferenceRepository
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.ui.toImageGridItem
 import javax.inject.Inject
@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryViewModel @Inject constructor (
     mediaCategoryRepository: MediaCategoryRepository,
-    photoPreferenceRepository: PhotoPreferenceRepository
+    mediaPreferenceRepository: MediaPreferenceRepository
 ) : BaseCategoryViewModel(
     mediaCategoryRepository
 ) {
@@ -20,7 +20,7 @@ class CategoryViewModel @Inject constructor (
         .map { items -> items.map { it.toImageGridItem() } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    val gridItemThumbnailSize = photoPreferenceRepository
+    val gridItemThumbnailSize = mediaPreferenceRepository
         .getPhotoGridItemSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Unspecified)
 }

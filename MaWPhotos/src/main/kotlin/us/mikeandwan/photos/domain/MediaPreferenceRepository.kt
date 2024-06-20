@@ -2,13 +2,13 @@ package us.mikeandwan.photos.domain
 
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import us.mikeandwan.photos.database.PhotoPreferenceDao
+import us.mikeandwan.photos.database.MediaPreferenceDao
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
-import us.mikeandwan.photos.domain.models.PhotoPreference
+import us.mikeandwan.photos.domain.models.MediaPreference
 import javax.inject.Inject
 
-class PhotoPreferenceRepository @Inject constructor (
-    private val dao: PhotoPreferenceDao
+class MediaPreferenceRepository @Inject constructor (
+    private val dao: MediaPreferenceDao
 ) {
     fun getSlideshowIntervalSeconds() = dao
         .getPhotoPreference(Constants.ID)
@@ -30,8 +30,8 @@ class PhotoPreferenceRepository @Inject constructor (
         .getPhotoPreference(Constants.ID)
         .map { it.toDomainPhotoPreference() }
 
-    private suspend fun setPhotoPreferences(pref: PhotoPreference) {
-        val dbPref = us.mikeandwan.photos.database.PhotoPreference(
+    private suspend fun setPhotoPreferences(pref: MediaPreference) {
+        val dbPref = us.mikeandwan.photos.database.MediaPreference(
             Constants.ID,
             pref.slideshowIntervalSeconds,
             pref.gridThumbnailSize)
@@ -39,7 +39,7 @@ class PhotoPreferenceRepository @Inject constructor (
         dao.setPhotoPreference(dbPref)
     }
 
-    private suspend fun setPreference(update: (pref: PhotoPreference) -> PhotoPreference) {
+    private suspend fun setPreference(update: (pref: MediaPreference) -> MediaPreference) {
         val pref = getPhotoPreferences().first()
 
         setPhotoPreferences(update(pref))

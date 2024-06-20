@@ -10,7 +10,7 @@ import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.CategoryPreferenceRepository
 import us.mikeandwan.photos.domain.ErrorRepository
 import us.mikeandwan.photos.domain.NotificationPreferenceRepository
-import us.mikeandwan.photos.domain.PhotoPreferenceRepository
+import us.mikeandwan.photos.domain.MediaPreferenceRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
 import us.mikeandwan.photos.domain.SearchPreferenceRepository
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
@@ -22,7 +22,7 @@ class SettingsViewModel @Inject constructor (
     private val authService: AuthService,
     private val categoryPreferenceRepository: CategoryPreferenceRepository,
     private val notificationPreferenceRepository: NotificationPreferenceRepository,
-    private val photoPreferenceRepository: PhotoPreferenceRepository,
+    private val mediaPreferenceRepository: MediaPreferenceRepository,
     private val randomPreferenceRepository: RandomPreferenceRepository,
     private val searchPreferenceRepository: SearchPreferenceRepository,
     private val errorRepository: ErrorRepository
@@ -43,11 +43,11 @@ class SettingsViewModel @Inject constructor (
         .getCategoryGridItemSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
-    val photoSlideshowInterval = photoPreferenceRepository
+    val photoSlideshowInterval = mediaPreferenceRepository
         .getSlideshowIntervalSeconds()
         .stateIn(viewModelScope, SharingStarted.Eagerly, 3)
 
-    val photoThumbnailSize = photoPreferenceRepository
+    val photoThumbnailSize = mediaPreferenceRepository
         .getPhotoGridItemSize()
         .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
 
@@ -97,13 +97,13 @@ class SettingsViewModel @Inject constructor (
 
     fun setPhotoSlideshowInterval(slideshowInterval: Int) {
         viewModelScope.launch {
-            photoPreferenceRepository.setSlideshowIntervalSeconds(slideshowInterval)
+            mediaPreferenceRepository.setSlideshowIntervalSeconds(slideshowInterval)
         }
     }
 
     fun setPhotoThumbnailSize(photoThumbnailSize: GridThumbnailSize) {
         viewModelScope.launch {
-            photoPreferenceRepository.setPhotoGridItemSize(photoThumbnailSize)
+            mediaPreferenceRepository.setPhotoGridItemSize(photoThumbnailSize)
         }
     }
 

@@ -5,6 +5,21 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 val MIGRATION_2_3 = object: Migration(2, 3) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        // new video_category table to be created by ROOM
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS video_category (
+                id INTEGER NOT NULL,
+                year INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                teaser_height INTEGER NOT NULL,
+                teaser_width INTEGER NOT NULL,
+                teaser_url TEXT NOT NULL,
+                PRIMARY KEY(id)
+            )
+        """)
+
+        db.execSQL("""
+           CREATE INDEX IF NOT EXISTS index_video_category_year 
+               ON video_category (year)
+        """)
     }
 }

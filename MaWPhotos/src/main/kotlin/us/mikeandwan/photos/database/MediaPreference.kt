@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
-@Entity(tableName = "photo_preference")
-data class PhotoPreference(
+@Entity(tableName = "media_preference")
+data class MediaPreference(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = "slideshow_interval_seconds") val slideshowIntervalSeconds: Int,
     @ColumnInfo(name = "grid_thumbnail_size") val gridThumbnailSize: GridThumbnailSize
