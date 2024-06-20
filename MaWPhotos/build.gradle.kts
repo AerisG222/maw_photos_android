@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.androidx.room)
 }
 
 android {
@@ -22,10 +23,6 @@ android {
         targetSdk = 34
         versionCode = 56
         versionName = "7.4"
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
 
         manifestPlaceholders["appAuthRedirectScheme"] = "us.mikeandwan.photos"
 
@@ -49,6 +46,10 @@ android {
             jvmTarget.set(JvmTarget.JVM_17)
             // freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
         }
+    }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 
     signingConfigs {

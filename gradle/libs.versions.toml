@@ -89,6 +89,7 @@ zoomable = { group = "net.engawapg.lib", name = "zoomable", version.ref = "zooma
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidx-baselineprofile" }
+androidx-room = { id = "androidx.room", version.ref = "androidx-room" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
