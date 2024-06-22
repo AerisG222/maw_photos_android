@@ -1,20 +1,17 @@
 package us.mikeandwan.photos.ui.screens.categories
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -74,7 +71,7 @@ fun CategoriesScreen(
     categories: List<MediaCategory>,
     refreshStatus: CategoryRefreshStatus,
     onNavigateToCategory: (MediaCategory) -> Unit,
-    onRefresh: suspend (Int) -> Unit
+    onRefresh: (Int) -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -82,18 +79,8 @@ fun CategoriesScreen(
     LaunchedEffect(refreshStatus) {
         Timber.i("$refreshStatus")
 
-        if(!refreshStatus.isRefreshing) {
-            pullToRefreshState.endRefresh()
-        }
-
         if(refreshStatus.message != null) {
             snackbarHostState.showSnackbar(refreshStatus.message)
-        }
-    }
-
-    if(pullToRefreshState.isRefreshing) {
-        LaunchedEffect(Unit) {
-            onRefresh(Random.nextInt())
         }
     }
 
@@ -108,9 +95,11 @@ fun CategoriesScreen(
             SnackbarHost(hostState = snackbarHostState)
         }
     ) { innerPadding ->
-        Box(Modifier
-            .padding(innerPadding)
-            .nestedScroll(pullToRefreshState.nestedScrollConnection)
+        PullToRefreshBox(
+            isRefreshing = refreshStatus.isRefreshing,
+            state = pullToRefreshState,
+            onRefresh = { onRefresh(Random.nextInt()) },
+            modifier = Modifier.padding(innerPadding)
         ) {
             when (preferences.displayType) {
                 CategoryDisplayType.Grid -> {
@@ -127,11 +116,6 @@ fun CategoriesScreen(
 
                 else -> {}
             }
-
-            PullToRefreshContainer(
-                modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState,
-            )
         }
     }
 }

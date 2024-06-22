@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.ui.controls.topbar
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -35,15 +36,20 @@ fun TopBar(
     TopAppBar(
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
             if(showSearch) {
-                SearchBar(
-                    initialSearchTerm = initialSearchTerm,
-                    onSearch = onSearch
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(0.dp)
+                ) {
+                    TopSearchBar(
+                        initialSearchTerm,
+                        onSearch
+                    )
+                }
             } else {
                 Text(
                     text = title,
