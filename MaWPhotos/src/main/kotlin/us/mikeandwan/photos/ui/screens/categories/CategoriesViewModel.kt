@@ -45,7 +45,7 @@ class CategoriesViewModel @Inject constructor (
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(0, false, null))
     private val _preferences = categoryPreferenceRepository
         .getCategoryPreference()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
+        .stateIn(viewModelScope, WhileSubscribed(5000), CATEGORY_PREFERENCE_DEFAULT)
 
     fun setYear(year: Int) {
         _year.value = year
