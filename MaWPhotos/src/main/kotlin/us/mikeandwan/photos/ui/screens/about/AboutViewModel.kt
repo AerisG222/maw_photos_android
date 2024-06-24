@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import us.mikeandwan.photos.BuildConfig
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.ui.screens.categories.CategoriesState
 import javax.inject.Inject
 
 sealed class AboutState {
@@ -36,7 +35,7 @@ class AboutViewModel @Inject constructor() : ViewModel() {
                 AboutState.Valid(version, history)
             }
         }
-        .stateIn(viewModelScope, WhileSubscribed(5000), CategoriesState.Unknown)
+        .stateIn(viewModelScope, WhileSubscribed(5000), AboutState.Unknown)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

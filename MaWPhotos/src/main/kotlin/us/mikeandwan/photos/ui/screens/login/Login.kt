@@ -26,8 +26,8 @@ import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.R
-import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.logo.Logo
 
 @Serializable
@@ -40,34 +40,32 @@ fun NavGraphBuilder.loginScreen(
 ) {
     composable<LoginRoute> {
         val vm: LoginViewModel = hiltViewModel()
-        val authStatus by vm.authStatus.collectAsStateWithLifecycle()
+        val state by vm.state.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
             updateTopBar(false, true, "Login")
             setNavArea(NavigationArea.Login)
         }
 
-        LoginScreen(
-            authStatus,
-            initiateAuthentication = { vm.initiateAuthentication() },
-            navigateAfterLogin = navigateAfterLogin
-        )
+        when(state) {
+            is LoginState.Unknown -> { Loading() }
+            is LoginState.Authorized -> {
+                LaunchedEffect(Unit) {
+                    navigateAfterLogin()
+                }
+            }
+            is LoginState.NotAuthorized -> {
+                LoginScreen(state as LoginState.NotAuthorized)
+            }
+        }
     }
 }
 
 @Composable
 fun LoginScreen(
-    authStatus: AuthStatus,
-    initiateAuthentication: () -> Unit,
-    navigateAfterLogin: () -> Unit
+    state: LoginState.NotAuthorized
 ) {
     val tangerine = FontFamily(Font(R.font.tangerine))
-
-    LaunchedEffect(authStatus) {
-        if(authStatus == AuthStatus.Authorized) {
-            navigateAfterLogin()
-        }
-    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -124,7 +122,7 @@ fun LoginScreen(
                 .padding(0.dp, 0.dp, 0.dp, 24.dp)
         ) {
             Button(
-                onClick = { initiateAuthentication() }
+                onClick = { state.initiateAuthentication() }
             ) {
                 Text(
                     text = stringResource(id = R.string.activity_login_login_button_text)

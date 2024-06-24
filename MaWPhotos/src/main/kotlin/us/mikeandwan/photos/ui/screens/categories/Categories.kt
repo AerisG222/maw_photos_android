@@ -18,7 +18,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
-import timber.log.Timber
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.MediaCategory
@@ -85,8 +84,6 @@ fun CategoriesScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(state.refreshStatus) {
-        Timber.i("$state.refreshStatus")
-
         if(state.refreshStatus.message != null) {
             snackbarHostState.showSnackbar(state.refreshStatus.message)
         }
