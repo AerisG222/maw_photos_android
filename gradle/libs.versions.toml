@@ -29,6 +29,7 @@ ksp = "2.0.0-1.0.21"
 
 appauth = "0.11.1"
 coil = "2.6.0"
+flowext = "1.0.0-RC"
 markdown = "0.4.1"
 ratingbar = "2.1.1"
 retrofit = "2.11.0"
@@ -80,6 +81,7 @@ jetbrains-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name =
 appauth = { group = "net.openid", name = "appauth", version.ref = "appauth" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 compose-ratingbar = { group = "com.github.SmartToolFactory", name = "Compose-RatingBar", version.ref = "ratingbar" }
+flowext = { group = "io.github.hoc081098", name = "FlowExt", version.ref = "flowext" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 markdown = { group = "com.github.jeziellago", name = "compose-markdown", version.ref = "markdown" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }

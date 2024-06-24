@@ -45,7 +45,8 @@ fun NavGraphBuilder.randomItemScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToYear: (Int) -> Unit,
-    navigateToCategory: (MediaCategory) -> Unit
+    navigateToCategory: (MediaCategory) -> Unit,
+    navigateToLogin: () -> Unit
 ) {
     composable<RandomItemRoute> { backStackEntry ->
         val vm: RandomItemViewModel = hiltViewModel()

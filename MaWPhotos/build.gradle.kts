@@ -149,6 +149,7 @@ dependencies {
     implementation(libs.appauth)
     implementation(libs.coil)
     implementation(libs.compose.ratingbar)
+    implementation(libs.flowext)
     implementation(platform(libs.okhttp.bom))
     implementation(libs.markdown)
     implementation(libs.okhttp)

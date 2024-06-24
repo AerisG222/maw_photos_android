@@ -5,9 +5,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.MediaRepository
+import us.mikeandwan.photos.domain.guards.AuthGuard
+import us.mikeandwan.photos.domain.guards.CategoriesLoadedGuard
 import us.mikeandwan.photos.domain.services.MediaCommentService
 import us.mikeandwan.photos.domain.services.MediaExifService
 import us.mikeandwan.photos.domain.services.MediaListService
@@ -61,6 +64,26 @@ class ViewModelModule {
             mediaRatingService,
             mediaCommentService,
             mediaExifService
+        )
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideAuthGuard(
+        authService: AuthService
+    ): AuthGuard {
+        return AuthGuard(
+            authService
+        )
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideCategoriesLoadedGuard(
+        mediaCategoryRepository: MediaCategoryRepository
+    ): CategoriesLoadedGuard {
+        return CategoriesLoadedGuard(
+            mediaCategoryRepository
         )
     }
 }

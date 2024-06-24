@@ -36,7 +36,7 @@ object LoginRoute
 fun NavGraphBuilder.loginScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
-    navigateToCategories: () -> Unit
+    navigateAfterLogin: () -> Unit
 ) {
     composable<LoginRoute> {
         val vm: LoginViewModel = hiltViewModel()
@@ -50,7 +50,7 @@ fun NavGraphBuilder.loginScreen(
         LoginScreen(
             authStatus,
             initiateAuthentication = { vm.initiateAuthentication() },
-            navigateToCategories = navigateToCategories
+            navigateAfterLogin = navigateAfterLogin
         )
     }
 }
@@ -59,7 +59,7 @@ fun NavGraphBuilder.loginScreen(
 fun LoginScreen(
     authStatus: AuthStatus,
     initiateAuthentication: () -> Unit,
-    navigateToCategories: () -> Unit
+    navigateAfterLogin: () -> Unit
 ) {
     val tangerine = FontFamily(Font(R.font.tangerine))
 
@@ -72,7 +72,7 @@ fun LoginScreen(
 
     LaunchedEffect(authStatus) {
         if(authStatus == AuthStatus.Authorized) {
-            navigateToCategories()
+            navigateAfterLogin()
         }
     }
 

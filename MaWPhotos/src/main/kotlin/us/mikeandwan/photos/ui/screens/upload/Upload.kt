@@ -31,7 +31,8 @@ object UploadRoute
 
 fun NavGraphBuilder.uploadScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
-    setNavArea: (NavigationArea) -> Unit
+    setNavArea: (NavigationArea) -> Unit,
+    navigateToLogin: () -> Unit
 ) {
     composable<UploadRoute> {
         val vm: UploadViewModel = hiltViewModel()

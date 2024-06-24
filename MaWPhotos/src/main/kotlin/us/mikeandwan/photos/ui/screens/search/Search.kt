@@ -44,7 +44,8 @@ fun NavGraphBuilder.searchScreen(
     onNavigateToCategory: (MediaCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
-    updateInitialSearchTerm: (String) -> Unit
+    updateInitialSearchTerm: (String) -> Unit,
+    navigateToLogin: () -> Unit
 ) {
     composable<SearchRoute> { backStackEntry ->
         val vm: SearchViewModel = hiltViewModel()

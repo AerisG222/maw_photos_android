@@ -154,10 +154,8 @@ class MainViewModel @Inject constructor(
                 .filter { it is AuthStatus.Authorized }
                 .collect {
                     Timber.i("User authorized - fetching categories")
-                    mediaCategoryRepository.getYears().collect {}
+                    mediaCategoryRepository.getNewCategories().collect {}
                 }
-
-            mediaCategoryRepository.getNewCategories()
 
             clearFileCache()
         }

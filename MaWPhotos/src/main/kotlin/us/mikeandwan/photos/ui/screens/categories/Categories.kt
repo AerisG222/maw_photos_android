@@ -8,6 +8,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -20,15 +21,13 @@ import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import timber.log.Timber
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
-import us.mikeandwan.photos.domain.models.CategoryPreference
-import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
+import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.toImageGridItem
-import kotlin.random.Random
 
 @Serializable
 data class CategoriesRoute (
@@ -38,55 +37,67 @@ data class CategoriesRoute (
 fun NavGraphBuilder.categoriesScreen(
     onNavigateToCategory: (MediaCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
-    setNavArea: (NavigationArea) -> Unit
+    setActiveYear: (Int) -> Unit,
+    setNavArea: (NavigationArea) -> Unit,
+    navigateToLogin: () -> Unit,
+    navigateToCategories: (Int) -> Unit
 ) {
     composable<CategoriesRoute> { backStackEntry ->
         val vm: CategoriesViewModel = hiltViewModel()
         val args = backStackEntry.toRoute<CategoriesRoute>()
+        val state by vm.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(args.year) {
-            vm.loadCategories(args.year)
-            updateTopBar(true, true, args.year.toString())
+        LaunchedEffect(Unit) {
             setNavArea(NavigationArea.Category)
         }
 
-        val categories by vm.categories.collectAsStateWithLifecycle()
-        val refreshStatus by vm.refreshStatus.collectAsStateWithLifecycle()
-        val preferences by vm.preferences.collectAsStateWithLifecycle()
+        DisposableEffect(Unit) {
+            vm.setYear(args.year)
+            updateTopBar(true, true, args.year.toString())
+            setActiveYear(args.year)
 
-        CategoriesScreen(
-            categories = categories,
-            preferences = preferences,
-            refreshStatus = refreshStatus,
-            onNavigateToCategory = onNavigateToCategory,
-            onRefresh = { vm.onRefreshCategories(it) }
-        )
+            onDispose {  }
+        }
+
+        when(state) {
+            is CategoriesState.Unknown -> Loading()
+            is CategoriesState.NotAuthorized ->
+                LaunchedEffect(Unit) {
+                    navigateToLogin()
+                }
+            is CategoriesState.InvalidYear ->
+                LaunchedEffect(Unit) {
+                    navigateToCategories((state as CategoriesState.InvalidYear).mostRecentYear)
+                }
+            is CategoriesState.Valid ->
+                CategoriesScreen(
+                    state as CategoriesState.Valid,
+                    onNavigateToCategory
+                )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreen(
-    preferences: CategoryPreference,
-    categories: List<MediaCategory>,
-    refreshStatus: CategoryRefreshStatus,
+    state: CategoriesState.Valid,
     onNavigateToCategory: (MediaCategory) -> Unit,
-    onRefresh: (Int) -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(refreshStatus) {
-        Timber.i("$refreshStatus")
+    LaunchedEffect(state.refreshStatus) {
+        Timber.i("$state.refreshStatus")
 
-        if(refreshStatus.message != null) {
-            snackbarHostState.showSnackbar(refreshStatus.message)
+        if(state.refreshStatus.message != null) {
+            snackbarHostState.showSnackbar(state.refreshStatus.message)
         }
     }
 
     val gridState = rememberImageGridState (
-        gridItems = categories.map { it.toImageGridItem() },
-        thumbnailSize = preferences.gridThumbnailSize,
+        gridItems = state.categories.map { it.toImageGridItem() },
+        thumbnailSize = state.preferences.gridThumbnailSize,
         onSelectGridItem = { onNavigateToCategory(it.data) }
     )
 
@@ -96,19 +107,19 @@ fun CategoriesScreen(
         }
     ) { innerPadding ->
         PullToRefreshBox(
-            isRefreshing = refreshStatus.isRefreshing,
+            isRefreshing = state.refreshStatus.isRefreshing,
             state = pullToRefreshState,
-            onRefresh = { onRefresh(Random.nextInt()) },
+            onRefresh = { state.refreshCategories() },
             modifier = Modifier.padding(innerPadding)
         ) {
-            when (preferences.displayType) {
+            when (state.preferences.displayType) {
                 CategoryDisplayType.Grid -> {
                     ImageGrid(gridState)
                 }
 
                 CategoryDisplayType.List -> {
                     CategoryList(
-                        categories = categories,
+                        categories = state.categories,
                         showYear = false,
                         onSelectCategory = { onNavigateToCategory(it) }
                     )

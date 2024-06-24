@@ -44,6 +44,7 @@ data class CategoryItemRoute (
 fun NavGraphBuilder.categoryItemScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
+    navigateToLogin: () -> Unit
 ) {
     composable<CategoryItemRoute> { backStackEntry ->
         val vm: CategoryItemViewModel = hiltViewModel()

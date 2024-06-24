@@ -22,7 +22,8 @@ data class CategoryRoute (
 fun NavGraphBuilder.categoryScreen(
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
-    navigateToMedia: (Media) -> Unit
+    navigateToMedia: (Media) -> Unit,
+    navigateToLogin: () -> Unit
 ) {
     composable<CategoryRoute> { backStackEntry ->
         val vm: CategoryViewModel = hiltViewModel()

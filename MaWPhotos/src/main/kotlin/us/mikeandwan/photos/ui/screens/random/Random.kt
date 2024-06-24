@@ -24,7 +24,8 @@ object RandomRoute
 fun NavGraphBuilder.randomScreen(
     onNavigateToPhoto: (Int) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
-    setNavArea: (NavigationArea) -> Unit
+    setNavArea: (NavigationArea) -> Unit,
+    navigateToLogin: () -> Unit
 ) {
     composable<RandomRoute> {
         val vm: RandomViewModel = hiltViewModel()

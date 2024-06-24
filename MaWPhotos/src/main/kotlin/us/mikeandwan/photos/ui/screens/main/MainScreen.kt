@@ -57,8 +57,6 @@ import us.mikeandwan.photos.ui.screens.search.SearchRoute
 import us.mikeandwan.photos.ui.screens.search.searchScreen
 import us.mikeandwan.photos.ui.screens.settings.SettingsRoute
 import us.mikeandwan.photos.ui.screens.settings.settingsScreen
-import us.mikeandwan.photos.ui.screens.splash.SplashRoute
-import us.mikeandwan.photos.ui.screens.splash.splashScreen
 import us.mikeandwan.photos.ui.screens.upload.UploadRoute
 import us.mikeandwan.photos.ui.screens.upload.uploadScreen
 import java.time.LocalDate
@@ -133,7 +131,6 @@ fun MainScreen() {
                         coroutineScope.launch { drawerState.close() }
                     },
                     navigateToCategoriesByYear = {
-                        setActiveYear(it)
                         navController.navigate(CategoriesRoute(it))
                         coroutineScope.launch { drawerState.close() }
                     },
@@ -191,19 +188,12 @@ fun MainScreen() {
             NavHost(
                 modifier = Modifier.padding(innerPadding),
                 navController = navController,
-                startDestination = SplashRoute
+                startDestination = CategoriesRoute(mostRecentYear)
             ) {
-                splashScreen(
-                    navigateToLogin = { navController.navigate(LoginRoute) },
-                    navigateToCategories = {
-                        setActiveYear(it)
-                        navController.navigate(CategoriesRoute(it))
-                    }
-                )
                 loginScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
-                    navigateToCategories = { navController.navigate(CategoriesRoute(mostRecentYear)) }
+                    navigateAfterLogin = { navController.popBackStack() }
                 )
                 aboutScreen(
                     updateTopBar = ::updateTopBar,
@@ -211,36 +201,44 @@ fun MainScreen() {
                 )
                 categoriesScreen(
                     updateTopBar = ::updateTopBar,
+                    setActiveYear = { setActiveYear(it) },
                     setNavArea = { setNavArea(it) },
-                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) }
+                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
+                    navigateToLogin = { navController.navigate(LoginRoute) },
+                    navigateToCategories = { navController.navigate(CategoriesRoute(it)) }
                 )
                 categoryScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
                     navigateToMedia = {
                         navController.navigate(CategoryItemRoute(it.type.name, it.categoryId, it.id))
-                    }
+                    },
+                    navigateToLogin = { navController.navigate(LoginRoute) },
                 )
                 categoryItemScreen(
                     updateTopBar = ::updateTopBar,
-                    setNavArea = { setNavArea(it) }
+                    setNavArea = { setNavArea(it) },
+                    navigateToLogin = { navController.navigate(LoginRoute) },
                 )
                 randomScreen(
                     updateTopBar = ::updateTopBar,
                     onNavigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
                     setNavArea = { setNavArea(it) },
+                    navigateToLogin = { navController.navigate(LoginRoute) },
                 )
                 randomItemScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
                     navigateToYear = { navController.navigate(CategoriesRoute(it)) },
-                    navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) }
+                    navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
+                    navigateToLogin = { navController.navigate(LoginRoute) },
                 )
                 searchScreen(
                     updateTopBar = ::updateTopBar,
                     updateInitialSearchTerm = { setTopBarInitialSearchTerm(it) },
                     onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
                     setNavArea = { setNavArea(it) },
+                    navigateToLogin = { navController.navigate(LoginRoute) },
                 )
                 settingsScreen(
                     updateTopBar = ::updateTopBar,
@@ -250,6 +248,7 @@ fun MainScreen() {
                 uploadScreen(
                     updateTopBar = ::updateTopBar,
                     setNavArea = { setNavArea(it) },
+                    navigateToLogin = { navController.navigate(LoginRoute) },
                 )
             }
         }

@@ -4,32 +4,121 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import us.mikeandwan.photos.domain.CategoryPreferenceRepository
 import us.mikeandwan.photos.domain.MediaCategoryRepository
+import us.mikeandwan.photos.domain.guards.AuthGuard
+import us.mikeandwan.photos.domain.guards.CategoriesLoadedGuard
+import us.mikeandwan.photos.domain.guards.GuardStatus
 import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.MediaCategory
 import javax.inject.Inject
+import com.hoc081098.flowext.combine
+import us.mikeandwan.photos.domain.models.CategoryPreference
+import kotlin.random.Random
+
+sealed class CategoriesState {
+    data object Unknown : CategoriesState()
+    data object NotAuthorized : CategoriesState()
+    data class InvalidYear(val mostRecentYear: Int) : CategoriesState()
+    data class Valid(
+        val categories: List<MediaCategory>,
+        val refreshStatus: CategoryRefreshStatus,
+        val preferences: CategoryPreference,
+        val refreshCategories: () -> Unit
+    ) : CategoriesState()
+}
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor (
     private val mediaCategoryRepository: MediaCategoryRepository,
+    authGuard: AuthGuard,
+    categoriesLoadedGuard: CategoriesLoadedGuard,
     categoryPreferenceRepository: CategoryPreferenceRepository
 ): ViewModel() {
-    private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(0, false, null))
-    val refreshStatus = _refreshStatus.asStateFlow()
-
+    private val _year = MutableStateFlow(-1)
     private val _categories = MutableStateFlow<List<MediaCategory>>(emptyList())
-    val categories = _categories.asStateFlow()
-
-    val preferences = categoryPreferenceRepository
+    private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(0, false, null))
+    private val _preferences = categoryPreferenceRepository
         .getCategoryPreference()
         .stateIn(viewModelScope, SharingStarted.Eagerly, CATEGORY_PREFERENCE_DEFAULT)
 
-    fun onRefreshCategories(id: Int) {
+    fun setYear(year: Int) {
+        _year.value = year
+    }
+
+    private var isFetchingNewCategories = false
+    private var isFetchingCategories = false
+
+    val state = combine(
+        authGuard.status,
+        categoriesLoadedGuard.status,
+        mediaCategoryRepository.getYears(),
+        _categories,
+        _year,
+        _refreshStatus,
+        _preferences
+    ) { authStatus,
+        categoriesStatus,
+        years,
+        categories,
+        year,
+        refreshStatus,
+        preferences ->
+
+        if (year <= 0) {
+            return@combine CategoriesState.Unknown
+        }
+
+        when(authStatus) {
+            is GuardStatus.Failed -> CategoriesState.NotAuthorized
+            is GuardStatus.Passed -> {
+                when(categoriesStatus) {
+                    is GuardStatus.Failed -> {
+                        if (!isFetchingNewCategories) {
+                            isFetchingNewCategories = true
+                            mediaCategoryRepository.getNewCategories()
+                        }
+
+                        CategoriesState.Unknown
+                    }
+                    is GuardStatus.Passed -> {
+                        if (years.isEmpty()) {
+                            CategoriesState.Unknown
+                        } else {
+                            if (years.contains(year)) {
+                                if (categories.isEmpty()) {
+                                    if (!isFetchingCategories) {
+                                        isFetchingCategories = true
+                                        loadCategories(year)
+                                    }
+                                    CategoriesState.Unknown
+                                } else {
+                                    CategoriesState.Valid(
+                                        categories,
+                                        refreshStatus,
+                                        preferences,
+                                        refreshCategories = { refreshCategories(Random.nextInt()) }
+                                    )
+                                }
+                            } else {
+                                CategoriesState.InvalidYear(years.max())
+                            }
+                        }
+                    }
+                    else -> CategoriesState.Unknown
+                }
+            }
+            else -> CategoriesState.Unknown
+        }
+    }
+    .stateIn(viewModelScope, WhileSubscribed(5000), CategoriesState.Unknown)
+
+    private fun refreshCategories(id: Int) {
         viewModelScope.launch {
             mediaCategoryRepository
                 .getNewCategories()
@@ -57,7 +146,7 @@ class CategoriesViewModel @Inject constructor (
         }
     }
 
-    fun loadCategories(year: Int) {
+    private fun loadCategories(year: Int) {
         viewModelScope.launch {
             mediaCategoryRepository
                 .getCategories(year)
