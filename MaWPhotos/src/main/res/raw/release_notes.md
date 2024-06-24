@@ -1,3 +1,15 @@
+## v8.0
+### 06/20/2024
+- New support for playing videos that were previously only available on the web!
+- Added support for older devices
+- Tweaked the theme - dark theme is now more consistent with the "Dusk" theme on the web
+- Tons of code updates:
+  - Rewrote UI code using Jetpack Compose
+  - Upgraded to Kotlin 2.0
+  - Changed / Updated almost all libraries
+  - Should serve as a strong foundation for future efforts
+- Hopefully things work well for you, if not - let me know!
+
 ## v7.4
 ### 11/20/2023
 - Fix crash when navigating to search screen
