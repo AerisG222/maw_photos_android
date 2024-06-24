@@ -5,19 +5,38 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.BuildConfig
 import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
+import us.mikeandwan.photos.ui.screens.categories.CategoriesState
 import javax.inject.Inject
+
+sealed class AboutState {
+    data object Unknown : AboutState()
+    data class Valid(
+        val version: String,
+        val history: String
+    )
+}
 
 @HiltViewModel
 class AboutViewModel @Inject constructor() : ViewModel() {
-    val version = "v${BuildConfig.VERSION_NAME}"
-
+    private val version = "v${BuildConfig.VERSION_NAME}"
     private val _history = MutableStateFlow("")
-    val history = _history.asStateFlow()
+
+    val state = _history
+        .map { history ->
+            if(history.isEmpty()) {
+                AboutState.Unknown
+            } else {
+                AboutState.Valid(version, history)
+            }
+        }
+        .stateIn(viewModelScope, WhileSubscribed(5000), CategoriesState.Unknown)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

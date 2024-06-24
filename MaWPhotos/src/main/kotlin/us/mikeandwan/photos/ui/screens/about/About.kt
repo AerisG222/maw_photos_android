@@ -27,6 +27,7 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.logo.Logo
 
 @Serializable
@@ -38,24 +39,23 @@ fun NavGraphBuilder.aboutScreen(
 ) {
     composable<AboutRoute> {
         val vm: AboutViewModel = hiltViewModel()
-        val history by vm.history.collectAsStateWithLifecycle()
+        val state by vm.state.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
             updateTopBar(true, false, "About")
             setNavArea(NavigationArea.About)
         }
 
-        AboutScreen(
-            vm.version,
-            history
-        )
+        when(state) {
+            is AboutState.Unknown -> { Loading() }
+            is AboutState.Valid -> AboutScreen((state as AboutState.Valid))
+        }
     }
 }
 
 @Composable
 fun AboutScreen(
-    version: String,
-    history: String
+    state: AboutState.Valid
 ) {
     val tangerine = FontFamily(Font(R.font.tangerine))
     val markdownStyle = MaterialTheme.typography.bodyMedium
@@ -99,7 +99,7 @@ fun AboutScreen(
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = version
+                text = state.version
             )
         }
 
@@ -110,7 +110,7 @@ fun AboutScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             MarkdownText(
-                markdown = history,
+                markdown = state.history,
                 style = markdownStyle
             )
         }
@@ -121,7 +121,6 @@ fun AboutScreen(
 @Composable
 fun AboutScreenPreview() {
     AboutScreen(
-        version = "v2.0",
-        history = "hi"
+        AboutState.Valid("vX.Y.Z", "Release Notes")
     )
 }
