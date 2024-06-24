@@ -1,10 +1,5 @@
-package us.mikeandwan.photos.ui.screens.main
+package us.mikeandwan.photos.ui.screens.appDrawer
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,19 +21,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigation.NavigationRail
 import us.mikeandwan.photos.ui.controls.topbar.TopBar
+import us.mikeandwan.photos.ui.main.MainViewModel
 import us.mikeandwan.photos.ui.screens.about.AboutRoute
 import us.mikeandwan.photos.ui.screens.about.aboutScreen
 import us.mikeandwan.photos.ui.screens.categories.CategoriesRoute
@@ -63,30 +55,23 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    val vm: MainViewModel = hiltViewModel()
+fun AppDrawer(
+    vm: MainViewModel,
+    content: @Composable () -> Unit,
+) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val snackbarHostState = remember { SnackbarHostState() }
-    val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
     val years by vm.years.collectAsStateWithLifecycle(initialValue = emptyList())
     val recentSearchTerms by vm.recentSearchTerms.collectAsStateWithLifecycle(initialValue = emptyList())
 
-    val context = LocalContext.current
-    val activity = context.findActivity()
-
+    val snackbarHostState = remember { SnackbarHostState() }
     val (navArea, setNavArea) = remember { mutableStateOf(NavigationArea.Category) }
     val (topBarDoShow, setTopBarDoShow) = remember { mutableStateOf(true) }
     val (topBarTitle, setTopBarTitle) = remember { mutableStateOf("") }
     val (topBarInitialSearchTerm, setTopBarInitialSearchTerm) = remember { mutableStateOf("") }
     val (topBarShowAppIcon, setTopBarShowAppIcon) = remember { mutableStateOf(false) }
     val (activeYear, setActiveYear) = remember { mutableIntStateOf(years.firstOrNull() ?: 0) }
-
-    LaunchedEffect(Unit) {
-        handleIntent(activity?.intent ?: Intent(), vm, navController)
-    }
 
     LaunchedEffect(Unit) {
         vm.errorsToDisplay.collect {
@@ -100,10 +85,7 @@ fun MainScreen() {
         setTopBarTitle(title)
     }
 
-    val mostRecentYear by vm.mostRecentYear
-        .filter { it != null }
-        .map { it!! }
-        .collectAsStateWithLifecycle(initialValue = LocalDate.now().year)
+
 
     ModalNavigationDrawer(
         gesturesEnabled = navArea != NavigationArea.Login,
@@ -185,95 +167,7 @@ fun MainScreen() {
                 SnackbarHost(hostState = snackbarHostState)
             },
         ) { innerPadding ->
-            NavHost(
-                modifier = Modifier.padding(innerPadding),
-                navController = navController,
-                startDestination = CategoriesRoute(mostRecentYear)
-            ) {
-                loginScreen(
-                    updateTopBar = ::updateTopBar,
-                    setNavArea = { setNavArea(it) },
-                    navigateAfterLogin = { navController.popBackStack() }
-                )
-                aboutScreen(
-                    updateTopBar = ::updateTopBar,
-                    setNavArea = { setNavArea(it) }
-                )
-                categoriesScreen(
-                    updateTopBar = ::updateTopBar,
-                    setActiveYear = { setActiveYear(it) },
-                    setNavArea = { setNavArea(it) },
-                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
-                    navigateToLogin = { navController.navigate(LoginRoute) },
-                    navigateToCategories = { navController.navigate(CategoriesRoute(it)) }
-                )
-                categoryScreen(
-                    updateTopBar = ::updateTopBar,
-                    setNavArea = { setNavArea(it) },
-                    navigateToMedia = {
-                        navController.navigate(CategoryItemRoute(it.type.name, it.categoryId, it.id))
-                    },
-                    navigateToLogin = { navController.navigate(LoginRoute) },
-                )
-                categoryItemScreen(
-                    updateTopBar = ::updateTopBar,
-                    setNavArea = { setNavArea(it) },
-                    navigateToLogin = { navController.navigate(LoginRoute) },
-                )
-                randomScreen(
-                    updateTopBar = ::updateTopBar,
-                    onNavigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
-                    setNavArea = { setNavArea(it) },
-                    navigateToLogin = { navController.navigate(LoginRoute) },
-                )
-                randomItemScreen(
-                    updateTopBar = ::updateTopBar,
-                    setNavArea = { setNavArea(it) },
-                    navigateToYear = { navController.navigate(CategoriesRoute(it)) },
-                    navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
-                    navigateToLogin = { navController.navigate(LoginRoute) },
-                )
-                searchScreen(
-                    updateTopBar = ::updateTopBar,
-                    updateInitialSearchTerm = { setTopBarInitialSearchTerm(it) },
-                    onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
-                    setNavArea = { setNavArea(it) },
-                    navigateToLogin = { navController.navigate(LoginRoute) },
-                )
-                settingsScreen(
-                    updateTopBar = ::updateTopBar,
-                    onNavigateToLogin = { navController.navigate(LoginRoute) },
-                    setNavArea = { setNavArea(it) },
-                )
-                uploadScreen(
-                    updateTopBar = ::updateTopBar,
-                    setNavArea = { setNavArea(it) },
-                    navigateToLogin = { navController.navigate(LoginRoute) },
-                )
-            }
+            content( modifier = Modifier.padding(innerPadding))
         }
     }
-}
-
-fun handleIntent(intent: Intent, vm: MainViewModel, navController: NavController) {
-    if (intent.action != null) {
-        when (intent.action) {
-            Intent.ACTION_SEND -> {
-                vm.handleSendSingle(intent)
-                navController.navigate(UploadRoute)
-            }
-            Intent.ACTION_SEND_MULTIPLE -> {
-                vm.handleSendMultiple(intent)
-                navController.navigate(UploadRoute)
-            }
-        }
-    } else {
-        vm.handleAuthorizeCallback(intent)
-    }
-}
-
-fun Context.findActivity(): ComponentActivity? = when (this) {
-    is Activity -> this as ComponentActivity
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
 }
