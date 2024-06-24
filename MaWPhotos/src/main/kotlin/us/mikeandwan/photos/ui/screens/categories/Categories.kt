@@ -8,7 +8,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -51,12 +50,10 @@ fun NavGraphBuilder.categoriesScreen(
             setNavArea(NavigationArea.Category)
         }
 
-        DisposableEffect(Unit) {
+        LaunchedEffect(args.year) {
             vm.setYear(args.year)
             updateTopBar(true, true, args.year.toString())
             setActiveYear(args.year)
-
-            onDispose {  }
         }
 
         when(state) {
