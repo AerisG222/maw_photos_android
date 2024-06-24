@@ -63,13 +63,6 @@ fun LoginScreen(
 ) {
     val tangerine = FontFamily(Font(R.font.tangerine))
 
-    // commenting the item below in case a user wants to remain logged out
-    // if we call this and they have active session on authorization server,
-    // it will automatically log them in....
-    //    if(authStatus == AuthStatus.RequiresAuthorization) {
-    //        initiateAuthentication()
-    //    }
-
     LaunchedEffect(authStatus) {
         if(authStatus == AuthStatus.Authorized) {
             navigateAfterLogin()
