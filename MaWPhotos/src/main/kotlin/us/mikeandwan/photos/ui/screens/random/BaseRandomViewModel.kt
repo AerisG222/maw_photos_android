@@ -2,7 +2,6 @@ package us.mikeandwan.photos.ui.screens.random
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -33,11 +32,11 @@ abstract class BaseRandomViewModel (
         //
         // this also exposed an issue where the item view would restart at where the user first
         // came into the item view, despite new items being loaded.  for now, lets just stop
-        // fetching once a user is in the item view.
-        viewModelScope.launch {
-            delay(1000)
+        // fetching once a user is in the item view (and no longer need the delay).
+        //viewModelScope.launch {
+            //delay(1000)
             randomPhotoRepository.setDoFetch(true)
-        }
+        //}
     }
 
     fun onPause() {
