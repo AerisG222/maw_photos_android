@@ -30,8 +30,15 @@ fun NavGraphBuilder.randomScreen(
     composable<RandomRoute> {
         val vm: RandomViewModel = hiltViewModel()
 
+        val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
         val photos by vm.photos.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
+
+        LaunchedEffect(isAuthorized) {
+            if(!isAuthorized) {
+                navigateToLogin()
+            }
+        }
 
         LaunchedEffect(Unit) {
             updateTopBar(true, true, "Random")

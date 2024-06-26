@@ -38,6 +38,14 @@ fun NavGraphBuilder.uploadScreen(
         val vm: UploadViewModel = hiltViewModel()
         val files by vm.filesToUpload.collectAsStateWithLifecycle()
 
+        val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
+
+        LaunchedEffect(isAuthorized) {
+            if(!isAuthorized) {
+                navigateToLogin()
+            }
+        }
+
         LaunchedEffect(Unit) {
             updateTopBar(true, false, "Upload Queue")
             setNavArea(NavigationArea.Upload)

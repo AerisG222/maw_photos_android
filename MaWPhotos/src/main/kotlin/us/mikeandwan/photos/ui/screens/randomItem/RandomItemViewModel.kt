@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.datasource.HttpDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
+import us.mikeandwan.photos.domain.guards.AuthGuard
+import us.mikeandwan.photos.domain.guards.GuardStatus
 import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.services.MediaListService
 import us.mikeandwan.photos.ui.screens.random.BaseRandomViewModel
@@ -17,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RandomItemViewModel @Inject constructor(
+    authGuard: AuthGuard,
     randomPhotoRepository: RandomPhotoRepository,
     randomPreferenceRepository: RandomPreferenceRepository,
     val videoPlayerDataSourceFactory: HttpDataSource.Factory,
@@ -59,6 +63,14 @@ class RandomItemViewModel @Inject constructor(
         .getSlideshowIntervalSeconds()
         .map { seconds -> (seconds * 1000).toLong() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
+
+    val isAuthorized = authGuard.status
+        .map {
+            when(it) {
+                is GuardStatus.Failed -> false
+                else -> true
+            }
+        }.stateIn(viewModelScope, WhileSubscribed(5000), true)
 
     init {
         mediaListService.initialize(

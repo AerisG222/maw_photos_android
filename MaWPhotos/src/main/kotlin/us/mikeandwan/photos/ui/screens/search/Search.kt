@@ -51,6 +51,14 @@ fun NavGraphBuilder.searchScreen(
         val vm: SearchViewModel = hiltViewModel()
         val args = backStackEntry.toRoute<SearchRoute>()
 
+        val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
+
+        LaunchedEffect(isAuthorized) {
+            if(!isAuthorized) {
+                navigateToLogin()
+            }
+        }
+
         LaunchedEffect(args.searchTerm) {
             if(args.searchTerm != null) {
                 updateInitialSearchTerm(args.searchTerm)

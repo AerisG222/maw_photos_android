@@ -50,6 +50,7 @@ fun NavGraphBuilder.categoryItemScreen(
         val vm: CategoryItemViewModel = hiltViewModel()
         val args = backStackEntry.toRoute<CategoryItemRoute>()
 
+        val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
         val category by vm.category.collectAsStateWithLifecycle()
         val media by vm.media.collectAsStateWithLifecycle()
         val activeId by vm.activeId.collectAsStateWithLifecycle()
@@ -70,6 +71,12 @@ fun NavGraphBuilder.categoryItemScreen(
             toggleDetails = { vm.toggleShowDetails() },
             saveMediaToShare = { drawable, filename, onComplete -> vm.saveFileToShare(drawable, filename, onComplete) },
         )
+
+        LaunchedEffect(isAuthorized) {
+            if(!isAuthorized) {
+                navigateToLogin()
+            }
+        }
 
         LaunchedEffect(Unit) {
             setNavArea(NavigationArea.Category)

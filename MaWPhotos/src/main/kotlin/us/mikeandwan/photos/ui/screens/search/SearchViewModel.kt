@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.SearchPreferenceRepository
 import us.mikeandwan.photos.domain.SearchRepository
+import us.mikeandwan.photos.domain.guards.AuthGuard
+import us.mikeandwan.photos.domain.guards.GuardStatus
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.SearchSource
@@ -15,6 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
+    authGuard: AuthGuard,
     private val searchRepository: SearchRepository,
     searchPreferenceRepository: SearchPreferenceRepository
 ) : ViewModel() {
@@ -37,6 +41,14 @@ class SearchViewModel @Inject constructor(
     val totalFound = searchRepository
         .totalFound
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+
+    val isAuthorized = authGuard.status
+        .map {
+            when(it) {
+                is GuardStatus.Failed -> false
+                else -> true
+            }
+        }.stateIn(viewModelScope, WhileSubscribed(5000), true)
 
     fun search(term: String) {
         viewModelScope.launch {

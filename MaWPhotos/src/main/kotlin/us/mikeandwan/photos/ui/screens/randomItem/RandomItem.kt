@@ -52,6 +52,8 @@ fun NavGraphBuilder.randomItemScreen(
         val vm: RandomItemViewModel = hiltViewModel()
         val args = backStackEntry.toRoute<RandomItemRoute>()
 
+        val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
+
         // photo list
         val category by vm.category.collectAsStateWithLifecycle()
         val photos by vm.photos.collectAsStateWithLifecycle()
@@ -73,6 +75,12 @@ fun NavGraphBuilder.randomItemScreen(
             toggleDetails = { vm.toggleShowDetails() },
             saveMediaToShare = { drawable, filename, onComplete -> vm.saveFileToShare(drawable, filename, onComplete) },
         )
+
+        LaunchedEffect(isAuthorized) {
+            if(!isAuthorized) {
+                navigateToLogin()
+            }
+        }
 
         LaunchedEffect(photos, args.photoId) {
             if(photos.isNotEmpty() && args.photoId > 0) {
