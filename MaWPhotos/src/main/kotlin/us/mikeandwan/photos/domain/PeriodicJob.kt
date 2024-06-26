@@ -44,12 +44,10 @@ class PeriodicJob<T>(
     }
 
     private fun scheduleNextJob(scope: CoroutineScope, interval: Long) {
-        scope.launch {
-            nextJob = launch {
-                while(true) {
-                    delay(interval)
-                    func().collect { }
-                }
+        nextJob = scope.launch {
+            while(true) {
+                delay(interval)
+                func().collect { }
             }
         }
     }

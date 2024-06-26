@@ -43,7 +43,7 @@ fun NavGraphBuilder.randomScreen(
         LaunchedEffect(Unit) {
             updateTopBar(true, true, "Random")
             setNavArea(NavigationArea.Random)
-            vm.fetch(24)
+            vm.initialFetch(24)
         }
 
         DisposableEffect(Unit) {

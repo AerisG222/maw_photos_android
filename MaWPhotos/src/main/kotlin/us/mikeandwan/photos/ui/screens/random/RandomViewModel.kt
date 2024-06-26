@@ -15,13 +15,13 @@ import javax.inject.Inject
 class RandomViewModel @Inject constructor(
     authGuard: AuthGuard,
     randomPhotoRepository: RandomPhotoRepository,
-    randomPreferenceRepository: RandomPreferenceRepository
+    randomPreferenceRepository: RandomPreferenceRepository,
 ) : BaseRandomViewModel(
     randomPhotoRepository
 ) {
     val gridItemThumbnailSize = randomPreferenceRepository
         .getPhotoGridItemSize()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
+        .stateIn(viewModelScope, WhileSubscribed(5000), GridThumbnailSize.Medium)
 
     val isAuthorized = authGuard.status
         .map {
@@ -30,4 +30,11 @@ class RandomViewModel @Inject constructor(
                 else -> true
             }
         }.stateIn(viewModelScope, WhileSubscribed(5000), true)
+
+    fun initialFetch(count: Int) {
+        // prevent fetching a new full amount after navigating between item and list views
+        if(photos.value.isEmpty()) {
+            fetch(count)
+        }
+    }
 }

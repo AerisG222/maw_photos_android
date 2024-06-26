@@ -3,7 +3,6 @@ package us.mikeandwan.photos.ui.screens.randomItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -93,13 +92,14 @@ fun NavGraphBuilder.randomItemScreen(
             setNavArea(NavigationArea.Random)
         }
 
-        DisposableEffect(Unit) {
-            vm.onResume()
-
-            onDispose {
-                vm.onPause()
-            }
-        }
+        // see baserandomviewmodel to understand why this is currently commented out
+//        DisposableEffect(Unit) {
+//            vm.onResume()
+//
+//            onDispose {
+//                vm.onPause()
+//            }
+//        }
 
         // rating
         val userRating by vm.userRating.collectAsStateWithLifecycle()
