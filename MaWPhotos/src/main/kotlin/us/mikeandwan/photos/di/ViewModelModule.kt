@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import us.mikeandwan.photos.authorization.AuthService
+import us.mikeandwan.photos.domain.ErrorRepository
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.MediaRepository
@@ -80,10 +81,12 @@ class ViewModelModule {
     @Provides
     @ViewModelScoped
     fun provideCategoriesLoadedGuard(
-        mediaCategoryRepository: MediaCategoryRepository
+        mediaCategoryRepository: MediaCategoryRepository,
+        errorRepository: ErrorRepository
     ): CategoriesLoadedGuard {
         return CategoriesLoadedGuard(
-            mediaCategoryRepository
+            mediaCategoryRepository,
+            errorRepository
         )
     }
 }

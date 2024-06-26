@@ -25,6 +25,7 @@ sealed class CategoriesState {
     data object Unknown : CategoriesState()
     data object NotAuthorized : CategoriesState()
     data class InvalidYear(val mostRecentYear: Int) : CategoriesState()
+    data object Error : CategoriesState()
     data class Valid(
         val categories: List<MediaCategory>,
         val refreshStatus: CategoryRefreshStatus,
@@ -51,7 +52,6 @@ class CategoriesViewModel @Inject constructor (
         _year.value = year
     }
 
-    private var isFetchingNewCategories = false
     private var isFetchingCategories = false
 
     val state = combine(
@@ -78,38 +78,25 @@ class CategoriesViewModel @Inject constructor (
             is GuardStatus.Failed -> CategoriesState.NotAuthorized
             is GuardStatus.Passed -> {
                 when(categoriesStatus) {
-                    is GuardStatus.Failed -> {
-                        if (!isFetchingNewCategories) {
-                            isFetchingNewCategories = true
-                            mediaCategoryRepository.getNewCategories()
-                        }
-
-                        CategoriesState.Unknown
-                    }
-                    is GuardStatus.Passed -> {
-                        if (years.isEmpty()) {
-                            CategoriesState.Unknown
-                        } else {
-                            if (years.contains(year)) {
-                                if (categories.isEmpty()) {
-                                    if (!isFetchingCategories) {
-                                        isFetchingCategories = true
-                                        loadCategories(year)
-                                    }
-                                    CategoriesState.Unknown
-                                } else {
-                                    CategoriesState.Valid(
-                                        categories,
-                                        refreshStatus,
-                                        preferences,
-                                        refreshCategories = { refreshCategories(Random.nextInt()) }
-                                    )
+                    is GuardStatus.Failed -> CategoriesState.Error
+                    is GuardStatus.Passed ->
+                        when {
+                            years.isEmpty() -> CategoriesState.Unknown
+                            !years.contains(year) -> CategoriesState.InvalidYear(years.max())
+                            categories.isEmpty() -> {
+                                if (!isFetchingCategories) {
+                                    isFetchingCategories = true
+                                    loadCategories(year)
                                 }
-                            } else {
-                                CategoriesState.InvalidYear(years.max())
+                                CategoriesState.Unknown
                             }
+                            else -> CategoriesState.Valid(
+                                    categories,
+                                    refreshStatus,
+                                    preferences,
+                                    refreshCategories = { refreshCategories(Random.nextInt()) }
+                                )
                         }
-                    }
                     else -> CategoriesState.Unknown
                 }
             }

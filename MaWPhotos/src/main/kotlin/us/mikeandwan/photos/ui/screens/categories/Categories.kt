@@ -70,6 +70,7 @@ fun NavGraphBuilder.categoriesScreen(
                     state as CategoriesState.Valid,
                     onNavigateToCategory
                 )
+            is CategoriesState.Error -> { }
         }
     }
 }
