@@ -37,6 +37,7 @@ fun TopBar(
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
+            scrolledContainerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
