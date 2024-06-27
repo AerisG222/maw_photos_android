@@ -72,6 +72,7 @@ class AuthService(
     }
 
     fun logout() {
+        authStateManager.replace(AuthState())
         _authStatus.value = AuthStatus.RequiresAuthorization
     }
 
