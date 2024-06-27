@@ -131,6 +131,9 @@ class MainActivity : ComponentActivity() {
                                     vm.clearRandomPhotos()
                                     coroutineScope.launch { drawerState.close() }
                                 },
+                                clearSearchHistory = {
+                                    vm.clearSearchHistory()
+                                },
                                 navigateToCategories = {
                                     navController.navigate(CategoriesRoute(mostRecentYear))
                                     coroutineScope.launch { drawerState.close() }
@@ -150,9 +153,6 @@ class MainActivity : ComponentActivity() {
                                 navigateToSearchWithTerm = {
                                     navController.navigate(SearchRoute(it))
                                     coroutineScope.launch { drawerState.close() }
-                                },
-                                clearSearchHistory = {
-                                    vm.clearSearchHistory()
                                 },
                                 navigateToSettings = {
                                     navController.navigate(SettingsRoute)
