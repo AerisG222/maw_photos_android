@@ -34,9 +34,11 @@ fun DetailTabs(
     exifState: ExifState,
     commentState: CommentState
 ) {
-    val tabs = when(activeMedia.type) {
-        MediaType.Photo -> listOf(TabIndex.RATING, TabIndex.COMMENT, TabIndex.EXIF)
-        MediaType.Video -> listOf(TabIndex.RATING, TabIndex.COMMENT)
+    val tabs = remember(activeMedia.type) {
+        when(activeMedia.type) {
+            MediaType.Photo -> listOf(TabIndex.RATING, TabIndex.COMMENT, TabIndex.EXIF)
+            MediaType.Video -> listOf(TabIndex.RATING, TabIndex.COMMENT)
+        }
     }
 
     val pagerState = rememberPagerState(pageCount = { tabs.size })

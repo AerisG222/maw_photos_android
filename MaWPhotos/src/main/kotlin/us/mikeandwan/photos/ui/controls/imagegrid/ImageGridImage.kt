@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -28,10 +29,12 @@ fun <T> ImageGridImage(
     onSelectImage: (ImageGridItem<T>) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val showVideoBadge = when(item.data) {
-        is MediaCategory -> item.data.type == MediaType.Video
-        is Video -> true
-        else -> false
+    val showVideoBadge = remember(item.data) {
+        when(item.data) {
+            is MediaCategory -> item.data.type == MediaType.Video
+            is Video -> true
+            else -> false
+        }
     }
 
     Box {

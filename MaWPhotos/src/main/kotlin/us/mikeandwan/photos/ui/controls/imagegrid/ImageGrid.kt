@@ -5,13 +5,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 
 @Composable
 fun <T> ImageGrid(state: ImageGridState<T>) {
-    val size = getSize(state.thumbnailSize)
+    val size = remember(state.thumbnailSize) { getSize(state.thumbnailSize) }
 
     if(size > 0.dp) {
         LazyVerticalGrid(
@@ -30,7 +31,6 @@ fun <T> ImageGrid(state: ImageGridState<T>) {
     }
 }
 
-@Composable
 fun getSize(size: GridThumbnailSize): Dp {
     return when (size) {
         GridThumbnailSize.ExtraSmall -> 60.dp

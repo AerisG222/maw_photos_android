@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
@@ -57,7 +58,7 @@ fun NavGraphBuilder.aboutScreen(
 fun AboutScreen(
     state: AboutState.Valid
 ) {
-    val tangerine = FontFamily(Font(R.font.tangerine))
+    val tangerine = remember { FontFamily(Font(R.font.tangerine)) }
     val markdownStyle = MaterialTheme.typography.bodyMedium
         .merge(color = MaterialTheme.colorScheme.onSurface)
 

@@ -25,9 +25,8 @@ import us.mikeandwan.photos.R
 @Composable
 fun CommentScreen(commentState: CommentState) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val (newComment, setNewComment) = remember { mutableStateOf("") }
-
     val interactionSource = remember { MutableInteractionSource() }
+    val (newComment, setNewComment) = remember { mutableStateOf("") }
 
     fun addComment() {
         commentState.addComment(newComment)

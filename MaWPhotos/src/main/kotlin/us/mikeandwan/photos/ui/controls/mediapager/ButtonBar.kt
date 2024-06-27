@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
@@ -26,8 +27,13 @@ fun ButtonBar(
     onShare: () -> Unit,
     onViewDetails: () -> Unit
 ) {
-    val slideshowIcon = if(isSlideshowPlaying) R.drawable.ic_stop else R.drawable.ic_play_arrow
     val color = MaterialTheme.colorScheme.onSurface
+    val slideshowIcon = remember(isSlideshowPlaying) {
+        when {
+            isSlideshowPlaying -> R.drawable.ic_stop
+            else -> R.drawable.ic_play_arrow
+        }
+    }
 
     Row(
         horizontalArrangement = Arrangement.Absolute.SpaceAround,

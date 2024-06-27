@@ -11,6 +11,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +25,7 @@ fun CommentTable(
     comments: List<Comment>,
     footer: @Composable () -> Unit
 ) {
-    val fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val fmt = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
     val bgHead = MaterialTheme.colorScheme.surfaceVariant
     val txtHead = MaterialTheme.colorScheme.onSurfaceVariant
     val bgRow = MaterialTheme.colorScheme.surface
