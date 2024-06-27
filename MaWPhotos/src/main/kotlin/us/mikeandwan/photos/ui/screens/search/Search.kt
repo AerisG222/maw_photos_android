@@ -41,7 +41,7 @@ data class SearchRoute (
 )
 
 fun NavGraphBuilder.searchScreen(
-    onNavigateToCategory: (MediaCategory) -> Unit,
+    navigateToCategory: (MediaCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     updateInitialSearchTerm: (String) -> Unit,
@@ -81,7 +81,7 @@ fun NavGraphBuilder.searchScreen(
             totalFound,
             displayType,
             thumbSize,
-            onNavigateToCategory = onNavigateToCategory,
+            onNavigateToCategory = navigateToCategory,
             continueSearch = { vm.continueSearch() }
         )
     }

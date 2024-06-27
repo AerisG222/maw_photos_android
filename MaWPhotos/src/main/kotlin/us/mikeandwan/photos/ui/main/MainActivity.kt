@@ -151,7 +151,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate(SearchRoute(it))
                                     coroutineScope.launch { drawerState.close() }
                                 },
-                                onClearSearchHistory = {
+                                clearSearchHistory = {
                                     vm.clearSearchHistory()
                                 },
                                 navigateToSettings = {
@@ -208,7 +208,7 @@ class MainActivity : ComponentActivity() {
                                 updateTopBar = ::updateTopBar,
                                 setActiveYear = { setActiveYear(it) },
                                 setNavArea = { setNavArea(it) },
-                                onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
+                                navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                                 navigateToCategories = { navController.navigate(CategoriesRoute(it)) }
                             )
@@ -227,7 +227,7 @@ class MainActivity : ComponentActivity() {
                             )
                             randomScreen(
                                 updateTopBar = ::updateTopBar,
-                                onNavigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
+                                navigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
                                 setNavArea = { setNavArea(it) },
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                             )
@@ -241,13 +241,13 @@ class MainActivity : ComponentActivity() {
                             searchScreen(
                                 updateTopBar = ::updateTopBar,
                                 updateInitialSearchTerm = { setTopBarInitialSearchTerm(it) },
-                                onNavigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
+                                navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
                                 setNavArea = { setNavArea(it) },
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                             )
                             settingsScreen(
                                 updateTopBar = ::updateTopBar,
-                                onNavigateToLogin = { navController.navigate(LoginRoute) },
+                                navigateToLogin = { navController.navigate(LoginRoute) },
                                 setNavArea = { setNavArea(it) },
                             )
                             uploadScreen(

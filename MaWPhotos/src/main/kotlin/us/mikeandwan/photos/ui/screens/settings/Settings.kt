@@ -45,7 +45,7 @@ import us.mikeandwan.photos.domain.models.NavigationArea
 object SettingsRoute
 
 fun NavGraphBuilder.settingsScreen(
-    onNavigateToLogin: () -> Unit,
+    navigateToLogin: () -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
@@ -140,7 +140,7 @@ fun NavGraphBuilder.settingsScreen(
             setSearchThumbnailSize = { viewModel.setSearchThumbnailSize(it) },
             logout = {
                 viewModel.logout()
-                onNavigateToLogin()
+                navigateToLogin()
             }
         )
     }

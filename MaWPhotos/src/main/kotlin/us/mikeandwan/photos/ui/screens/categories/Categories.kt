@@ -33,7 +33,7 @@ data class CategoriesRoute (
 )
 
 fun NavGraphBuilder.categoriesScreen(
-    onNavigateToCategory: (MediaCategory) -> Unit,
+    navigateToCategory: (MediaCategory) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setActiveYear: (Int) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
@@ -68,7 +68,7 @@ fun NavGraphBuilder.categoriesScreen(
             is CategoriesState.Valid ->
                 CategoriesScreen(
                     state as CategoriesState.Valid,
-                    onNavigateToCategory
+                    navigateToCategory
                 )
             is CategoriesState.Error -> { }
         }

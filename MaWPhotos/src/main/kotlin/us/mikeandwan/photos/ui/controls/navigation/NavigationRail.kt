@@ -20,7 +20,7 @@ fun NavigationRail(
     years: List<Int>,
     recentSearchTerms: List<SearchHistory>,
     navigateToSearchWithTerm: (String) -> Unit,
-    onClearSearchHistory: () -> Unit,
+    clearSearchHistory: () -> Unit,
     fetchRandomPhotos: (Int) -> Unit,
     clearRandomPhotos: () -> Unit,
     activeYear: Int,
@@ -107,7 +107,7 @@ fun NavigationRail(
                     SearchListMenu(
                         recentSearchTerms = recentSearchTerms,
                         onTermSelected = { term -> navigateToSearchWithTerm(term) },
-                        onClearSearchHistory = { onClearSearchHistory() }
+                        onClearSearchHistory = { clearSearchHistory() }
                     )
                 }
                 else -> { }

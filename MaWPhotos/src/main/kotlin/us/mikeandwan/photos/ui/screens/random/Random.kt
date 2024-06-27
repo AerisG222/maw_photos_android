@@ -22,7 +22,7 @@ import us.mikeandwan.photos.ui.toImageGridItem
 object RandomRoute
 
 fun NavGraphBuilder.randomScreen(
-    onNavigateToPhoto: (Int) -> Unit,
+    navigateToPhoto: (Int) -> Unit,
     updateTopBar : (Boolean, Boolean, String) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToLogin: () -> Unit
@@ -57,7 +57,7 @@ fun NavGraphBuilder.randomScreen(
         RandomScreen(
             photos,
             thumbSize,
-            onPhotoClicked = { onNavigateToPhoto(it.id) }
+            onPhotoClicked = { navigateToPhoto(it.id) }
         )
     }
 }
