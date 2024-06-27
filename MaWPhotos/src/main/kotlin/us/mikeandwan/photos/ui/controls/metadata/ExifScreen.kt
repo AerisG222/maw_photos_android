@@ -19,7 +19,10 @@ fun ExifScreen(
     exifState: ExifState
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
-        itemsIndexed(exifState.exifDisplay) { index, data ->
+        itemsIndexed(
+            exifState.exifDisplay,
+            key = { index, item -> item.first }
+        ) { index, data ->
             val bgColor = if (index % 2 == 0) {
                 MaterialTheme.colorScheme.surfaceVariant
             } else {

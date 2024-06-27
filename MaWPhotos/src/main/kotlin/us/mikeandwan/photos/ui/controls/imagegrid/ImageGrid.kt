@@ -20,7 +20,10 @@ fun <T> ImageGrid(state: ImageGridState<T>) {
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            items(state.gridItems) {
+            items(
+                state.gridItems,
+                key = { item -> item.id }
+            ) {
                 ImageGridImage(
                     item = it,
                     size = size,

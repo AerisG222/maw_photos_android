@@ -14,8 +14,13 @@ fun CategoryList(
     showYear: Boolean,
     onSelectCategory: (MediaCategory) -> Unit
 ) {
-    LazyColumn(Modifier.fillMaxSize()) {
-        itemsIndexed(categories) { index, category ->
+    LazyColumn(
+        Modifier.fillMaxSize()
+    ) {
+        itemsIndexed(
+            categories,
+            key = { index, item -> item.id }
+        ) { index, category ->
             CategoryListItem(
                 category,
                 showYear,

@@ -18,7 +18,10 @@ fun YearListMenu(
     val yearDividerModifier = Modifier.padding(16.dp, 0.dp)
 
     LazyColumn(Modifier.fillMaxSize()) {
-        itemsIndexed(years) { index, year ->
+        itemsIndexed(
+            years,
+            key = { index, item -> item }
+        ) { index, year ->
             YearListItem(
                 year,
                 year == activeYear,

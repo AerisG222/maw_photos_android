@@ -45,7 +45,10 @@ fun SearchListMenu(
             }
         } else {
             LazyColumn {
-                itemsIndexed(recentSearchTerms) { index, term ->
+                itemsIndexed(
+                    recentSearchTerms,
+                    key = { index, item -> item.term }
+                ) { index, term ->
                     SearchListItem(
                         term.term,
                         { newTerm -> onTermSelected(newTerm) }
