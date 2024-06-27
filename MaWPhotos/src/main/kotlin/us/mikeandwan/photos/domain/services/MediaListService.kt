@@ -76,8 +76,8 @@ class MediaListService @Inject constructor (
         }
     }
 
-    fun startSlideshow() { _slideshowJob.start() }
-    fun stopSlideshow() { _slideshowJob.stop() }
+    private fun startSlideshow() { _slideshowJob.start() }
+    private fun stopSlideshow() { _slideshowJob.stop() }
 
     fun toggleShowDetails() {
         if(_showDetailSheet.value) {

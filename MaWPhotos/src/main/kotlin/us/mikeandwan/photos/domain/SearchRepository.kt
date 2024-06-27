@@ -25,7 +25,7 @@ class SearchRepository @Inject constructor(
     }
 
     private val _searchRequest = MutableStateFlow(SearchRequest("", SearchSource.None))
-    val searchRequest = _searchRequest.asStateFlow()
+    private val searchRequest = _searchRequest.asStateFlow()
 
     private val _searchResults = MutableStateFlow<List<SearchResultCategory>>(emptyList())
     val searchResults = _searchResults.asStateFlow()

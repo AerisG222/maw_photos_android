@@ -70,7 +70,7 @@ fun SearchInputField(
                 },
                 trailingIcon =
                 trailingIcon?.let { trailing ->
-                    { Box(Modifier.offset(x = -4.dp)) { trailing() } }
+                    { Box(Modifier.offset(x = (-4).dp)) { trailing() } }
                 },
                 shape = SearchBarDefaults.inputFieldShape,
                 colors = colors,

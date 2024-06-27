@@ -21,7 +21,7 @@ sealed class LoginState {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    val authService: AuthService
+    private val authService: AuthService
 ): ViewModel() {
     val state = authService.authStatus
         .map {

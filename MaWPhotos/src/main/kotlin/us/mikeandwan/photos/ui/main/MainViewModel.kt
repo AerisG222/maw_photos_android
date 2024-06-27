@@ -35,7 +35,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    val authService: AuthService,
+    private val authService: AuthService,
     private val mediaCategoryRepository: MediaCategoryRepository,
     private val fileStorageRepository: FileStorageRepository,
     private val searchRepository: SearchRepository,

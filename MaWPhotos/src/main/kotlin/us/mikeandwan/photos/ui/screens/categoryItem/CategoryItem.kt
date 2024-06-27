@@ -58,7 +58,7 @@ fun NavGraphBuilder.categoryItemScreen(
         val activeMedia by vm.activeMedia.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
-        val photoListState = rememberMediaListState(
+        val mediaListState = rememberMediaListState(
             category,
             media,
             activeId,
@@ -120,22 +120,22 @@ fun NavGraphBuilder.categoryItemScreen(
             addComment = { vm.addComment(it) }
         )
 
-        when(photoListState) {
+        when(mediaListState) {
             is MediaListState.Loading -> Loading()
             is MediaListState.CategoryLoaded -> {
-                LaunchedEffect(photoListState.category) {
-                    updateTopBar(true, true, photoListState.category.name)
+                LaunchedEffect(mediaListState.category) {
+                    updateTopBar(true, true, mediaListState.category.name)
                 }
 
                 Loading()
             }
             is MediaListState.Loaded -> {
-                LaunchedEffect(photoListState.category) {
-                    updateTopBar(true, true, photoListState.category.name)
+                LaunchedEffect(mediaListState.category) {
+                    updateTopBar(true, true, mediaListState.category.name)
                 }
 
                 CategoryItemScreen(
-                    photoListState,
+                    mediaListState,
                     ratingState,
                     exifState,
                     commentState,

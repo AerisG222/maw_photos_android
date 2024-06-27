@@ -7,11 +7,11 @@ import us.mikeandwan.photos.authorization.AuthStatus
 import javax.inject.Inject
 
 class AuthGuard @Inject constructor (
-    private val authService: AuthService
+    authService: AuthService
 ) {
     val status = authService
         .authStatus
-        .map { it ->
+        .map {
             if(it == AuthStatus.Authorized) {
                 GuardStatus.Passed
             } else {
