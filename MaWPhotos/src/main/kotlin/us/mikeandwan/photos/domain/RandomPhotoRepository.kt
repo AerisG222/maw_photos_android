@@ -7,7 +7,7 @@ import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Photo
-import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
+import us.mikeandwan.photos.domain.models.RandomPreference
 import javax.inject.Inject
 
 class RandomPhotoRepository @Inject constructor(
@@ -25,7 +25,7 @@ class RandomPhotoRepository @Inject constructor(
     private val slideshowDurationInMillis = randomPreferenceRepository
         .getSlideshowIntervalSeconds()
         .map { seconds -> (seconds * 1000).toLong() }
-        .stateIn(scope, WhileSubscribed(5000), (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
+        .stateIn(scope, WhileSubscribed(5000), (RandomPreference().slideshowIntervalSeconds * 1000).toLong())
 
     private val _photos = MutableStateFlow(emptyList<Photo>())
     val photos = _photos.asStateFlow()

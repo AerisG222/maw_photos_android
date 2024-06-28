@@ -1,11 +1,6 @@
 package us.mikeandwan.photos.domain.models
 
 data class RandomPreference (
-    val slideshowIntervalSeconds: Int,
-    val gridThumbnailSize: GridThumbnailSize
-)
-
-val RANDOM_PREFERENCE_DEFAULT = RandomPreference(
-    3,
-    GridThumbnailSize.Unspecified
+    val slideshowIntervalSeconds: Int = 3,
+    val gridThumbnailSize: GridThumbnailSize = GridThumbnailSize.Unspecified
 )

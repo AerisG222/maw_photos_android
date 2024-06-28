@@ -12,7 +12,6 @@ import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.guards.AuthGuard
 import us.mikeandwan.photos.domain.guards.CategoriesLoadedGuard
 import us.mikeandwan.photos.domain.guards.GuardStatus
-import us.mikeandwan.photos.domain.models.CATEGORY_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.models.CategoryRefreshStatus
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.MediaCategory
@@ -46,7 +45,7 @@ class CategoriesViewModel @Inject constructor (
     private val _refreshStatus = MutableStateFlow(CategoryRefreshStatus(0, false, null))
     private val _preferences = categoryPreferenceRepository
         .getCategoryPreference()
-        .stateIn(viewModelScope, WhileSubscribed(5000), CATEGORY_PREFERENCE_DEFAULT)
+        .stateIn(viewModelScope, WhileSubscribed(5000), CategoryPreference())
 
     fun setYear(year: Int) {
         _year.value = year

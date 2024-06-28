@@ -11,7 +11,7 @@ import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
 import us.mikeandwan.photos.domain.guards.AuthGuard
 import us.mikeandwan.photos.domain.guards.GuardStatus
-import us.mikeandwan.photos.domain.models.RANDOM_PREFERENCE_DEFAULT
+import us.mikeandwan.photos.domain.models.RandomPreference
 import us.mikeandwan.photos.domain.services.MediaListService
 import us.mikeandwan.photos.ui.screens.random.BaseRandomViewModel
 import java.io.File
@@ -61,7 +61,7 @@ class RandomItemViewModel @Inject constructor(
     private val slideshowDurationInMillis = randomPreferenceRepository
         .getSlideshowIntervalSeconds()
         .map { seconds -> (seconds * 1000).toLong() }
-        .stateIn(viewModelScope, WhileSubscribed(5000), (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
+        .stateIn(viewModelScope, WhileSubscribed(5000), (RandomPreference().slideshowIntervalSeconds * 1000).toLong())
 
     val isAuthorized = authGuard.status
         .map {

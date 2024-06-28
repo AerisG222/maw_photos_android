@@ -7,11 +7,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import us.mikeandwan.photos.domain.models.MediaPreference
 import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.MediaPreferenceRepository
 import us.mikeandwan.photos.domain.guards.AuthGuard
 import us.mikeandwan.photos.domain.guards.GuardStatus
-import us.mikeandwan.photos.domain.models.MEDIA_PREFERENCE_DEFAULT
 import us.mikeandwan.photos.domain.services.MediaListService
 import us.mikeandwan.photos.ui.screens.category.BaseCategoryViewModel
 import java.io.File
@@ -61,7 +61,7 @@ class CategoryItemViewModel @Inject constructor (
     private val slideshowDurationInMillis = mediaPreferenceRepository
         .getSlideshowIntervalSeconds()
         .map { seconds -> (seconds * 1000).toLong() }
-        .stateIn(viewModelScope, WhileSubscribed(5000), (MEDIA_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
+        .stateIn(viewModelScope, WhileSubscribed(5000), (MediaPreference().slideshowIntervalSeconds * 1000).toLong())
 
     val isAuthorized = authGuard.status
         .map {
