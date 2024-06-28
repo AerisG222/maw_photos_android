@@ -93,6 +93,8 @@ fun CategoriesScreen(
     LaunchedEffect(state.refreshStatus) {
         if(state.refreshStatus.message != null) {
             snackbarHostState.showSnackbar(state.refreshStatus.message)
+
+            state.clearRefreshStatus()
         }
     }
 

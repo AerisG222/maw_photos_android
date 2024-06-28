@@ -29,7 +29,8 @@ sealed class CategoriesState {
         val categories: List<MediaCategory>,
         val refreshStatus: CategoryRefreshStatus,
         val preferences: CategoryPreference,
-        val refreshCategories: () -> Unit
+        val refreshCategories: () -> Unit,
+        val clearRefreshStatus: () -> Unit
     ) : CategoriesState()
 }
 
@@ -93,7 +94,10 @@ class CategoriesViewModel @Inject constructor (
                                     categories,
                                     refreshStatus,
                                     preferences,
-                                    refreshCategories = { refreshCategories(Random.nextInt()) }
+                                    refreshCategories = { refreshCategories(Random.nextInt()) },
+                                    clearRefreshStatus = {
+                                        _refreshStatus.value = CategoryRefreshStatus(Random.nextInt(), false, null)
+                                    }
                                 )
                         }
                     else -> CategoriesState.Unknown
