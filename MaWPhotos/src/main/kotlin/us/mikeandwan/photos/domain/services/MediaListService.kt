@@ -48,12 +48,8 @@ class MediaListService @Inject constructor (
     private val _activeIndex = MutableStateFlow(-1)
     val activeIndex = _activeIndex.asStateFlow()
 
-    val activeMedia = _media.combine(activeIndex) { photos, index ->
-        if(index >= 0 && index < photos.size) {
-            photos[index]
-        } else {
-            null
-        }
+    val activeMedia = combine(_media, activeIndex) { media, index ->
+        media.getOrNull(index)
     }.stateIn(scope, WhileSubscribed(5000), null)
 
     val activeId = activeMedia
@@ -198,11 +194,13 @@ class MediaListService @Inject constructor (
         }
     }
 
-    private fun moveNext() = flow<Unit>{
-        if(activeIndex.value >= _media.value.size) {
-            stopSlideshow()
+    private fun moveNext() = flow<Unit> {
+        val nextIndex = activeIndex.value + 1
+
+        if(nextIndex < _media.value.size) {
+            setActiveIndex(nextIndex)
         } else {
-            setActiveIndex(activeIndex.value + 1)
+            stopSlideshow()
         }
     }
 }
