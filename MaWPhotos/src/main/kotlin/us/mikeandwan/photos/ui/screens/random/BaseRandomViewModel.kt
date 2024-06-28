@@ -2,17 +2,13 @@ package us.mikeandwan.photos.ui.screens.random
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 
 abstract class BaseRandomViewModel (
     private val randomPhotoRepository: RandomPhotoRepository
 ): ViewModel() {
-    val photos = randomPhotoRepository
-        .photos
-        .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
+    val photos = randomPhotoRepository.photos
 
     fun fetch(count: Int) {
         viewModelScope.launch {
