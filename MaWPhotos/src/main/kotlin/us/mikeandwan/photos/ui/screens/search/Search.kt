@@ -33,6 +33,7 @@ import us.mikeandwan.photos.domain.models.MediaCategory
 import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import us.mikeandwan.photos.ui.toImageGridItem
 
 @Serializable
@@ -42,9 +43,8 @@ data class SearchRoute (
 
 fun NavGraphBuilder.searchScreen(
     navigateToCategory: (MediaCategory) -> Unit,
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
-    updateInitialSearchTerm: (String) -> Unit,
     navigateToLogin: () -> Unit
 ) {
     composable<SearchRoute> { backStackEntry ->
@@ -52,6 +52,7 @@ fun NavGraphBuilder.searchScreen(
         val args = backStackEntry.toRoute<SearchRoute>()
 
         val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
+        val activeTerm by vm.activeTerm.collectAsStateWithLifecycle()
 
         LaunchedEffect(isAuthorized) {
             if(!isAuthorized) {
@@ -60,15 +61,25 @@ fun NavGraphBuilder.searchScreen(
         }
 
         LaunchedEffect(args.searchTerm) {
-            if(args.searchTerm != null) {
-                updateInitialSearchTerm(args.searchTerm)
-                vm.search(args.searchTerm)
-            }
-        }
-
-        LaunchedEffect(Unit) {
-            updateTopBar(true, true, "Search")
             setNavArea(NavigationArea.Search)
+
+            var term = args.searchTerm
+
+            if(term.isNullOrBlank()) {
+                // incoming term is blank, then set to the one in the view model / repository
+                // as it will also contain the results from the last query
+                term = activeTerm
+            } else {
+                // for new terms, make sure we execute a search to autopopulate the list
+                vm.search(term)
+            }
+
+            updateTopBar(
+                TopBarState().copy(
+                    showSearch = true,
+                    initialSearchTerm = term
+                )
+            )
         }
 
         val results by vm.searchResultsAsCategories.collectAsStateWithLifecycle()

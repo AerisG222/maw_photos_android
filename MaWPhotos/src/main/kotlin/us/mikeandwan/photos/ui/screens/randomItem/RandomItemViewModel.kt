@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable
 import androidx.lifecycle.viewModelScope
 import androidx.media3.datasource.HttpDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -62,7 +61,7 @@ class RandomItemViewModel @Inject constructor(
     private val slideshowDurationInMillis = randomPreferenceRepository
         .getSlideshowIntervalSeconds()
         .map { seconds -> (seconds * 1000).toLong() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
+        .stateIn(viewModelScope, WhileSubscribed(5000), (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
 
     val isAuthorized = authGuard.status
         .map {

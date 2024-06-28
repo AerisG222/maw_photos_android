@@ -13,7 +13,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -28,8 +30,11 @@ import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.SearchRepository
 import us.mikeandwan.photos.domain.models.ErrorMessage
+import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import us.mikeandwan.photos.workers.UploadWorker
 import java.io.File
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -42,9 +47,22 @@ class MainViewModel @Inject constructor(
     private val randomPhotoRepository: RandomPhotoRepository,
     errorRepository: ErrorRepository
 ): ViewModel() {
-    val mostRecentYear = mediaCategoryRepository.getMostRecentYear()
+    val mostRecentYear = mediaCategoryRepository
+        .getMostRecentYear()
+        .filter { it != null }
+        .map { it!! }
+        .stateIn(viewModelScope, WhileSubscribed(5000), LocalDate.now().year)
 
     val years = mediaCategoryRepository.getYears()
+
+    private val _activeYear = MutableStateFlow(-1)
+    val activeYear = _activeYear.asStateFlow()
+
+    private val _navArea = MutableStateFlow(NavigationArea.Category)
+    val navArea = _navArea.asStateFlow()
+
+    private val _topBarState = MutableStateFlow(TopBarState())
+    val topBarState = _topBarState.asStateFlow()
 
     val errorsToDisplay = errorRepository.error
         .filter { it is ErrorMessage.Display }
@@ -52,7 +70,19 @@ class MainViewModel @Inject constructor(
 
     val recentSearchTerms = searchRepository
         .getSearchHistory()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
+
+    fun setNavArea(area: NavigationArea) {
+        _navArea.value = area
+    }
+
+    fun updateTopBar(nextState: TopBarState) {
+        _topBarState.value = nextState
+    }
+
+    fun setActiveYear(year: Int) {
+        _activeYear.value = year
+    }
 
     fun clearSearchHistory() {
         viewModelScope.launch {

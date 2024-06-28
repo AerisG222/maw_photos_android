@@ -43,11 +43,11 @@ class CategoryViewModel @Inject constructor (
 ) {
     private val gridItems = media
         .map { items -> items.map { it.toImageGridItem() } }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
 
     private val gridItemThumbnailSize = mediaPreferenceRepository
         .getPhotoGridItemSize()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Unspecified)
+        .stateIn(viewModelScope, WhileSubscribed(5000), GridThumbnailSize.Unspecified)
 
     fun initState(mediaType: String, categoryId: Int) {
         val type = MediaType.valueOf(mediaType)

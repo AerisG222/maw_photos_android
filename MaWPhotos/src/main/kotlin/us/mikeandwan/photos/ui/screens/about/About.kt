@@ -30,12 +30,13 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.logo.Logo
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 
 @Serializable
 object AboutRoute
 
 fun NavGraphBuilder.aboutScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
     composable<AboutRoute> {
@@ -43,8 +44,13 @@ fun NavGraphBuilder.aboutScreen(
         val state by vm.state.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
-            updateTopBar(true, false, "About")
             setNavArea(NavigationArea.About)
+            updateTopBar(
+                TopBarState().copy(
+                    showAppIcon = false,
+                    title = "About"
+                )
+            )
         }
 
         when(state) {

@@ -21,14 +21,19 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import us.mikeandwan.photos.R
 
+data class TopBarState(
+    var show: Boolean = true,
+    var showAppIcon: Boolean = true,
+    var title: String = "",
+    var initialSearchTerm : String = "",
+    var showSearch : Boolean = false
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
-    showAppIcon: Boolean,
-    title: String,
-    initialSearchTerm: String,
-    showSearch: Boolean,
+    state: TopBarState,
     onExpandNavMenu: () -> Unit,
     onBackClicked: () -> Unit,
     onSearch: (String) -> Unit
@@ -41,26 +46,26 @@ fun TopBar(
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
-            if(showSearch) {
+            if(state.showSearch) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(0.dp)
                 ) {
                     TopSearchBar(
-                        initialSearchTerm,
+                        state.initialSearchTerm,
                         onSearch
                     )
                 }
             } else {
                 Text(
-                    text = title,
+                    text = state.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
         },
         navigationIcon = {
-            if(showAppIcon) {
+            if(state.showAppIcon) {
                 AsyncImage(
                     model = R.drawable.ic_launch,
                     contentDescription = stringResource(R.string.application_menu_icon_description),

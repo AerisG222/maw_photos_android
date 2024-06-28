@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -54,11 +54,11 @@ class MediaListService @Inject constructor (
         } else {
             null
         }
-    }.stateIn(scope, SharingStarted.Eagerly, null)
+    }.stateIn(scope, WhileSubscribed(5000), null)
 
     val activeId = activeMedia
         .map { photo -> photo?.id ?: -1 }
-        .stateIn(scope, SharingStarted.Eagerly, -1)
+        .stateIn(scope, WhileSubscribed(5000), -1)
 
     fun setActiveIndex(index: Int) {
         _activeIndex.value = index

@@ -19,8 +19,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -32,12 +30,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigation.NavigationRail
 import us.mikeandwan.photos.ui.controls.topbar.TopBar
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import us.mikeandwan.photos.ui.screens.about.AboutRoute
 import us.mikeandwan.photos.ui.screens.about.aboutScreen
 import us.mikeandwan.photos.ui.screens.categories.CategoriesRoute
@@ -59,7 +56,6 @@ import us.mikeandwan.photos.ui.screens.settings.settingsScreen
 import us.mikeandwan.photos.ui.screens.upload.UploadRoute
 import us.mikeandwan.photos.ui.screens.upload.uploadScreen
 import us.mikeandwan.photos.ui.theme.AppTheme
-import java.time.LocalDate
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -76,42 +72,40 @@ class MainActivity : ComponentActivity() {
 
             val coroutineScope = rememberCoroutineScope()
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+            val snackbarHostState = remember { SnackbarHostState() }
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val years by vm.years.collectAsStateWithLifecycle(initialValue = emptyList())
             val recentSearchTerms by vm.recentSearchTerms.collectAsStateWithLifecycle(initialValue = emptyList())
+            val navArea by vm.navArea.collectAsStateWithLifecycle()
+            val topBarState by vm.topBarState.collectAsStateWithLifecycle()
+            val activeYear by vm.activeYear.collectAsStateWithLifecycle()
+            val mostRecentYear by vm.mostRecentYear.collectAsStateWithLifecycle()
 
-            val snackbarHostState = remember { SnackbarHostState() }
-            val (navArea, setNavArea) = remember { mutableStateOf(NavigationArea.Category) }
-            val (topBarDoShow, setTopBarDoShow) = remember { mutableStateOf(true) }
-            val (topBarTitle, setTopBarTitle) = remember { mutableStateOf("") }
-            val (topBarInitialSearchTerm, setTopBarInitialSearchTerm) = remember { mutableStateOf("") }
-            val (topBarShowAppIcon, setTopBarShowAppIcon) = remember { mutableStateOf(false) }
-            val (activeYear, setActiveYear) = remember { mutableIntStateOf(years.firstOrNull() ?: 0) }
+            val enableDrawerGestures = remember(topBarState) { topBarState.show && topBarState.showAppIcon }
 
             LaunchedEffect(Unit) {
+                handleIntent(activity.intent ?: Intent(), vm, navController)
+
                 vm.errorsToDisplay.collect {
                     snackbarHostState.showSnackbar(it.message)
                 }
             }
 
-            fun updateTopBar(show: Boolean, showAppIcon: Boolean, title: String) {
-                setTopBarDoShow(show)
-                setTopBarShowAppIcon(showAppIcon)
-                setTopBarTitle(title)
+            fun updateTopBar(nextState: TopBarState) {
+                vm.updateTopBar(nextState)
             }
 
-            val mostRecentYear by vm.mostRecentYear
-                .filter { it != null }
-                .map { it!! }
-                .collectAsStateWithLifecycle(initialValue = LocalDate.now().year)
+            fun setNavArea(area: NavigationArea) {
+                vm.setNavArea(area)
+            }
 
-            LaunchedEffect(Unit) {
-                handleIntent(activity.intent ?: Intent(), vm, navController)
+            fun setActiveYear(year: Int) {
+                vm.setActiveYear(year)
             }
 
             AppTheme {
                 ModalNavigationDrawer(
-                    gesturesEnabled = navArea != NavigationArea.Login,
+                    gesturesEnabled = enableDrawerGestures,
                     drawerState = drawerState,
                     drawerContent = {
                         ModalDrawerSheet(
@@ -173,13 +167,10 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
-                            if (topBarDoShow) {
+                            if (topBarState.show) {
                                 TopBar(
                                     scrollBehavior,
-                                    initialSearchTerm = topBarInitialSearchTerm,
-                                    showSearch = navArea == NavigationArea.Search,
-                                    title = topBarTitle,
-                                    showAppIcon = topBarShowAppIcon,
+                                    state = topBarState,
                                     onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
                                     onBackClicked = { navController.navigateUp() },
                                     onSearch = { navController.navigate(SearchRoute(it)) },
@@ -197,24 +188,24 @@ class MainActivity : ComponentActivity() {
                         ) {
                             loginScreen(
                                 updateTopBar = ::updateTopBar,
-                                setNavArea = { setNavArea(it) },
+                                setNavArea = ::setNavArea,
                                 navigateAfterLogin = { navController.popBackStack() }
                             )
                             aboutScreen(
                                 updateTopBar = ::updateTopBar,
-                                setNavArea = { setNavArea(it) }
+                                setNavArea = ::setNavArea
                             )
                             categoriesScreen(
                                 updateTopBar = ::updateTopBar,
-                                setActiveYear = { setActiveYear(it) },
-                                setNavArea = { setNavArea(it) },
+                                setNavArea = ::setNavArea,
+                                setActiveYear = ::setActiveYear,
                                 navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                                 navigateToCategories = { navController.navigate(CategoriesRoute(it)) }
                             )
                             categoryScreen(
                                 updateTopBar = ::updateTopBar,
-                                setNavArea = { setNavArea(it) },
+                                setNavArea = ::setNavArea,
                                 navigateToMedia = {
                                     navController.navigate(CategoryItemRoute(it.type.name, it.categoryId, it.id))
                                 },
@@ -222,37 +213,36 @@ class MainActivity : ComponentActivity() {
                             )
                             categoryItemScreen(
                                 updateTopBar = ::updateTopBar,
-                                setNavArea = { setNavArea(it) },
+                                setNavArea = ::setNavArea,
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                             )
                             randomScreen(
                                 updateTopBar = ::updateTopBar,
+                                setNavArea = ::setNavArea,
                                 navigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
-                                setNavArea = { setNavArea(it) },
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                             )
                             randomItemScreen(
                                 updateTopBar = ::updateTopBar,
-                                setNavArea = { setNavArea(it) },
+                                setNavArea = ::setNavArea,
                                 navigateToYear = { navController.navigate(CategoriesRoute(it)) },
                                 navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                             )
                             searchScreen(
                                 updateTopBar = ::updateTopBar,
-                                updateInitialSearchTerm = { setTopBarInitialSearchTerm(it) },
+                                setNavArea = ::setNavArea,
                                 navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
-                                setNavArea = { setNavArea(it) },
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                             )
                             settingsScreen(
                                 updateTopBar = ::updateTopBar,
+                                setNavArea = ::setNavArea,
                                 navigateToLogin = { navController.navigate(LoginRoute) },
-                                setNavArea = { setNavArea(it) },
                             )
                             uploadScreen(
                                 updateTopBar = ::updateTopBar,
-                                setNavArea = { setNavArea(it) },
+                                setNavArea = ::setNavArea,
                                 navigateToLogin = { navController.navigate(LoginRoute) },
                             )
                         }

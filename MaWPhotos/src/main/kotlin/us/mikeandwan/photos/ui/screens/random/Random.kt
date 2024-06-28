@@ -16,6 +16,7 @@ import us.mikeandwan.photos.domain.models.Photo
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import us.mikeandwan.photos.ui.toImageGridItem
 
 @Serializable
@@ -23,7 +24,7 @@ object RandomRoute
 
 fun NavGraphBuilder.randomScreen(
     navigateToPhoto: (Int) -> Unit,
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToLogin: () -> Unit
 ) {
@@ -41,8 +42,14 @@ fun NavGraphBuilder.randomScreen(
         }
 
         LaunchedEffect(Unit) {
-            updateTopBar(true, true, "Random")
             setNavArea(NavigationArea.Random)
+
+            updateTopBar(
+                TopBarState().copy(
+                    title = "Random"
+                )
+            )
+
             vm.initialFetch(24)
         }
 

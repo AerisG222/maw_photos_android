@@ -25,6 +25,7 @@ import us.mikeandwan.photos.ui.controls.categorylist.CategoryList
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import us.mikeandwan.photos.ui.controls.loading.Loading
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import us.mikeandwan.photos.ui.toImageGridItem
 
 @Serializable
@@ -34,7 +35,7 @@ data class CategoriesRoute (
 
 fun NavGraphBuilder.categoriesScreen(
     navigateToCategory: (MediaCategory) -> Unit,
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setActiveYear: (Int) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToLogin: () -> Unit,
@@ -51,8 +52,13 @@ fun NavGraphBuilder.categoriesScreen(
 
         LaunchedEffect(args.year) {
             vm.setYear(args.year)
-            updateTopBar(true, true, args.year.toString())
             setActiveYear(args.year)
+
+            updateTopBar(
+                TopBarState().copy(
+                    title = args.year.toString()
+                )
+            )
         }
 
         when(state) {

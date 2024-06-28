@@ -30,12 +30,13 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.logo.Logo
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 
 @Serializable
 object LoginRoute
 
 fun NavGraphBuilder.loginScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateAfterLogin: () -> Unit
 ) {
@@ -44,7 +45,12 @@ fun NavGraphBuilder.loginScreen(
         val state by vm.state.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
-            updateTopBar(false, true, "Login")
+            updateTopBar(
+                TopBarState().copy(
+                    show = false
+                )
+            )
+
             setNavArea(NavigationArea.Login)
         }
 

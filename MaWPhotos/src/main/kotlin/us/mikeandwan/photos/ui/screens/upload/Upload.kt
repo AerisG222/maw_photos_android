@@ -24,13 +24,14 @@ import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGridItem
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import java.io.File
 
 @Serializable
 object UploadRoute
 
 fun NavGraphBuilder.uploadScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToLogin: () -> Unit
 ) {
@@ -47,8 +48,14 @@ fun NavGraphBuilder.uploadScreen(
         }
 
         LaunchedEffect(Unit) {
-            updateTopBar(true, false, "Upload Queue")
             setNavArea(NavigationArea.Upload)
+
+            updateTopBar(
+                TopBarState().copy(
+                    showAppIcon = false,
+                    title = "Upload Queue"
+                )
+            )
         }
 
         UploadScreen(

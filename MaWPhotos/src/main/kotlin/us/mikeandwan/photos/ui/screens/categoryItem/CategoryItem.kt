@@ -31,6 +31,7 @@ import us.mikeandwan.photos.ui.controls.mediapager.ButtonBar
 import us.mikeandwan.photos.ui.controls.mediapager.OverlayPositionCount
 import us.mikeandwan.photos.ui.controls.mediapager.MediaPager
 import us.mikeandwan.photos.ui.controls.mediapager.rememberRotation
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import us.mikeandwan.photos.ui.rememberMediaListState
 import us.mikeandwan.photos.ui.shareMedia
 
@@ -42,7 +43,7 @@ data class CategoryItemRoute (
 )
 
 fun NavGraphBuilder.categoryItemScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToLogin: () -> Unit
 ) {
@@ -124,14 +125,22 @@ fun NavGraphBuilder.categoryItemScreen(
             is MediaListState.Loading -> Loading()
             is MediaListState.CategoryLoaded -> {
                 LaunchedEffect(mediaListState.category) {
-                    updateTopBar(true, true, mediaListState.category.name)
+                    updateTopBar(
+                        TopBarState().copy(
+                            title = mediaListState.category.name
+                        )
+                    )
                 }
 
                 Loading()
             }
             is MediaListState.Loaded -> {
                 LaunchedEffect(mediaListState.category) {
-                    updateTopBar(true, true, mediaListState.category.name)
+                    updateTopBar(
+                        TopBarState().copy(
+                            title = mediaListState.category.name
+                        )
+                    )
                 }
 
                 CategoryItemScreen(

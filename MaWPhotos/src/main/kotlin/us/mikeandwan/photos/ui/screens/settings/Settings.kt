@@ -40,13 +40,14 @@ import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.NavigationArea
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 
 @Serializable
 object SettingsRoute
 
 fun NavGraphBuilder.settingsScreen(
     navigateToLogin: () -> Unit,
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit
 ) {
     composable<SettingsRoute> {
@@ -71,8 +72,13 @@ fun NavGraphBuilder.settingsScreen(
         val searchThumbnailSize by viewModel.searchThumbnailSize.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
-            updateTopBar(true, false, "Settings")
             setNavArea(NavigationArea.Settings)
+            updateTopBar(
+                TopBarState().copy(
+                    showAppIcon = false,
+                    title = "Settings"
+                )
+            )
         }
 
         fun areNotificationsPermitted(): Boolean {

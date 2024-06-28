@@ -2,6 +2,7 @@ package us.mikeandwan.photos.domain
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
@@ -24,7 +25,7 @@ class RandomPhotoRepository @Inject constructor(
     private val slideshowDurationInMillis = randomPreferenceRepository
         .getSlideshowIntervalSeconds()
         .map { seconds -> (seconds * 1000).toLong() }
-        .stateIn(scope, SharingStarted.Eagerly, (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
+        .stateIn(scope, WhileSubscribed(5000), (RANDOM_PREFERENCE_DEFAULT.slideshowIntervalSeconds * 1000).toLong())
 
     private val _photos = MutableStateFlow(emptyList<Photo>())
     val photos = _photos.asStateFlow()

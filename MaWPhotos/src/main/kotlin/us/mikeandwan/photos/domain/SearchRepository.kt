@@ -30,6 +30,9 @@ class SearchRepository @Inject constructor(
     private val _searchResults = MutableStateFlow<List<SearchResultCategory>>(emptyList())
     val searchResults = _searchResults.asStateFlow()
 
+    private val _activeSearchTerm = MutableStateFlow("")
+    val activeSearchTerm = _activeSearchTerm.asStateFlow()
+
     private val _totalFound = MutableStateFlow(0)
     val totalFound = _totalFound.asStateFlow()
 
@@ -48,6 +51,7 @@ class SearchRepository @Inject constructor(
         val currentQuery = searchRequest.value.query
 
         if(query.isNotBlank() && !currentQuery.equals(query, true)) {
+            _activeSearchTerm.value = query
             _searchResults.value = emptyList()
             _searchRequest.value = SearchRequest(query, searchSource)
             _isSearching.value = true

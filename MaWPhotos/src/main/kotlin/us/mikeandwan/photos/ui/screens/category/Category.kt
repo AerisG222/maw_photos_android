@@ -14,6 +14,7 @@ import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.imagegrid.ImageGrid
 import us.mikeandwan.photos.ui.controls.imagegrid.rememberImageGridState
 import us.mikeandwan.photos.ui.controls.loading.Loading
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 
 @Serializable
 data class CategoryRoute (
@@ -22,7 +23,7 @@ data class CategoryRoute (
 )
 
 fun NavGraphBuilder.categoryScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToMedia: (Media) -> Unit,
     navigateToLogin: () -> Unit
@@ -51,14 +52,22 @@ fun NavGraphBuilder.categoryScreen(
                 val s = state as CategoryState.CategoryLoaded
 
                 LaunchedEffect(s.category) {
-                    updateTopBar(true, true, s.category.name)
+                    updateTopBar(
+                        TopBarState().copy(
+                            title = s.category.name
+                        )
+                    )
                 }
             }
             is CategoryState.Loaded -> {
                 val s = state as CategoryState.Loaded
 
                 LaunchedEffect(s.category) {
-                    updateTopBar(true, true, s.category.name)
+                    updateTopBar(
+                        TopBarState().copy(
+                            title = s.category.name
+                        )
+                    )
                 }
 
                 CategoryScreen(

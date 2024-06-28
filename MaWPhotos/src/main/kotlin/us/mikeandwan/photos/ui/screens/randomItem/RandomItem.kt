@@ -33,6 +33,7 @@ import us.mikeandwan.photos.ui.controls.mediapager.MediaPager
 import us.mikeandwan.photos.ui.controls.mediapager.rememberRotation
 import us.mikeandwan.photos.ui.shareMedia
 import us.mikeandwan.photos.ui.controls.scaffolds.ItemPagerScaffold
+import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import us.mikeandwan.photos.ui.rememberMediaListState
 
 @Serializable
@@ -41,7 +42,7 @@ data class RandomItemRoute (
 )
 
 fun NavGraphBuilder.randomItemScreen(
-    updateTopBar : (Boolean, Boolean, String) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
     setNavArea: (NavigationArea) -> Unit,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (MediaCategory) -> Unit,
@@ -88,8 +89,12 @@ fun NavGraphBuilder.randomItemScreen(
         }
 
         LaunchedEffect(Unit) {
-            updateTopBar(true, true, "Random")
             setNavArea(NavigationArea.Random)
+            updateTopBar(
+                TopBarState().copy(
+                    title = "Random"
+                )
+            )
         }
 
         // see baserandomviewmodel to understand why this is currently commented out

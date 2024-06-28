@@ -22,25 +22,28 @@ class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     searchPreferenceRepository: SearchPreferenceRepository
 ) : ViewModel() {
+    val activeTerm = searchRepository.activeSearchTerm
+        .stateIn(viewModelScope, WhileSubscribed(5000), "")
+
     private val searchResults = searchRepository
         .searchResults
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
 
     val searchResultsAsCategories = searchResults
         .map { results -> results.map { it.toDomainMediaCategory() }}
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
 
     val displayType = searchPreferenceRepository
         .getSearchDisplayType()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, CategoryDisplayType.Unspecified)
+        .stateIn(viewModelScope, WhileSubscribed(5000), CategoryDisplayType.Unspecified)
 
     val gridItemThumbnailSize = searchPreferenceRepository
         .getSearchGridItemSize()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
+        .stateIn(viewModelScope, WhileSubscribed(5000), GridThumbnailSize.Medium)
 
     val totalFound = searchRepository
         .totalFound
-        .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+        .stateIn(viewModelScope, WhileSubscribed(5000), 0)
 
     val isAuthorized = authGuard.status
         .map {

@@ -3,7 +3,7 @@ package us.mikeandwan.photos.ui.screens.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.authorization.AuthService
@@ -29,47 +29,47 @@ class SettingsViewModel @Inject constructor (
 ): ViewModel() {
     val notificationDoNotify = notificationPreferenceRepository
         .getDoNotify()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+        .stateIn(viewModelScope, WhileSubscribed(5000), false)
 
     val notificationDoVibrate = notificationPreferenceRepository
         .getDoVibrate()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+        .stateIn(viewModelScope, WhileSubscribed(5000), true)
 
     val categoryDisplayType = categoryPreferenceRepository
         .getCategoryDisplayType()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, CategoryDisplayType.Grid)
+        .stateIn(viewModelScope, WhileSubscribed(5000), CategoryDisplayType.Grid)
 
     val categoryThumbnailSize = categoryPreferenceRepository
         .getCategoryGridItemSize()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
+        .stateIn(viewModelScope, WhileSubscribed(5000), GridThumbnailSize.Medium)
 
     val photoSlideshowInterval = mediaPreferenceRepository
         .getSlideshowIntervalSeconds()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, 3)
+        .stateIn(viewModelScope, WhileSubscribed(5000), 3)
 
     val photoThumbnailSize = mediaPreferenceRepository
         .getPhotoGridItemSize()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
+        .stateIn(viewModelScope, WhileSubscribed(5000), GridThumbnailSize.Medium)
 
     val randomSlideshowInterval = randomPreferenceRepository
         .getSlideshowIntervalSeconds()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, 3)
+        .stateIn(viewModelScope, WhileSubscribed(5000), 3)
 
     val randomThumbnailSize = randomPreferenceRepository
         .getPhotoGridItemSize()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
+        .stateIn(viewModelScope, WhileSubscribed(5000), GridThumbnailSize.Medium)
 
     val searchQueryCount = searchPreferenceRepository
         .getSearchesToSaveCount()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, 20)
+        .stateIn(viewModelScope, WhileSubscribed(5000), 20)
 
     val searchDisplayType = searchPreferenceRepository
         .getSearchDisplayType()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, CategoryDisplayType.Grid)
+        .stateIn(viewModelScope, WhileSubscribed(5000), CategoryDisplayType.Grid)
 
     val searchThumbnailSize = searchPreferenceRepository
         .getSearchGridItemSize()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, GridThumbnailSize.Medium)
+        .stateIn(viewModelScope, WhileSubscribed(5000), GridThumbnailSize.Medium)
 
     fun setNotificationDoNotify(doNotify: Boolean) {
         viewModelScope.launch {
