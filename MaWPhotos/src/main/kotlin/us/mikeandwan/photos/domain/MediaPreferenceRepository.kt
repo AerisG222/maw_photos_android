@@ -10,12 +10,16 @@ import javax.inject.Inject
 class MediaPreferenceRepository @Inject constructor (
     private val dao: MediaPreferenceDao
 ) {
+    companion object {
+        private const val PREFERENCE_ID = 1
+    }
+
     fun getSlideshowIntervalSeconds() = dao
-        .getPhotoPreference(Constants.ID)
+        .getPhotoPreference(PREFERENCE_ID)
         .map { it.slideshowIntervalSeconds }
 
     fun getPhotoGridItemSize() = dao
-        .getPhotoPreference(Constants.ID)
+        .getPhotoPreference(PREFERENCE_ID)
         .map { it.gridThumbnailSize}
 
     suspend fun setSlideshowIntervalSeconds(seconds: Int) {
@@ -27,12 +31,12 @@ class MediaPreferenceRepository @Inject constructor (
     }
 
     private fun getPhotoPreferences() = dao
-        .getPhotoPreference(Constants.ID)
+        .getPhotoPreference(PREFERENCE_ID)
         .map { it.toDomainPhotoPreference() }
 
     private suspend fun setPhotoPreferences(pref: MediaPreference) {
         val dbPref = us.mikeandwan.photos.database.MediaPreference(
-            Constants.ID,
+            PREFERENCE_ID,
             pref.slideshowIntervalSeconds,
             pref.gridThumbnailSize)
 
@@ -43,9 +47,5 @@ class MediaPreferenceRepository @Inject constructor (
         val pref = getPhotoPreferences().first()
 
         setPhotoPreferences(update(pref))
-    }
-
-    object Constants {
-        const val ID = 1
     }
 }

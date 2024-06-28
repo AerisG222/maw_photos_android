@@ -18,15 +18,15 @@ class MediaCategoryRepository @Inject constructor(
     private val vcRepo: VideoCategoryRepository
 ) : ICategoryRepository {
     override fun getYears() = flow {
-        val data = mcDao.getYears()
+        val years = mcDao.getYears()
 
-        if(data.first().isEmpty()) {
+        if(years.first().isEmpty()) {
             emit(emptyList())
             getNewCategories()
                 .collect { }
         }
 
-        emitAll(data)
+        emitAll(years)
     }
 
     override fun getMostRecentYear() = mcDao.getMostRecentYear()
@@ -34,18 +34,8 @@ class MediaCategoryRepository @Inject constructor(
     override fun getNewCategories() = flow {
         emit(ExternalCallStatus.Loading)
 
-        val photoCategoriesResult = try {
-            pcRepo.getNewCategories().first { it !is ExternalCallStatus.Loading }
-        } catch (e: NoSuchElementException) {
-            ExternalCallStatus.Error("No photo categories emitted.")
-        }
-
-        val videoCategoriesResult = try {
-            vcRepo.getNewCategories().first { it !is ExternalCallStatus.Loading }
-        } catch (e: NoSuchElementException) {
-            ExternalCallStatus.Error("No video categories emitted.")
-        }
-
+        val photoCategoriesResult = fetchCategories(pcRepo)
+        val videoCategoriesResult = fetchCategories(vcRepo)
         val combinedCategories = mutableListOf<MediaCategory>()
 
         if (photoCategoriesResult is ExternalCallStatus.Success) {
@@ -56,12 +46,22 @@ class MediaCategoryRepository @Inject constructor(
             combinedCategories.addAll(videoCategoriesResult.result)
         }
 
-        when {
+        val result = when {
             photoCategoriesResult is ExternalCallStatus.Error ||
             videoCategoriesResult is ExternalCallStatus.Error ->
-                emit(ExternalCallStatus.Error("Unable to load all categories."))
+                ExternalCallStatus.Error("Unable to load all categories.")
             else ->
-                emit(ExternalCallStatus.Success(combinedCategories))
+                ExternalCallStatus.Success(combinedCategories)
+        }
+
+        emit(result)
+    }
+
+    private suspend fun fetchCategories(repository: ICategoryRepository): ExternalCallStatus<List<MediaCategory>> {
+        return try {
+            repository.getNewCategories().first { it !is ExternalCallStatus.Loading }
+        } catch (e: NoSuchElementException) {
+            ExternalCallStatus.Error("No categories emitted from repository.")
         }
     }
 

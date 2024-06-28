@@ -11,11 +11,11 @@ class PhotoRepository @Inject constructor (
     private val apiErrorHandler: ApiErrorHandler
 ){
     companion object {
-        const val ERR_MSG_LOAD_EXIF = "Unable to load EXIF data at this time.  Please try again later."
-        const val ERR_MSG_LOAD_RATINGS = "Unable to load ratings at this time.  Please try again later."
-        const val ERR_MSG_LOAD_COMMENTS = "Unable to load comments at this time.  Please try again later."
-        const val ERR_MSG_ADD_COMMENTS = "Unable to add comments at this time.  Please try again later."
-        const val ERR_MSG_SET_RATING = "Unable to add ratings at this time.  Please try again later."
+        private const val ERR_MSG_LOAD_EXIF = "Unable to load EXIF data at this time.  Please try again later."
+        private const val ERR_MSG_LOAD_RATINGS = "Unable to load ratings at this time.  Please try again later."
+        private const val ERR_MSG_LOAD_COMMENTS = "Unable to load comments at this time.  Please try again later."
+        private const val ERR_MSG_ADD_COMMENTS = "Unable to add comments at this time.  Please try again later."
+        private const val ERR_MSG_SET_RATING = "Unable to add ratings at this time.  Please try again later."
     }
 
     fun getExifData(photoId: Int) = flow {

@@ -10,16 +10,20 @@ import javax.inject.Inject
 class RandomPreferenceRepository @Inject constructor (
     private val dao: RandomPreferenceDao
 ) {
+    companion object {
+        private const val PREFERENCE_ID = 1
+    }
+
     private fun getRandomPreferences() = dao
-        .getRandomPreference(Constants.ID)
+        .getRandomPreference(PREFERENCE_ID)
         .map { it.toDomainRandomPreference() }
 
     fun getSlideshowIntervalSeconds() = dao
-        .getRandomPreference(Constants.ID)
+        .getRandomPreference(PREFERENCE_ID)
         .map { it.slideshowIntervalSeconds }
 
     fun getPhotoGridItemSize() = dao
-        .getRandomPreference(Constants.ID)
+        .getRandomPreference(PREFERENCE_ID)
         .map { it.gridThumbnailSize}
 
     suspend fun setSlideshowIntervalSeconds(seconds: Int) {
@@ -32,7 +36,7 @@ class RandomPreferenceRepository @Inject constructor (
 
     private suspend fun setRandomPreferences(pref: RandomPreference) {
         val dbPref = us.mikeandwan.photos.database.RandomPreference(
-            Constants.ID,
+            PREFERENCE_ID,
             pref.slideshowIntervalSeconds,
             pref.gridThumbnailSize)
 
@@ -43,9 +47,5 @@ class RandomPreferenceRepository @Inject constructor (
         val pref = getRandomPreferences().first()
 
         setRandomPreferences(update(pref))
-    }
-
-    object Constants {
-        const val ID = 1
     }
 }

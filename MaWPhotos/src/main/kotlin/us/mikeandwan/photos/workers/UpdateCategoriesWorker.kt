@@ -31,10 +31,10 @@ class UpdateCategoriesWorker @AssistedInject constructor(
     companion object {
         const val WORK_NAME = "WORK: update_categories"
 
-        const val STATUS_UNKNOWN = 0
-        const val STATUS_SUCCESS = 1
-        const val STATUS_FAILED = 2
-        const val STATUS_RETRY = 3
+        private const val STATUS_UNKNOWN = 0
+        private const val STATUS_SUCCESS = 1
+        private const val STATUS_FAILED = 2
+        private const val STATUS_RETRY = 3
     }
 
     override suspend fun doWork(): Result {

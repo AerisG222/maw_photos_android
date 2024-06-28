@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.domain
 
+import androidx.collection.LruCache
 import androidx.room.withTransaction
 import kotlinx.coroutines.flow.*
 import us.mikeandwan.photos.api.ApiResult
@@ -16,12 +17,11 @@ class VideoCategoryRepository @Inject constructor(
     private val apiErrorHandler: ApiErrorHandler
 ) : ICategoryRepository {
     companion object {
-        const val ERR_MSG_LOAD_CATEGORIES = "Unable to load categories at this time.  Please try again later."
-        const val ERR_MSG_LOAD_VIDEOS = "Unable to load videos.  Please try again later."
+        private const val ERR_MSG_LOAD_CATEGORIES = "Unable to load categories at this time.  Please try again later."
+        private const val ERR_MSG_LOAD_VIDEOS = "Unable to load videos.  Please try again later."
     }
 
-    private var _lastCategoryId = -1
-    private var _lastCategoryVideos = emptyList<Video>()
+    private var cachedCategoryVideos = LruCache<Int, List<Video>>(8)
 
     override fun getYears() = flow {
         val data = vcDao.getYears()
@@ -40,15 +40,11 @@ class VideoCategoryRepository @Inject constructor(
     override fun getNewCategories() = flow {
         val category = vcDao
             .getMostRecentCategory()
-            .first()
+            .firstOrNull()
 
         // do not show error messages as snackbar for this method as it is called only from
         // the update categories worker - which will create an error notification on failure
-        val categories = if (category == null) {
-            loadCategories(-1, null)
-        } else {
-            loadCategories(category.id, null)
-        }
+        val categories = loadCategories(category?.id ?:-1, null)
 
         emitAll(categories)
     }
@@ -61,27 +57,28 @@ class VideoCategoryRepository @Inject constructor(
 
     override fun getCategory(categoryId: Int) = vcDao
         .getCategory(categoryId)
-        .filter { it != null }
-        .map { cat -> cat!!.toDomainMediaCategory() }
+        .filterNotNull()
+        .map { cat -> cat.toDomainMediaCategory() }
 
     override fun getMedia(categoryId: Int) = flow {
-        if(categoryId == _lastCategoryId) {
-            emit(ExternalCallStatus.Success(_lastCategoryVideos))
-        } else {
-            emit(ExternalCallStatus.Loading)
+        cachedCategoryVideos[categoryId]?.let {
+            emit(ExternalCallStatus.Success(it))
+            return@flow
+        }
 
-            when(val result = api.getVideos(categoryId)) {
-                is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_LOAD_VIDEOS))
-                is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_LOAD_VIDEOS))
-                is ApiResult.Success -> {
-                    _lastCategoryVideos = result.result.items.map { it.toDomainVideo() }
+        emit(ExternalCallStatus.Loading)
 
-                    if (_lastCategoryVideos.isNotEmpty()) {
-                        _lastCategoryId = categoryId
-                    }
+        when(val result = api.getVideos(categoryId)) {
+            is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_LOAD_VIDEOS))
+            is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_LOAD_VIDEOS))
+            is ApiResult.Success -> {
+                val videos = result.result.items.map { it.toDomainVideo() }
 
-                    emit(ExternalCallStatus.Success(_lastCategoryVideos))
+                if (videos.isNotEmpty()) {
+                    cachedCategoryVideos.put(categoryId, videos)
                 }
+
+                emit(ExternalCallStatus.Success(videos))
             }
         }
     }

@@ -16,15 +16,15 @@ import java.io.FileFilter
 import javax.inject.Inject
 
 class FileStorageRepository @Inject constructor(
-    private val _context: Context
+    private val context: Context
 ) {
     companion object {
-        val mimeTypeMap = MimeTypeMap.getSingleton()!!
-        const val DIR_SHARE = "photos_to_share"
-        const val DIR_UPLOAD = "upload"
+        private val mimeTypeMap = MimeTypeMap.getSingleton()!!
+        private const val DIR_SHARE = "photos_to_share"
+        private const val DIR_UPLOAD = "upload"
     }
 
-    private val _pendingUploads = MutableStateFlow(emptyList<File>())
+    private val _pendingUploads = MutableStateFlow<List<File>>(emptyList())
     val pendingUploads = _pendingUploads.asStateFlow()
 
     suspend fun savePhotoToShare(drawable: Drawable, originalFilename: String): File {
@@ -49,11 +49,12 @@ class FileStorageRepository @Inject constructor(
     }
 
     suspend fun saveFileToUpload(mediaUri: Uri): File? {
-        val mimeType = _context.contentResolver.getType(mediaUri)
+        val mimeType = context.contentResolver.getType(mediaUri)
 
-        return when(isValidType(mimeType)) {
-            true -> writeUploadFile(mediaUri, mimeType!!)
-            false -> null
+        return if(isValidType(mimeType)) {
+            writeUploadFile(mediaUri, mimeType!!)
+        } else {
+            null
         }
     }
 
@@ -67,7 +68,7 @@ class FileStorageRepository @Inject constructor(
 
     suspend fun clearLegacyFiles() {
         withContext(Dispatchers.IO) {
-            _context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                 ?.walkBottomUp()
                 ?.forEach { it.delete() }
         }
@@ -75,7 +76,7 @@ class FileStorageRepository @Inject constructor(
 
     suspend fun clearLegacyDatabase() {
         withContext(Dispatchers.IO) {
-            _context.deleteDatabase("maw")
+            context.deleteDatabase("maw")
         }
     }
 
@@ -92,7 +93,7 @@ class FileStorageRepository @Inject constructor(
             if(uploadFile.exists()) {
                 null
             } else {
-                _context.contentResolver.openInputStream(mediaUri).use { inputStream ->
+                context.contentResolver.openInputStream(mediaUri).use { inputStream ->
                     uploadFile.outputStream().use { outputStream ->
                         if (inputStream != null) {
                             inputStream.copyTo(outputStream)
@@ -109,8 +110,8 @@ class FileStorageRepository @Inject constructor(
 
     private fun getUploadFile(mediaUri: Uri, mimeType: String): File {
         val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
-        val typeName = mimeType.substring(0, mimeType.indexOf('/'))
-        val filename = "${typeName}_${mediaUri.lastPathSegment}.$extension"
+        val typeName = mimeType.substringBefore('/')
+        val filename = "${typeName}_${mediaUri.lastPathSegment}.${extension}"
         val dir = getUploadDirectory()
 
         dir?.mkdirs()
@@ -119,7 +120,7 @@ class FileStorageRepository @Inject constructor(
     }
 
     private fun getUploadDirectory(): File? {
-        return _context.getExternalFilesDir(DIR_UPLOAD)
+        return context.getExternalFilesDir(DIR_UPLOAD)
     }
 
     private fun getShareFile(originalFilename: String): File {
@@ -127,7 +128,7 @@ class FileStorageRepository @Inject constructor(
     }
 
     private fun getShareDirectory(): File? {
-        return _context.getExternalFilesDir(DIR_SHARE)
+        return context.getExternalFilesDir(DIR_SHARE)
     }
 
     private fun isValidType(mimeType: String?): Boolean {

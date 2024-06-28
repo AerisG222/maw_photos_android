@@ -9,12 +9,16 @@ import javax.inject.Inject
 class NotificationPreferenceRepository @Inject constructor(
     private val dao: NotificationPreferenceDao
 ) {
+    companion object {
+        private const val PREFERENCE_ID = 1
+    }
+
     fun getDoNotify() = dao
-        .getNotificationPreference(Constants.ID)
+        .getNotificationPreference(PREFERENCE_ID)
         .map { it.doNotify }
 
     fun getDoVibrate() = dao
-        .getNotificationPreference(Constants.ID)
+        .getNotificationPreference(PREFERENCE_ID)
         .map { it.doVibrate }
 
     suspend fun setDoNotify(doNotify: Boolean) {
@@ -26,11 +30,11 @@ class NotificationPreferenceRepository @Inject constructor(
     }
 
     private fun getNotificationPreferences() = dao
-        .getNotificationPreference(Constants.ID)
+        .getNotificationPreference(PREFERENCE_ID)
         .map { it.toDomainNotificationPreference() }
 
     private suspend fun setNotificationPreferences(pref: NotificationPreference) {
-        val dbPref = us.mikeandwan.photos.database.NotificationPreference(Constants.ID, pref.doNotify, pref.doVibrate)
+        val dbPref = us.mikeandwan.photos.database.NotificationPreference(PREFERENCE_ID, pref.doNotify, pref.doVibrate)
 
         dao.setNotificationPreference(dbPref)
     }
@@ -39,9 +43,5 @@ class NotificationPreferenceRepository @Inject constructor(
         val pref = getNotificationPreferences().first()
 
         setNotificationPreferences(update(pref))
-    }
-
-    object Constants {
-        const val ID = 1
     }
 }

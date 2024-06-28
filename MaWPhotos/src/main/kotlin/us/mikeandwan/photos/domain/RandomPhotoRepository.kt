@@ -24,8 +24,8 @@ class RandomPhotoRepository @Inject constructor(
 
     private val slideshowDurationInMillis = randomPreferenceRepository
         .getSlideshowIntervalSeconds()
-        .map { seconds -> (seconds * 1000).toLong() }
-        .stateIn(scope, WhileSubscribed(5000), (RandomPreference().slideshowIntervalSeconds * 1000).toLong())
+        .map { it * 1000L }
+        .stateIn(scope, WhileSubscribed(5000), RandomPreference().slideshowIntervalSeconds * 1000L)
 
     private val _photos = MutableStateFlow(emptyList<Photo>())
     val photos = _photos.asStateFlow()
@@ -45,13 +45,9 @@ class RandomPhotoRepository @Inject constructor(
             is ApiResult.Error -> emit(apiErrorHandler.handleError(result, ERR_MSG_FETCH))
             is ApiResult.Empty -> emit(apiErrorHandler.handleEmpty(result, ERR_MSG_FETCH))
             is ApiResult.Success -> {
-                var newPhotos = emptyList<Photo>()
+                val newPhotos = result.result.items.map { it.toDomainPhoto() }
 
-                if(result.result.items.isNotEmpty()) {
-                    newPhotos = result.result.items.map { it.toDomainPhoto() }
-
-                    _photos.value += newPhotos
-                }
+                _photos.value += newPhotos
 
                 emit(ExternalCallStatus.Success(newPhotos))
             }

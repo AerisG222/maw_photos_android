@@ -21,7 +21,7 @@ class SearchRepository @Inject constructor(
     private val apiErrorHandler: ApiErrorHandler
 ) {
     companion object {
-        const val ERR_MSG_SEARCH = "Unable to search at this time.  Please try again later."
+        private const val ERR_MSG_SEARCH = "Unable to search at this time.  Please try again later."
     }
 
     private val _searchRequest = MutableStateFlow(SearchRequest("", SearchSource.None))

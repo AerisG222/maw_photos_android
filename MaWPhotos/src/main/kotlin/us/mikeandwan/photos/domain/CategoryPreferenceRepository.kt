@@ -12,7 +12,7 @@ class CategoryPreferenceRepository @Inject constructor(
     private val dao: CategoryPreferenceDao
 ) {
     companion object {
-        const val PREFERENCE_ID = 1
+        private const val PREFERENCE_ID = 1
     }
 
     fun getCategoryPreference() = dao

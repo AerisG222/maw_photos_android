@@ -11,16 +11,20 @@ import javax.inject.Inject
 class SearchPreferenceRepository @Inject constructor (
     private val dao: SearchPreferenceDao
 ) {
+    companion object {
+        private const val PREFERENCE_ID = 1
+    }
+
     fun getSearchesToSaveCount() = dao
-        .getSearchPreference(Constants.ID)
+        .getSearchPreference(PREFERENCE_ID)
         .map { it.recentQueryCount }
 
     fun getSearchGridItemSize() = dao
-        .getSearchPreference(Constants.ID)
+        .getSearchPreference(PREFERENCE_ID)
         .map { it.gridThumbnailSize }
 
     fun getSearchDisplayType() = dao
-        .getSearchPreference(Constants.ID)
+        .getSearchPreference(PREFERENCE_ID)
         .map { it.displayType }
 
     suspend fun setSearchesToSaveCount(count: Int) {
@@ -36,12 +40,12 @@ class SearchPreferenceRepository @Inject constructor (
     }
 
     private fun getSearchPreferences() = dao
-        .getSearchPreference(Constants.ID)
+        .getSearchPreference(PREFERENCE_ID)
         .map { it.toDomainSearchPreference() }
 
     private suspend fun setSearchPreferences(pref: SearchPreference) {
         val dbPref = us.mikeandwan.photos.database.SearchPreference(
-            Constants.ID,
+            PREFERENCE_ID,
             pref.recentQueryCountToSave,
             pref.displayType,
             pref.gridThumbnailSize)
@@ -53,9 +57,5 @@ class SearchPreferenceRepository @Inject constructor (
         val pref = getSearchPreferences().first()
 
         setSearchPreferences(update(pref))
-    }
-
-    object Constants {
-        const val ID = 1
     }
 }
