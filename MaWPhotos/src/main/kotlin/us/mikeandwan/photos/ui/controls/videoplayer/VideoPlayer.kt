@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.controls.videoplayer
 
+import androidx.annotation.OptIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -10,14 +11,17 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.HttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.domain.models.MediaType
 import us.mikeandwan.photos.ui.getMediaUrl
 
+@OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
     activeMedia: Media,
@@ -64,6 +68,7 @@ fun VideoPlayer(
         factory = {
             PlayerView(context).apply {
                 player = exoPlayer
+                this.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
             }
         }
     )
