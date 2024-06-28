@@ -189,7 +189,7 @@ class MainActivity : ComponentActivity() {
                             loginScreen(
                                 updateTopBar = ::updateTopBar,
                                 setNavArea = ::setNavArea,
-                                navigateAfterLogin = { navController.popBackStack() }
+                                navigateAfterLogin = { navController.navigateUp() }
                             )
                             aboutScreen(
                                 updateTopBar = ::updateTopBar,
