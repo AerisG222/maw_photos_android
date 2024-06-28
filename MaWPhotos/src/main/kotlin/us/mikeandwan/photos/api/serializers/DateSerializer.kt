@@ -12,16 +12,16 @@ import java.util.Locale
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = Date::class)
 object DateSerializer : KSerializer<Date> {
-    private val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
+    private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
+    private val formatter = SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
 
     override fun deserialize(decoder: Decoder): Date {
         val dateString = decoder.decodeString()
 
-        return format.parse(dateString) ?: Date()
+        return runCatching { formatter.parse(dateString) }.getOrElse { Date() }
     }
 
     override fun serialize(encoder: Encoder, value: Date) {
-        val dateString = format.format(value)
-        encoder.encodeString(dateString)
+        encoder.encodeString(formatter.format(value))
     }
 }

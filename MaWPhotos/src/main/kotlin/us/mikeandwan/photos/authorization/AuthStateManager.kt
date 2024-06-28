@@ -13,34 +13,32 @@ import us.mikeandwan.photos.database.Authorization
 import us.mikeandwan.photos.database.AuthorizationDao
 import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 // based on: https://github.com/openid/AppAuth-Android/blob/master/app/java/net/openid/appauthdemo/AuthStateManager.java
 class AuthStateManager(
     private val authorizationDao: AuthorizationDao
 ) {
-    private val _lock: ReentrantLock = ReentrantLock()
-    private val mCurrentAuthState: AtomicReference<AuthState> = AtomicReference()
+    private val lock: ReentrantLock = ReentrantLock()
+    private val currentAuthState: AtomicReference<AuthState> = AtomicReference()
 
-    @get:AnyThread
     val current: AuthState
-        get() {
-            if (mCurrentAuthState.get() != null) {
-                return mCurrentAuthState.get()
-            }
+        @AnyThread get() {
+            currentAuthState.get()?.let { return it }
 
             val state = readState()
 
-            return if (mCurrentAuthState.compareAndSet(null, state)) {
+            return if (currentAuthState.compareAndSet(null, state)) {
                 state
             } else {
-                mCurrentAuthState.get()
+                currentAuthState.get()
             }
         }
 
     @AnyThread
     fun replace(state: AuthState): AuthState {
         writeState(state)
-        mCurrentAuthState.set(state)
+        currentAuthState.set(state)
 
         return state
     }
@@ -49,29 +47,25 @@ class AuthStateManager(
     fun updateAfterAuthorization(
         response: AuthorizationResponse?,
         ex: AuthorizationException?
-    ): AuthState {
-        val current = current
-        current.update(response, ex)
-
-        return replace(current)
-    }
+    ): AuthState = updateState { it.update(response, ex) }
 
     @AnyThread
     fun updateAfterTokenResponse(
         response: TokenResponse?,
         ex: AuthorizationException?
-    ): AuthState {
-        val current = current
-        current.update(response, ex)
+    ): AuthState = updateState { it.update(response, ex) }
 
-        return replace(current)
+    @AnyThread
+    private fun updateState(updateAction: (AuthState) -> Unit): AuthState {
+        val currentState = current
+        updateAction(currentState)
+
+        return replace(currentState)
     }
 
     @AnyThread
     private fun readState(): AuthState {
-        _lock.lock()
-
-        try {
+        lock.withLock {
             var authState = AuthState()
 
             runBlocking {
@@ -87,16 +81,12 @@ class AuthStateManager(
             }
 
             return authState
-        } finally {
-            _lock.unlock()
         }
     }
 
     @AnyThread
     private fun writeState(state: AuthState?) {
-        _lock.lock()
-
-        try {
+        lock.withLock {
             runBlocking {
                 if(state == null) {
                     authorizationDao.deleteAuthorization(AUTHORIZATION_ID)
@@ -106,8 +96,6 @@ class AuthStateManager(
                     authorizationDao.setAuthorization(auth)
                 }
             }
-        } finally {
-            _lock.unlock()
         }
     }
 

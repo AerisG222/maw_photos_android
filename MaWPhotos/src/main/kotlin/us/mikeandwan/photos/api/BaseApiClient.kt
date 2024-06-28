@@ -8,7 +8,7 @@ import timber.log.Timber
 import java.io.File
 
 abstract class BaseApiClient {
-    private val _mimeMap by lazy { MimeTypeMap.getSingleton() }
+    private val mimeMap by lazy { MimeTypeMap.getSingleton() }
 
     protected suspend fun <T> makeApiCall(name: String, apiCall: suspend () -> retrofit2.Response<T>): ApiResult<T> {
         Timber.d("$name starting")
@@ -18,15 +18,9 @@ abstract class BaseApiClient {
             val result = ApiResult.build(response)
 
             when(result) {
-                is ApiResult.Error -> {
-                    Timber.w("$name failed: ${result.error}")
-                }
-                is ApiResult.Success -> {
-                    Timber.d("$name succeeded")
-                }
-                is ApiResult.Empty -> {
-                    Timber.d("$name was empty")
-                }
+                is ApiResult.Error -> Timber.w("$name failed: ${result.error}")
+                is ApiResult.Success -> Timber.d("$name succeeded")
+                is ApiResult.Empty -> Timber.d("$name was empty")
             }
 
             return result
@@ -38,18 +32,8 @@ abstract class BaseApiClient {
     }
 
     protected fun getMediaTypeForFile(file: File): MediaType {
-        val mimeType = _mimeMap.getMimeTypeFromExtension(file.extension)
-        var type: MediaType? = null
-
-        if(mimeType != null) {
-            type = mimeType.toMediaTypeOrNull()
-        }
-
-        if(type == null)
-        {
-            type = "binary/octet-stream".toMediaType()
-        }
-
-        return type
+        return mimeMap
+            .getMimeTypeFromExtension(file.extension)
+                ?.toMediaTypeOrNull() ?: "binary/octet-stream".toMediaType()
     }
 }
