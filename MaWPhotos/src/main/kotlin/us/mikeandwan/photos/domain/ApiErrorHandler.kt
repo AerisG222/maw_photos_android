@@ -18,10 +18,8 @@ class ApiErrorHandler @Inject constructor(
 
         if(error.isUnauthorized()) {
             authService.logout()
-        } else {
-            if(!message.isNullOrBlank()) {
-                errorRepository.showError(message)
-            }
+        } else if(!message.isNullOrBlank()) {
+            errorRepository.showError(message)
         }
 
         return error.toExternalCallStatus()

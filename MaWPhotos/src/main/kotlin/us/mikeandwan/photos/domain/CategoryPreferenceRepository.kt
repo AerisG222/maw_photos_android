@@ -11,16 +11,20 @@ import javax.inject.Inject
 class CategoryPreferenceRepository @Inject constructor(
     private val dao: CategoryPreferenceDao
 ) {
+    companion object {
+        const val PREFERENCE_ID = 1
+    }
+
     fun getCategoryPreference() = dao
-        .getCategoryPreference(Constants.ID)
+        .getCategoryPreference(PREFERENCE_ID)
         .map { it.toDomainCategoryPreference() }
 
     fun getCategoryDisplayType() = dao
-        .getCategoryPreference(Constants.ID)
+        .getCategoryPreference(PREFERENCE_ID)
         .map { it.displayType }
 
     fun getCategoryGridItemSize() = dao
-        .getCategoryPreference(Constants.ID)
+        .getCategoryPreference(PREFERENCE_ID)
         .map { it.gridThumbnailSize}
 
     suspend fun setCategoryDisplayType(displayType: CategoryDisplayType) {
@@ -33,7 +37,7 @@ class CategoryPreferenceRepository @Inject constructor(
 
     private suspend fun setCategoryPreference(pref: CategoryPreference) {
         val dbPref = us.mikeandwan.photos.database.CategoryPreference(
-            Constants.ID,
+            PREFERENCE_ID,
             pref.displayType,
             pref.gridThumbnailSize)
 
@@ -44,9 +48,5 @@ class CategoryPreferenceRepository @Inject constructor(
         val pref = getCategoryPreference().first()
 
         setCategoryPreference(update(pref))
-    }
-
-    object Constants {
-        const val ID = 1
     }
 }
