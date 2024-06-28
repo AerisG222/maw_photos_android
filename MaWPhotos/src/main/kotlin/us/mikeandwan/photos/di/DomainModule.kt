@@ -15,21 +15,19 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DomainModule {
+object DomainModule {
     @Provides
     @Singleton
-    fun provideErrorRepository(): ErrorRepository {
-        return ErrorRepository()
-    }
+    fun provideErrorRepository(): ErrorRepository =
+        ErrorRepository()
 
     @Provides
     @Singleton
     fun provideApiErrorHandler(
         authService: AuthService,
         errorRepository: ErrorRepository
-    ): ApiErrorHandler {
-        return ApiErrorHandler(authService, errorRepository)
-    }
+    ): ApiErrorHandler =
+        ApiErrorHandler(authService, errorRepository)
 
     @Provides
     @Singleton
@@ -38,9 +36,8 @@ class DomainModule {
         db: MawDatabase,
         photoCategoryDao: PhotoCategoryDao,
         apiErrorHandler: ApiErrorHandler
-    ): PhotoCategoryRepository {
-        return PhotoCategoryRepository(api, db, photoCategoryDao, apiErrorHandler)
-    }
+    ): PhotoCategoryRepository =
+        PhotoCategoryRepository(api, db, photoCategoryDao, apiErrorHandler)
 
     @Provides
     @Singleton
@@ -48,17 +45,15 @@ class DomainModule {
         api: PhotoApiClient,
         randomPreferenceRepository: RandomPreferenceRepository,
         apiErrorHandler: ApiErrorHandler
-    ): RandomPhotoRepository {
-        return RandomPhotoRepository(api, randomPreferenceRepository, apiErrorHandler)
-    }
+    ): RandomPhotoRepository =
+        RandomPhotoRepository(api, randomPreferenceRepository, apiErrorHandler)
 
     @Provides
     @Singleton
     fun provideFileStorageRepository(
         application: Application
-    ): FileStorageRepository {
-        return FileStorageRepository(application)
-    }
+    ): FileStorageRepository =
+        FileStorageRepository(application)
 
     @Provides
     @Singleton
@@ -67,13 +62,13 @@ class DomainModule {
         searchPreferenceRepository: SearchPreferenceRepository,
         searchHistoryDao: SearchHistoryDao,
         apiErrorHandler: ApiErrorHandler
-    ): SearchRepository {
-        return SearchRepository(
+    ): SearchRepository =
+        SearchRepository(
             api,
             searchHistoryDao,
             searchPreferenceRepository,
-            apiErrorHandler)
-    }
+            apiErrorHandler
+        )
 
     @Provides
     @Singleton
@@ -82,37 +77,31 @@ class DomainModule {
         db: MawDatabase,
         videoCategoryDao: VideoCategoryDao,
         apiErrorHandler: ApiErrorHandler
-    ): VideoCategoryRepository {
-        return VideoCategoryRepository(api, db, videoCategoryDao, apiErrorHandler)
-    }
+    ): VideoCategoryRepository =
+        VideoCategoryRepository(api, db, videoCategoryDao, apiErrorHandler)
 
     @Provides
     @Singleton
-    fun provideCategoryPreferenceRepository(categoryPreferenceDao: CategoryPreferenceDao): CategoryPreferenceRepository {
-        return CategoryPreferenceRepository(categoryPreferenceDao)
-    }
+    fun provideCategoryPreferenceRepository(categoryPreferenceDao: CategoryPreferenceDao): CategoryPreferenceRepository =
+        CategoryPreferenceRepository(categoryPreferenceDao)
 
     @Provides
     @Singleton
-    fun provideNotificationPreferenceRepository(notificationPreferenceDao: NotificationPreferenceDao): NotificationPreferenceRepository {
-        return NotificationPreferenceRepository(notificationPreferenceDao)
-    }
+    fun provideNotificationPreferenceRepository(notificationPreferenceDao: NotificationPreferenceDao): NotificationPreferenceRepository =
+        NotificationPreferenceRepository(notificationPreferenceDao)
 
     @Provides
     @Singleton
-    fun providePhotoPreferenceRepository(photoPreferenceDao: MediaPreferenceDao): MediaPreferenceRepository {
-        return MediaPreferenceRepository(photoPreferenceDao)
-    }
+    fun providePhotoPreferenceRepository(photoPreferenceDao: MediaPreferenceDao): MediaPreferenceRepository =
+        MediaPreferenceRepository(photoPreferenceDao)
 
     @Provides
     @Singleton
-    fun provideRandomPreferenceRepository(randomPreferenceDao: RandomPreferenceDao): RandomPreferenceRepository {
-        return RandomPreferenceRepository(randomPreferenceDao)
-    }
+    fun provideRandomPreferenceRepository(randomPreferenceDao: RandomPreferenceDao): RandomPreferenceRepository =
+        RandomPreferenceRepository(randomPreferenceDao)
 
     @Provides
     @Singleton
-    fun provideSearchPreferenceRepository(searchPreferenceDao: SearchPreferenceDao): SearchPreferenceRepository {
-        return SearchPreferenceRepository(searchPreferenceDao)
-    }
+    fun provideSearchPreferenceRepository(searchPreferenceDao: SearchPreferenceDao): SearchPreferenceRepository =
+        SearchPreferenceRepository(searchPreferenceDao)
 }

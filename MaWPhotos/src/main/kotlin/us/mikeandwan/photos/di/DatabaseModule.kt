@@ -15,79 +15,68 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DatabaseModule {
+object DatabaseModule {
     @Provides
     @Singleton
-    fun provideMawDatabase(application: Application): MawDatabase {
-        return Room.databaseBuilder(
+    fun provideMawDatabase(application: Application): MawDatabase =
+        Room.databaseBuilder(
             application,
             MawDatabase::class.java,
             "us.mikeandwan.photos"
         )
-            .addCallback(MawDatabaseCreateCallback())
-            .addMigrations(MIGRATION_1_2)
-            .addMigrations(MIGRATION_2_3)
-            .addMigrations(MIGRATION_3_4)
-            .build()
-    }
+        .addCallback(MawDatabaseCreateCallback())
+        .addMigrations(MIGRATION_1_2)
+        .addMigrations(MIGRATION_2_3)
+        .addMigrations(MIGRATION_3_4)
+        .build()
 
     @Provides
     @Singleton
-    fun provideAuthorizationDao(mawDatabase: MawDatabase): AuthorizationDao {
-        return mawDatabase.authorizationDao()
-    }
+    fun provideAuthorizationDao(mawDatabase: MawDatabase): AuthorizationDao =
+        mawDatabase.authorizationDao()
 
     @Provides
     @Singleton
-    fun provideCategoryPreferenceDao(mawDatabase: MawDatabase): CategoryPreferenceDao {
-        return mawDatabase.categoryPreferenceDao()
-    }
+    fun provideCategoryPreferenceDao(mawDatabase: MawDatabase): CategoryPreferenceDao =
+        mawDatabase.categoryPreferenceDao()
 
     @Provides
     @Singleton
-    fun provideMediaCategoryDao(mawDatabase: MawDatabase): MediaCategoryDao {
-        return mawDatabase.mediaCategoryDao()
-    }
+    fun provideMediaCategoryDao(mawDatabase: MawDatabase): MediaCategoryDao =
+        mawDatabase.mediaCategoryDao()
 
     @Provides
     @Singleton
-    fun provideNotificationPreferenceDao(mawDatabase: MawDatabase): NotificationPreferenceDao {
-        return mawDatabase.notificationPreferenceDao()
-    }
+    fun provideNotificationPreferenceDao(mawDatabase: MawDatabase): NotificationPreferenceDao =
+        mawDatabase.notificationPreferenceDao()
 
     @Provides
     @Singleton
-    fun providePhotoCategoryDao(mawDatabase: MawDatabase): PhotoCategoryDao {
-        return mawDatabase.photoCategoryDao()
-    }
+    fun providePhotoCategoryDao(mawDatabase: MawDatabase): PhotoCategoryDao =
+        mawDatabase.photoCategoryDao()
 
     @Provides
     @Singleton
-    fun providePhotoPreferenceDao(mawDatabase: MawDatabase): MediaPreferenceDao {
-        return mawDatabase.mediaPreferenceDao()
-    }
+    fun providePhotoPreferenceDao(mawDatabase: MawDatabase): MediaPreferenceDao =
+        mawDatabase.mediaPreferenceDao()
 
     @Provides
     @Singleton
-    fun provideRandomPreferenceDao(mawDatabase: MawDatabase): RandomPreferenceDao {
-        return mawDatabase.randomPreferenceDao()
-    }
+    fun provideRandomPreferenceDao(mawDatabase: MawDatabase): RandomPreferenceDao =
+        mawDatabase.randomPreferenceDao()
 
     @Provides
     @Singleton
-    fun provideSearchHistoryDao(mawDatabase: MawDatabase): SearchHistoryDao {
-        return mawDatabase.searchHistoryDao()
-    }
+    fun provideSearchHistoryDao(mawDatabase: MawDatabase): SearchHistoryDao =
+        mawDatabase.searchHistoryDao()
 
     @Provides
     @Singleton
-    fun provideSearchPreferenceDao(mawDatabase: MawDatabase): SearchPreferenceDao {
-        return mawDatabase.searchPreferenceDao()
-    }
+    fun provideSearchPreferenceDao(mawDatabase: MawDatabase): SearchPreferenceDao =
+        mawDatabase.searchPreferenceDao()
 
     @Provides
     @Singleton
-    fun provideVideoCategoryDao(mawDatabase: MawDatabase): VideoCategoryDao {
-        return mawDatabase.videoCategoryDao()
-    }
+    fun provideVideoCategoryDao(mawDatabase: MawDatabase): VideoCategoryDao =
+        mawDatabase.videoCategoryDao()
 }

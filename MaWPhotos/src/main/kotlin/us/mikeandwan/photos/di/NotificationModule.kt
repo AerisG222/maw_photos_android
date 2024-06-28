@@ -17,7 +17,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NotificationModule {
+object NotificationModule {
     @Provides
     @Singleton
     fun provideNotificationManager(app: Application): NotificationManager {
@@ -51,8 +51,8 @@ class NotificationModule {
 
     private fun createChannel(
         notificationManager: NotificationManager,
-        name: String,
-        description: String,
+        channelName: String,
+        channelDescription: String,
         channelId: String
     ) {
         val audioAttributes = AudioAttributes.Builder()
@@ -61,19 +61,19 @@ class NotificationModule {
 
         val channel = NotificationChannel(
             channelId,
-            name,
+            channelName,
             NotificationManager.IMPORTANCE_DEFAULT
-        )
-
-        channel.description = description
-        channel.enableLights(true)
-        channel.enableVibration(true)
-        channel.vibrationPattern = longArrayOf(300, 300)
-        channel.lightColor = Color.argb(255, 75, 0, 130)
-        channel.setSound(
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
-            audioAttributes
-        )
+        ).apply {
+            description = channelDescription
+            enableLights(true)
+            enableVibration(true)
+            vibrationPattern = longArrayOf(300, 300)
+            lightColor = Color.argb(255, 75, 0, 130)
+            setSound(
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+                audioAttributes
+            )
+        }
 
         notificationManager.createNotificationChannel(channel)
     }

@@ -19,36 +19,21 @@ import us.mikeandwan.photos.domain.services.MediaRatingService
 
 @Module
 @InstallIn(ViewModelComponent::class)
-class ViewModelModule {
+object ViewModelModule {
     @Provides
     @ViewModelScoped
-    fun providesMediaRatingService(
-        mediaRepository: MediaRepository
-    ): MediaRatingService {
-        return MediaRatingService(
-            mediaRepository
-        )
-    }
+    fun providesMediaRatingService(mediaRepository: MediaRepository): MediaRatingService =
+        MediaRatingService(mediaRepository)
 
     @Provides
     @ViewModelScoped
-    fun providesMediaCommentService(
-        mediaRepository: MediaRepository
-    ): MediaCommentService {
-        return MediaCommentService(
-            mediaRepository
-        )
-    }
+    fun providesMediaCommentService(mediaRepository: MediaRepository): MediaCommentService =
+        MediaCommentService(mediaRepository)
 
     @Provides
     @ViewModelScoped
-    fun providesMediaExifService(
-        mediaRepository: MediaRepository
-    ): MediaExifService {
-        return MediaExifService(
-            mediaRepository
-        )
-    }
+    fun providesMediaExifService(mediaRepository: MediaRepository): MediaExifService =
+        MediaExifService(mediaRepository)
 
     @Provides
     @ViewModelScoped
@@ -58,35 +43,28 @@ class ViewModelModule {
         mediaRatingService: MediaRatingService,
         mediaCommentService: MediaCommentService,
         mediaExifService: MediaExifService
-    ): MediaListService {
-        return MediaListService(
+    ): MediaListService =
+        MediaListService(
             mediaCategoryRepository,
             fileRepository,
             mediaRatingService,
             mediaCommentService,
             mediaExifService
         )
-    }
 
     @Provides
     @ViewModelScoped
-    fun provideAuthGuard(
-        authService: AuthService
-    ): AuthGuard {
-        return AuthGuard(
-            authService
-        )
-    }
+    fun provideAuthGuard(authService: AuthService): AuthGuard =
+        AuthGuard(authService)
 
     @Provides
     @ViewModelScoped
     fun provideCategoriesLoadedGuard(
         mediaCategoryRepository: MediaCategoryRepository,
         errorRepository: ErrorRepository
-    ): CategoriesLoadedGuard {
-        return CategoriesLoadedGuard(
+    ): CategoriesLoadedGuard =
+        CategoriesLoadedGuard(
             mediaCategoryRepository,
             errorRepository
         )
-    }
 }

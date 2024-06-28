@@ -22,26 +22,24 @@ import us.mikeandwan.photos.api.VideoApiClient
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
         authenticator: AuthAuthenticator,
         authInterceptor: AuthInterceptor
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
+    ): OkHttpClient =
+        OkHttpClient.Builder()
             .authenticator(authenticator)
             .addInterceptor(authInterceptor)
             .build()
-    }
 
     @Provides
     @Singleton
     fun provideHttpDataSourceFactory(
         okHttpClient: OkHttpClient
-    ): HttpDataSource.Factory {
-        return OkHttpDataSource.Factory(okHttpClient)
-    }
+    ): HttpDataSource.Factory =
+        OkHttpDataSource.Factory(okHttpClient)
 
     @Provides
     @Singleton
@@ -58,25 +56,21 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun providePhotoApiClient(retrofit: Retrofit): PhotoApiClient {
-        return PhotoApiClient(retrofit)
-    }
+    fun providePhotoApiClient(retrofit: Retrofit): PhotoApiClient =
+        PhotoApiClient(retrofit)
 
     @Provides
     @Singleton
-    fun provideSearchApiClient(retrofit: Retrofit): SearchApiClient {
-        return SearchApiClient(retrofit)
-    }
+    fun provideSearchApiClient(retrofit: Retrofit): SearchApiClient =
+        SearchApiClient(retrofit)
 
     @Provides
     @Singleton
-    fun provideUploadApiClient(retrofit: Retrofit): UploadApiClient {
-        return UploadApiClient(retrofit)
-    }
+    fun provideUploadApiClient(retrofit: Retrofit): UploadApiClient =
+        UploadApiClient(retrofit)
 
     @Provides
     @Singleton
-    fun provideVideoApiClient(retrofit: Retrofit): VideoApiClient {
-        return VideoApiClient(retrofit)
-    }
+    fun provideVideoApiClient(retrofit: Retrofit): VideoApiClient =
+        VideoApiClient(retrofit)
 }

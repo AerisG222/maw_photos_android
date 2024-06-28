@@ -15,41 +15,36 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AuthModule {
+object AuthModule {
     @Provides
     @Singleton
     fun provideAuthService(
         application: Application,
         authorizationService: AuthorizationService,
         authStateManager: AuthStateManager
-    ): AuthService {
-        return AuthService(application, authorizationService, authStateManager)
-    }
+    ): AuthService =
+        AuthService(application, authorizationService, authStateManager)
 
     @Provides
     @Singleton
-    fun provideAuthStateManager(authorizationDao: AuthorizationDao): AuthStateManager {
-        return AuthStateManager(authorizationDao)
-    }
+    fun provideAuthStateManager(authorizationDao: AuthorizationDao): AuthStateManager =
+        AuthStateManager(authorizationDao)
 
     @Provides
     @Singleton
-    fun provideAuthorizationService(application: Application): AuthorizationService {
-        return AuthorizationService(application)
-    }
+    fun provideAuthorizationService(application: Application): AuthorizationService =
+        AuthorizationService(application)
 
     @Provides
     @Singleton
     fun provideAuthAuthenticator(
         authService: AuthorizationService,
         authStateManager: AuthStateManager
-    ): AuthAuthenticator {
-        return AuthAuthenticator(authService, authStateManager)
-    }
+    ): AuthAuthenticator =
+        AuthAuthenticator(authService, authStateManager)
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(authStateManager: AuthStateManager): AuthInterceptor {
-        return AuthInterceptor(authStateManager)
-    }
+    fun provideAuthInterceptor(authStateManager: AuthStateManager): AuthInterceptor =
+        AuthInterceptor(authStateManager)
 }
