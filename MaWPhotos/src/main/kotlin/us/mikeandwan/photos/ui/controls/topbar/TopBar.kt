@@ -25,8 +25,8 @@ data class TopBarState(
     var show: Boolean = true,
     var showAppIcon: Boolean = true,
     var title: String = "",
-    var initialSearchTerm : String = "",
-    var showSearch : Boolean = false
+    var initialSearchTerm: String = "",
+    var showSearch: Boolean = false
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
