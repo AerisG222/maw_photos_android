@@ -38,7 +38,6 @@ fun NavGraphBuilder.uploadScreen(
     composable<UploadRoute> {
         val vm: UploadViewModel = hiltViewModel()
         val files by vm.filesToUpload.collectAsStateWithLifecycle()
-
         val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
 
         LaunchedEffect(isAuthorized) {
@@ -47,18 +46,9 @@ fun NavGraphBuilder.uploadScreen(
             }
         }
 
-        LaunchedEffect(Unit) {
-            setNavArea(NavigationArea.Upload)
-
-            updateTopBar(
-                TopBarState().copy(
-                    showAppIcon = false,
-                    title = "Upload Queue"
-                )
-            )
-        }
-
         UploadScreen(
+            updateTopBar,
+            setNavArea,
             files
         )
     }
@@ -66,8 +56,21 @@ fun NavGraphBuilder.uploadScreen(
 
 @Composable
 fun UploadScreen(
+    updateTopBar : (TopBarState) -> Unit,
+    setNavArea: (NavigationArea) -> Unit,
     files: List<File>
 ) {
+    LaunchedEffect(Unit) {
+        setNavArea(NavigationArea.Upload)
+
+        updateTopBar(
+            TopBarState().copy(
+                showAppIcon = false,
+                title = "Upload Queue"
+            )
+        )
+    }
+
     val gridState = rememberImageGridState(
         gridItems = files.mapIndexed { id, file -> ImageGridItem(id, file.path, file) },
         thumbnailSize = GridThumbnailSize.Medium,
