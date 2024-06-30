@@ -46,35 +46,27 @@ fun NavGraphBuilder.categoriesScreen(
         val args = backStackEntry.toRoute<CategoriesRoute>()
         val state by vm.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(Unit) {
-            setNavArea(NavigationArea.Category)
-        }
-
         LaunchedEffect(args.year) {
             vm.setYear(args.year)
-            setActiveYear(args.year)
-
-            updateTopBar(
-                TopBarState().copy(
-                    title = args.year.toString()
-                )
-            )
         }
 
         when(state) {
             is CategoriesState.Unknown -> Loading()
             is CategoriesState.NotAuthorized ->
-                LaunchedEffect(Unit) {
+                LaunchedEffect(state) {
                     navigateToLogin()
                 }
             is CategoriesState.InvalidYear ->
-                LaunchedEffect(Unit) {
+                LaunchedEffect(state) {
                     navigateToCategories((state as CategoriesState.InvalidYear).mostRecentYear)
                 }
             is CategoriesState.Valid ->
                 CategoriesScreen(
                     state as CategoriesState.Valid,
-                    navigateToCategory
+                    updateTopBar,
+                    setActiveYear,
+                    setNavArea,
+                    navigateToCategory,
                 )
             is CategoriesState.Error -> { }
         }
@@ -85,10 +77,26 @@ fun NavGraphBuilder.categoriesScreen(
 @Composable
 fun CategoriesScreen(
     state: CategoriesState.Valid,
-    onNavigateToCategory: (MediaCategory) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
+    setActiveYear: (Int) -> Unit,
+    setNavArea: (NavigationArea) -> Unit,
+    navigateToCategory: (MediaCategory) -> Unit,
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        setNavArea(NavigationArea.Category)
+    }
+
+    LaunchedEffect(state.year) {
+        setActiveYear(state.year)
+        updateTopBar(
+            TopBarState().copy(
+                title = state.year.toString()
+            )
+        )
+    }
 
     LaunchedEffect(state.refreshStatus) {
         if(state.refreshStatus.message != null) {
@@ -101,7 +109,7 @@ fun CategoriesScreen(
     val gridState = rememberImageGridState (
         gridItems = state.categories.map { it.toImageGridItem() },
         thumbnailSize = state.preferences.gridThumbnailSize,
-        onSelectGridItem = { onNavigateToCategory(it.data) }
+        onSelectGridItem = { navigateToCategory(it.data) }
     )
 
     Scaffold (
@@ -124,7 +132,7 @@ fun CategoriesScreen(
                     CategoryList(
                         categories = state.categories,
                         showYear = false,
-                        onSelectCategory = { onNavigateToCategory(it) }
+                        onSelectCategory = { navigateToCategory(it) }
                     )
                 }
 

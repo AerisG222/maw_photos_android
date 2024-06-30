@@ -28,7 +28,10 @@ class LoginViewModel @Inject constructor(
             when(it) {
                 is AuthStatus.Authorized -> LoginState.Authorized
                 is AuthStatus.RequiresAuthorization -> LoginState.NotAuthorized(::initiateAuthentication)
-                else -> LoginState.Unknown
+
+                // when in process, return the notauthorized state, as this will catch the case where the user
+                // starts authentication but does not complete that action (closing browser tab / going back / etc)
+                is AuthStatus.LoginInProcess -> LoginState.NotAuthorized(::initiateAuthentication)
             }
         }
         .stateIn(viewModelScope, WhileSubscribed(5000), LoginState.Unknown)

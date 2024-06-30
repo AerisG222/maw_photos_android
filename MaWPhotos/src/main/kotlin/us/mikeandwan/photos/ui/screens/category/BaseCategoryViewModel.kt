@@ -44,7 +44,11 @@ abstract class BaseCategoryViewModel (
     }
 
     fun loadMedia(mediaType: MediaType, categoryId: Int) {
-        if(category.value?.id == categoryId) {
+        if(
+            category.value?.id == categoryId &&
+            category.value?.type == mediaType &&
+            media.value.isNotEmpty()
+        ) {
             return
         }
 

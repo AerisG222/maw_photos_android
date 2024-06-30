@@ -28,7 +28,6 @@ import coil.compose.AsyncImage
 import kotlinx.serialization.Serializable
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
-import us.mikeandwan.photos.ui.controls.loading.Loading
 import us.mikeandwan.photos.ui.controls.logo.Logo
 import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 
@@ -44,25 +43,18 @@ fun NavGraphBuilder.loginScreen(
         val vm: LoginViewModel = hiltViewModel()
         val state by vm.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(Unit) {
-            updateTopBar(
-                TopBarState().copy(
-                    show = false
-                )
-            )
-
-            setNavArea(NavigationArea.Login)
-        }
-
         when(state) {
-            is LoginState.Unknown -> { Loading() }
-            is LoginState.Authorized -> {
-                LaunchedEffect(Unit) {
+            is LoginState.Unknown -> {}
+            is LoginState.Authorized ->
+                LaunchedEffect(state) {
                     navigateAfterLogin()
                 }
-            }
             is LoginState.NotAuthorized -> {
-                LoginScreen(state as LoginState.NotAuthorized)
+                LoginScreen(
+                    state as LoginState.NotAuthorized,
+                    updateTopBar,
+                    setNavArea
+                )
             }
         }
     }
@@ -70,9 +62,21 @@ fun NavGraphBuilder.loginScreen(
 
 @Composable
 fun LoginScreen(
-    state: LoginState.NotAuthorized
+    state: LoginState.NotAuthorized,
+    updateTopBar : (TopBarState) -> Unit,
+    setNavArea: (NavigationArea) -> Unit,
 ) {
     val tangerine = FontFamily(Font(R.font.tangerine))
+
+    LaunchedEffect(Unit) {
+        updateTopBar(
+            TopBarState().copy(
+                show = false
+            )
+        )
+
+        setNavArea(NavigationArea.Login)
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -144,6 +148,8 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        LoginState.NotAuthorized({ })
+        LoginState.NotAuthorized() {},
+        {},
+        {}
     )
 }

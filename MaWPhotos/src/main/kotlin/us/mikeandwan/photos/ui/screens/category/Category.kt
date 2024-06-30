@@ -33,17 +33,13 @@ fun NavGraphBuilder.categoryScreen(
         val args = backStackEntry.toRoute<CategoryRoute>()
         val state by vm.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(Unit) {
-            setNavArea(NavigationArea.Category)
-        }
-
         LaunchedEffect(args.mediaType, args.categoryId) {
             vm.initState(args.mediaType, args.categoryId)
         }
 
         when(state) {
             is CategoryState.NotAuthorized -> {
-                LaunchedEffect(Unit) {
+                LaunchedEffect(state) {
                     navigateToLogin()
                 }
             }
@@ -72,6 +68,7 @@ fun NavGraphBuilder.categoryScreen(
 
                 CategoryScreen(
                     s,
+                    setNavArea,
                     navigateToMedia
                 )
             }
@@ -83,8 +80,13 @@ fun NavGraphBuilder.categoryScreen(
 @Composable
 fun CategoryScreen(
     state: CategoryState.Loaded,
+    setNavArea: (NavigationArea) -> Unit,
     navigateToMedia: (Media) -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        setNavArea(NavigationArea.Category)
+    }
+
     val gridState = rememberImageGridState(
         gridItems = state.gridItems,
         thumbnailSize = state.gridItemThumbnailSize,

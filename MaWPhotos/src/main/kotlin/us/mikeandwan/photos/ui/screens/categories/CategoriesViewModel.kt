@@ -26,6 +26,7 @@ sealed class CategoriesState {
     data class InvalidYear(val mostRecentYear: Int) : CategoriesState()
     data object Error : CategoriesState()
     data class Valid(
+        val year: Int,
         val categories: List<MediaCategory>,
         val refreshStatus: CategoryRefreshStatus,
         val preferences: CategoryPreference,
@@ -62,7 +63,8 @@ class CategoriesViewModel @Inject constructor (
         _year,
         _refreshStatus,
         _preferences
-    ) { authStatus,
+    ) {
+        authStatus,
         categoriesStatus,
         years,
         categories,
@@ -75,9 +77,11 @@ class CategoriesViewModel @Inject constructor (
         }
 
         when(authStatus) {
+            is GuardStatus.NotInitialized -> authGuard.initializeGuard()
             is GuardStatus.Failed -> CategoriesState.NotAuthorized
             is GuardStatus.Passed -> {
                 when(categoriesStatus) {
+                    is GuardStatus.NotInitialized -> categoriesLoadedGuard.initializeGuard()
                     is GuardStatus.Failed -> CategoriesState.Error
                     is GuardStatus.Passed ->
                         when {
@@ -91,19 +95,18 @@ class CategoriesViewModel @Inject constructor (
                                 CategoriesState.Unknown
                             }
                             else -> CategoriesState.Valid(
-                                    categories,
-                                    refreshStatus,
-                                    preferences,
-                                    refreshCategories = { refreshCategories(Random.nextInt()) },
-                                    clearRefreshStatus = {
-                                        _refreshStatus.value = CategoryRefreshStatus(Random.nextInt(), false, null)
-                                    }
-                                )
+                                year,
+                                categories,
+                                refreshStatus,
+                                preferences,
+                                refreshCategories = { refreshCategories(Random.nextInt()) },
+                                clearRefreshStatus = {
+                                    _refreshStatus.value = CategoryRefreshStatus(Random.nextInt(), false, null)
+                                }
+                            )
                         }
-                    else -> CategoriesState.Unknown
                 }
             }
-            else -> CategoriesState.Unknown
         }
     }
     .stateIn(viewModelScope, WhileSubscribed(5000), CategoriesState.Unknown)

@@ -70,9 +70,11 @@ class CategoryViewModel @Inject constructor (
         gridItemThumbnailSize ->
 
         when(authStatus) {
+            is GuardStatus.NotInitialized -> authGuard.initializeGuard()
             is GuardStatus.Failed -> CategoryState.NotAuthorized
             is GuardStatus.Passed ->
                 when (categoriesStatus) {
+                    is GuardStatus.NotInitialized -> categoriesLoadedGuard.initializeGuard()
                     is GuardStatus.Failed -> CategoryState.Error
                     is GuardStatus.Passed ->
                         when {
@@ -84,9 +86,7 @@ class CategoryViewModel @Inject constructor (
                                 gridItemThumbnailSize
                             )
                         }
-                    else -> CategoryState.Loading
                 }
-            else -> CategoryState.Loading
         }
     }
     .stateIn(viewModelScope, WhileSubscribed(5000), CategoryState.Loading)
