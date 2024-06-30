@@ -15,7 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import us.mikeandwan.photos.domain.models.MediaType
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.MediaListState
 import us.mikeandwan.photos.ui.controls.scaffolds.ItemPagerScaffold
@@ -39,7 +38,7 @@ import us.mikeandwan.photos.ui.shareMedia
 data class CategoryItemRoute (
     val mediaType: String,
     val categoryId: Int,
-    val photoId: Int
+    val mediaId: Int
 )
 
 fun NavGraphBuilder.categoryItemScreen(
@@ -79,21 +78,8 @@ fun NavGraphBuilder.categoryItemScreen(
             }
         }
 
-        LaunchedEffect(Unit) {
-            setNavArea(NavigationArea.Category)
-        }
-
-        LaunchedEffect(args.categoryId) {
-            val type = MediaType.valueOf(args.mediaType)
-
-            vm.loadCategory(type, args.categoryId)
-            vm.loadMedia(type, args.categoryId)
-        }
-
-        LaunchedEffect(media, args.photoId) {
-            if(media.isNotEmpty() && args.photoId > 0) {
-                vm.setActiveId(args.photoId)
-            }
+        LaunchedEffect(args.categoryId, args.mediaType, args.mediaId) {
+            vm.initState(args.categoryId, args.mediaType, args.mediaId)
         }
 
         // rating
@@ -135,20 +121,14 @@ fun NavGraphBuilder.categoryItemScreen(
                 Loading()
             }
             is MediaListState.Loaded -> {
-                LaunchedEffect(mediaListState.category) {
-                    updateTopBar(
-                        TopBarState().copy(
-                            title = mediaListState.category.name
-                        )
-                    )
-                }
-
                 CategoryItemScreen(
                     mediaListState,
                     ratingState,
                     exifState,
                     commentState,
-                    vm.videoPlayerDataSourceFactory
+                    vm.videoPlayerDataSourceFactory,
+                    updateTopBar,
+                    setNavArea
                 )
             }
         }
@@ -162,12 +142,26 @@ fun CategoryItemScreen(
     ratingState: RatingState,
     exifState: ExifState,
     commentState: CommentState,
-    videoPlayerDataSourceFactory: HttpDataSource.Factory
+    videoPlayerDataSourceFactory: HttpDataSource.Factory,
+    updateTopBar : (TopBarState) -> Unit,
+    setNavArea: (NavigationArea) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
     val rotationState = rememberRotation(mediaListState.activeIndex)
+
+    LaunchedEffect(Unit) {
+        setNavArea(NavigationArea.Category)
+    }
+
+    LaunchedEffect(mediaListState.category) {
+        updateTopBar(
+            TopBarState().copy(
+                title = mediaListState.category.name
+            )
+        )
+    }
 
     ItemPagerScaffold(
         showDetails = mediaListState.showDetailSheet,

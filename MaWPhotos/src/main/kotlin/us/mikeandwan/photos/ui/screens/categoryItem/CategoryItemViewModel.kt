@@ -5,13 +5,17 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.datasource.HttpDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.models.MediaPreference
 import us.mikeandwan.photos.domain.MediaCategoryRepository
 import us.mikeandwan.photos.domain.MediaPreferenceRepository
 import us.mikeandwan.photos.domain.guards.AuthGuard
 import us.mikeandwan.photos.domain.guards.GuardStatus
+import us.mikeandwan.photos.domain.models.MediaType
 import us.mikeandwan.photos.domain.services.MediaListService
 import us.mikeandwan.photos.ui.screens.category.BaseCategoryViewModel
 import java.io.File
@@ -34,10 +38,21 @@ class CategoryItemViewModel @Inject constructor (
     val isSlideshowPlaying = mediaListService.isSlideshowPlaying
     val showDetailSheet = mediaListService.showDetailSheet
 
-    fun setActiveId(id: Int) { mediaListService.setActiveId(id) }
+    private var initialMediaId: Int = -1
+    private var initialMediaUpdated = false
+
     fun setActiveIndex(index: Int) { mediaListService.setActiveIndex(index) }
     fun toggleSlideshow() { mediaListService.toggleSlideshow() }
     fun toggleShowDetails() { mediaListService.toggleShowDetails() }
+
+    fun initState(categoryId: Int, mediaType: String, mediaId: Int) {
+        val type = MediaType.valueOf(mediaType)
+
+        loadCategory(type, categoryId)
+        loadMedia(type, categoryId)
+
+        initialMediaId = mediaId
+    }
 
     fun saveFileToShare(drawable: Drawable, filename: String, onComplete: (File) -> Unit) {
         mediaListService.saveFileToShare(drawable, filename, onComplete)
@@ -76,5 +91,17 @@ class CategoryItemViewModel @Inject constructor (
             media,
             slideshowDurationInMillis
         )
+
+        viewModelScope.launch {
+            media
+                .filter { !initialMediaUpdated }
+                .filterNotNull()
+                .filter { it.isNotEmpty() }
+                .map {
+                    initialMediaUpdated = true
+                    mediaListService.setActiveId(initialMediaId)
+                }
+                .collect { }
+        }
     }
 }
