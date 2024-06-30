@@ -8,7 +8,8 @@ import us.mikeandwan.photos.domain.RandomPhotoRepository
 abstract class BaseRandomViewModel (
     private val randomPhotoRepository: RandomPhotoRepository
 ): ViewModel() {
-    val photos = randomPhotoRepository.photos
+    // todo: allow videos in random area?
+    val media = randomPhotoRepository.photos
 
     fun fetch(count: Int) {
         viewModelScope.launch {

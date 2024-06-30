@@ -94,7 +94,7 @@ class CategoryItemViewModel @Inject constructor (
 
         viewModelScope.launch {
             media
-                .filter { !initialMediaUpdated }
+                .filter { !initialMediaUpdated && initialMediaId > 0 }
                 .filterNotNull()
                 .filter { it.isNotEmpty() }
                 .map {

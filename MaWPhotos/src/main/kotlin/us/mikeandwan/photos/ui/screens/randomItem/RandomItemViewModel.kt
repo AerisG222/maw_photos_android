@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.datasource.HttpDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.RandomPhotoRepository
 import us.mikeandwan.photos.domain.RandomPreferenceRepository
 import us.mikeandwan.photos.domain.guards.AuthGuard
@@ -34,10 +37,16 @@ class RandomItemViewModel @Inject constructor(
     val isSlideshowPlaying = mediaListService.isSlideshowPlaying
     val showDetailSheet = mediaListService.showDetailSheet
 
-    fun setActiveId(id: Int) { mediaListService.setActiveId(id) }
+    private var initialMediaId: Int = -1
+    private var initialMediaUpdated = false
+
     fun setActiveIndex(index: Int) { mediaListService.setActiveIndex(index) }
     fun toggleSlideshow() { mediaListService.toggleSlideshow() }
     fun toggleShowDetails() { mediaListService.toggleShowDetails() }
+
+    fun initState(id: Int) {
+        initialMediaId = id
+    }
 
     fun saveFileToShare(drawable: Drawable, filename: String, onComplete: (File) -> Unit) {
         mediaListService.saveFileToShare(drawable, filename, onComplete)
@@ -73,8 +82,20 @@ class RandomItemViewModel @Inject constructor(
 
     init {
         mediaListService.initialize(
-            photos,
+            media,
             slideshowDurationInMillis
         )
+
+        viewModelScope.launch {
+            media
+                .filter { !initialMediaUpdated && initialMediaId > 0 }
+                .filterNotNull()
+                .filter { it.isNotEmpty() }
+                .map {
+                    initialMediaUpdated = true
+                    mediaListService.setActiveId(initialMediaId)
+                }
+                .collect { }
+        }
     }
 }

@@ -33,7 +33,7 @@ class RandomViewModel @Inject constructor(
 
     fun initialFetch(count: Int) {
         // prevent fetching a new full amount after navigating between item and list views
-        if(photos.value.size < count) {
+        if(media.value.size < count) {
             fetch(count)
         }
     }

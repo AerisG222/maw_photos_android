@@ -38,7 +38,7 @@ import us.mikeandwan.photos.ui.rememberMediaListState
 
 @Serializable
 data class RandomItemRoute (
-    val photoId: Int
+    val mediaId: Int
 )
 
 fun NavGraphBuilder.randomItemScreen(
@@ -53,21 +53,19 @@ fun NavGraphBuilder.randomItemScreen(
         val args = backStackEntry.toRoute<RandomItemRoute>()
 
         val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
-
-        // photo list
         val category by vm.category.collectAsStateWithLifecycle()
-        val photos by vm.photos.collectAsStateWithLifecycle()
-        val activePhotoId by vm.activeId.collectAsStateWithLifecycle()
-        val activePhotoIndex by vm.activeIndex.collectAsStateWithLifecycle()
-        val activePhoto by vm.activePhoto.collectAsStateWithLifecycle()
+        val media by vm.media.collectAsStateWithLifecycle()
+        val activeId by vm.activeId.collectAsStateWithLifecycle()
+        val activeIndex by vm.activeIndex.collectAsStateWithLifecycle()
+        val activeMedia by vm.activePhoto.collectAsStateWithLifecycle()
         val isSlideshowPlaying by vm.isSlideshowPlaying.collectAsStateWithLifecycle()
         val showDetailSheet by vm.showDetailSheet.collectAsStateWithLifecycle()
-        val photoListState = rememberMediaListState(
+        val mediaListState = rememberMediaListState(
             category,
-            photos,
-            activePhotoId,
-            activePhotoIndex,
-            activePhoto,
+            media,
+            activeId,
+            activeIndex,
+            activeMedia,
             isSlideshowPlaying,
             showDetailSheet,
             setActiveIndex = { vm.setActiveIndex(it) },
@@ -82,19 +80,8 @@ fun NavGraphBuilder.randomItemScreen(
             }
         }
 
-        LaunchedEffect(photos, args.photoId) {
-            if(photos.isNotEmpty() && args.photoId > 0) {
-                vm.setActiveId(args.photoId)
-            }
-        }
-
-        LaunchedEffect(Unit) {
-            setNavArea(NavigationArea.Random)
-            updateTopBar(
-                TopBarState().copy(
-                    title = "Random"
-                )
-            )
+        LaunchedEffect(args.mediaId) {
+            vm.initState(args.mediaId)
         }
 
         // see baserandomviewmodel to understand why this is currently commented out
@@ -131,16 +118,18 @@ fun NavGraphBuilder.randomItemScreen(
             addComment = { vm.addComment(it) }
         )
 
-        when(photoListState) {
+        when(mediaListState) {
             is MediaListState.Loading -> Loading()
             is MediaListState.CategoryLoaded -> Loading()
             is MediaListState.Loaded -> {
                 RandomItemScreen(
-                    photoListState,
+                    mediaListState,
                     ratingState,
                     exifState,
                     commentState,
                     vm.videoPlayerDataSourceFactory,
+                    updateTopBar,
+                    setNavArea,
                     navigateToYear,
                     navigateToCategory
                 )
@@ -157,6 +146,8 @@ fun RandomItemScreen(
     exifState: ExifState,
     commentState: CommentState,
     videoPlayerDataSourceFactory: HttpDataSource.Factory,
+    updateTopBar : (TopBarState) -> Unit,
+    setNavArea: (NavigationArea) -> Unit,
     navigateToYear: (Int) -> Unit,
     navigateToCategory: (MediaCategory) -> Unit
 ) {
@@ -164,6 +155,15 @@ fun RandomItemScreen(
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
     val rotationState = rememberRotation(mediaListState.activeIndex)
+
+    LaunchedEffect(Unit) {
+        setNavArea(NavigationArea.Random)
+        updateTopBar(
+            TopBarState().copy(
+                title = "Random"
+            )
+        )
+    }
 
     ItemPagerScaffold(
         showDetails = mediaListState.showDetailSheet,

@@ -32,7 +32,7 @@ fun NavGraphBuilder.randomScreen(
         val vm: RandomViewModel = hiltViewModel()
 
         val isAuthorized by vm.isAuthorized.collectAsStateWithLifecycle()
-        val photos by vm.photos.collectAsStateWithLifecycle()
+        val photos by vm.media.collectAsStateWithLifecycle()
         val thumbSize by vm.gridItemThumbnailSize.collectAsStateWithLifecycle()
 
         LaunchedEffect(isAuthorized) {
@@ -42,14 +42,6 @@ fun NavGraphBuilder.randomScreen(
         }
 
         LaunchedEffect(Unit) {
-            setNavArea(NavigationArea.Random)
-
-            updateTopBar(
-                TopBarState().copy(
-                    title = "Random"
-                )
-            )
-
             vm.initialFetch(24)
         }
 
@@ -64,7 +56,9 @@ fun NavGraphBuilder.randomScreen(
         RandomScreen(
             photos,
             thumbSize,
-            onPhotoClicked = { navigateToPhoto(it.id) }
+            onPhotoClicked = { navigateToPhoto(it.id) },
+            updateTopBar,
+            setNavArea
         )
     }
 }
@@ -73,8 +67,20 @@ fun NavGraphBuilder.randomScreen(
 fun RandomScreen(
     photos: List<Photo>,
     thumbSize: GridThumbnailSize,
-    onPhotoClicked: (ImageGridItem<Media>) -> Unit
+    onPhotoClicked: (ImageGridItem<Media>) -> Unit,
+    updateTopBar : (TopBarState) -> Unit,
+    setNavArea: (NavigationArea) -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        setNavArea(NavigationArea.Random)
+
+        updateTopBar(
+            TopBarState().copy(
+                title = "Random"
+            )
+        )
+    }
+
     val gridState = rememberImageGridState(
         photos.map { it.toImageGridItem() },
         thumbSize,
