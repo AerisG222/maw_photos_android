@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -53,7 +53,7 @@ class MediaListService @Inject constructor (
     }.stateIn(scope, WhileSubscribed(5000), null)
 
     val activeId = activeMedia
-        .map { photo -> photo?.id ?: -1 }
+        .map { media -> media?.id ?: -1 }
         .stateIn(scope, WhileSubscribed(5000), -1)
 
     fun setActiveIndex(index: Int) {
@@ -104,22 +104,18 @@ class MediaListService @Inject constructor (
     val averageRating = mediaRatingService.averageRating
 
     fun setRating(rating: Short) {
-        if(activeMedia.value == null) {
-            return
-        }
-
-        scope.launch {
-            mediaRatingService.setRating(activeMedia.value!!, rating)
+        activeMedia.value?.let {
+            scope.launch {
+                mediaRatingService.setRating(activeMedia.value!!, rating)
+            }
         }
     }
 
     fun fetchRating() {
-        if(activeMedia.value == null) {
-            return
-        }
-
-        scope.launch {
-            mediaRatingService.fetchRatingDetails(activeMedia.value!!)
+        activeMedia.value?.let {
+            scope.launch {
+                mediaRatingService.fetchRatingDetails(activeMedia.value!!)
+            }
         }
     }
 
@@ -127,12 +123,12 @@ class MediaListService @Inject constructor (
     val exif = mediaExifService.exif
 
     fun fetchExif() {
-        if(activeMedia.value == null || activeMedia.value is Video) {
-            return
-        }
-
-        scope.launch {
-            mediaExifService.fetchExifDetails(activeMedia.value!!)
+        activeMedia.value?.let {
+            if(it !is Video) {
+                scope.launch {
+                    mediaExifService.fetchExifDetails(it)
+                }
+            }
         }
     }
 
@@ -140,22 +136,18 @@ class MediaListService @Inject constructor (
     val comments = mediaCommentService.comments
 
     fun fetchComments() {
-        if(activeMedia.value == null) {
-            return
-        }
-
-        scope.launch {
-            mediaCommentService.fetchCommentDetails(activeMedia.value!!)
+        activeMedia.value?.let {
+            scope.launch {
+                mediaCommentService.fetchCommentDetails(activeMedia.value!!)
+            }
         }
     }
 
     fun addComment(comment: String) {
-        if(activeMedia.value == null) {
-            return
-        }
-
-        scope.launch {
-            mediaCommentService.addComment(activeMedia.value!!, comment)
+        activeMedia.value?.let {
+            scope.launch {
+                mediaCommentService.addComment(activeMedia.value!!, comment)
+            }
         }
     }
 
@@ -170,8 +162,8 @@ class MediaListService @Inject constructor (
 
         scope.launch {
             activeMedia
-                .filter { it != null }
-                .collect { loadCategory(it!!.type, it.categoryId) }
+                .filterNotNull()
+                .collect { loadCategory(it.type, it.categoryId) }
         }
 
         scope.launch {
