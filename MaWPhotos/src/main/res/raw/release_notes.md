@@ -1,5 +1,5 @@
 ## v8.0
-### 06/20/2024
+### 06/30/2024
 - New support for playing videos that were previously only available on the web!
 - Added support for older devices
 - Tweaked the theme - dark theme is now more consistent with the "Dusk" theme on the web
