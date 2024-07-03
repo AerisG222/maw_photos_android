@@ -14,7 +14,7 @@ class ApiErrorHandler @Inject constructor(
     private val authService: AuthService,
     private val errorRepository: ErrorRepository
 ) {
-    val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     fun handleError(error: ApiResult.Error, message: String?): ExternalCallStatus<Nothing> {
         if(error.exception is CancellationException) {
