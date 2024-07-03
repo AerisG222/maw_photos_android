@@ -9,8 +9,8 @@ import net.openid.appauth.AuthorizationService
 import us.mikeandwan.photos.authorization.AuthAuthenticator
 import us.mikeandwan.photos.authorization.AuthInterceptor
 import us.mikeandwan.photos.authorization.AuthService
-import us.mikeandwan.photos.authorization.AuthStateManager
 import us.mikeandwan.photos.database.AuthorizationDao
+import us.mikeandwan.photos.domain.AuthorizationRepository
 import javax.inject.Singleton
 
 @Module
@@ -21,14 +21,14 @@ object AuthModule {
     fun provideAuthService(
         application: Application,
         authorizationService: AuthorizationService,
-        authStateManager: AuthStateManager
+        authorizationRepository: AuthorizationRepository
     ): AuthService =
-        AuthService(application, authorizationService, authStateManager)
+        AuthService(application, authorizationService, authorizationRepository)
 
     @Provides
     @Singleton
-    fun provideAuthStateManager(authorizationDao: AuthorizationDao): AuthStateManager =
-        AuthStateManager(authorizationDao)
+    fun provideAuthorizationRepository(authorizationDao: AuthorizationDao): AuthorizationRepository =
+        AuthorizationRepository(authorizationDao)
 
     @Provides
     @Singleton
@@ -39,12 +39,12 @@ object AuthModule {
     @Singleton
     fun provideAuthAuthenticator(
         authService: AuthorizationService,
-        authStateManager: AuthStateManager
+        authorizationRepository: AuthorizationRepository
     ): AuthAuthenticator =
-        AuthAuthenticator(authService, authStateManager)
+        AuthAuthenticator(authService, authorizationRepository)
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(authStateManager: AuthStateManager): AuthInterceptor =
-        AuthInterceptor(authStateManager)
+    fun provideAuthInterceptor(authorizationRepository: AuthorizationRepository): AuthInterceptor =
+        AuthInterceptor(authorizationRepository)
 }

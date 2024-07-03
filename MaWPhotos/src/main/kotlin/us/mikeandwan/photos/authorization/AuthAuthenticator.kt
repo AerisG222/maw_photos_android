@@ -7,17 +7,18 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
+import us.mikeandwan.photos.domain.AuthorizationRepository
 import java.io.IOException
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class AuthAuthenticator(
     private val authService: AuthorizationService,
-    private val authStateManager: AuthStateManager
+    private val authorizationRepository: AuthorizationRepository
 ) : Authenticator {
     @Synchronized
     @Throws(IOException::class)
     override fun authenticate(route: Route?, response: Response): Request? {
-        val authState = authStateManager.current
+        val authState = authorizationRepository.authState.value
         var request: Request? = null
 
         Timber.d("Starting Authenticator.authenticate")

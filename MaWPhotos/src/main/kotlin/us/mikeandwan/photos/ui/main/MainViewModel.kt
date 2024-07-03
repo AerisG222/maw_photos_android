@@ -102,10 +102,6 @@ class MainViewModel @Inject constructor(
         randomPhotoRepository.clear()
     }
 
-    fun handleAuthorizeCallback(intent: Intent) {
-        authService.completeAuthorization(intent)
-    }
-
     fun handleSendSingle(intent: Intent) {
         val mediaUri = IntentCompat.getParcelableExtra(
             intent,

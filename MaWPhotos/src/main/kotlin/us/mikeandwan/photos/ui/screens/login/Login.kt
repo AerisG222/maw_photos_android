@@ -1,5 +1,8 @@
 package us.mikeandwan.photos.ui.screens.login
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +29,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import kotlinx.serialization.Serializable
+import timber.log.Timber
 import us.mikeandwan.photos.R
 import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.logo.Logo
@@ -42,6 +46,23 @@ fun NavGraphBuilder.loginScreen(
     composable<LoginRoute> {
         val vm: LoginViewModel = hiltViewModel()
         val state by vm.state.collectAsStateWithLifecycle()
+        val notifyStartLogin by vm.notifyStartLogin.collectAsStateWithLifecycle()
+
+        val loginLauncher = rememberLauncherForActivityResult (
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                vm.handleAuthorizeCallback(result.data!!)
+            } else {
+                Timber.e("wtf!")
+            }
+        }
+
+        LaunchedEffect(notifyStartLogin) {
+            notifyStartLogin?.let {
+                loginLauncher.launch(it)
+            }
+        }
 
         when(state) {
             is LoginState.Unknown -> {}

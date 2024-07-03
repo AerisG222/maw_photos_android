@@ -253,19 +253,15 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleIntent(intent: Intent, vm: MainViewModel, navController: NavController) {
-        if (intent.action != null) {
-            when (intent.action) {
-                Intent.ACTION_SEND -> {
-                    vm.handleSendSingle(intent)
-                    navController.navigate(UploadRoute)
-                }
-                Intent.ACTION_SEND_MULTIPLE -> {
-                    vm.handleSendMultiple(intent)
-                    navController.navigate(UploadRoute)
-                }
+        when (intent?.action) {
+            Intent.ACTION_SEND -> {
+                vm.handleSendSingle(intent)
+                navController.navigate(UploadRoute)
             }
-        } else {
-            vm.handleAuthorizeCallback(intent)
+            Intent.ACTION_SEND_MULTIPLE -> {
+                vm.handleSendMultiple(intent)
+                navController.navigate(UploadRoute)
+            }
         }
     }
 }
