@@ -8,7 +8,6 @@ import java.io.IOException
 class AuthInterceptor(
     private val authorizationRepository: AuthorizationRepository
 ) : Interceptor {
-    @Synchronized
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val srcRequest = chain.request()
