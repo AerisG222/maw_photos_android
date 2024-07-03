@@ -54,7 +54,7 @@ fun NavGraphBuilder.loginScreen(
             if (result.resultCode == Activity.RESULT_OK) {
                 vm.handleAuthorizeCallback(result.data!!)
             } else {
-                Timber.e("wtf!")
+                Timber.i("user cancelled auth process")
             }
         }
 
