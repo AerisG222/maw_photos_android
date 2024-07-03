@@ -4,9 +4,9 @@ import android.graphics.drawable.Drawable
 import androidx.lifecycle.viewModelScope
 import androidx.media3.datasource.HttpDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -38,8 +38,8 @@ class CategoryItemViewModel @Inject constructor (
     val isSlideshowPlaying = mediaListService.isSlideshowPlaying
     val showDetailSheet = mediaListService.showDetailSheet
 
-    private var initialMediaId: Int = -1
-    private var initialMediaUpdated = false
+    private val initialMediaId = MutableStateFlow(-1)
+    private val initialMediaIdWasSet = MutableStateFlow(false)
 
     fun setActiveIndex(index: Int) { mediaListService.setActiveIndex(index) }
     fun toggleSlideshow() { mediaListService.toggleSlideshow() }
@@ -51,7 +51,7 @@ class CategoryItemViewModel @Inject constructor (
         loadCategory(type, categoryId)
         loadMedia(type, categoryId)
 
-        initialMediaId = mediaId
+        initialMediaId.value = mediaId
     }
 
     fun saveFileToShare(drawable: Drawable, filename: String, onComplete: (File) -> Unit) {
@@ -93,15 +93,22 @@ class CategoryItemViewModel @Inject constructor (
         )
 
         viewModelScope.launch {
-            media
-                .filter { !initialMediaUpdated && initialMediaId > 0 }
-                .filterNotNull()
-                .filter { it.isNotEmpty() }
-                .map {
-                    initialMediaUpdated = true
-                    mediaListService.setActiveId(initialMediaId)
+            combine(
+                media,
+                initialMediaId,
+                initialMediaIdWasSet
+            ) {
+                media,
+                id,
+                wasSet ->
+
+                if (wasSet || media.isEmpty() || id <= 0) {
+                    return@combine
                 }
-                .collect { }
+
+                mediaListService.setActiveId(id)
+                initialMediaIdWasSet.value = true
+            }.collect { }
         }
     }
 }
