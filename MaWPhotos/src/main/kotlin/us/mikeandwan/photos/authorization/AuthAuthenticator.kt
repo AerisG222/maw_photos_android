@@ -50,18 +50,17 @@ class AuthAuthenticator(
                 authState.performActionWithFreshTokens(authService) { accessToken: String?,
                                                                       idToken: String?,
                                                                       ex: AuthorizationException? ->
+                    runBlocking {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            authorizationRepository.save(authState)
+                        }
+                    }
 
                     when {
                         ex != null -> Timber.e(ex, "Failed to authorize")
                         accessToken == null -> Timber.e("Failed to authorize, received null access token")
                         else -> {
                             Timber.i("authenticate: obtained access token")
-
-                            runBlocking {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    authorizationRepository.save(authState)
-                                }
-                            }
 
                             request = response.request.newBuilder()
                                 .header("Authorization", "Bearer $accessToken")

@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.TokenResponse
 import timber.log.Timber
 import us.mikeandwan.photos.authorization.ApplicationException
 import us.mikeandwan.photos.authorization.AuthService
@@ -52,19 +51,23 @@ class LoginViewModel @Inject constructor(
         .stateIn(viewModelScope, WhileSubscribed(5000), LoginState.Unknown)
 
     fun handleAuthorizeCallback(intent: Intent) {
-        val authorizationResponse = authService.completeAuthorization(
-            AuthorizationResponse.fromIntent(intent),
-            AuthorizationException.fromIntent(intent)
-        )
-
-        var tokenResponse: TokenResponse?
+        val curr = authorizationRepository.authState.value
+        val authResponse = AuthorizationResponse.fromIntent(intent)
+        val authEx = AuthorizationException.fromIntent(intent)
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                try {
-                    tokenResponse = authService.redeemCodeForTokens(authorizationResponse)
+                curr.update(authResponse, authEx)
+                authorizationRepository.save(curr)
 
-                    val curr = authorizationRepository.authState.value
+                try {
+                    val authorizationResponse = authService.completeAuthorization(
+                        authResponse,
+                        authEx
+                    )
+
+                    val tokenResponse = authService.redeemCodeForTokens(authorizationResponse)
+
                     curr.update(tokenResponse!!, null)
                     authorizationRepository.save(curr)
                 } catch (ex: ApplicationException) {
