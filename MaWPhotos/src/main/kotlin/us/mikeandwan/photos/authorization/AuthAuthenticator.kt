@@ -46,28 +46,31 @@ class AuthAuthenticator(
                 }
             }
 
-            authState.performActionWithFreshTokens(authService) {
-                accessToken: String?,
-                idToken: String?,
-                ex: AuthorizationException? ->
+            try {
+                authState.performActionWithFreshTokens(authService) { accessToken: String?,
+                                                                      idToken: String?,
+                                                                      ex: AuthorizationException? ->
 
-                when {
-                    ex != null -> Timber.e(ex, "Failed to authorize")
-                    accessToken == null -> Timber.e("Failed to authorize, received null access token")
-                    else -> {
-                        Timber.i("authenticate: obtained access token")
+                    when {
+                        ex != null -> Timber.e(ex, "Failed to authorize")
+                        accessToken == null -> Timber.e("Failed to authorize, received null access token")
+                        else -> {
+                            Timber.i("authenticate: obtained access token")
 
-                        runBlocking {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                authorizationRepository.save(authState)
+                            runBlocking {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    authorizationRepository.save(authState)
+                                }
                             }
-                        }
 
-                        request = response.request.newBuilder()
-                            .header("Authorization", "Bearer $accessToken")
-                            .build()
+                            request = response.request.newBuilder()
+                                .header("Authorization", "Bearer $accessToken")
+                                .build()
+                        }
                     }
                 }
+            } catch (ex: Exception) {
+                Timber.e(ex, "Failed to renew tokens")
             }
         }
 
