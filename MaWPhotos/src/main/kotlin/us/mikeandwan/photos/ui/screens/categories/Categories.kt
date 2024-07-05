@@ -51,6 +51,12 @@ fun NavGraphBuilder.categoriesScreen(
             vm.setYear(args.year)
         }
 
+        DisposableEffect(Unit) {
+            onDispose {
+                vm.clearRefreshStaus()
+            }
+        }
+
         when(state) {
             is CategoriesState.Unknown -> Loading()
             is CategoriesState.NotAuthorized ->
@@ -104,12 +110,6 @@ fun CategoriesScreen(
             snackbarHostState.showSnackbar(state.refreshStatus.message)
 
             state.clearRefreshStatus()
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            snackbarHostState.currentSnackbarData?.dismiss()
         }
     }
 

@@ -53,6 +53,10 @@ class CategoriesViewModel @Inject constructor (
         _year.value = year
     }
 
+    fun clearRefreshStaus() {
+        _refreshStatus.value = CategoryRefreshStatus(Random.nextInt(),false, null)
+    }
+
     private var isFetchingCategories = false
 
     val state = combine(
