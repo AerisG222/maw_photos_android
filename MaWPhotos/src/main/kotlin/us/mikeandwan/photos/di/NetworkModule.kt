@@ -15,7 +15,9 @@ import us.mikeandwan.photos.authorization.AuthInterceptor
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import us.mikeandwan.photos.BuildConfig
 import us.mikeandwan.photos.api.SearchApiClient
 import us.mikeandwan.photos.api.UploadApiClient
 import us.mikeandwan.photos.api.VideoApiClient
@@ -28,11 +30,20 @@ object NetworkModule {
     fun provideOkHttpClient(
         authenticator: AuthAuthenticator,
         authInterceptor: AuthInterceptor
-    ): OkHttpClient =
-        OkHttpClient.Builder()
+    ): OkHttpClient {
+        val builder = OkHttpClient.Builder()
             .authenticator(authenticator)
             .addInterceptor(authInterceptor)
-            .build()
+
+        if(BuildConfig.DEBUG) {
+            val logging = HttpLoggingInterceptor()
+            logging.level = HttpLoggingInterceptor.Level.BASIC
+
+            builder.addInterceptor(logging)
+        }
+
+        return builder.build()
+    }
 
     @Provides
     @Singleton

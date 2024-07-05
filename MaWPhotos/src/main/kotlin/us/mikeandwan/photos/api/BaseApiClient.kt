@@ -11,8 +11,6 @@ abstract class BaseApiClient {
     private val mimeMap by lazy { MimeTypeMap.getSingleton() }
 
     protected suspend fun <T> makeApiCall(name: String, apiCall: suspend () -> retrofit2.Response<T>): ApiResult<T> {
-        Timber.d("$name starting")
-
         try {
             val response = apiCall()
             val result = ApiResult.build(response)
