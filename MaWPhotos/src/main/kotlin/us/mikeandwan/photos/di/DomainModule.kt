@@ -8,7 +8,6 @@ import dagger.hilt.components.SingletonComponent
 import us.mikeandwan.photos.api.PhotoApiClient
 import us.mikeandwan.photos.api.SearchApiClient
 import us.mikeandwan.photos.api.VideoApiClient
-import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.database.*
 import us.mikeandwan.photos.domain.*
 import javax.inject.Singleton
@@ -24,10 +23,9 @@ object DomainModule {
     @Provides
     @Singleton
     fun provideApiErrorHandler(
-        authService: AuthService,
         errorRepository: ErrorRepository
     ): ApiErrorHandler =
-        ApiErrorHandler(authService, errorRepository)
+        ApiErrorHandler(errorRepository)
 
     @Provides
     @Singleton

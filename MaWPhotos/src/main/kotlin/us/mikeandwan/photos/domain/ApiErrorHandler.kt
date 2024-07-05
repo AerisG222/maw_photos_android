@@ -1,31 +1,26 @@
 package us.mikeandwan.photos.domain
 
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import timber.log.Timber
 import us.mikeandwan.photos.api.ApiResult
-import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.ui.toExternalCallStatus
 import javax.inject.Inject
 
 class ApiErrorHandler @Inject constructor(
-    private val authService: AuthService,
     private val errorRepository: ErrorRepository
 ) {
-    private val scope = CoroutineScope(Dispatchers.IO)
-
     fun handleError(error: ApiResult.Error, message: String?): ExternalCallStatus<Nothing> {
         if(error.exception is CancellationException) {
             return error.toExternalCallStatus()
         }
 
         if(error.isUnauthorized()) {
-            scope.launch {
-                authService.logout()
-            }
+            // we used to logout here, but when there are multiple requests in flight, the logout
+            // would overrule the reauth that would come back a bit later - so just log this condition
+            Timber.i("ApiErrorHandler::handleError: Unauthorized")
         } else if(!message.isNullOrBlank()) {
+            Timber.i("ApiErrorHandler::handleError: $message")
             errorRepository.showError(message)
         }
 

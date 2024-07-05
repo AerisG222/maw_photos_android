@@ -130,6 +130,8 @@ class CategoriesViewModel @Inject constructor (
                             _refreshStatus.value = CategoryRefreshStatus(id,false, msg)
                         }
                         is ExternalCallStatus.Error -> {
+                            Timber.e(it.message)
+                            Timber.e(it.cause)
                             _refreshStatus.value = CategoryRefreshStatus(id,false, "There was an error loading categories")
                         }
                     }

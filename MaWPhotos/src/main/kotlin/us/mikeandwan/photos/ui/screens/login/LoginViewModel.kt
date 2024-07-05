@@ -57,14 +57,14 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                curr.update(authResponse, authEx)
-                authorizationRepository.save(curr)
-
                 try {
                     val authorizationResponse = authService.completeAuthorization(
                         authResponse,
                         authEx
                     )
+
+                    curr.update(authResponse, authEx)
+                    authorizationRepository.save(curr)
 
                     val tokenResponse = authService.redeemCodeForTokens(authorizationResponse)
 

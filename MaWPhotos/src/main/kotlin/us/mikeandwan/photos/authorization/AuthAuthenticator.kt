@@ -17,60 +17,78 @@ import java.io.IOException
 // https://www.coinbase.com/blog/okhttp-and-oauth-token-refreshes
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class AuthAuthenticator(
-    private val authService: AuthorizationService,
+    private val authService: AuthService,
+    private val authorizationService: AuthorizationService,
     private val authorizationRepository: AuthorizationRepository
 ) : Authenticator {
+    @Synchronized
     @Throws(IOException::class)
     override fun authenticate(route: Route?, response: Response): Request? {
         val authState = authorizationRepository.authState.value
         val currToken = authState.accessToken
         var request: Request? = null
 
-        if(currToken == null || authState.refreshToken == null) {
-            Timber.i("tokens are null, will not try to refresh")
+        Timber.i("authentication called for ${route?.address?.url}")
+        Timber.d("authenticate (auth token): $currToken")
+        Timber.d("authenticate (refresh token): ${authState.refreshToken}")
+
+        if (authState.refreshToken == null) {
+            Timber.i("refresh token is null, will not try to refresh")
             return request
         }
 
         Timber.d("Starting Authenticator.authenticate")
 
-        synchronized(this) {
-            val potentiallyNewToken = authorizationRepository.authState.value.accessToken
+        val potentiallyNewToken = authorizationRepository.authState.value.accessToken
 
-            // see if prior attempt included an auth token
-            if (response.request.header("Authorization") != null) {
-                // see if token was already refreshed, and if so try that
-                if(potentiallyNewToken != currToken) {
-                    return response.request.newBuilder()
-                        .header("Authorization", "Bearer $potentiallyNewToken")
-                        .build()
-                }
+        // see if prior attempt included an auth token
+        if (response.request.header("Authorization") != null) {
+            // see if token was already refreshed, and if so try that
+            if (potentiallyNewToken != currToken) {
+                return response.request.newBuilder()
+                    .header("Authorization", "Bearer $potentiallyNewToken")
+                    .build()
             }
+        }
 
-            try {
-                authState.performActionWithFreshTokens(authService) { accessToken: String?,
-                                                                      idToken: String?,
-                                                                      ex: AuthorizationException? ->
+        try {
+            authState.performActionWithFreshTokens(authorizationService) {
+                accessToken: String?,
+                idToken: String?,
+                ex: AuthorizationException? ->
+
+                Timber.i("perform with fresh tokens called for ${route?.address?.url}")
+
+                when {
+                    ex != null -> Timber.e(ex, "Failed to authorize")
+                    accessToken == null -> Timber.e("Failed to authorize, received null access token")
+                    else -> {
+                        Timber.i("authenticate: obtained access token")
+
+                        runBlocking {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                authorizationRepository.save(authState)
+                            }
+                        }
+
+                        request = response.request.newBuilder()
+                            .header("Authorization", "Bearer $accessToken")
+                            .build()
+                    }
+                }
+
+                // if we don't have a new request to try and refresh the auth, logout to forcefully
+                // signal that a user will be required to login
+                if(request == null) {
                     runBlocking {
                         CoroutineScope(Dispatchers.IO).launch {
-                            authorizationRepository.save(authState)
-                        }
-                    }
-
-                    when {
-                        ex != null -> Timber.e(ex, "Failed to authorize")
-                        accessToken == null -> Timber.e("Failed to authorize, received null access token")
-                        else -> {
-                            Timber.i("authenticate: obtained access token")
-
-                            request = response.request.newBuilder()
-                                .header("Authorization", "Bearer $accessToken")
-                                .build()
+                            authService.logout()
                         }
                     }
                 }
-            } catch (ex: Exception) {
-                Timber.e(ex, "Failed to renew tokens")
             }
+        } catch (ex: Exception) {
+            Timber.e(ex, "Failed to renew tokens")
         }
 
         return request
