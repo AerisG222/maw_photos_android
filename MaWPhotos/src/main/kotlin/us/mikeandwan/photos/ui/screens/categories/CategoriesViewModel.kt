@@ -115,8 +115,6 @@ class CategoriesViewModel @Inject constructor (
     }
     .stateIn(viewModelScope, WhileSubscribed(5000), CategoriesState.Unknown)
 
-    private var refreshAttempt = 1
-
     private fun refreshCategories(id: Int) {
         viewModelScope.launch {
             mediaCategoryRepository
@@ -133,29 +131,17 @@ class CategoriesViewModel @Inject constructor (
                                 else -> "${it.result.count()} categories loaded"
                             }
 
-                            refreshAttempt = 1
                             _refreshStatus.value = CategoryRefreshStatus(id,false, msg)
                         }
                         is ExternalCallStatus.Error -> {
                             Timber.e(it.message)
                             Timber.e(it.cause)
 
-                            // when refreshing a token, one of the calls fails when the token is refreshed
-                            // so to avoid an err message, let's attempt the refresh a couple times
-                            if(refreshAttempt <= 2) {
-                                Timber.i("retrying refresh")
-
-                                refreshAttempt++
-                                refreshCategories(id)
-                            } else {
-                                refreshAttempt = 1
-
-                                _refreshStatus.value = CategoryRefreshStatus(
-                                    id,
-                                    false,
-                                    "There was an error loading categories"
-                                )
-                            }
+                            _refreshStatus.value = CategoryRefreshStatus(
+                                id,
+                                false,
+                                "There was an error loading categories"
+                            )
                         }
                     }
                 }
