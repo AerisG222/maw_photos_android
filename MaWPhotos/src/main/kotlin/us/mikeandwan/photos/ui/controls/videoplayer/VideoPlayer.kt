@@ -43,7 +43,7 @@ fun VideoPlayer(
         .apply {
             setMediaItem(MediaItem.fromUri(activeMedia.getMediaUrl()))
             prepare()
-            playWhenReady = true
+            //playWhenReady = true
         }
 
     DisposableEffect(Unit) {
