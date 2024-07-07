@@ -19,6 +19,7 @@ import us.mikeandwan.photos.authorization.ApplicationException
 import us.mikeandwan.photos.authorization.AuthService
 import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.domain.AuthorizationRepository
+import us.mikeandwan.photos.domain.MediaCategoryRepository
 import javax.inject.Inject
 
 sealed class LoginState {
@@ -32,7 +33,8 @@ sealed class LoginState {
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authService: AuthService,
-    private val authorizationRepository: AuthorizationRepository
+    private val authorizationRepository: AuthorizationRepository,
+    private val mediaCategoryRepository: MediaCategoryRepository
 ): ViewModel() {
     private val _notifyStartLogin = MutableStateFlow<Intent?>(null)
     val notifyStartLogin = _notifyStartLogin.asStateFlow()
@@ -75,6 +77,12 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    suspend fun refreshCategories() {
+        mediaCategoryRepository
+            .getNewCategories()
+            .collect { }
     }
 
     private fun initiateAuthentication() {

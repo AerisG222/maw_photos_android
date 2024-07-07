@@ -68,6 +68,9 @@ fun NavGraphBuilder.loginScreen(
             is LoginState.Unknown -> {}
             is LoginState.Authorized ->
                 LaunchedEffect(state) {
+                    // refresh categories here - this helps to make sure we have the categories
+                    // before redirecting to the categories screen after install
+                    vm.refreshCategories()
                     navigateAfterLogin()
                 }
             is LoginState.NotAuthorized -> {
