@@ -20,10 +20,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import us.mikeandwan.photos.MawApplication
-import us.mikeandwan.photos.authorization.AuthService
-import us.mikeandwan.photos.authorization.AuthStatus
 import us.mikeandwan.photos.domain.ErrorRepository
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.MediaCategoryRepository
@@ -40,12 +37,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val authService: AuthService,
-    private val mediaCategoryRepository: MediaCategoryRepository,
+    mediaCategoryRepository: MediaCategoryRepository,
+    errorRepository: ErrorRepository,
     private val fileStorageRepository: FileStorageRepository,
     private val searchRepository: SearchRepository,
     private val randomPhotoRepository: RandomPhotoRepository,
-    errorRepository: ErrorRepository
 ): ViewModel() {
     val mostRecentYear = mediaCategoryRepository
         .getMostRecentYear()
@@ -175,14 +171,6 @@ class MainViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             fileStorageRepository.refreshPendingUploads()
-
-            authService.authStatus
-                .filter { it is AuthStatus.Authorized }
-                .collect {
-                    Timber.i("User authorized - fetching categories")
-                    mediaCategoryRepository.getNewCategories().collect {}
-                }
-
             clearFileCache()
         }
     }

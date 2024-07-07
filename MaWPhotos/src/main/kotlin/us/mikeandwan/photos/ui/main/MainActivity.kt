@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContent {
-            val vm: MainViewModel = hiltViewModel<MainViewModel>()
+            val vm = hiltViewModel<MainViewModel>()
             val navController = rememberNavController()
 
             val coroutineScope = rememberCoroutineScope()
@@ -253,7 +253,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleIntent(intent: Intent, vm: MainViewModel, navController: NavController) {
-        when (intent?.action) {
+        when (intent.action) {
             Intent.ACTION_SEND -> {
                 vm.handleSendSingle(intent)
                 navController.navigate(UploadRoute)
