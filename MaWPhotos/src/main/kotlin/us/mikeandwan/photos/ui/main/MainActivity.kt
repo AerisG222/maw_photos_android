@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -181,70 +183,106 @@ class MainActivity : ComponentActivity() {
                             SnackbarHost(hostState = snackbarHostState)
                         },
                     ) { innerPadding ->
-                        NavHost(
-                            modifier = Modifier.padding(innerPadding),
-                            navController = navController,
-                            startDestination = CategoriesRoute(mostRecentYear)
-                        ) {
-                            loginScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                navigateAfterLogin = { navController.navigateUp() }
-                            )
-                            aboutScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea
-                            )
-                            categoriesScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                setActiveYear = ::setActiveYear,
-                                navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
-                                navigateToLogin = { navController.navigate(LoginRoute) },
-                                navigateToCategories = { navController.navigate(CategoriesRoute(it)) }
-                            )
-                            categoryScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                navigateToMedia = {
-                                    navController.navigate(CategoryItemRoute(it.type.name, it.categoryId, it.id))
-                                },
-                                navigateToLogin = { navController.navigate(LoginRoute) },
-                            )
-                            categoryItemScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                navigateToLogin = { navController.navigate(LoginRoute) },
-                            )
-                            randomScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                navigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
-                                navigateToLogin = { navController.navigate(LoginRoute) },
-                            )
-                            randomItemScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                navigateToYear = { navController.navigate(CategoriesRoute(it)) },
-                                navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
-                                navigateToLogin = { navController.navigate(LoginRoute) },
-                            )
-                            searchScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                navigateToCategory = { navController.navigate(CategoryRoute(it.type.name, it.id)) },
-                                navigateToLogin = { navController.navigate(LoginRoute) },
-                            )
-                            settingsScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                navigateToLogin = { navController.navigate(LoginRoute) },
-                            )
-                            uploadScreen(
-                                updateTopBar = ::updateTopBar,
-                                setNavArea = ::setNavArea,
-                                navigateToLogin = { navController.navigate(LoginRoute) },
-                            )
+                        // https://issuetracker.google.com/issues/297824100
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            NavHost(
+                                modifier = Modifier.padding(innerPadding),
+                                navController = navController,
+                                startDestination = CategoriesRoute(mostRecentYear)
+                            ) {
+                                loginScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    navigateAfterLogin = { navController.navigateUp() }
+                                )
+                                aboutScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea
+                                )
+                                categoriesScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    setActiveYear = ::setActiveYear,
+                                    navigateToCategory = {
+                                        navController.navigate(
+                                            CategoryRoute(
+                                                it.type.name,
+                                                it.id
+                                            )
+                                        )
+                                    },
+                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                    navigateToCategories = {
+                                        navController.navigate(
+                                            CategoriesRoute(
+                                                it
+                                            )
+                                        )
+                                    }
+                                )
+                                categoryScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    navigateToMedia = {
+                                        navController.navigate(
+                                            CategoryItemRoute(
+                                                it.type.name,
+                                                it.categoryId,
+                                                it.id
+                                            )
+                                        )
+                                    },
+                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                )
+                                categoryItemScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                )
+                                randomScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    navigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
+                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                )
+                                randomItemScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    navigateToYear = { navController.navigate(CategoriesRoute(it)) },
+                                    navigateToCategory = {
+                                        navController.navigate(
+                                            CategoryRoute(
+                                                it.type.name,
+                                                it.id
+                                            )
+                                        )
+                                    },
+                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                )
+                                searchScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    navigateToCategory = {
+                                        navController.navigate(
+                                            CategoryRoute(
+                                                it.type.name,
+                                                it.id
+                                            )
+                                        )
+                                    },
+                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                )
+                                settingsScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                )
+                                uploadScreen(
+                                    updateTopBar = ::updateTopBar,
+                                    setNavArea = ::setNavArea,
+                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                )
+                            }
                         }
                     }
                 }
