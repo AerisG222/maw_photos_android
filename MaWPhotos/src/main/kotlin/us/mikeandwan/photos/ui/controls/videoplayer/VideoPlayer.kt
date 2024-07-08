@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.HttpDataSource
@@ -39,6 +40,8 @@ fun VideoPlayer(
             DefaultMediaSourceFactory(context)
                 .setDataSourceFactory(videoPlayerHttpDataSourceFactory)
         )
+//        .setUseLazyPreparation(false)
+//        .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
         .build()
         .apply {
             setMediaItem(MediaItem.fromUri(activeMedia.getMediaUrl()))
@@ -50,17 +53,6 @@ fun VideoPlayer(
         onDispose {
             exoPlayer.release()
         }
-    }
-
-    LaunchedEffect(Unit) {
-        snapshotFlow { lifecycle.currentState }
-            .collect { state ->
-                when (state) {
-                    Lifecycle.State.STARTED -> if (!exoPlayer.isPlaying) exoPlayer.play()
-                    Lifecycle.State.DESTROYED -> exoPlayer.pause()
-                    else -> {}
-                }
-            }
     }
 
     AndroidView(
