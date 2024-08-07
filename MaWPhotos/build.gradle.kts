@@ -14,7 +14,7 @@ plugins {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 35
     namespace = "us.mikeandwan.photos"
 
     defaultConfig {
