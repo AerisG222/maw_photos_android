@@ -1,10 +1,11 @@
 package us.mikeandwan.photos.domain
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthState
 import us.mikeandwan.photos.database.Authorization
 import us.mikeandwan.photos.database.AuthorizationDao
@@ -17,24 +18,34 @@ class AuthorizationRepository @Inject constructor(
         private const val AUTHORIZATION_ID = 1
     }
 
-    private val scope = CoroutineScope(Dispatchers.Main)
+    private val _authState = MutableStateFlow<AuthState>(getInitialAuthState())
+    val authState = _authState.asStateFlow()
 
-    val authState = dao
-        .getAuthorization(AUTHORIZATION_ID)
-        .map {
-            if(it == null) {
-                AuthState()
-            } else {
-                AuthState.jsonDeserialize(it.json)
-            }
+    fun getInitialAuthState(): AuthState {
+        return runBlocking {
+            dao
+                .getAuthorization(AUTHORIZATION_ID)
+                .map {
+                    if (it == null) {
+                        AuthState()
+                    } else {
+                        AuthState.jsonDeserialize(it.json)
+                    }
+                }
+                .first()
         }
-        .stateIn(scope, WhileSubscribed(5000), AuthState())
+    }
 
     suspend fun save(state: AuthState?) {
         if(state == null) {
+            _authState.update { AuthState() }
             dao.deleteAuthorization(AUTHORIZATION_ID)
         } else {
-            dao.setAuthorization(Authorization(AUTHORIZATION_ID, state.jsonSerializeString()))
+            // serialize and deserialize to get a new object so state flow sees this as a new value
+            val json = state.jsonSerializeString()
+
+            dao.setAuthorization(Authorization(AUTHORIZATION_ID, json))
+            _authState.value = AuthState.jsonDeserialize(json)
         }
     }
 }
