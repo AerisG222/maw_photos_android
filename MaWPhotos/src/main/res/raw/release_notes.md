@@ -1,3 +1,8 @@
+## v8.1
+### 08/08/2024
+- Update libraries and hopefully addresses sizing issue when playing videos in the pager
+- Simplify / improve authorization code to avoid errors when updating categories in background
+
 ## v8.0
 ### 07/07/2024
 - New support for playing videos that were previously only available on the web!
