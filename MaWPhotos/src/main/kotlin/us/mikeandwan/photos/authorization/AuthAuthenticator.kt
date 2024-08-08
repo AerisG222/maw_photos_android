@@ -1,8 +1,5 @@
 package us.mikeandwan.photos.authorization
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
@@ -25,30 +22,15 @@ class AuthAuthenticator(
     @Throws(IOException::class)
     override fun authenticate(route: Route?, response: Response): Request? {
         val authState = authorizationRepository.authState.value
-        val currToken = authState.accessToken
         var request: Request? = null
 
-        Timber.i("authentication called for ${route?.address?.url}")
-        Timber.d("authenticate (auth token): $currToken")
-        Timber.d("authenticate (refresh token): ${authState.refreshToken}")
+        Timber.i("authenticate called for ${route?.address?.url}")
+        Timber.d("authenticate (current access token): ${authState.accessToken}")
+        Timber.d("authenticate (current refresh token): ${authState.refreshToken}")
 
         if (authState.refreshToken == null) {
             Timber.i("refresh token is null, will not try to refresh")
             return request
-        }
-
-        Timber.d("Starting Authenticator.authenticate")
-
-        val potentiallyNewToken = authorizationRepository.authState.value.accessToken
-
-        // see if prior attempt included an auth token
-        if (response.request.header("Authorization") != null) {
-            // see if token was already refreshed, and if so try that
-            if (potentiallyNewToken != currToken) {
-                return response.request.newBuilder()
-                    .header("Authorization", "Bearer $potentiallyNewToken")
-                    .build()
-            }
         }
 
         try {
@@ -58,6 +40,7 @@ class AuthAuthenticator(
                 ex: AuthorizationException? ->
 
                 Timber.i("perform with fresh tokens called for ${route?.address?.url}")
+                Timber.d("authenticate (post access token): $accessToken")
 
                 when {
                     ex != null -> Timber.e(ex, "Failed to authorize")
@@ -79,9 +62,7 @@ class AuthAuthenticator(
                 // signal that a user will be required to login
                 if(request == null) {
                     runBlocking {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            authService.logout()
-                        }
+                        authService.logout()
                     }
                 }
             }
