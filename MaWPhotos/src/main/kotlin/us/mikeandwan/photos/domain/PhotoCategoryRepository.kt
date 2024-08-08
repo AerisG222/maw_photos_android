@@ -42,8 +42,6 @@ class PhotoCategoryRepository @Inject constructor(
             .getMostRecentCategory()
             .firstOrNull()
 
-        // do not show error messages as snackbar for this method as it is called only from
-        // the update categories worker - which will create an error notification on failure
         val categories = loadCategories(category?.id ?: -1, null)
 
         emitAll(categories)
