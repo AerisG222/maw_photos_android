@@ -58,23 +58,21 @@ class LoginViewModel @Inject constructor(
         val authEx = AuthorizationException.fromIntent(intent)
 
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    val authorizationResponse = authService.completeAuthorization(
-                        authResponse,
-                        authEx
-                    )
+            try {
+                val authorizationResponse = authService.completeAuthorization(
+                    authResponse,
+                    authEx
+                )
 
-                    curr.update(authResponse, authEx)
-                    authorizationRepository.save(curr)
+                curr.update(authResponse, authEx)
+                authorizationRepository.save(curr)
 
-                    val tokenResponse = authService.redeemCodeForTokens(authorizationResponse)
+                val tokenResponse = authService.redeemCodeForTokens(authorizationResponse)
 
-                    curr.update(tokenResponse!!, null)
-                    authorizationRepository.save(curr)
-                } catch (ex: ApplicationException) {
-                    Timber.e("Could not handle the authorization response", ex)
-                }
+                curr.update(tokenResponse!!, null)
+                authorizationRepository.save(curr)
+            } catch (ex: ApplicationException) {
+                Timber.e(ex, "Could not handle the authorization response")
             }
         }
     }
@@ -89,20 +87,14 @@ class LoginViewModel @Inject constructor(
         var cfg = authorizationRepository.authState.value.authorizationServiceConfiguration
 
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    if(cfg == null) {
-                        cfg = authService.loadConfig()
-                    }
-
-                    withContext(Dispatchers.Main) {
-                        _notifyStartLogin.value = authService.getAuthorizationRedirectIntent(cfg!!)
-                    }
-                } catch (ex: ApplicationException) {
-                    withContext(Dispatchers.Main) {
-                        Timber.e("could not initiate authorization", ex)
-                    }
+            try {
+                if(cfg == null) {
+                    cfg = authService.loadConfig()
                 }
+
+                _notifyStartLogin.value = authService.getAuthorizationRedirectIntent(cfg!!)
+            } catch (ex: ApplicationException) {
+                Timber.e(ex, "could not initiate authorization")
             }
         }
     }
