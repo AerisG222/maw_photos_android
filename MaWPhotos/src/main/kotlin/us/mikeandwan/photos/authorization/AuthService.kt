@@ -1,10 +1,11 @@
 package us.mikeandwan.photos.authorization
 
 import android.app.Application
-import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import net.openid.appauth.*
 import net.openid.appauth.AuthorizationServiceConfiguration.fetchFromIssuer
 import timber.log.Timber
@@ -40,17 +41,23 @@ class AuthService(
     }
 
     suspend fun loadConfig(): AuthorizationServiceConfiguration {
-        return suspendCoroutine { continuation ->
-            fetchFromIssuer(Uri.parse(Constants.AUTH_BASE_URL)) { metadata, ex ->
-                when {
-                    metadata != null -> {
-                        Timber.i("metadata retrieved successfully")
-                        Timber.d(metadata.toJsonString())
-                        continuation.resume(metadata)
-                    }
-                    else -> {
-                        val error = createAuthorizationError("failed to fetch openidc configuration", ex)
-                        continuation.resumeWithException(error)
+        return withContext(Dispatchers.IO) {
+            return@withContext suspendCoroutine { continuation ->
+                fetchFromIssuer(Uri.parse(Constants.AUTH_BASE_URL)) { metadata, ex ->
+                    when {
+                        metadata != null -> {
+                            Timber.i("metadata retrieved successfully")
+                            Timber.d(metadata.toJsonString())
+                            continuation.resume(metadata)
+                        }
+
+                        else -> {
+                            val error = createAuthorizationError(
+                                "failed to fetch openidc configuration",
+                                ex
+                            )
+                            continuation.resumeWithException(error)
+                        }
                     }
                 }
             }
