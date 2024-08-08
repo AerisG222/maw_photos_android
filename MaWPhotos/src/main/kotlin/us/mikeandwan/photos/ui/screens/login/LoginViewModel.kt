@@ -4,14 +4,12 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import timber.log.Timber
@@ -92,7 +90,7 @@ class LoginViewModel @Inject constructor(
                     cfg = authService.loadConfig()
                 }
 
-                _notifyStartLogin.value = authService.getAuthorizationRedirectIntent(cfg!!)
+                _notifyStartLogin.value = authService.getAuthorizationRedirectIntent(cfg)
             } catch (ex: ApplicationException) {
                 Timber.e(ex, "could not initiate authorization")
             }

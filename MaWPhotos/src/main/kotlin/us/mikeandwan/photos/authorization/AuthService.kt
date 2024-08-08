@@ -29,7 +29,6 @@ class AuthService(
     val authStatus = authorizationRepository.authState
         .map {
             when {
-                it == null -> AuthStatus.RequiresAuthorization
                 it.isAuthorized -> AuthStatus.Authorized
                 it.refreshToken != null -> AuthStatus.Authorized
                 else -> AuthStatus.RequiresAuthorization

@@ -172,7 +172,7 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        LoginState.NotAuthorized() {},
+        LoginState.NotAuthorized {},
         {},
         {}
     )
