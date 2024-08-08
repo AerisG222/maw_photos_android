@@ -66,9 +66,7 @@ class AuthAuthenticator(
                         Timber.i("authenticate: obtained access token")
 
                         runBlocking {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                authorizationRepository.save(authState)
-                            }
+                            authorizationRepository.save(authState)
                         }
 
                         request = response.request.newBuilder()
