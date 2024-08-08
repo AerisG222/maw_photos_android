@@ -78,8 +78,8 @@ class AuthService(
             throw createAuthorizationError("Authorization Request Error", ex)
         }
 
-        Timber.i(ContentValues.TAG, "Authorization response received successfully")
-        Timber.d(ContentValues.TAG, "CODE: ${response.authorizationCode}, STATE: ${response.state}")
+        Timber.i("Authorization response received successfully")
+        Timber.d("CODE: ${response.authorizationCode}, STATE: ${response.state}")
 
         return response
     }
@@ -92,8 +92,8 @@ class AuthService(
             authorizationService.performTokenRequest(tokenRequest) { tokenResponse, ex ->
                 when {
                     tokenResponse != null -> {
-                        Timber.i(ContentValues.TAG, "Authorization code grant response received successfully")
-                        Timber.d(ContentValues.TAG, "AT: ${tokenResponse.accessToken}, RT: ${tokenResponse.refreshToken}, IDT: ${tokenResponse.idToken}" )
+                        Timber.i("Authorization code grant response received successfully")
+                        Timber.d("AT: ${tokenResponse.accessToken}, RT: ${tokenResponse.refreshToken}, IDT: ${tokenResponse.idToken}" )
                         continuation.resume(tokenResponse)
                     }
                     else -> {
