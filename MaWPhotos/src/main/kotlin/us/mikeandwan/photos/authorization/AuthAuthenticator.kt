@@ -1,7 +1,6 @@
 package us.mikeandwan.photos.authorization
 
 import kotlinx.coroutines.runBlocking
-import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -9,36 +8,29 @@ import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
 import us.mikeandwan.photos.domain.AuthorizationRepository
-import java.io.IOException
 
 // https://www.coinbase.com/blog/okhttp-and-oauth-token-refreshes
-@Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class AuthAuthenticator(
     private val authorizationService: AuthorizationService,
     private val authorizationRepository: AuthorizationRepository
 ) : Authenticator {
     @Synchronized
-    @Throws(IOException::class)
     override fun authenticate(route: Route?, response: Response): Request? {
         val authState = authorizationRepository.authState.value
         var request: Request? = null
 
-        Timber.i("authenticate called for ${route?.address?.url}")
+        Timber.i("authenticate: ${route?.address?.url}")
         Timber.d("authenticate (current access token): ${authState.accessToken}")
         Timber.d("authenticate (current refresh token): ${authState.refreshToken}")
 
         try {
-            authState.performActionWithFreshTokens(authorizationService) {
-                accessToken: String?,
-                idToken: String?,
-                ex: AuthorizationException? ->
-
-                Timber.i("perform with fresh tokens called for ${route?.address?.url}")
-                Timber.d("authenticate (post access token): $accessToken")
+            authState.performActionWithFreshTokens(authorizationService) { newAccessToken, _, authException ->
+                Timber.i("performActionWithFreshTokens: ${route?.address?.url}")
+                Timber.d("performActionWithFreshTokens (new access token): $newAccessToken")
 
                 when {
-                    ex != null -> Timber.e(ex, "Failed to authorize")
-                    accessToken == null -> Timber.e("Failed to authorize, received null access token")
+                    authException != null -> Timber.e(authException, "Failed to authorize")
+                    newAccessToken == null -> Timber.e("Failed to authorize, received null access token")
                     else -> {
                         Timber.i("authenticate: obtained access token")
 
@@ -47,7 +39,7 @@ class AuthAuthenticator(
                         }
 
                         request = response.request.newBuilder()
-                            .header("Authorization", "Bearer $accessToken")
+                            .header("Authorization", "Bearer $newAccessToken")
                             .build()
                     }
                 }
