@@ -19,33 +19,30 @@ class AuthAuthenticator(
         val authState = authorizationRepository.authState.value
         var request: Request? = null
 
-        Timber.i("authenticate: ${route?.address?.url}")
-        Timber.d("authenticate (current access token): ${authState.accessToken}")
-        Timber.d("authenticate (current refresh token): ${authState.refreshToken}")
+        Timber.i("authenticate: ${route?.address?.url} || ${authState.accessToken} || ${authState.refreshToken}")
 
         try {
             authState.performActionWithFreshTokens(authorizationService) { newAccessToken, _, authException ->
-                Timber.i("performActionWithFreshTokens: ${route?.address?.url}")
-                Timber.d("performActionWithFreshTokens (new access token): $newAccessToken")
-
-                when {
-                    authException != null -> Timber.e(authException, "Failed to authorize")
-                    newAccessToken == null -> Timber.e("Failed to authorize, received null access token")
-                    else -> {
-                        Timber.i("authenticate: obtained access token")
-
-                        runBlocking {
-                            authorizationRepository.save(authState)
-                        }
-
-                        request = response.request.newBuilder()
-                            .header("Authorization", "Bearer $newAccessToken")
-                            .build()
-                    }
+                if(authException != null) {
+                    throw authException
                 }
+
+                if(newAccessToken == null) {
+                    throw Exception("Failed to authorize, received null access token")
+                }
+
+                Timber.i("performActionWithFreshTokens: ${route?.address?.url} || $newAccessToken")
+
+                runBlocking {
+                    authorizationRepository.save(authState)
+                }
+
+                request = response.request.newBuilder()
+                    .header("Authorization", "Bearer $newAccessToken")
+                    .build()
             }
         } catch (ex: Exception) {
-            Timber.e(ex, "Failed to renew tokens")
+            Timber.e(ex, "Failed to renew tokens: ${route?.address?.url} || ${ex.message}")
         }
 
         return request
