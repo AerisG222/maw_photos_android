@@ -14,7 +14,6 @@ import java.io.IOException
 // https://www.coinbase.com/blog/okhttp-and-oauth-token-refreshes
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class AuthAuthenticator(
-    private val authService: AuthService,
     private val authorizationService: AuthorizationService,
     private val authorizationRepository: AuthorizationRepository
 ) : Authenticator {
@@ -50,14 +49,6 @@ class AuthAuthenticator(
                         request = response.request.newBuilder()
                             .header("Authorization", "Bearer $accessToken")
                             .build()
-                    }
-                }
-
-                // if we don't have a new request to try and refresh the auth, logout to forcefully
-                // signal that a user will be required to login
-                if(request == null) {
-                    runBlocking {
-                        authService.logout()
                     }
                 }
             }
