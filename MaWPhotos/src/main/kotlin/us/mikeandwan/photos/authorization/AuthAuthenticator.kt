@@ -14,37 +14,53 @@ class AuthAuthenticator(
     private val authorizationService: AuthorizationService,
     private val authorizationRepository: AuthorizationRepository
 ) : Authenticator {
-    @Synchronized
     override fun authenticate(route: Route?, response: Response): Request? {
-        val authState = authorizationRepository.authState.value
-        var request: Request? = null
+        // get original token - if none exists, return null as we won't be able to get a new one
+        val origAuthHeader = response.request.headers["Authorization"] ?: return null
+        val origToken = origAuthHeader.replace("Bearer ", "")
 
-        Timber.i("authenticate: ${route?.address?.url} || ${authState.accessToken} || ${authState.refreshToken}")
+        Timber.i("authenticate: ${route?.address?.url} || $origToken")
 
-        try {
-            authState.performActionWithFreshTokens(authorizationService) { newAccessToken, _, authException ->
-                if(authException != null) {
-                    throw authException
-                }
+        synchronized(this) {
+            val authState = authorizationRepository.authState.value
+            val currToken = authState.accessToken
+            var request: Request? = null
 
-                if(newAccessToken == null) {
-                    throw Exception("Failed to authorize, received null access token")
-                }
-
-                Timber.i("performActionWithFreshTokens: ${route?.address?.url} || $newAccessToken")
-
-                runBlocking {
-                    authorizationRepository.save(authState)
-                }
-
-                request = response.request.newBuilder()
-                    .header("Authorization", "Bearer $newAccessToken")
-                    .build()
+            // if we got a new token in a separate attempt/call/thread, try that one first
+            if(currToken != null && origToken != currToken) {
+                request = buildRequest(response, currToken)
             }
-        } catch (ex: Exception) {
-            Timber.e(ex, "Failed to renew tokens: ${route?.address?.url} || ${ex.message}")
-        }
+            else {
+                try {
+                    authState.performActionWithFreshTokens(authorizationService) { newAccessToken, _, authException ->
+                        if (authException != null) {
+                            throw authException
+                        }
 
-        return request
+                        if (newAccessToken == null) {
+                            throw Exception("Failed to authorize, received null access token")
+                        }
+
+                        Timber.i("performActionWithFreshTokens: ${route?.address?.url} || $newAccessToken")
+
+                        runBlocking {
+                            authorizationRepository.save(authState)
+                        }
+
+                        request = buildRequest(response, newAccessToken)
+                    }
+                } catch (ex: Exception) {
+                    Timber.e(ex, "Failed to renew tokens: ${route?.address?.url} || ${ex.message}")
+                }
+            }
+
+            return request
+        }
+    }
+
+    fun buildRequest(response: Response, accessToken: String): Request {
+        return response.request.newBuilder()
+            .header("Authorization", "Bearer $accessToken")
+            .build()
     }
 }
