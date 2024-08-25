@@ -28,11 +28,6 @@ class AuthAuthenticator(
         Timber.d("authenticate (current access token): ${authState.accessToken}")
         Timber.d("authenticate (current refresh token): ${authState.refreshToken}")
 
-        if (authState.refreshToken == null) {
-            Timber.i("refresh token is null, will not try to refresh")
-            return request
-        }
-
         try {
             authState.performActionWithFreshTokens(authorizationService) {
                 accessToken: String?,
