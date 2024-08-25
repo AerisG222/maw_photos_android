@@ -1,20 +1,22 @@
 [versions]
-androidGradlePlugin = "8.5.1"
+androidGradlePlugin = "8.5.2"
 androidx-activity-compose = "1.9.1"
 androidx-annotation = "1.8.2"
-androidx-baselineprofile = "1.2.4"
-androidx-benchmark-macro-junit4 = "1.2.4"
-androidx-compose-bom = "2024.06.00"
-androidx-material3 = "1.3.0-beta05"
+androidx-baselineprofile = "1.3.0"
+androidx-benchmark-macro-junit4 = "1.3.0"
+androidx-compose-bom = "2024.08.00"
+androidx-material3 = "1.3.0-rc01"
 androidx-corektx = "1.13.1"
 androidx-hilt-compiler = "1.2.0"
 androidx-hilt-work = "1.2.0"
 androidx-lifecycle = "2.8.4"
 androidx-media3 = "1.4.0"
-androidx-navigation = "2.8.0-beta07"
+androidx-navigation = "2.8.0-rc01"
 androidx-profileinstaller = "1.3.1"
 androidx-room = "2.6.1"
-androidx-test = "1.6.1"
+androidx-test = "1.6.2"
+androidx-test-core = "1.6.1"
+androidx-test-rules = "1.6.1"
 androidx-test-espresso = "3.6.1"
 androidx-test-ext-junit = "1.2.1"
 androidx-uiautomator = "2.3.0"
@@ -23,9 +25,9 @@ androidx-work = "2.9.1"
 coroutines = "1.8.1"
 hilt = "2.52"
 junit = "4.13.2"
-kotlin = "2.0.10"
+kotlin = "2.0.20"
 kotlinx-serialization = "1.7.1"
-ksp = "2.0.10-1.0.24"
+ksp = "2.0.20-1.0.24"
 
 appauth = "0.11.1"
 coil = "2.7.0"
@@ -62,11 +64,11 @@ androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profi
 androidx-room = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "androidx-room" }
-androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-test-espresso" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
-androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
+androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidx-uiautomator" }
 androidx-work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidx-work" }
 
