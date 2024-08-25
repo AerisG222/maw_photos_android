@@ -21,8 +21,8 @@ android {
         applicationId = "us.mikeandwan.pictures"
         minSdk = 26
         targetSdk = 34
-        versionCode = 65
-        versionName = "8.1"
+        versionCode = 66
+        versionName = "8.2"
 
         manifestPlaceholders["appAuthRedirectScheme"] = "us.mikeandwan.photos"
 

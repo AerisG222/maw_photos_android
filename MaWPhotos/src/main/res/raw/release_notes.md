@@ -1,3 +1,8 @@
+## v8.2
+### 08/25/2024
+- library updates
+- another attempt to fix the broken auth refresh
+
 ## v8.1
 ### 08/08/2024
 - Update libraries and hopefully addresses sizing issue when playing videos in the pager
