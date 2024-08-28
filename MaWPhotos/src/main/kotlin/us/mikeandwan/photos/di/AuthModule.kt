@@ -38,10 +38,11 @@ object AuthModule {
     @Provides
     @Singleton
     fun provideAuthAuthenticator(
+        authService: AuthService,
         authorizationService: AuthorizationService,
         authorizationRepository: AuthorizationRepository
     ): AuthAuthenticator =
-        AuthAuthenticator(authorizationService, authorizationRepository)
+        AuthAuthenticator(authService, authorizationService, authorizationRepository)
 
     @Provides
     @Singleton

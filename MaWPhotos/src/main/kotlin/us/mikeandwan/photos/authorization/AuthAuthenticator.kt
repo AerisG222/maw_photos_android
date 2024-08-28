@@ -11,6 +11,7 @@ import us.mikeandwan.photos.domain.AuthorizationRepository
 
 // https://www.coinbase.com/blog/okhttp-and-oauth-token-refreshes
 class AuthAuthenticator(
+    private val authService: AuthService,
     private val authorizationService: AuthorizationService,
     private val authorizationRepository: AuthorizationRepository
 ) : Authenticator {
@@ -31,8 +32,8 @@ class AuthAuthenticator(
                 request = buildRequest(response, currToken)
             }
             else {
-                try {
-                    authState.performActionWithFreshTokens(authorizationService) { newAccessToken, _, authException ->
+                authState.performActionWithFreshTokens(authorizationService) { newAccessToken, _, authException ->
+                    try {
                         if (authException != null) {
                             throw authException
                         }
@@ -48,9 +49,15 @@ class AuthAuthenticator(
                         }
 
                         request = buildRequest(response, newAccessToken)
+                    } catch (ex: Exception) {
+                        Timber.e(ex, "Failed to renew tokens: ${route?.address?.url} || ${ex.message}")
+
+                        // if we don't have a new request to try and refresh the auth, logout to forcefully
+                        // signal that a user will be required to login
+                        runBlocking {
+                            authService.logout()
+                        }
                     }
-                } catch (ex: Exception) {
-                    Timber.e(ex, "Failed to renew tokens: ${route?.address?.url} || ${ex.message}")
                 }
             }
 
