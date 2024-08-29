@@ -1,5 +1,8 @@
 package us.mikeandwan.photos.authorization
 
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationService
 import okhttp3.Authenticator
@@ -20,48 +23,55 @@ class AuthAuthenticator(
         val origAuthHeader = response.request.headers["Authorization"] ?: return null
         val origToken = origAuthHeader.replace("Bearer ", "")
 
-        Timber.i("authenticate: ${route?.address?.url} || $origToken")
+        Timber.i("authenticate: ${response.request.url} || ${trimToken(origToken)}")
 
         synchronized(this) {
-            val authState = authorizationRepository.authState.value
-            val currToken = authState.accessToken
-            var request: Request? = null
+            return runBlocking {
+                val tokenFlow = Channel<String?>()
+                val tf = tokenFlow.consumeAsFlow()
+                val authState = authorizationRepository.authState.value
+                val currToken = authState.accessToken
 
-            // if we got a new token in a separate attempt/call/thread, try that one first
-            if(currToken != null && origToken != currToken) {
-                request = buildRequest(response, currToken)
-            }
-            else {
-                authState.performActionWithFreshTokens(authorizationService) { newAccessToken, _, authException ->
-                    try {
-                        if (authException != null) {
-                            throw authException
-                        }
+                Timber.i("inner authenticate: ${response.request.url} || ${trimToken(origToken)}")
 
-                        if (newAccessToken == null) {
-                            throw Exception("Failed to authorize, received null access token")
-                        }
+                // if we got a new token in a separate attempt/call/thread, try that one first
+                if (currToken != null && origToken != currToken) {
+                    Timber.i("token already updated!")
+                    tokenFlow.send(currToken)
+                } else {
+                    authState.performActionWithFreshTokens(authorizationService) { newAccessToken, _, authException ->
+                        try {
+                            if (authException != null) {
+                                throw authException
+                            }
 
-                        Timber.i("performActionWithFreshTokens: ${route?.address?.url} || $newAccessToken")
+                            if (newAccessToken == null) {
+                                throw Exception("Failed to authorize, received null access token")
+                            }
 
-                        runBlocking {
-                            authorizationRepository.save(authState)
-                        }
+                            Timber.i("performActionWithFreshTokens: ${route?.address?.url} || ${trimToken(newAccessToken)}")
 
-                        request = buildRequest(response, newAccessToken)
-                    } catch (ex: Exception) {
-                        Timber.e(ex, "Failed to renew tokens: ${route?.address?.url} || ${ex.message}")
+                            runBlocking {
+                                authorizationRepository.save(authState)
+                                tokenFlow.send(newAccessToken)
+                            }
+                        } catch (ex: Exception) {
+                            Timber.e(ex, "Failed to renew tokens: ${response.request.url} || ${ex.message}")
 
-                        // if we don't have a new request to try and refresh the auth, logout to forcefully
-                        // signal that a user will be required to login
-                        runBlocking {
-                            authService.logout()
+                            // if we don't have a new request to try and refresh the auth, logout to forcefully
+                            // signal that a user will be required to login
+                            runBlocking {
+                                authService.logout()
+                                tokenFlow.send(null)
+                            }
                         }
                     }
                 }
-            }
 
-            return request
+                val token =  tf.first()
+
+                return@runBlocking token?.let { buildRequest(response, it) }
+            }
         }
     }
 
@@ -70,4 +80,6 @@ class AuthAuthenticator(
             .header("Authorization", "Bearer $accessToken")
             .build()
     }
+
+    fun trimToken(token: String) = token.replaceRange(5, token.length - 5, "...")
 }
