@@ -1,3 +1,8 @@
+## v8.3
+### 08/30/2024
+- library updates
+- this will definitely fix the authorization issue for good - i hope =D
+
 ## v8.2
 ### 08/25/2024
 - library updates
