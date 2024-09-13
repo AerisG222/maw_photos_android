@@ -1,3 +1,7 @@
+## v8.3.1
+### 09/13/2024
+- dependency updates
+
 ## v8.3
 ### 08/30/2024
 - library updates
