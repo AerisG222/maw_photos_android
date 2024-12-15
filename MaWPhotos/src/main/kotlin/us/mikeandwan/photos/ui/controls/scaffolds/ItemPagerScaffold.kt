@@ -24,7 +24,7 @@ fun ItemPagerScaffold(
 ) {
     content()
 
-    val bgColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.76f)
+    val bgColor = MaterialTheme.colorScheme.primaryContainer
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,

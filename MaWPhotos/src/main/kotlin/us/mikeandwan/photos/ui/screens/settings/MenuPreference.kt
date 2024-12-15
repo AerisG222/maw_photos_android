@@ -34,7 +34,7 @@ fun MenuPreference(
         )
 
         if(display) {
-            Dialog(onDismissRequest = { setDisplay(false) } ) {
+            Dialog(onDismissRequest = { setDisplay(false) }) {
                 MenuPreferenceCard(
                     labelStringId = labelStringId,
                     options = options,

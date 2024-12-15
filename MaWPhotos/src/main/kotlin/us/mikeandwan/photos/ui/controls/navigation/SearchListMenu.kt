@@ -1,5 +1,7 @@
 package us.mikeandwan.photos.ui.controls.navigation
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +31,10 @@ fun SearchListMenu(
 ) {
     val termDividerModifier = Modifier.padding(16.dp, 0.dp)
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(color = MaterialTheme.colorScheme.secondaryContainer)
+    ) {
         if(recentSearchTerms.isEmpty()) {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -39,7 +44,7 @@ fun SearchListMenu(
             ) {
                 Text(
                     text = "No recent searches",
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     fontStyle = FontStyle.Italic
                 )
             }
@@ -55,20 +60,27 @@ fun SearchListMenu(
                     )
 
                     if (index != recentSearchTerms.size - 1) {
-                        HorizontalDivider(modifier = termDividerModifier)
+                        HorizontalDivider(
+                            modifier = termDividerModifier,
+                            color = MaterialTheme.colorScheme.inverseOnSurface
+                        )
                     }
                 }
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            HorizontalDivider(modifier = Modifier.padding(16.dp, 24.dp, 16.dp, 8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(16.dp, 24.dp, 16.dp, 8.dp),
+                color = MaterialTheme.colorScheme.inverseOnSurface
+            )
 
             OutlinedButton(
                 onClick = { onClearSearchHistory() },
                 modifier = Modifier
                     .padding(16.dp, 4.dp, 16.dp, 16.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
             ) {
                 Text(
                     text = stringResource(id = R.string.clear_search_history)

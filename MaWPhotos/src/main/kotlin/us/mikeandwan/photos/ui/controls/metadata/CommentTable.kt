@@ -69,7 +69,7 @@ fun CommentTable(
             }
 
             if (index != comments.size - 1) {
-                HorizontalDivider()
+                HorizontalDivider(color = MaterialTheme.colorScheme.inverseOnSurface)
             }
         }
 

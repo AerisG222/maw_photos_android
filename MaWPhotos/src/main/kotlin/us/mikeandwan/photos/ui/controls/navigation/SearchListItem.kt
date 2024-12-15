@@ -25,7 +25,7 @@ fun SearchListItem(
         ) {
             Text(
                 text = term,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import us.mikeandwan.photos.domain.models.MediaCategory
@@ -28,7 +29,7 @@ fun CategoryList(
             )
 
             if (index != categories.size - 1) {
-                HorizontalDivider()
+                HorizontalDivider(color = MaterialTheme.colorScheme.inverseOnSurface)
             }
         }
     }

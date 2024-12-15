@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun YearListItem(
@@ -22,12 +20,12 @@ fun YearListItem(
     // https://stackoverflow.com/a/75062699
     val bgColor = when(isActive) {
         true -> MaterialTheme.colorScheme.primary
-        else -> MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+        else -> MaterialTheme.colorScheme.secondaryContainer
     }
 
     val textColor = when(isActive) {
         true -> MaterialTheme.colorScheme.onPrimary
-        else -> MaterialTheme.colorScheme.onSurface
+        else -> MaterialTheme.colorScheme.onSecondaryContainer
     }
 
     Row(

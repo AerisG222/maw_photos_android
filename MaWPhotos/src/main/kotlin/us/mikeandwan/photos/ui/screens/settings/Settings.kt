@@ -202,7 +202,10 @@ fun SettingsScreen(
             isChecked = notificationDoVibrate,
             onChange = { setNotificationDoVibrate(it) }
         )
-        HorizontalDivider(modifier = dividerModifier)
+        HorizontalDivider(
+            modifier = dividerModifier,
+            color = MaterialTheme.colorScheme.inverseOnSurface
+        )
 
         // --- CATEGORY LIST ----
         Heading(stringId = R.string.pref_category_display_header)
@@ -222,7 +225,10 @@ fun SettingsScreen(
                 setCategoryThumbnailSize(enumValueOf(it))
             }
         )
-        HorizontalDivider(modifier = dividerModifier)
+        HorizontalDivider(
+            modifier = dividerModifier,
+            color = MaterialTheme.colorScheme.inverseOnSurface
+        )
 
         // --- CATEGORY / PHOTO ----
         Heading(stringId = R.string.pref_media_display_header)
@@ -242,7 +248,10 @@ fun SettingsScreen(
                 setPhotoThumbnailSize(enumValueOf(it))
             }
         )
-        HorizontalDivider(modifier = dividerModifier)
+        HorizontalDivider(
+            modifier = dividerModifier,
+            color = MaterialTheme.colorScheme.inverseOnSurface
+        )
 
         // --- RANDOM ----
         Heading(stringId = R.string.pref_random_display_header)
@@ -262,7 +271,10 @@ fun SettingsScreen(
                 setRandomThumbnailSize(enumValueOf(it))
             }
         )
-        HorizontalDivider(modifier = dividerModifier)
+        HorizontalDivider(
+            modifier = dividerModifier,
+            color = MaterialTheme.colorScheme.inverseOnSurface
+        )
 
         // --- SEARCH ----
         Heading(stringId = R.string.pref_search_display_header)
@@ -290,7 +302,10 @@ fun SettingsScreen(
                 setSearchThumbnailSize(enumValueOf(it))
             }
         )
-        HorizontalDivider(modifier = dividerModifier)
+        HorizontalDivider(
+            modifier = dividerModifier,
+            color = MaterialTheme.colorScheme.inverseOnSurface
+        )
 
         // --- ADVANCED ----
         Heading(stringId = R.string.pref_advanced_display_header)

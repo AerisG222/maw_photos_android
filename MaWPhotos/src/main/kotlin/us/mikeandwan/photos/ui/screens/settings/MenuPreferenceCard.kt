@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +34,10 @@ fun MenuPreferenceCard(
     ElevatedCard(
         modifier = Modifier
             .height(400.dp)
-            .width(300.dp)
+            .width(300.dp),
+        colors = CardDefaults.elevatedCardColors().copy(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
     ) {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
@@ -80,7 +84,7 @@ fun MenuPreferenceCard(
                         }
 
                         if (index != options.size - 1) {
-                            HorizontalDivider()
+                            HorizontalDivider(color = MaterialTheme.colorScheme.inverseOnSurface)
                         }
                     }
                 }

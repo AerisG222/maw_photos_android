@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -125,6 +126,8 @@ fun SearchScreen(
         ) {
             Text(
                 text = stringResource(id = R.string.fragment_search_no_results_found),
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                fontStyle = FontStyle.Italic
             )
         }
     }

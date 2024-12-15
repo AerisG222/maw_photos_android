@@ -25,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -112,7 +111,6 @@ class MainActivity : ComponentActivity() {
                     drawerContent = {
                         ModalDrawerSheet(
                             drawerContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            drawerTonalElevation = 1.dp
                         ) {
                             NavigationRail(
                                 activeArea = navArea,
