@@ -1,6 +1,5 @@
 package us.mikeandwan.photos.ui.screens.categories
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -14,7 +13,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -136,7 +134,8 @@ fun CategoriesScreen(
             isRefreshing = state.refreshStatus.isRefreshing,
             state = pullToRefreshState,
             onRefresh = { state.refreshCategories() },
-            modifier = Modifier.padding(innerPadding)
+            // don't use padding otherwise a gap is produced between top bar and content
+            //modifier = Modifier.padding(innerPadding)
         ) {
             when (state.preferences.displayType) {
                 CategoryDisplayType.Grid -> {
