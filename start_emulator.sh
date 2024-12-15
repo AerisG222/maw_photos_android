@@ -5,8 +5,24 @@ ADB="${SDK}/platform-tools/adb"
 #DNS_SERVER_IP=$(hostname -I | cut -d ' ' -f 1)
 DNS_SERVER_IP=127.0.0.1
 
-echo "*** Starting Emulator with DNS server: ${DNS_SERVER_IP} ***"
-$EMU -avd Pixel_7a_API_34 -no-snapshot -dns-server "${DNS_SERVER_IP}" -feature -Vulkan &
+DEVICES=(
+  "Pixel_8a_API_35"
+  "Pixel_7a_API_34"
+  "Pixel_2XL_API_26"
+)
+
+select DEVICE in "${DEVICES[@]}"
+do
+    case $REPLY in
+        1) break;;
+        2) break;;
+        3) break;;
+        *) echo "invalid!";;
+    esac
+done
+
+echo "*** Starting ${DEVICE} Emulator with DNS server: ${DNS_SERVER_IP} ***"
+$EMU -avd "${DEVICE}" -no-snapshot -dns-server "${DNS_SERVER_IP}" -feature -Vulkan &
 
 echo '*** Wait for Emulator to Start ***'
 sleep 60
