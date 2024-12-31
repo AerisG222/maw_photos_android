@@ -1,5 +1,5 @@
 ## v8.4
-### 12/15/2024
+### 12/31/2024
 - theme/color related updates
 - overhauled light theme for improved contrast
 - many dependencies updated

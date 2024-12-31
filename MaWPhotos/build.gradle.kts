@@ -21,7 +21,7 @@ android {
         applicationId = "us.mikeandwan.pictures"
         minSdk = 26
         targetSdk = 35
-        versionCode = 71
+        versionCode = 72
         versionName = "8.4"
 
         manifestPlaceholders += mapOf("appAuthRedirectScheme" to "us.mikeandwan.photos")
