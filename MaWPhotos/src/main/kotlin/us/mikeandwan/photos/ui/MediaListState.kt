@@ -42,11 +42,11 @@ fun rememberMediaListState(
     toggleDetails: () -> Unit,
     saveMediaToShare: (drawable: Drawable, filename: String, onComplete: (file: File) -> Unit) -> Unit
 ): MediaListState {
-    if(category == null || media.isEmpty()) {
+    if(category == null) {
         return MediaListState.Loading
     }
 
-    if((category != null && media.isEmpty()) || activeIndex < 0) {
+    if(media.isEmpty() || activeIndex < 0) {
         return MediaListState.CategoryLoaded(category)
     }
 
