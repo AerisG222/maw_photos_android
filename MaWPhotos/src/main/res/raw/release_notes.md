@@ -1,3 +1,7 @@
+## v8.5
+### 04/25/2025
+- update dependencies
+
 ## v8.4
 ### 12/31/2024
 - theme/color related updates
