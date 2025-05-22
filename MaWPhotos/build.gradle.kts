@@ -96,6 +96,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-maw.pro"
             )
+
+            baselineProfile.automaticGenerationDuringBuild = true
         }
     }
 
