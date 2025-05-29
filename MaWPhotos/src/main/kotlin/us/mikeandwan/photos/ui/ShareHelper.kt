@@ -9,6 +9,7 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import us.mikeandwan.photos.BuildConfig
 import us.mikeandwan.photos.domain.models.Media
 import us.mikeandwan.photos.utils.getFilenameFromUrl
 import java.io.File
@@ -24,7 +25,7 @@ suspend fun shareMedia(
         drawable,
         getFilenameFromUrl(media.getMediaUrl())
     ) { fileToShare ->
-        val contentUri = FileProvider.getUriForFile(ctx, "us.mikeandwan.photos.fileprovider", fileToShare)
+        val contentUri = FileProvider.getUriForFile(ctx, "${BuildConfig.APPLICATION_ID}.fileprovider", fileToShare)
         val sendIntent = Intent(Intent.ACTION_SEND)
 
         sendIntent.setDataAndType(contentUri, "image/*")
