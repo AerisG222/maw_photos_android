@@ -32,10 +32,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.domain.models.NavigationArea
 import us.mikeandwan.photos.ui.controls.navigation.NavigationRail
 import us.mikeandwan.photos.ui.controls.topbar.TopBar
-import us.mikeandwan.photos.ui.controls.topbar.TopBarState
 import us.mikeandwan.photos.ui.screens.about.AboutRoute
 import us.mikeandwan.photos.ui.screens.about.aboutScreen
 import us.mikeandwan.photos.ui.screens.categories.CategoriesRoute
@@ -89,18 +87,6 @@ class MainActivity : ComponentActivity() {
                 vm.errorsToDisplay.collect {
                     snackbarHostState.showSnackbar(it.message)
                 }
-            }
-
-            fun updateTopBar(nextState: TopBarState) {
-                vm.updateTopBar(nextState)
-            }
-
-            fun setNavArea(area: NavigationArea) {
-                vm.setNavArea(area)
-            }
-
-            fun setActiveYear(year: Int) {
-                vm.setActiveYear(year)
             }
 
             AppTheme {
@@ -188,18 +174,18 @@ class MainActivity : ComponentActivity() {
                                 startDestination = CategoriesRoute(mostRecentYear)
                             ) {
                                 loginScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
                                     navigateAfterLogin = { navController.navigateUp() }
                                 )
                                 aboutScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea
                                 )
                                 categoriesScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
-                                    setActiveYear = ::setActiveYear,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
+                                    setActiveYear = vm::setActiveYear,
                                     navigateToCategory = {
                                         navController.navigate(
                                             CategoryRoute(
@@ -218,8 +204,8 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                                 categoryScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
                                     navigateToMedia = {
                                         navController.navigate(
                                             CategoryItemRoute(
@@ -232,19 +218,19 @@ class MainActivity : ComponentActivity() {
                                     navigateToLogin = { navController.navigate(LoginRoute) },
                                 )
                                 categoryItemScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
                                     navigateToLogin = { navController.navigate(LoginRoute) },
                                 )
                                 randomScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
                                     navigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
                                     navigateToLogin = { navController.navigate(LoginRoute) },
                                 )
                                 randomItemScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
                                     navigateToYear = { navController.navigate(CategoriesRoute(it)) },
                                     navigateToCategory = {
                                         navController.navigate(
@@ -257,8 +243,8 @@ class MainActivity : ComponentActivity() {
                                     navigateToLogin = { navController.navigate(LoginRoute) },
                                 )
                                 searchScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
                                     navigateToCategory = {
                                         navController.navigate(
                                             CategoryRoute(
@@ -270,13 +256,13 @@ class MainActivity : ComponentActivity() {
                                     navigateToLogin = { navController.navigate(LoginRoute) },
                                 )
                                 settingsScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
                                     navigateToLogin = { navController.navigate(LoginRoute) },
                                 )
                                 uploadScreen(
-                                    updateTopBar = ::updateTopBar,
-                                    setNavArea = ::setNavArea,
+                                    updateTopBar = vm::updateTopBar,
+                                    setNavArea = vm::setNavArea,
                                     navigateToLogin = { navController.navigate(LoginRoute) },
                                 )
                             }
