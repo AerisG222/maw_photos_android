@@ -15,6 +15,7 @@ import us.mikeandwan.photos.domain.AuthorizationRepository
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import androidx.core.net.toUri
 
 // inspired by: https://curity.io/resources/learn/kotlin-android-appauth/
 class AuthService(
@@ -24,7 +25,7 @@ class AuthService(
 ) {
     private val authClientId: String = application.resources.getString(R.string.auth_client_id)
     private val authSchemeRedirect: String = application.resources.getString(R.string.auth_scheme_redirect_uri)
-    private val authSchemeRedirectUri: Uri = Uri.parse(authSchemeRedirect)
+    private val authSchemeRedirectUri: Uri = authSchemeRedirect.toUri()
 
     val authStatus = authorizationRepository.authState
         .map {
@@ -42,7 +43,7 @@ class AuthService(
     suspend fun loadConfig(): AuthorizationServiceConfiguration {
         return withContext(Dispatchers.IO) {
             return@withContext suspendCoroutine { continuation ->
-                fetchFromIssuer(Uri.parse(Constants.AUTH_BASE_URL)) { metadata, ex ->
+                fetchFromIssuer(Constants.AUTH_BASE_URL.toUri()) { metadata, ex ->
                     when {
                         metadata != null -> {
                             Timber.i("metadata retrieved successfully")
