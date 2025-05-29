@@ -2,9 +2,9 @@ package us.mikeandwan.photos.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -62,10 +62,9 @@ import us.mikeandwan.photos.ui.theme.AppTheme
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val activity = this
-
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContent {
             val vm = hiltViewModel<MainViewModel>()
