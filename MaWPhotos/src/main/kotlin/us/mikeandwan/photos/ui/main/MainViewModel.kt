@@ -61,6 +61,10 @@ class MainViewModel @Inject constructor(
     private val _topBarState = MutableStateFlow(TopBarState())
     val topBarState = _topBarState.asStateFlow()
 
+    val enableDrawerGestures = topBarState
+        .map { it.show && it.showAppIcon }
+        .stateIn(viewModelScope, WhileSubscribed(5000), true)
+
     private val _drawerState = MutableStateFlow(DrawerValue.Closed)
     val drawerState = _drawerState.asStateFlow()
 

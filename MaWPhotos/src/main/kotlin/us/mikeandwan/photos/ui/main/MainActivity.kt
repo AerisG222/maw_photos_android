@@ -77,10 +77,9 @@ class MainActivity : ComponentActivity() {
             val recentSearchTerms by vm.recentSearchTerms.collectAsStateWithLifecycle(initialValue = emptyList())
             val navArea by vm.navArea.collectAsStateWithLifecycle()
             val topBarState by vm.topBarState.collectAsStateWithLifecycle()
+            val enableDrawerGestures by vm.enableDrawerGestures.collectAsStateWithLifecycle()
             val activeYear by vm.activeYear.collectAsStateWithLifecycle()
             val mostRecentYear by vm.mostRecentYear.collectAsStateWithLifecycle()
-
-            val enableDrawerGestures = remember(topBarState) { topBarState.show && topBarState.showAppIcon }
 
             LaunchedEffect(Unit) {
                 handleIntent(activity.intent ?: Intent(), vm, navController)
