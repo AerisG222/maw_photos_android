@@ -2,6 +2,7 @@ package us.mikeandwan.photos.ui.main
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.material3.DrawerValue
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -60,6 +61,12 @@ class MainViewModel @Inject constructor(
     private val _topBarState = MutableStateFlow(TopBarState())
     val topBarState = _topBarState.asStateFlow()
 
+    private val _drawerState = MutableStateFlow(DrawerValue.Closed)
+    val drawerState = _drawerState.asStateFlow()
+
+    private val _signalNavigate = MutableStateFlow<Any?>(null)
+    val signalNavigate = _signalNavigate.asStateFlow()
+
     val errorsToDisplay = errorRepository.error
         .filter { it is ErrorMessage.Display }
         .map { it as ErrorMessage.Display }
@@ -70,6 +77,23 @@ class MainViewModel @Inject constructor(
 
     fun setNavArea(area: NavigationArea) {
         _navArea.value = area
+    }
+
+    fun openDrawer() {
+        _drawerState.value = DrawerValue.Open
+    }
+
+    fun closeDrawer() {
+        _drawerState.value = DrawerValue.Closed
+    }
+
+    fun navigate(destination: Any) {
+        _signalNavigate.value = destination
+    }
+
+    fun navigateAndCloseDrawer(destination: Any) {
+        closeDrawer()
+        navigate(destination)
     }
 
     fun updateTopBar(nextState: TopBarState) {
@@ -92,10 +116,13 @@ class MainViewModel @Inject constructor(
                 .fetch(count)
                 .collect { }
         }
+
+        closeDrawer()
     }
 
     fun clearRandomPhotos() {
         randomPhotoRepository.clear()
+        closeDrawer()
     }
 
     fun handleSendSingle(intent: Intent) {

@@ -66,12 +66,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val vm = hiltViewModel<MainViewModel>()
-            val navController = rememberNavController()
 
+            val navController = rememberNavController()
             val coroutineScope = rememberCoroutineScope()
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
             val snackbarHostState = remember { SnackbarHostState() }
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            val drawerState = rememberDrawerState(DrawerValue.Closed)
+
             val years by vm.years.collectAsStateWithLifecycle(initialValue = emptyList())
             val recentSearchTerms by vm.recentSearchTerms.collectAsStateWithLifecycle(initialValue = emptyList())
             val navArea by vm.navArea.collectAsStateWithLifecycle()
@@ -83,7 +84,28 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(Unit) {
                 handleIntent(activity.intent ?: Intent(), vm, navController)
+            }
 
+            LaunchedEffect(Unit) {
+                vm.drawerState.collect {
+                    coroutineScope.launch {
+                        when(it) {
+                            DrawerValue.Closed -> drawerState.close()
+                            DrawerValue.Open -> drawerState.open()
+                        }
+                    }
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                vm.signalNavigate.collect { route ->
+                    if (route != null) {
+                        navController.navigate(route)
+                    }
+                }
+            }
+
+            LaunchedEffect(Unit) {
                 vm.errorsToDisplay.collect {
                     snackbarHostState.showSnackbar(it.message)
                 }
@@ -102,49 +124,17 @@ class MainActivity : ComponentActivity() {
                                 years = years,
                                 activeYear = activeYear,
                                 recentSearchTerms = recentSearchTerms,
-                                fetchRandomPhotos = {
-                                    vm.fetchRandomPhotos(it)
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                clearRandomPhotos = {
-                                    vm.clearRandomPhotos()
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                clearSearchHistory = {
-                                    vm.clearSearchHistory()
-                                },
-                                navigateToCategories = {
-                                    navController.navigate(CategoriesRoute(mostRecentYear))
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                navigateToCategoriesByYear = {
-                                    navController.navigate(CategoriesRoute(it))
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                navigateToRandom = {
-                                    navController.navigate(RandomRoute)
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                navigateToSearch = {
-                                    navController.navigate(SearchRoute())
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                navigateToSearchWithTerm = {
-                                    navController.navigate(SearchRoute(it))
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                navigateToSettings = {
-                                    navController.navigate(SettingsRoute)
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                navigateToUpload = {
-                                    navController.navigate(UploadRoute)
-                                    coroutineScope.launch { drawerState.close() }
-                                },
-                                navigateToAbout = {
-                                    navController.navigate(AboutRoute)
-                                    coroutineScope.launch { drawerState.close() }
-                                }
+                                fetchRandomPhotos = vm::fetchRandomPhotos,
+                                clearRandomPhotos = vm::clearRandomPhotos,
+                                clearSearchHistory = vm::clearSearchHistory,
+                                navigateToCategories = { vm.navigateAndCloseDrawer(CategoriesRoute(mostRecentYear)) },
+                                navigateToCategoriesByYear = { vm.navigateAndCloseDrawer(CategoriesRoute(it)) },
+                                navigateToRandom = { vm.navigateAndCloseDrawer(RandomRoute) },
+                                navigateToSearch = { vm.navigateAndCloseDrawer(SearchRoute()) },
+                                navigateToSearchWithTerm = { vm.navigateAndCloseDrawer(SearchRoute(it)) },
+                                navigateToSettings = { vm.navigateAndCloseDrawer(SettingsRoute) },
+                                navigateToUpload = { vm.navigateAndCloseDrawer(UploadRoute) },
+                                navigateToAbout = { vm.navigateAndCloseDrawer(AboutRoute) }
                             )
                         }
                     }
@@ -156,9 +146,9 @@ class MainActivity : ComponentActivity() {
                                 TopBar(
                                     scrollBehavior,
                                     state = topBarState,
-                                    onExpandNavMenu = { coroutineScope.launch { drawerState.open() } },
+                                    onExpandNavMenu = { vm.openDrawer() },
                                     onBackClicked = { navController.navigateUp() },
-                                    onSearch = { navController.navigate(SearchRoute(it)) },
+                                    onSearch = { vm.navigate(SearchRoute(it)) },
                                 )
                             }
                         },
@@ -186,84 +176,49 @@ class MainActivity : ComponentActivity() {
                                     updateTopBar = vm::updateTopBar,
                                     setNavArea = vm::setNavArea,
                                     setActiveYear = vm::setActiveYear,
-                                    navigateToCategory = {
-                                        navController.navigate(
-                                            CategoryRoute(
-                                                it.type.name,
-                                                it.id
-                                            )
-                                        )
-                                    },
-                                    navigateToLogin = { navController.navigate(LoginRoute) },
-                                    navigateToCategories = {
-                                        navController.navigate(
-                                            CategoriesRoute(
-                                                it
-                                            )
-                                        )
-                                    }
+                                    navigateToCategory = { vm.navigate(CategoryRoute(it.type.name, it.id)) },
+                                    navigateToLogin = { vm.navigate(LoginRoute) },
+                                    navigateToCategories = { vm.navigate(CategoriesRoute(it)) }
                                 )
                                 categoryScreen(
                                     updateTopBar = vm::updateTopBar,
                                     setNavArea = vm::setNavArea,
-                                    navigateToMedia = {
-                                        navController.navigate(
-                                            CategoryItemRoute(
-                                                it.type.name,
-                                                it.categoryId,
-                                                it.id
-                                            )
-                                        )
-                                    },
-                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                    navigateToMedia = { vm.navigate(CategoryItemRoute(it.type.name, it.categoryId, it.id)) },
+                                    navigateToLogin = { vm.navigate(LoginRoute) },
                                 )
                                 categoryItemScreen(
                                     updateTopBar = vm::updateTopBar,
                                     setNavArea = vm::setNavArea,
-                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                    navigateToLogin = { vm.navigate(LoginRoute) },
                                 )
                                 randomScreen(
                                     updateTopBar = vm::updateTopBar,
                                     setNavArea = vm::setNavArea,
-                                    navigateToPhoto = { navController.navigate(RandomItemRoute(it)) },
-                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                    navigateToPhoto = { vm.navigate(RandomItemRoute(it)) },
+                                    navigateToLogin = { vm.navigate(LoginRoute) },
                                 )
                                 randomItemScreen(
                                     updateTopBar = vm::updateTopBar,
                                     setNavArea = vm::setNavArea,
-                                    navigateToYear = { navController.navigate(CategoriesRoute(it)) },
-                                    navigateToCategory = {
-                                        navController.navigate(
-                                            CategoryRoute(
-                                                it.type.name,
-                                                it.id
-                                            )
-                                        )
-                                    },
-                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                    navigateToYear = { vm.navigate(CategoriesRoute(it)) },
+                                    navigateToCategory = { vm.navigate(CategoryRoute(it.type.name, it.id)) },
+                                    navigateToLogin = { vm.navigate(LoginRoute) },
                                 )
                                 searchScreen(
                                     updateTopBar = vm::updateTopBar,
                                     setNavArea = vm::setNavArea,
-                                    navigateToCategory = {
-                                        navController.navigate(
-                                            CategoryRoute(
-                                                it.type.name,
-                                                it.id
-                                            )
-                                        )
-                                    },
-                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                    navigateToCategory = { vm.navigate(CategoryRoute(it.type.name, it.id)) },
+                                    navigateToLogin = { vm.navigate(LoginRoute) },
                                 )
                                 settingsScreen(
                                     updateTopBar = vm::updateTopBar,
                                     setNavArea = vm::setNavArea,
-                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                    navigateToLogin = { vm.navigate(LoginRoute) },
                                 )
                                 uploadScreen(
                                     updateTopBar = vm::updateTopBar,
                                     setNavArea = vm::setNavArea,
-                                    navigateToLogin = { navController.navigate(LoginRoute) },
+                                    navigateToLogin = { vm.navigate(LoginRoute) },
                                 )
                             }
                         }
