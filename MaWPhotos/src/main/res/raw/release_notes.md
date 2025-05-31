@@ -1,3 +1,10 @@
+## v8.6
+### 05/31/2025
+- try to properly handle edge 2 edge
+- code cleanup and updates after playing with gemini 
+- attempt to define better baseline profile to improve performance
+- update dependencies
+
 ## v8.5
 ### 04/25/2025
 - update dependencies
