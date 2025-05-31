@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.screens.about
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,36 +11,37 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.BuildConfig
-import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.R
 import javax.inject.Inject
 
 sealed class AboutState {
-    data object Unknown : AboutState()
-    data class Valid(
+    data object Loading : AboutState()
+    data class Loaded(
         val version: String,
         val history: String
     )
 }
 
 @HiltViewModel
-class AboutViewModel @Inject constructor() : ViewModel() {
+class AboutViewModel @Inject constructor(
+    private val application: Application
+) : ViewModel() {
     private val version = "v${BuildConfig.VERSION_NAME}"
     private val _history = MutableStateFlow("")
 
     val state = _history
         .map { history ->
             if(history.isEmpty()) {
-                AboutState.Unknown
+                AboutState.Loading
             } else {
-                AboutState.Valid(version, history)
+                AboutState.Loaded(version, history)
             }
         }
-        .stateIn(viewModelScope, WhileSubscribed(5000), AboutState.Unknown)
+        .stateIn(viewModelScope, WhileSubscribed(5000), AboutState.Loading)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _history.value = MawApplication.instance.resources
+            _history.value = application.resources
                 .openRawResource(R.raw.release_notes)
                 .bufferedReader()
                 .use { it.readText() }

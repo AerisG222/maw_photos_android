@@ -44,17 +44,6 @@ fun NavGraphBuilder.categoryScreen(
                 }
             }
             is CategoryState.Loading -> Loading()
-            is CategoryState.CategoryLoaded -> {
-                val s = state as CategoryState.CategoryLoaded
-
-                LaunchedEffect(s.category) {
-                    updateTopBar(
-                        TopBarState().copy(
-                            title = s.category.name
-                        )
-                    )
-                }
-            }
             is CategoryState.Loaded -> {
                 val s = state as CategoryState.Loaded
 

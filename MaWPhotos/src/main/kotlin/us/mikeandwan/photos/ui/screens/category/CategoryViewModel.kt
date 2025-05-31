@@ -21,10 +21,6 @@ sealed class CategoryState {
     data object Loading: CategoryState()
     data object NotAuthorized: CategoryState()
     data object Error : CategoryState()
-    data class CategoryLoaded(
-        val category: MediaCategory
-    ): CategoryState()
-
     data class Loaded(
         val category: MediaCategory,
         val gridItems: List<ImageGridItem<Media>>,
@@ -77,10 +73,10 @@ class CategoryViewModel @Inject constructor (
                     is GuardStatus.NotInitialized -> categoriesLoadedGuard.initializeGuard()
                     is GuardStatus.Failed -> CategoryState.Error
                     is GuardStatus.Passed ->
-                        when {
-                            category == null -> CategoryState.Loading
-                            gridItems.isEmpty() -> CategoryState.CategoryLoaded(category)
-                            else -> CategoryState.Loaded(
+                        if(category == null) {
+                            CategoryState.Loading
+                        } else {
+                            CategoryState.Loaded(
                                 category,
                                 gridItems,
                                 gridItemThumbnailSize

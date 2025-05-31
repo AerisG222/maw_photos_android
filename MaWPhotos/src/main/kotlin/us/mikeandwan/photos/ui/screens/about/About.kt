@@ -54,15 +54,15 @@ fun NavGraphBuilder.aboutScreen(
         }
 
         when(state) {
-            is AboutState.Unknown -> { Loading() }
-            is AboutState.Valid -> AboutScreen((state as AboutState.Valid))
+            is AboutState.Loading -> { Loading() }
+            is AboutState.Loaded -> AboutScreen((state as AboutState.Loaded))
         }
     }
 }
 
 @Composable
 fun AboutScreen(
-    state: AboutState.Valid
+    state: AboutState.Loaded
 ) {
     val tangerine = remember { FontFamily(Font(R.font.tangerine)) }
     val markdownStyle = MaterialTheme.typography.bodyMedium
@@ -128,6 +128,6 @@ fun AboutScreen(
 @Composable
 fun AboutScreenPreview() {
     AboutScreen(
-        AboutState.Valid("vX.Y.Z", "Release Notes")
+        AboutState.Loaded("vX.Y.Z", "Release Notes")
     )
 }

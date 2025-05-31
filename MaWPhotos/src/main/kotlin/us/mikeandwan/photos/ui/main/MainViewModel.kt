@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.ui.main
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.material3.DrawerValue
@@ -21,7 +22,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import us.mikeandwan.photos.MawApplication
 import us.mikeandwan.photos.domain.ErrorRepository
 import us.mikeandwan.photos.domain.FileStorageRepository
 import us.mikeandwan.photos.domain.MediaCategoryRepository
@@ -40,6 +40,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     mediaCategoryRepository: MediaCategoryRepository,
     errorRepository: ErrorRepository,
+    private val application: Application,
     private val fileStorageRepository: FileStorageRepository,
     private val searchRepository: SearchRepository,
     private val randomPhotoRepository: RandomPhotoRepository,
@@ -177,7 +178,7 @@ class MainViewModel @Inject constructor(
                         .setInputData(data)
                         .build()
 
-                    val workManager = WorkManager.getInstance(MawApplication.instance)
+                    val workManager = WorkManager.getInstance(application)
 
                     workManager.enqueueUniqueWork(
                         "upload ${file.path}",

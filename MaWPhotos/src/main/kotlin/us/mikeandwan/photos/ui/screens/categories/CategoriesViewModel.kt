@@ -53,7 +53,7 @@ class CategoriesViewModel @Inject constructor (
         _year.value = year
     }
 
-    fun clearRefreshStaus() {
+    fun clearRefreshStatus() {
         _refreshStatus.value = CategoryRefreshStatus(Random.nextInt(),false, null)
     }
 

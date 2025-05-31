@@ -53,7 +53,7 @@ fun NavGraphBuilder.categoriesScreen(
 
         DisposableEffect(Unit) {
             onDispose {
-                vm.clearRefreshStaus()
+                vm.clearRefreshStatus()
             }
         }
 

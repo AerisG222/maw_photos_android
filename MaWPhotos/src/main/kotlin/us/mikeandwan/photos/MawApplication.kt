@@ -23,7 +23,6 @@ class MawApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
@@ -63,17 +62,10 @@ class MawApplication : Application(), Configuration.Provider {
             .setConstraints(constraints)
             .build()
 
-        val workManager = WorkManager.getInstance(this)
-
-        workManager.enqueueUniquePeriodicWork(
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             UpdateCategoriesWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             work
         )
-    }
-
-    companion object {
-        lateinit var instance: MawApplication
-            private set
     }
 }
