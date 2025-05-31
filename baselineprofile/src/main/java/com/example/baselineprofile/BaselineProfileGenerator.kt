@@ -4,9 +4,11 @@ import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
 /**
  * This test class generates a basic startup baseline profile for the target package.
@@ -54,12 +56,44 @@ class BaselineProfileGenerator {
             // Start default activity for your app
             pressHome()
             startActivityAndWait()
+            device.waitForIdle()
 
-            // TODO Write more interactions to optimize advanced journeys of your app.
-            // For example:
-            // 1. Wait until the content is asynchronously loaded
-            // 2. Scroll the feed content
-            // 3. Navigate to detail screen
+            // when running this, first establish a logged in session so the tests will work
+            val loginButton = device.findObject(By.text("Login"))
+            if(loginButton != null) {
+                // If the app has a login screen, we can log in to ensure the app is ready for the user.
+                loginButton.click()
+                device.waitForIdle()
+            }
+
+            // scroll down list of categories
+            device.drag(300, 900, 320, 200, 10)
+            device.waitForIdle()
+
+            // click on a random category
+            device.click(300, 300)
+            device.waitForIdle()
+            sleep(250)
+
+            // scroll down list of images
+            device.drag(300, 900, 320, 200, 10)
+            device.waitForIdle()
+            sleep(250)
+
+            // click on a random photo
+            device.click(300, 300)
+            device.waitForIdle()
+            sleep(250)
+
+            // go back to photo list
+            device.pressBack()
+            device.waitForIdle()
+            sleep(250)
+
+            // go back to category list
+            device.pressBack()
+            device.waitForIdle()
+            sleep(250)
 
             // Check UiAutomator documentation for more information how to interact with the app.
             // https://d.android.com/training/testing/other-components/ui-automator

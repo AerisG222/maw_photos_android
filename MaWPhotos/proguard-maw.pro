@@ -1,6 +1,6 @@
 -printusage build/proguard-usage.txt
 
--keep class us.mikeandwan.photos.** {
+-keep class us.mikeandwan.photos.api.** {
     *;
 }
 

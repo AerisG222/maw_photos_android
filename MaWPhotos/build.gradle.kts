@@ -97,7 +97,8 @@ android {
                 "proguard-maw.pro"
             )
 
-            baselineProfile.automaticGenerationDuringBuild = true
+            // lets run manually for now - before running, ensure there is an authenticated session
+            // baselineProfile.automaticGenerationDuringBuild = true
         }
     }
 
@@ -111,7 +112,7 @@ android {
 dependencies {
     implementation(libs.androidx.profileinstaller)
 
-    "baselineProfile"(project(":baselineprofile"))
+    baselineProfile(project(":baselineprofile"))
 
     implementation(libs.jetbrains.kotlin.stdlib)
     implementation(libs.jetbrains.coroutines.android)
