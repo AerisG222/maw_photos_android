@@ -141,7 +141,9 @@ class MediaFeedItemViewModel
         }
 
         fun toggleFavorite() {
-            uiState.value.activeMedia?.let {
+            // read from the service rather than from [uiState], which stops assembling once the
+            // screen stops collecting it
+            mediaListService.state.value.activeMedia?.let {
                 mediaListService.onAction(MediaListAction.SetIsFavorite(!it.isFavorite))
             }
         }
