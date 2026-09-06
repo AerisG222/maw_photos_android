@@ -2,6 +2,7 @@ package us.mikeandwan.photos.domain
 
 import java.net.HttpURLConnection
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +27,7 @@ import us.mikeandwan.photos.domain.models.Place
  * here: on a phone the tree is walked rather than queried, and the drill-down is short enough -
  * three levels - that a search box would be a second way to do what tapping already does.
  */
+@Singleton
 class PlaceRepository
     @Inject
     constructor(

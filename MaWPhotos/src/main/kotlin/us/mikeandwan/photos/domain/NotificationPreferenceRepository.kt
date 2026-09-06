@@ -1,11 +1,13 @@
 package us.mikeandwan.photos.domain
 
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.database.NotificationPreferenceDao
 import us.mikeandwan.photos.domain.models.NotificationPreference
 
+@Singleton
 class NotificationPreferenceRepository
     @Inject
     constructor(

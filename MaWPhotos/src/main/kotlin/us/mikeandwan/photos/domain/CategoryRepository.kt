@@ -3,6 +3,7 @@ package us.mikeandwan.photos.domain
 import androidx.collection.LruCache
 import androidx.room.withTransaction
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
@@ -29,6 +30,7 @@ import us.mikeandwan.photos.database.YearDao
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Media
 
+@Singleton
 class CategoryRepository
     @Inject
     constructor(

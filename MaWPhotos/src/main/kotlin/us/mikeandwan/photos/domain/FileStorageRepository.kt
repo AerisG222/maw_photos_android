@@ -8,18 +8,21 @@ import android.net.Uri
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import coil3.ImageLoader
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
+@Singleton
 class FileStorageRepository
     @Inject
     constructor(
-        private val context: Context,
+        @ApplicationContext private val context: Context,
         private val imageLoader: ImageLoader,
     ) {
         companion object {

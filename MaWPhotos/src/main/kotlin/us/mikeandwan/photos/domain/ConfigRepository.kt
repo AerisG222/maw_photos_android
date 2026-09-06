@@ -2,6 +2,7 @@ package us.mikeandwan.photos.domain
 
 import androidx.room.withTransaction
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emitAll
@@ -13,6 +14,7 @@ import us.mikeandwan.photos.database.MawDatabase
 import us.mikeandwan.photos.database.ScaleDao
 import us.mikeandwan.photos.domain.models.UserStatus
 
+@Singleton
 class ConfigRepository
     @Inject
     constructor(

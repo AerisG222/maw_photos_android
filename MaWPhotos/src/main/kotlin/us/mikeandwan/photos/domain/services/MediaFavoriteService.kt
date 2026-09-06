@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.domain.services
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -7,6 +8,7 @@ import us.mikeandwan.photos.domain.MediaRepository
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Media
 
+@ViewModelScoped
 class MediaFavoriteService
     @Inject
     constructor(

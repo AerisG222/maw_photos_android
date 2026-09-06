@@ -1,5 +1,6 @@
 package us.mikeandwan.photos.domain.services
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.coroutineScope
@@ -22,6 +23,7 @@ import us.mikeandwan.photos.domain.models.FaceHighlight
  * media, and an error banner over a photo the user is looking at would cost more than the overlay
  * is worth.  The call has already been reported the way every other failed call is.
  */
+@ViewModelScoped
 class MediaFaceService
     @Inject
     constructor(

@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.domain
 
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
@@ -26,6 +27,7 @@ import us.mikeandwan.photos.api.Media as ApiMedia
  * the same list of media, the same way the random feed is shared between its two. Only one feed is
  * on screen at a time, so one accumulation is enough.
  */
+@Singleton
 class MediaFeedRepository
     @Inject
     constructor(

@@ -2,6 +2,7 @@ package us.mikeandwan.photos.domain.services
 
 import android.graphics.drawable.Drawable
 import com.hoc081098.flowext.combine
+import dagger.hilt.android.scopes.ViewModelScoped
 import java.io.File
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -110,6 +111,7 @@ data class MediaListState(
         get() = activeIndex >= 0 && activeIndex < media.size - 1
 }
 
+@ViewModelScoped
 class MediaListService
     @Inject
     constructor(

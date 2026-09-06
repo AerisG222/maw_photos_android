@@ -2,6 +2,7 @@ package us.mikeandwan.photos.domain
 
 import androidx.collection.LruCache
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.flow
 import us.mikeandwan.photos.api.ApiResult
@@ -19,6 +20,7 @@ import us.mikeandwan.photos.domain.models.ExternalCallStatus
  * published face never moves: the boxes for a given media item are as fixed as the pixels they sit
  * on, until the pipeline republishes them.
  */
+@Singleton
 class MediaFaceRepository
     @Inject
     constructor(

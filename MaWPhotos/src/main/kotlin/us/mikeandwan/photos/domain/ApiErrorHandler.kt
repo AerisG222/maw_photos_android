@@ -1,12 +1,14 @@
 package us.mikeandwan.photos.domain
 
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 import us.mikeandwan.photos.api.ApiResult
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.ui.shared.toExternalCallStatus
 
+@Singleton
 class ApiErrorHandler
     @Inject
     constructor(

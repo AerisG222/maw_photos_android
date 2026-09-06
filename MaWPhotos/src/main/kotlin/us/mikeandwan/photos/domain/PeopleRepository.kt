@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.domain
 
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -20,6 +21,7 @@ import us.mikeandwan.photos.domain.models.Person
  * fetched once and filtered locally, which is what lets the picker respond to typing without a
  * round trip per keystroke.
  */
+@Singleton
 class PeopleRepository
     @Inject
     constructor(

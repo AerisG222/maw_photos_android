@@ -1,18 +1,24 @@
 package us.mikeandwan.photos.domain
 
-class NotificationIdRepository {
-    private val _lockObject = Any()
-    private var _id = 1
+import javax.inject.Inject
+import javax.inject.Singleton
 
-    fun getAndInc(): Int {
-        synchronized(_lockObject) {
-            if (_id == Int.MAX_VALUE) {
-                _id = 1
-            }
+@Singleton
+class NotificationIdRepository
+    @Inject
+    constructor() {
+        private val _lockObject = Any()
+        private var _id = 1
 
-            _id++
+        fun getAndInc(): Int {
+            synchronized(_lockObject) {
+                if (_id == Int.MAX_VALUE) {
+                    _id = 1
+                }
 
-            return _id
+                _id++
+
+                return _id
         }
     }
 }

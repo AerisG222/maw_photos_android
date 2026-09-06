@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.domain
 
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,6 +15,7 @@ import us.mikeandwan.photos.api.MediaApiClient
 import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.Media
 
+@Singleton
 class RandomMediaRepository
     @Inject
     constructor(

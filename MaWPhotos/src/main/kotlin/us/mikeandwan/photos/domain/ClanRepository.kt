@@ -2,6 +2,7 @@ package us.mikeandwan.photos.domain
 
 import java.net.HttpURLConnection
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +20,7 @@ import us.mikeandwan.photos.domain.models.ExternalCallStatus
  * Writes patch the cached list rather than refetching it: the API answers every write with the
  * whole clan, so the reply is already the new state of the only row that moved.
  */
+@Singleton
 class ClanRepository
     @Inject
     constructor(

@@ -1,6 +1,7 @@
 package us.mikeandwan.photos.domain
 
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import us.mikeandwan.photos.database.SearchPreferenceDao
@@ -8,6 +9,7 @@ import us.mikeandwan.photos.domain.models.CategoryDisplayType
 import us.mikeandwan.photos.domain.models.GridThumbnailSize
 import us.mikeandwan.photos.domain.models.SearchPreference
 
+@Singleton
 class SearchPreferenceRepository
     @Inject
     constructor(

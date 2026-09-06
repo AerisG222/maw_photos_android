@@ -2,6 +2,7 @@ package us.mikeandwan.photos.domain
 
 import java.util.Calendar
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -18,6 +19,7 @@ import us.mikeandwan.photos.domain.models.ExternalCallStatus
 import us.mikeandwan.photos.domain.models.SearchRequest
 import us.mikeandwan.photos.domain.models.SearchSource
 
+@Singleton
 class SearchRepository
     @Inject
     constructor(
