@@ -1,5 +1,5 @@
 import com.android.build.api.dsl.ApkSigningConfig
-import java.io.FileInputStream
+import java.io.File
 import java.util.Properties
 
 plugins {
@@ -43,15 +43,27 @@ android {
     }
 
     signingConfigs {
-        val homeDir = System.getProperty("user.home")
-        val keystoreProperties = Properties()
-        keystoreProperties.load(FileInputStream("$homeDir/.gradle/gradle.properties"))
+        // The release keystore is described in the developer's own ~/.gradle/gradle.properties,
+        // which is deliberately not in the repository.  Where that file is absent - CI, or a fresh
+        // clone - the config is left unpopulated rather than failing configuration, so everything
+        // that does not actually sign a release (check, the tests, the debug variants) still runs.
+        // Signing a release without it fails at signing time, where the message names the problem.
+        val keystoreFile = File(System.getProperty("user.home"), ".gradle/gradle.properties")
+        val keystoreProperties = Properties().apply {
+            if (keystoreFile.isFile) {
+                keystoreFile.inputStream().use { load(it) }
+            }
+        }
 
         create("release") {
-            storeFile = file(keystoreProperties["RELEASE_STORE_FILE"] as String)
-            storePassword = keystoreProperties["RELEASE_STORE_PASSWORD"] as String
-            keyAlias = keystoreProperties["RELEASE_KEY_ALIAS"] as String
-            keyPassword = keystoreProperties["RELEASE_KEY_PASSWORD"] as String
+            val releaseStoreFile = keystoreProperties["RELEASE_STORE_FILE"] as String?
+
+            if (releaseStoreFile != null) {
+                storeFile = file(releaseStoreFile)
+                storePassword = keystoreProperties["RELEASE_STORE_PASSWORD"] as String?
+                keyAlias = keystoreProperties["RELEASE_KEY_ALIAS"] as String?
+                keyPassword = keystoreProperties["RELEASE_KEY_PASSWORD"] as String?
+            }
         }
     }
 

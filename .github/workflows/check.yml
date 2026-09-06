@@ -1,0 +1,54 @@
+name: check
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+# A newer push to the same branch makes the run in progress irrelevant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up the Android SDK
+        uses: android-actions/setup-android@v3
+
+      # Also validates the checksum of the wrapper jar that is committed to the repository.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # ktlintCheck, the unit tests and android lint, for every variant.  The release keystore
+      # lives outside the repository, so nothing here signs anything - see MaWPhotos/build.gradle.kts.
+      - name: Check
+        run: ./gradlew check --stacktrace
+
+      - name: Upload reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            MaWPhotos/build/reports/
+            baselineprofile/build/reports/
+          retention-days: 14
+          if-no-files-found: ignore
