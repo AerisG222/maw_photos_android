@@ -7,15 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
 import javax.inject.Inject
 import kotlin.uuid.Uuid
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import us.mikeandwan.photos.domain.CategoryRepository
 import us.mikeandwan.photos.domain.MediaPreferenceRepository
 import us.mikeandwan.photos.domain.models.Category
@@ -55,28 +49,8 @@ class CategoryItemViewModel
     ) : BaseCategoryViewModel(
             categoryRepository,
         ) {
-        private val _uiState = MutableStateFlow(CategoryItemUiState())
-        val uiState = _uiState.asStateFlow()
-
-        init {
-            val slideshowDurationInMillisFlow = mediaPreferenceRepository
-                .getSlideshowIntervalSeconds()
-                .map { seconds -> (seconds * 1000).toLong() }
-                .stateIn(
-                    viewModelScope,
-                    WhileSubscribed(5000),
-                    (MediaPreference().slideshowIntervalSeconds * 1000).toLong(),
-                )
-
-            mediaListService.initialize(
-                media,
-                slideshowDurationInMillisFlow,
-            )
-
-            combine(
-                mediaListService.state,
-            ) { stateList ->
-                val mediaListState = stateList[0]
+        val uiState = mediaListService.state
+            .map { mediaListState ->
                 CategoryItemUiState(
                     category = mediaListState.category,
                     media = mediaListState.media,
@@ -93,9 +67,22 @@ class CategoryItemViewModel
                     hasPrevious = mediaListState.hasPrevious,
                     hasNext = mediaListState.hasNext,
                 )
-            }.onEach { newState ->
-                _uiState.update { newState }
-            }.launchIn(viewModelScope)
+            }.stateIn(viewModelScope, WhileSubscribed(5000), CategoryItemUiState())
+
+        init {
+            val slideshowDurationInMillisFlow = mediaPreferenceRepository
+                .getSlideshowIntervalSeconds()
+                .map { seconds -> (seconds * 1000).toLong() }
+                .stateIn(
+                    viewModelScope,
+                    WhileSubscribed(5000),
+                    (MediaPreference().slideshowIntervalSeconds * 1000).toLong(),
+                )
+
+            mediaListService.initialize(
+                media,
+                slideshowDurationInMillisFlow,
+            )
         }
 
         fun initState(
@@ -103,8 +90,9 @@ class CategoryItemViewModel
             mediaId: Uuid,
         ) {
             mediaListService.onAction(MediaListAction.Reset)
+            // clearing the state is left to [reset], whose empty media list reaches the service
+            // through the wiring [initialize] set up and comes back out of its state a hop later
             reset()
-            _uiState.update { CategoryItemUiState() }
 
             loadCategory(categoryId)
             loadMedia(categoryId)
@@ -136,7 +124,9 @@ class CategoryItemViewModel
         }
 
         fun toggleFavorite() {
-            _uiState.value.activeMedia?.let {
+            // read from the service rather than from [uiState], which stops assembling once the
+            // screen stops collecting it
+            mediaListService.state.value.activeMedia?.let {
                 mediaListService.onAction(MediaListAction.SetIsFavorite(!it.isFavorite))
             }
         }
