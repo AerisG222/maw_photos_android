@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -77,27 +76,25 @@ class RandomItemViewModel
                 slideshowDurationInMillisFlow,
             )
 
-            uiState = combine(
-                mediaListService.state,
-            ) { stateList ->
-                val mediaListState = stateList[0]
-                RandomItemUiState(
-                    category = mediaListState.category,
-                    media = mediaListState.media,
-                    activeId = mediaListState.activeId,
-                    activeMedia = mediaListState.activeMedia,
-                    isSlideshowPlaying = mediaListState.isSlideshowPlaying,
-                    showDetailSheet = mediaListState.showDetailSheet,
-                    exif = mediaListState.exif,
-                    comments = mediaListState.comments,
-                    faces = mediaListState.faces,
-                    showFaceHighlights = mediaListState.showFaceHighlights,
-                    canHighlightFaces = mediaListState.canHighlightFaces,
-                    isLoading = mediaListState.isLoading,
-                    hasPrevious = mediaListState.hasPrevious,
-                    hasNext = mediaListState.hasNext,
-                )
-            }.stateIn(viewModelScope, WhileSubscribed(5000), RandomItemUiState())
+            uiState = mediaListService.state
+                .map { mediaListState ->
+                    RandomItemUiState(
+                        category = mediaListState.category,
+                        media = mediaListState.media,
+                        activeId = mediaListState.activeId,
+                        activeMedia = mediaListState.activeMedia,
+                        isSlideshowPlaying = mediaListState.isSlideshowPlaying,
+                        showDetailSheet = mediaListState.showDetailSheet,
+                        exif = mediaListState.exif,
+                        comments = mediaListState.comments,
+                        faces = mediaListState.faces,
+                        showFaceHighlights = mediaListState.showFaceHighlights,
+                        canHighlightFaces = mediaListState.canHighlightFaces,
+                        isLoading = mediaListState.isLoading,
+                        hasPrevious = mediaListState.hasPrevious,
+                        hasNext = mediaListState.hasNext,
+                    )
+                }.stateIn(viewModelScope, WhileSubscribed(5000), RandomItemUiState())
         }
 
         fun reset() {
