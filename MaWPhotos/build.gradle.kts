@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.ApkSigningConfig
-import java.io.File
 import java.util.Properties
 
 plugins {
@@ -129,7 +128,7 @@ androidComponents {
         val isBaselineBuildType =
             variant.buildType == "nonMinifiedRelease" || variant.buildType == "benchmarkRelease"
         if (variant.flavorName == "development" && isBaselineBuildType) {
-            variant.signingConfig.setConfig(debugSigning)
+            variant.signingConfig.from(debugSigning)
         }
     }
 }
