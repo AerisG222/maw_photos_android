@@ -10,6 +10,7 @@ import javax.inject.Inject
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -58,8 +59,7 @@ class MediaFeedItemViewModel
         val videoPlayerDataSourceFactory: HttpDataSource.Factory,
         private val mediaListService: MediaListService,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow(MediaFeedItemUiState())
-        val uiState = _uiState.asStateFlow()
+        val uiState: StateFlow<MediaFeedItemUiState>
 
         init {
             val slideshowDurationInMillisFlow = mediaPreferenceRepository
@@ -76,29 +76,27 @@ class MediaFeedItemViewModel
                 slideshowDurationInMillisFlow,
             )
 
-            mediaListService.state
+            uiState = mediaListService.state
                 .onEach { state ->
-                    _uiState.update {
-                        MediaFeedItemUiState(
-                            category = state.category,
-                            media = state.media,
-                            activeId = state.activeId,
-                            activeMedia = state.activeMedia,
-                            isSlideshowPlaying = state.isSlideshowPlaying,
-                            showDetailSheet = state.showDetailSheet,
-                            exif = state.exif,
-                            comments = state.comments,
-                            faces = state.faces,
-                            showFaceHighlights = state.showFaceHighlights,
-                            canHighlightFaces = state.canHighlightFaces,
-                            isLoading = state.isLoading,
-                        )
-                    }
-
                     // the feed is paged, so swiping toward the end of what has been loaded has to
                     // fetch more or the pager simply stops at a page boundary
                     loadMoreIfNeeded(state.activeIndex, state.media.size)
-                }.launchIn(viewModelScope)
+                }.map { state ->
+                    MediaFeedItemUiState(
+                        category = state.category,
+                        media = state.media,
+                        activeId = state.activeId,
+                        activeMedia = state.activeMedia,
+                        isSlideshowPlaying = state.isSlideshowPlaying,
+                        showDetailSheet = state.showDetailSheet,
+                        exif = state.exif,
+                        comments = state.comments,
+                        faces = state.faces,
+                        showFaceHighlights = state.showFaceHighlights,
+                        canHighlightFaces = state.canHighlightFaces,
+                        isLoading = state.isLoading,
+                    )
+                }.stateIn(viewModelScope, WhileSubscribed(5000), MediaFeedItemUiState())
         }
 
         /**
@@ -143,7 +141,7 @@ class MediaFeedItemViewModel
         }
 
         fun toggleFavorite() {
-            _uiState.value.activeMedia?.let {
+            uiState.value.activeMedia?.let {
                 mediaListService.onAction(MediaListAction.SetIsFavorite(!it.isFavorite))
             }
         }

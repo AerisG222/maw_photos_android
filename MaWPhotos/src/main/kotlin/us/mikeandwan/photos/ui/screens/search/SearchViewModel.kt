@@ -6,11 +6,13 @@ import com.hoc081098.flowext.combine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -41,10 +43,7 @@ class SearchViewModel
         private val categoryRepository: CategoryRepository,
         searchPreferenceRepository: SearchPreferenceRepository,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow(SearchUiState())
-        val uiState = _uiState.asStateFlow()
-
-        init {
+        val uiState =
             combine(
                 searchRepository.searchResults,
                 searchRepository.hasMoreResults,
@@ -62,10 +61,7 @@ class SearchViewModel
                     showFavoriteIndicator = searchPref.showFavoriteIndicator,
                     activeTerm = activeTerm,
                 )
-            }.onEach { newState ->
-                _uiState.update { newState }
-            }.launchIn(viewModelScope)
-        }
+            }.stateIn(viewModelScope, WhileSubscribed(5000), SearchUiState())
 
         fun search(term: String) {
             viewModelScope.launch {

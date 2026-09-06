@@ -9,6 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -58,8 +59,7 @@ class CategoriesViewModel
                 }
             }.stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
 
-        private val _uiState = MutableStateFlow(CategoriesUiState())
-        val uiState = _uiState.asStateFlow()
+        val uiState: StateFlow<CategoriesUiState>
 
         init {
             viewModelScope.launch {
@@ -72,7 +72,7 @@ class CategoriesViewModel
                     }.collect { }
             }
 
-            combine(
+            uiState = combine(
                 categoryRepository.getYears(),
                 categories,
                 _year,
@@ -99,9 +99,7 @@ class CategoriesViewModel
                     isLoading = isLoading,
                     invalidYearMostRecent = invalidYearMostRecent,
                 )
-            }.onEach { state ->
-                _uiState.update { state }
-            }.launchIn(viewModelScope)
+            }.stateIn(viewModelScope, WhileSubscribed(5000), CategoriesUiState())
         }
 
         fun setYear(year: Int?) {

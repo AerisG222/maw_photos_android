@@ -9,7 +9,9 @@ import kotlin.uuid.Uuid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -22,7 +24,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import us.mikeandwan.photos.api.ApiResult
+import us.mikeandwan.photos.api.Category as ApiCategory
 import us.mikeandwan.photos.api.FaceApiClient
+import us.mikeandwan.photos.api.Media as ApiMedia
 import us.mikeandwan.photos.api.PlaceApiClient
 import us.mikeandwan.photos.api.SearchResults
 import us.mikeandwan.photos.domain.ApiErrorHandler
@@ -47,8 +51,6 @@ import us.mikeandwan.photos.domain.models.PlaceAncestor
 import us.mikeandwan.photos.domain.models.PlaceKind
 import us.mikeandwan.photos.domain.models.PlacePreference
 import us.mikeandwan.photos.domain.services.MediaFavoriteService
-import us.mikeandwan.photos.api.Category as ApiCategory
-import us.mikeandwan.photos.api.Media as ApiMedia
 
 /*
    Driven against a real MediaFeedRepository over a mocked api client: the parts worth pinning here -
@@ -474,7 +476,9 @@ class MediaFeedViewModelTest {
         assertTrue(vm.uiState.value.placeChain.isEmpty())
     }
 
-    private fun viewModel() =
+    // uiState runs its upstream only while something is collecting it, so the test keeps a
+    // subscriber open for its duration rather than reading a state that was never assembled
+    private fun TestScope.viewModel() =
         MediaFeedViewModel(
             mediaFeedRepository,
             peopleRepository,
@@ -486,7 +490,7 @@ class MediaFeedViewModelTest {
             categoryPreferenceRepository,
             mediaPreferenceRepository,
             mediaFavoriteService,
-        )
+        ).also { vm -> backgroundScope.launch { vm.uiState.collect { } } }
 
     private fun categoryPage(
         count: Int,

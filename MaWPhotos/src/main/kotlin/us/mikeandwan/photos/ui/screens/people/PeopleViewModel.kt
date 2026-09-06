@@ -7,9 +7,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.domain.ClanRepository
@@ -68,11 +71,10 @@ class PeopleViewModel
         private val _isSaving = MutableStateFlow(false)
         private val _saveError = MutableStateFlow<ClanSaveError?>(null)
 
-        private val _uiState = MutableStateFlow(PeopleUiState())
-        val uiState = _uiState.asStateFlow()
+        val uiState: StateFlow<PeopleUiState>
 
         init {
-            combine(
+            uiState = combine(
                 peopleRepository.people,
                 clanRepository.clans,
                 _filter,
@@ -111,9 +113,7 @@ class PeopleViewModel
                     isSaving = isSaving,
                     saveError = saveError,
                 )
-            }.onEach { newState ->
-                _uiState.update { newState }
-            }.launchIn(viewModelScope)
+            }.stateIn(viewModelScope, WhileSubscribed(5000), PeopleUiState())
 
             loadPeople()
             loadClans()
@@ -126,7 +126,7 @@ class PeopleViewModel
         fun toggleSort() {
             viewModelScope.launch {
                 peoplePreferenceRepository.setSortBy(
-                    _uiState.value.preferences.sortBy
+                    uiState.value.preferences.sortBy
                         .next(),
                 )
             }
@@ -136,7 +136,7 @@ class PeopleViewModel
         // it off there are one setting rather than two that can disagree
         fun toggleClansExpanded() {
             viewModelScope.launch {
-                peoplePreferenceRepository.setShowClans(!_uiState.value.preferences.showClans)
+                peoplePreferenceRepository.setShowClans(!uiState.value.preferences.showClans)
             }
         }
 

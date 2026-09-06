@@ -9,6 +9,7 @@ import javax.inject.Inject
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -59,8 +60,7 @@ class RandomItemViewModel
     ) : BaseRandomViewModel(
             randomMediaRepository,
         ) {
-        private val _uiState = MutableStateFlow(RandomItemUiState())
-        val uiState = _uiState.asStateFlow()
+        val uiState: StateFlow<RandomItemUiState>
 
         init {
             val slideshowDurationInMillisFlow = randomPreferenceRepository
@@ -77,7 +77,7 @@ class RandomItemViewModel
                 slideshowDurationInMillisFlow,
             )
 
-            combine(
+            uiState = combine(
                 mediaListService.state,
             ) { stateList ->
                 val mediaListState = stateList[0]
@@ -97,9 +97,7 @@ class RandomItemViewModel
                     hasPrevious = mediaListState.hasPrevious,
                     hasNext = mediaListState.hasNext,
                 )
-            }.onEach { newState ->
-                _uiState.update { newState }
-            }.launchIn(viewModelScope)
+            }.stateIn(viewModelScope, WhileSubscribed(5000), RandomItemUiState())
         }
 
         fun reset() {
@@ -134,7 +132,7 @@ class RandomItemViewModel
         }
 
         fun toggleFavorite() {
-            _uiState.value.activeMedia?.let {
+            uiState.value.activeMedia?.let {
                 mediaListService.onAction(MediaListAction.SetIsFavorite(!it.isFavorite))
             }
         }

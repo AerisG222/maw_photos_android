@@ -6,9 +6,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import us.mikeandwan.photos.authorization.AuthService
@@ -29,21 +32,22 @@ class InactiveUserViewModel
         private val configRepository: ConfigRepository,
         private val errorRepository: ErrorRepository,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow(InactiveUserUiState())
-        val uiState = _uiState.asStateFlow()
+        // isLoading belongs to the button press rather than to anything upstream, so it is held
+        // here and combined in rather than being pushed into the state from queryUserStatus
+        private val _isLoading = MutableStateFlow(false)
 
-        init {
-            configRepository.userStatus
-                .onEach { status ->
-                    _uiState.update { it.copy(userStatus = status) }
-                }.launchIn(viewModelScope)
-        }
+        val uiState = combine(
+            configRepository.userStatus,
+            _isLoading,
+        ) { status, isLoading ->
+            InactiveUserUiState(userStatus = status, isLoading = isLoading)
+        }.stateIn(viewModelScope, WhileSubscribed(5000), InactiveUserUiState())
 
         fun queryUserStatus() {
             viewModelScope.launch {
-                _uiState.update { it.copy(isLoading = true) }
+                _isLoading.update { true }
                 configRepository.getUserStatus()
-                _uiState.update { it.copy(isLoading = false) }
+                _isLoading.update { false }
 
                 if (configRepository.userStatus.value is UserStatus.Inactive) {
                     errorRepository.showThenClearError("Sorry, your account is still inactive.")

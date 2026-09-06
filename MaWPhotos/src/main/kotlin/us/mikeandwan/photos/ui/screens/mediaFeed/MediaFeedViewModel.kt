@@ -9,6 +9,7 @@ import kotlin.random.Random
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -108,8 +109,7 @@ class MediaFeedViewModel
         private val _subject = MutableStateFlow<MediaFeedSubject?>(null)
         private val _isLoading = MutableStateFlow(true)
 
-        private val _uiState = MutableStateFlow(MediaFeedUiState())
-        val uiState = _uiState.asStateFlow()
+        val uiState: StateFlow<MediaFeedUiState>
 
         // read from whatever the subject was listed in rather than fetched on its own: those
         // listings are already held, and taking the name from there means a rename or a favorite
@@ -208,7 +208,7 @@ class MediaFeedViewModel
 
             // flowext's combine rather than the one in kotlinx: the typed overloads there stop at
             // five flows, and this state has more parts than that
-            combine(
+            uiState = combine(
                 mediaFeedRepository.media,
                 mediaFeedRepository.hasMore,
                 mediaFeedRepository.filter,
@@ -247,9 +247,7 @@ class MediaFeedViewModel
                     isLoading = isLoading && isListingEmpty,
                     isEmpty = !isLoading && isListingEmpty,
                 )
-            }.onEach { newState ->
-                _uiState.update { newState }
-            }.launchIn(viewModelScope)
+            }.stateIn(viewModelScope, WhileSubscribed(5000), MediaFeedUiState())
         }
 
         fun initState(subject: MediaFeedSubject) {

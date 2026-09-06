@@ -8,7 +8,9 @@ import kotlin.uuid.Uuid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -390,8 +392,11 @@ class PeopleViewModelTest {
         members: List<Person> = emptyList(),
     ) = Clan(id = Uuid.random(), name = name, members = members)
 
-    private fun viewModel() =
+    // uiState runs its upstream only while something is collecting it, so the test keeps a
+    // subscriber open for its duration rather than reading a state that was never assembled
+    private fun TestScope.viewModel() =
         PeopleViewModel(peopleRepository, peoplePreferenceRepository, clanRepository)
+            .also { vm -> backgroundScope.launch { vm.uiState.collect { } } }
 
     private fun person(
         name: String,

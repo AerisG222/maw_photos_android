@@ -6,6 +6,7 @@ import javax.inject.Inject
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -39,8 +40,7 @@ class CategoryViewModel
         mediaPreferenceRepository: MediaPreferenceRepository,
         private val mediaFavoriteService: MediaFavoriteService,
     ) : BaseCategoryViewModel(categoryRepository) {
-        private val _uiState = MutableStateFlow(CategoryUiState())
-        val uiState = _uiState.asStateFlow()
+        val uiState: StateFlow<CategoryUiState>
 
         init {
             val gridItemThumbnailSizeFlow = mediaPreferenceRepository
@@ -60,7 +60,7 @@ class CategoryViewModel
                 }
             }.stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
 
-            combine(
+            uiState = combine(
                 category,
                 gridItemsFlow,
                 gridItemThumbnailSizeFlow,
@@ -81,9 +81,7 @@ class CategoryViewModel
                     isLoading = isLoading,
                     isError = isError,
                 )
-            }.onEach { newState ->
-                _uiState.update { newState }
-            }.launchIn(viewModelScope)
+            }.stateIn(viewModelScope, WhileSubscribed(5000), CategoryUiState())
         }
 
         fun initState(categoryId: Uuid) {
