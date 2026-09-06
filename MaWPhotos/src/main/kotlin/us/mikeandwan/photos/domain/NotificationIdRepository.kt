@@ -19,6 +19,6 @@ class NotificationIdRepository
                 _id++
 
                 return _id
+            }
         }
     }
-}
