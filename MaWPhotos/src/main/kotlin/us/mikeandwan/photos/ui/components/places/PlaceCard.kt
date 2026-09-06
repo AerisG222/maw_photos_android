@@ -102,8 +102,7 @@ fun PlaceCard(
                         .clip(BADGE_SHAPE)
                         .background(
                             MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f),
-                        )
-                        .padding(3.dp),
+                        ).padding(3.dp),
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_image),

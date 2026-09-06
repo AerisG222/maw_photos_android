@@ -168,113 +168,113 @@ class PeopleViewModel
         fun stopPicking() {
             _picking.update { ClanPicking.Off }
             _selectedIds.update { emptySet() }
-    }
-
-    fun toggleSelected(person: Person) {
-        _selectedIds.update { selected ->
-            if (person.id in selected) selected - person.id else selected + person.id
         }
-    }
 
-    fun clearSelection() {
-        _selectedIds.update { emptySet() }
-    }
-
-    /**
-     * Finishes picking: a new clan goes on to be named, while an edit to an existing one saves
-     * straight away - it already has a name, and the membership is the only thing that changed.
-     */
-    fun submitPicking() {
-        when (val picking = _picking.value) {
-            is ClanPicking.Create -> {
-                _naming.update { ClanNaming.Create }
+        fun toggleSelected(person: Person) {
+            _selectedIds.update { selected ->
+                if (person.id in selected) selected - person.id else selected + person.id
             }
+        }
 
-            is ClanPicking.Members -> {
-                save {
-                    clanRepository.setClanPeople(picking.clan.id, _selectedIds.value.toList())
+        fun clearSelection() {
+            _selectedIds.update { emptySet() }
+        }
+
+        /**
+         * Finishes picking: a new clan goes on to be named, while an edit to an existing one saves
+         * straight away - it already has a name, and the membership is the only thing that changed.
+         */
+        fun submitPicking() {
+            when (val picking = _picking.value) {
+                is ClanPicking.Create -> {
+                    _naming.update { ClanNaming.Create }
                 }
-            }
 
-            ClanPicking.Off -> {}
+                is ClanPicking.Members -> {
+                    save {
+                        clanRepository.setClanPeople(picking.clan.id, _selectedIds.value.toList())
+                    }
+                }
+
+                ClanPicking.Off -> {}
+            }
         }
-    }
 
-    // CLAN NAMING
+        // CLAN NAMING
 
-    fun startRename(clan: Clan) {
-        _naming.update { ClanNaming.Rename(clan) }
-    }
-
-    fun submitName(name: String) {
-        when (val naming = _naming.value) {
-            is ClanNaming.Create -> {
-                save { clanRepository.createClan(name, _selectedIds.value.toList()) }
-            }
-
-            is ClanNaming.Rename -> {
-                save { clanRepository.renameClan(naming.clan.id, name) }
-            }
-
-            ClanNaming.Off -> {}
+        fun startRename(clan: Clan) {
+            _naming.update { ClanNaming.Rename(clan) }
         }
-    }
 
-    fun cancelNaming() {
-        _naming.update { ClanNaming.Off }
-        _saveError.update { null }
-    }
+        fun submitName(name: String) {
+            when (val naming = _naming.value) {
+                is ClanNaming.Create -> {
+                    save { clanRepository.createClan(name, _selectedIds.value.toList()) }
+                }
 
-    // CLAN DELETION
+                is ClanNaming.Rename -> {
+                    save { clanRepository.renameClan(naming.clan.id, name) }
+                }
 
-    fun startDelete(clan: Clan) {
-        _deleting.update { clan }
-    }
+                ClanNaming.Off -> {}
+            }
+        }
 
-    fun confirmDelete() {
-        val clan = _deleting.value ?: return
+        fun cancelNaming() {
+            _naming.update { ClanNaming.Off }
+            _saveError.update { null }
+        }
 
-        viewModelScope.launch {
-            _isSaving.update { true }
-            clanRepository.deleteClan(clan.id)
+        // CLAN DELETION
 
-            // closed either way: a failure has already been reported the way every other failed
-            // call is, and leaving the dialog open would say it a second time
-            _isSaving.update { false }
+        fun startDelete(clan: Clan) {
+            _deleting.update { clan }
+        }
+
+        fun confirmDelete() {
+            val clan = _deleting.value ?: return
+
+            viewModelScope.launch {
+                _isSaving.update { true }
+                clanRepository.deleteClan(clan.id)
+
+                // closed either way: a failure has already been reported the way every other failed
+                // call is, and leaving the dialog open would say it a second time
+                _isSaving.update { false }
+                _deleting.update { null }
+            }
+        }
+
+        fun cancelDelete() {
             _deleting.update { null }
         }
-    }
 
-    fun cancelDelete() {
-        _deleting.update { null }
-    }
+        private fun save(call: suspend () -> ClanResult) {
+            viewModelScope.launch {
+                _isSaving.update { true }
+                _saveError.update { null }
 
-    private fun save(call: suspend () -> ClanResult) {
-        viewModelScope.launch {
-            _isSaving.update { true }
-            _saveError.update { null }
+                when (val result = call()) {
+                    is ClanResult.Success -> {
+                        _naming.update { ClanNaming.Off }
+                        stopPicking()
+                    }
 
-            when (val result = call()) {
-                is ClanResult.Success -> {
-                    _naming.update { ClanNaming.Off }
-                    stopPicking()
+                    ClanResult.DuplicateName -> {
+                        _saveError.update { ClanSaveError.DuplicateName }
+                    }
+
+                    ClanResult.Invalid -> {
+                        _saveError.update { ClanSaveError.Invalid }
+                    }
+
+                    ClanResult.Failed -> {
+                        _saveError.update { ClanSaveError.Failed }
+                    }
                 }
 
-                ClanResult.DuplicateName -> {
-                    _saveError.update { ClanSaveError.DuplicateName }
-                }
-
-                ClanResult.Invalid -> {
-                    _saveError.update { ClanSaveError.Invalid }
-                }
-
-                ClanResult.Failed -> {
-                    _saveError.update { ClanSaveError.Failed }
-                }
+                _isSaving.update { false }
             }
-
-            _isSaving.update { false }
-        }
         }
 
         private fun loadPeople(forceRefresh: Boolean = false) {
@@ -289,13 +289,13 @@ class PeopleViewModel
             }
         }
 
-    private fun loadClans(forceRefresh: Boolean = false) {
-        viewModelScope.launch {
-            clanRepository
-                .getClans(forceRefresh)
-                .collect { }
+        private fun loadClans(forceRefresh: Boolean = false) {
+            viewModelScope.launch {
+                clanRepository
+                    .getClans(forceRefresh)
+                    .collect { }
+            }
         }
-    }
 
         // matched anywhere in the name rather than only at the start: people are remembered by
         // whichever part of their name comes to mind first

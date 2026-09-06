@@ -93,8 +93,7 @@ fun PersonCard(
             .graphicsLayer {
                 scaleX = pressScale
                 scaleY = pressScale
-            }
-            .then(
+            }.then(
                 if (onSelect != null) {
                     Modifier.clickable(
                         interactionSource = interactionSource,
@@ -125,8 +124,7 @@ fun PersonCard(
                     .background(
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
                         shape = CircleShape,
-                    )
-                    .clickable {
+                    ).clickable {
                         haptics.performHapticFeedback(
                             if (person.isFavorite) {
                                 HapticFeedbackType.ToggleOff
@@ -158,8 +156,7 @@ fun PersonCard(
                         .background(
                             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
                             shape = CircleShape,
-                        )
-                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                        ).padding(horizontal = 6.dp, vertical = 2.dp),
                 )
             }
         }

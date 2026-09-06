@@ -164,8 +164,7 @@ private fun Rung(
                 } else {
                     MaterialTheme.colorScheme.surface
                 },
-            )
-            .border(1.dp, borderColor, CHIP_SHAPE)
+            ).border(1.dp, borderColor, CHIP_SHAPE)
             .clickable { onSelect() }
             .padding(end = 8.dp),
     ) {

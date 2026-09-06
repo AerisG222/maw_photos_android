@@ -300,31 +300,31 @@ class MediaFeedViewModel
             loadNextPage()
         }
 
-    /**
-     * Turns the year or the title on the listed categories on and off, for the area this feed is
-     * being browsed from.
-     *
-     * Saved rather than held, so this and the switch on the settings screen are the one setting.
-     * Nothing is refetched: it changes what a category says about itself, not which ones came back,
-     * so the accumulated pages stand.
-     */
-    fun setShowCategoryYear(showYear: Boolean) {
-        viewModelScope.launch {
-            when (_subject.value) {
-                is MediaFeedSubject.Place -> placePreferenceRepository.setShowCategoryYear(showYear)
-                else -> peoplePreferenceRepository.setShowCategoryYear(showYear)
+        /**
+         * Turns the year or the title on the listed categories on and off, for the area this feed is
+         * being browsed from.
+         *
+         * Saved rather than held, so this and the switch on the settings screen are the one setting.
+         * Nothing is refetched: it changes what a category says about itself, not which ones came back,
+         * so the accumulated pages stand.
+         */
+        fun setShowCategoryYear(showYear: Boolean) {
+            viewModelScope.launch {
+                when (_subject.value) {
+                    is MediaFeedSubject.Place -> placePreferenceRepository.setShowCategoryYear(showYear)
+                    else -> peoplePreferenceRepository.setShowCategoryYear(showYear)
+                }
             }
         }
-    }
 
-    fun setShowCategoryTitle(showTitle: Boolean) {
-        viewModelScope.launch {
-            when (_subject.value) {
-                is MediaFeedSubject.Place -> placePreferenceRepository.setShowCategoryTitle(showTitle)
-                else -> peoplePreferenceRepository.setShowCategoryTitle(showTitle)
+        fun setShowCategoryTitle(showTitle: Boolean) {
+            viewModelScope.launch {
+                when (_subject.value) {
+                    is MediaFeedSubject.Place -> placePreferenceRepository.setShowCategoryTitle(showTitle)
+                    else -> peoplePreferenceRepository.setShowCategoryTitle(showTitle)
+                }
             }
         }
-    }
 
         fun setFavoritesOnly(favoritesOnly: Boolean) {
             applyFilter { it.copy(favoritesOnly = favoritesOnly) }
@@ -347,39 +347,39 @@ class MediaFeedViewModel
             }
         }
 
-    fun toggleCategoryFavorite(category: Category) {
-        viewModelScope.launch {
-            categoryRepository
-                .setFavorite(category.id, !category.isFavorite)
-                .filterIsInstance<ExternalCallStatus.Success<Category>>()
-                .catch { e -> Timber.e(e) }
-                // the answer describes the category on its own terms and knows nothing of the
-                // person it was listed for, so only the flag that was asked to change is taken
-                // from it - the count of their media in it is left as it was
-                .collect { status ->
-                    mediaFeedRepository.updateCategory(
-                        category.copy(isFavorite = status.result.isFavorite),
-                    )
-                }
+        fun toggleCategoryFavorite(category: Category) {
+            viewModelScope.launch {
+                categoryRepository
+                    .setFavorite(category.id, !category.isFavorite)
+                    .filterIsInstance<ExternalCallStatus.Success<Category>>()
+                    .catch { e -> Timber.e(e) }
+                    // the answer describes the category on its own terms and knows nothing of the
+                    // person it was listed for, so only the flag that was asked to change is taken
+                    // from it - the count of their media in it is left as it was
+                    .collect { status ->
+                        mediaFeedRepository.updateCategory(
+                            category.copy(isFavorite = status.result.isFavorite),
+                        )
+                    }
+            }
         }
-    }
 
-    private fun applyFilter(update: (MediaFeedFilter) -> MediaFeedFilter) {
-        val next = update(mediaFeedRepository.filter.value)
+        private fun applyFilter(update: (MediaFeedFilter) -> MediaFeedFilter) {
+            val next = update(mediaFeedRepository.filter.value)
 
-        if (next == mediaFeedRepository.filter.value) {
+            if (next == mediaFeedRepository.filter.value) {
                 return
             }
 
             _isLoading.update { true }
-        mediaFeedRepository.setFilter(next)
+            mediaFeedRepository.setFilter(next)
 
             loadNextPage()
         }
 
-    // the name comes from a listing this screen may have been opened without: a cold start
-    // restoring straight into a feed holds none of them yet
-    private fun ensureSubjectIsNamed(subject: MediaFeedSubject) {
+        // the name comes from a listing this screen may have been opened without: a cold start
+        // restoring straight into a feed holds none of them yet
+        private fun ensureSubjectIsNamed(subject: MediaFeedSubject) {
             viewModelScope.launch {
                 when (subject) {
                     is MediaFeedSubject.Person -> peopleRepository.getPeople().collect { }
