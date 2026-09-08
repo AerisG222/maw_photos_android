@@ -1,6 +1,6 @@
 package us.mikeandwan.photos.authorization
 
-import com.auth0.android.authentication.storage.CredentialsManager
+import com.auth0.android.authentication.storage.BaseCredentialsManager
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -10,7 +10,7 @@ import timber.log.Timber
 
 class TokenAuthenticator(
     private val authService: AuthService,
-    private val credManager: CredentialsManager,
+    private val credManager: BaseCredentialsManager,
 ) : Authenticator {
     override fun authenticate(
         route: Route?,

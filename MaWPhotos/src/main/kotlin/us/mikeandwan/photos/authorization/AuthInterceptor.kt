@@ -1,7 +1,7 @@
 package us.mikeandwan.photos.authorization
 
 import android.app.Application
-import com.auth0.android.authentication.storage.CredentialsManager
+import com.auth0.android.authentication.storage.BaseCredentialsManager
 import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -10,7 +10,7 @@ import us.mikeandwan.photos.R
 
 class AuthInterceptor(
     private val application: Application,
-    private val credManager: CredentialsManager,
+    private val credManager: BaseCredentialsManager,
 ) : Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {

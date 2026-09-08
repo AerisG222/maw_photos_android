@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
     <exclude domain="external" path="*"/>
+    <!--
+        Auth0 keeps the credentials here.  They are encrypted with a key held in the keystore, which
+        never leaves the device it was generated on, so a restored copy could not be decrypted
+        anyway - and before this app moved to an encrypted store the same file held the tokens in
+        plaintext, which is exactly what should never have been leaving the device.
+    -->
+    <exclude
+        domain="sharedpref"
+        path="com.auth0.authentication.storage.xml" />
 </full-backup-content>

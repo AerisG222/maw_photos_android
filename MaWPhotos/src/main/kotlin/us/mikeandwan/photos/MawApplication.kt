@@ -16,7 +16,12 @@ import coil3.SingletonImageLoader
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import us.mikeandwan.photos.authorization.LegacyCredentialPurge
 import us.mikeandwan.photos.workers.RandomPhotoWorker
 import us.mikeandwan.photos.workers.UpdateCategoriesWorker
 
@@ -30,6 +35,11 @@ class MawApplication :
 
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var legacyCredentialPurge: LegacyCredentialPurge
+
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun newImageLoader(context: android.content.Context): ImageLoader = imageLoader
 
@@ -59,6 +69,7 @@ class MawApplication :
             )
         }
 
+        purgeLegacyCredentials()
         schedulePeriodicRefresh()
         scheduleWidgetUpdate()
     }
@@ -68,6 +79,15 @@ class MawApplication :
             .Builder()
             .setWorkerFactory(workerFactory)
             .build()
+
+    // the tokens the app wrote before it moved to an encrypted store are still sitting in
+    // plaintext preferences on every device that has been through an older build, so each launch
+    // gets one attempt to revoke and delete them until it succeeds
+    private fun purgeLegacyCredentials() {
+        applicationScope.launch {
+            legacyCredentialPurge.run()
+        }
+    }
 
     private fun schedulePeriodicRefresh() {
         val constraints = Constraints

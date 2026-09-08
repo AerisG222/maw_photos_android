@@ -4,7 +4,8 @@ import android.app.Application
 import android.content.Context
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationException
-import com.auth0.android.authentication.storage.CredentialsManager
+import com.auth0.android.authentication.storage.BaseCredentialsManager
+import com.auth0.android.authentication.storage.CredentialsManagerException
 import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ import us.mikeandwan.photos.R
 class AuthService(
     private val application: Application,
     private val auth0: Auth0,
-    private val credMgr: CredentialsManager,
+    private val credMgr: BaseCredentialsManager,
 ) {
     private val _authStatus = MutableStateFlow(
         if (credMgr.hasValidCredentials()) {
@@ -79,6 +80,16 @@ class AuthService(
         } catch (e: AuthenticationException) {
             _authStatus.update { AuthStatus.RequiresAuthorization }
             Timber.e(e, "Error trying to login with Auth0")
+        } catch (e: CredentialsManagerException) {
+            // the credentials are only ever held encrypted, so a device the keystore cannot serve
+            // has nowhere to put them and there is nothing to stay logged in with
+            _authStatus.update { AuthStatus.RequiresAuthorization }
+
+            if (e.isDeviceIncompatible) {
+                Timber.e(e, "This device cannot store credentials securely")
+            } else {
+                Timber.e(e, "Error trying to store the credentials returned by Auth0")
+            }
         }
     }
 
